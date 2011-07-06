@@ -1,0 +1,53 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CLASS_HPP	align.hpp	2;"	d
+SetNull	align.cpp	/^		void SetNull(string initname) \/\/ initializes to null$/;"	f	class:seq
+SetNull	align.hpp	/^      void SetNull(string initname) \/\/ initializes to null$/;"	f	class:seq
+SetNullVector	align.cpp	/^void SetNullVector(vseq& vSeq)$/;"	f
+chr	align.cpp	/^		string name, chr; \/\/ species, chromosome$/;"	m	class:seq	file:
+chr	align.hpp	/^      string name, chr; \/\/ species, chromosome$/;"	m	class:seq
+colnum	align.cpp	/^		int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq	file:
+colnum	align.hpp	/^      int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq
+getseqs	align.cpp	/^void getseqs(string filename, vvseq & falign)$/;"	f
+inttoname	align.cpp	/^string inttoname(int iname)$/;"	f
+ivint	align.cpp	/^	typedef vint::iterator ivint;$/;"	t	file:
+ivint	align.hpp	/^typedef vint::iterator ivint;$/;"	t
+ivseq	align.cpp	/^	typedef vseq::iterator ivseq;$/;"	t	file:
+ivseq	align.hpp	/^typedef vseq::iterator ivseq;$/;"	t
+ivvseq	align.cpp	/^	typedef vvseq::iterator ivvseq;$/;"	t	file:
+ivvseq	align.hpp	/^typedef vvseq::iterator ivvseq;$/;"	t
+length	align.cpp	/^		int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq	file:
+length	align.hpp	/^      int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq
+main	align.cpp	/^int main (int argc, char * const argv[]) $/;"	f
+name	align.cpp	/^		string name, chr; \/\/ species, chromosome$/;"	m	class:seq	file:
+name	align.hpp	/^      string name, chr; \/\/ species, chromosome$/;"	m	class:seq
+nametoint	align.cpp	/^int nametoint(string strName)$/;"	f
+operator <<	align.cpp	/^ostream& operator <<(ostream &os,seq & cSeq)$/;"	f
+operator <<	align.cpp	/^ostream& operator <<(ostream &os,vseq & vSeq)$/;"	f
+rawseq	align.cpp	/^		string rawseq; \/\/ sequence from the alignment (with '-'s)$/;"	m	class:seq	file:
+rawseq	align.hpp	/^      string rawseq; \/\/ sequence from the alignment (with '-'s)$/;"	m	class:seq
+rawtoseq	align.cpp	/^ string rawtoseq(string strRaw)$/;"	f
+readinfo	align.cpp	/^void readinfo (ifstream& inf, vseq& seqs, string line) \/\/get header info$/;"	f
+reversecomp	align.cpp	/^string reversecomp(string rawseq){$/;"	f
+seq	align.cpp	/^class seq$/;"	c	file:
+seq	align.hpp	/^class seq$/;"	c
+shortname	align.cpp	/^string shortname(string strName)$/;"	f
+start	align.cpp	/^		int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq	file:
+start	align.hpp	/^      int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq
+stop	align.cpp	/^		int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq	file:
+stop	align.hpp	/^      int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq
+strClean	align.cpp	/^string strClean(string& strInput, string strErase)$/;"	f
+strand	align.cpp	/^		int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq	file:
+strand	align.hpp	/^      int start,stop,strand,length,colnum; \/\/ start, end, chromosome length, column number in the alignment file		$/;"	m	class:seq
+vint	align.cpp	/^	typedef vector<int> vint;$/;"	t	file:
+vint	align.hpp	/^typedef vector<int> vint;$/;"	t
+vseq	align.cpp	/^	typedef vector<seq> vseq;$/;"	t	file:
+vseq	align.hpp	/^typedef vector<seq> vseq;$/;"	t
+vvseq	align.cpp	/^	typedef vector<vseq> vvseq;$/;"	t	file:
+vvseq	align.hpp	/^typedef vector<vseq> vvseq;$/;"	t
+whichchrom	align.cpp	/^string whichchrom(string chr)$/;"	f
+writefiles	align.cpp	/^void writefiles(vvseq & falign)$/;"	f
