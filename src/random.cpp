@@ -9,6 +9,14 @@ using namespace std;
 
 gsl_rng * gslran;
 
+
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  rnginit
+ *  Description:  Initialize the random number generator (inspired by gsl documentation)
+ * =====================================================================================
+ */
    void
 rnginit()
 {

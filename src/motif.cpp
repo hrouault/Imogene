@@ -5045,6 +5045,13 @@ funcroot_fdf (double x, void *params, double *y, double *dy)
    *dy=funcroot_deriv(x,NULL);
 }
 
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  compalpha
+ *  Description:  Compute the base priors
+ * =====================================================================================
+ */
    int
 compalpha()
 {
@@ -5055,10 +5062,6 @@ compalpha()
    double x0, x = 0.1, r_expected = sqrt (5.0);
    gsl_function_fdf FDF;
 
-
-   //if (args_info.pwm_given){ 
-   //	ic=9.0/10;
-   //} else 
    ic=scorethr2/width;
 
    FDF.f = &funcroot;
@@ -5077,9 +5080,6 @@ compalpha()
       x0 = x;
       x = gsl_root_fdfsolver_root (s);
       status = gsl_root_test_delta (x, x0, 0, 1e-3);
-
-      //      printf ("%5d %10.7f %10.7f\n",
-      //            iter, x, x - x0);
    }
    while (status == GSL_CONTINUE && iter < max_iter);
 
@@ -5087,16 +5087,7 @@ compalpha()
    beta=concc/conca*alpha;
 
 
-   //	if (args_info.pwm_given){
-   //		cout << "alpha : " << x << endl;
-   //		cout << "beta : " << beta << endl;
-   //		cout << "ic : " << ic << endl;
-   //	} else {
-   //		cout << "threshold : " << scorethr2 << endl;
-   cout << "alpha : " << x << endl;
-   cout << "beta : " << beta << endl;
-   //	}
-
+   fconf << "computed priors : alpha=" << alpha << ", beta=" << beta endl;
    gsl_root_fdfsolver_free (s);
    return status;
 }
@@ -5125,9 +5116,9 @@ matfreqdisp(vvd& matrice)
    for (vvd::iterator imat=matrice.begin();imat!=matrice.end();imat++){
       vd & col=*imat;
       double col0=0.3*exp(col[0]);//A
-      double col1=0.3*exp(col[1]);//T
       double col2=0.2*exp(col[2]);//C
       double col3=0.2*exp(col[3]);//G
+      double col1=0.3*exp(col[1]);//T
       //convert in A/C/G/T format.
       mat[j][0]=col0;//floor(100*col0);//A
       mat[j][1]=col1;//floor(100*col2);//T

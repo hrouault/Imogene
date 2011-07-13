@@ -1,0 +1,92 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename imogene.info
+@settitle Imogene Manual @value{VERSION}
+@include version.texi
+@c %**end of header
+
+@copying
+This manual is for Imogene
+(version @value{VERSION}, @value{UPDATED}).
+
+Copyright @copyright{} 2006,2007,2008,2009,2010 Hervé Rouault
+
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with the Front-Cover Texts being ``A GNU Manual,''
+and with the Back-Cover Texts as in (a) below.  A copy of the
+license is included in the section entitled ``GNU Free Documentation
+License.''
+
+(a) The FSF's Back-Cover Text is: ``You have freedom to copy and modify
+this GNU Manual, like GNU software.  Copies published by the Free
+Software Foundation raise funds for GNU development.''
+@end quotation
+@end copying
+
+@titlepage
+@title Imogene
+@subtitle for version @value{VERSION}, @value{UPDATED}
+@author H. Rouault (@email{rouault@@lps.ens.fr})
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+
+@c Output the table of contents at the beginning.
+@contents
+
+@ifnottex
+@node Top
+@top Imogene
+
+@insertcopying
+@end ifnottex
+
+@menu
+* Generating motifs de novo:: 
+* Copying This Manual::
+* Index::
+@end menu
+
+
+@node Generating motifs de novo
+@chapter Generating motifs de novo
+
+@cindex chapter, first
+
+This is the first chapter.
+@cindex index entry, another
+
+Here is a numbered list.
+
+@enumerate
+@item
+This is the first item.
+
+@item
+This is the second item.
+@end enumerate
+
+@node Copying This Manual
+@appendix Copying This Manual
+
+@menu
+* GNU Free Documentation License::  License for copying this manual.
+@end menu
+
+@include fdl.texi
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye
+

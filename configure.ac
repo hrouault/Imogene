@@ -1,9 +1,9 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.65])
+AC_PREREQ([2.61])
 #AC_INIT(Imogene, 1.0, [Hervé Rouault rouault@lps.ens.fr Marc Santolini marc.santolini@lps.ens.fr])
-AC_INIT(Imogene, 1.0, [rouault@lps.ens.fr marc.santolini@lps.ens.fr])
+AC_INIT(Imogene, m4_esyscmd([tools/git-version-gen .tarball-version]), [rouault@lps.ens.fr marc.santolini@lps.ens.fr])
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR([src/alignments/align.cpp])
 AC_CONFIG_HEADERS([config.h])
@@ -68,6 +68,7 @@ AC_CONFIG_FILES([Makefile
                  scripts/python/Makefile
                  scripts/sh/Makefile
                  data/Makefile
+                 doc/Makefile
                  src/Makefile
                  src/alignments/Makefile])
 
