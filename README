@@ -1,1 +1,13 @@
-Test
+
+You can refer to the INSTALL file for installation instruction. In addition, some flags have to be added to support either drosophila genomes or eutherian genomes or both.
+
+I advice you not to use the default prefix for installation, which would pollute your /usr/local with imogene specific scripts. I would rather use something like (in the imogene folder) :
+mkdir build
+cd build
+../configure --enable-droso --prefix=$PWD/imogene
+
+Once the package is installed, the first thing to do is to download the required genomes. To help in that task, scripts have been added in the script folder.
+Create then a folder where to stock the alignments :
+mkdir align
+cd align
+../test/bin/generate-droso-alignlist.sh

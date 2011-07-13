@@ -1,0 +1,62 @@
+#!/usr/bin/python
+
+""" This module is a python adaptation of the mapping.sql file provided with the release 5
+of the Drosophila melanogaster genome.
+See the website 'http://www.fruitfly.org/sequence/release5genomic.shtml' for further information
+"""
+
+fmap=open('@pkgdatadir@/mapping.dat')
+mappings=[i.rstrip().split("\t") for i in fmap.readlines()]
+fmap.close()
+for i in mappings:
+   i[1]=int(i[1])
+   i[2]=int(i[2])
+   i[3]=int(i[3])
+
+def r4_map(coordr4):
+   """Function that returns a release 5 coordinate from a release 4 coordinate.
+   This function is '1' based.
+
+   This returns ["",0,0] for any unmappable base. 
+   """
+   res=[coordr4[0],0,0]
+   for i in mappings:
+      check1=0
+      check2=0
+      if i[0]==coordr4[0]:
+         if i[1]<=coordr4[1] and i[1]+i[3]>coordr4[1]:
+            res[1]=i[2]+coordr4[1]-i[1]
+            check1=1
+         if i[1]<=coordr4[2] and i[1]+i[3]>coordr4[2]:
+            res[2]=i[2]+coordr4[2]-i[1]
+            check2=1
+         if check1 and check2:
+            break
+   if not check1 or not check2 or res[2]-res[1]!=coordr4[2]-coordr4[1]:
+      return ["",0,0]
+   return res
+
+def r5_map(coordr5):
+   """Function that returns a release 4 coordinate from a release 5 coordinate.
+
+   This function is '1' based.
+
+   This returns ["",0,0] for any unmappable base. 
+   """
+   res=[coordr5[0],0,0]
+   for i in mappings:
+      check1=0
+      check2=0
+      if i[0]==coordr5[0]:
+         if i[2]<=coordr5[1] and i[2]+i[3]>coordr5[1]:
+            res[1]=i[1]+coordr5[1]-i[2]
+            check1=1
+         if i[2]<=coordr5[2] and i[2]+i[3]>coordr5[2]:
+            res[2]=i[1]+coordr5[2]-i[2]
+            check2=1
+         if check1 and check2:
+            break
+   if not check1 or not check2 or res[2]-res[1]!=coordr5[2]-coordr5[1]:
+      return ["",0,0]
+   return res
+   

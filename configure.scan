@@ -1,0 +1,46 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.65])
+AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+AC_CONFIG_SRCDIR([config.h.in])
+AC_CONFIG_HEADERS([config.h])
+
+# Checks for programs.
+AC_PROG_AWK
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_CPP
+AC_PROG_MKDIR_P
+
+# Checks for libraries.
+# FIXME: Replace `main' with a function in `-lfrtbegin':
+AC_CHECK_LIB([frtbegin], [main])
+# FIXME: Replace `main' with a function in `-lg2c':
+AC_CHECK_LIB([g2c], [main])
+# FIXME: Replace `main' with a function in `-lgsl':
+AC_CHECK_LIB([gsl], [main])
+# FIXME: Replace `main' with a function in `-lgslcblas':
+AC_CHECK_LIB([gslcblas], [main])
+# FIXME: Replace `main' with a function in `-lm':
+AC_CHECK_LIB([m], [main])
+
+# Checks for header files.
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+
+# Checks for library functions.
+AC_CHECK_FUNCS([floor pow sqrt])
+
+AC_CONFIG_FILES([Makefile
+                 build/Makefile
+                 build/src/Makefile
+                 build/src/alignments/Makefile
+                 scripts/Makefile
+                 scripts/python/Makefile
+                 scripts/sh/Makefile
+                 src/Makefile
+                 src/alignments/Makefile])
+AC_OUTPUT

@@ -1,0 +1,13 @@
+     
+purpose  "Distance between PWM."
+
+args "--unamed-opts=<motifs>"
+
+     # Options
+option  "width" w "Width of the motifs"
+             int typestr="int"   default="10" optional
+
+option   "threshold" t "Threshold used for motif scanning"
+            double typestr="double" required
+
+option   "wnames" - "Input motifs with names" optional

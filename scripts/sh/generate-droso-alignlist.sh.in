@@ -1,0 +1,97 @@
+#!/bin/sh
+
+echo "[ `date` ]  Getting Mavid Mercator alignment files..."
+echo
+wget -c "http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/fly_CAF1.1.tar.gz"
+echo "[ `date` ]  Extracting alignment files (over about 600000 checkpoints)..."
+echo
+tar xzf fly_CAF1.1.tar.gz --checkpoint=10000
+mv Dro*.agp map genomes treefile alignments
+rm fly_CAF1.1.tar.gz
+
+echo "[ `date` ]  Getting Flybase annotation files..."
+echo
+mkdir annot
+cd annot
+wget -c "ftp://ftp.flybase.net/releases/current/dmel_r5.38/gff/dmel-2L-r5.38.gff.gz"
+wget -c "ftp://ftp.flybase.net/releases/current/dmel_r5.38/gff/dmel-2R-r5.38.gff.gz"
+wget -c "ftp://ftp.flybase.net/releases/current/dmel_r5.38/gff/dmel-3L-r5.38.gff.gz"
+wget -c "ftp://ftp.flybase.net/releases/current/dmel_r5.38/gff/dmel-3R-r5.38.gff.gz"
+wget -c "ftp://ftp.flybase.net/releases/current/dmel_r5.38/gff/dmel-4-r5.38.gff.gz"
+wget -c "ftp://ftp.flybase.net/releases/current/dmel_r5.38/gff/dmel-X-r5.38.gff.gz"
+echo "[ `date` ]  Extracting alignment files..."
+echo
+gunzip dmel*.gz
+
+echo "[ `date` ]  Relevant coordinate extraction."
+echo
+
+awk '/repeatmasker_dummy\tmatch\t/ {print $1,$4,$5}' dmel*.gff | uniq > repeat-coord.dat
+awk '/FlyBase\tCDS\t/ {print $1,$4,$5}' dmel*.gff | uniq > CDS-coord.dat
+awk '/FlyBase\tmRNA\t/ {
+   if ($7 == "+"){
+      print $1,$4
+   } else {
+      print $1,$5
+   }
+}' dmel*.gff | uniq > TSS-coord.dat
+
+rm *.gff
+
+echo "[ `date` ]  Relevant coordinate extraction finished successfully."
+echo
+
+cd ..
+
+echo "[ `date` ]  Modifying alignments."
+echo
+
+cd alignments
+
+## Remove all the unnecessary alignment files
+for i in `ls --color=never -d [0-9]*/`
+do
+   if (head -1 ${i}mavid.mfa | grep -v 'DroMel' > /dev/null); then
+      rm -r $i
+   fi
+done
+
+## Join lines
+for i in `ls --color=never -d [0-9]*/`
+do
+tr -d '\n' ${i}mavid.mfa | sed -i -e 's/>/\
+>/g
+s/CAF1/CAF1\
+/g' | sed '1 d' > ${i}mavid2.mfa
+mv ${i}mavid2.mfa ${i}mavid.mfa
+done
+## Join lines
+for i in `ls --color=never -d [0-9]*/`
+do
+   tr -d '\n' < ${i}mavid.mfa | sed -s 's/>/\
+>/g;s/CAF1/CAF1\
+/g;1 d'
+echo '%j
+%s/>/\
+>/g
+%s/CAF1/CAF1\
+/g
+1 d
+w' | ed -s ${i}mavid.mfa
+done
+
+## Add coordinates on the first line
+while read foldname chr start stop line4
+do
+   echo '1 s/$/ '$chr' '$start' '$stop'
+wq' | ed -s $foldname'/mavid.mfa'
+done < map
+
+cd ..
+
+## Mask sequences
+python @pythondir@/splicedmultidro.py
+
+
+echo "[ `date` ]  The script finished successfully."
+echo
