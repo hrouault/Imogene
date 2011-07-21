@@ -2,13 +2,13 @@
 
 SUBDIRS = alignments
 
-bin_PROGRAMS = imogene_genmot distinfo
+bin_PROGRAMS = imogene_genmot ##distinfo
 ##bin_PROGRAMS = scangen distinfo 
 ## 
 imogene_genmot_SOURCES = imogene-genmot.hpp imogene-genmot.cpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp cmdline.c cmdline.h
 imogene_genmot_CPPFLAGS = -DDATA_PATH=${pkgdatadir}
 
-distinfo_SOURCES =  distinfo.cpp distinfo.hpp
+## distinfo_SOURCES =  distinfo.cpp distinfo.hpp motif.cpp motif.hpp sequence.cpp sequence.hpp tree.cpp tree.hpp const.cpp const.hpp vectortypes.cpp vectortypes.hpp
 
 ## scangen_SOURCES = scangen.cpp scangen.hpp motif.cpp motif.hpp sequence.cpp sequence.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp vectortypes.hpp const.hpp const.cpp cmdline.c cmdline.h
 ## ##scangen_CPPFLAGS = -O3

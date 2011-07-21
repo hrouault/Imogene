@@ -14,3 +14,9 @@ aclocal.m4
 autom4te.cache
 *cmdline.[ch]
 depcomp
+compile
+mdate-sh
+texinfo.tex
+*.info
+stamp-vti
+version.texi

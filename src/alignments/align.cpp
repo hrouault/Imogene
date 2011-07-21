@@ -7,7 +7,11 @@
 #include <vector>
 #include <cstdlib>
 
+#include "align.hpp"
+
 using namespace std;
+
+
 
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -355,23 +359,23 @@ void writefiles(vvseq & falign)
 // ---------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-int main (int argc, char * const argv[]) 
-{
-	// Filenames of the alignment files
-   ifstream inf("/home/santolin/these/files/mus/epo/epo_10_eutherian/files.dat");
-	string file;
-   getline(inf,file); 
-
-   while (!inf.eof())
-   {
-      cout << file << endl;
-      //for each file we get all the alignments in a vvseq
-      vvseq falign;
-      cout << "Reading file..." << endl;
-      getseqs(file,falign);
-      cout << "Writing align files..." << endl;
-      writefiles(falign);
-      getline(inf,file);
-   } 
-	return(0);
-}
+//int main (int argc, char * const argv[]) 
+//{
+//	// Filenames of the alignment files
+//   ifstream inf("/home/santolin/these/files/mus/epo/epo_10_eutherian/files.dat");
+//	string file;
+//   getline(inf,file); 
+//
+//   while (!inf.eof())
+//   {
+//      cout << file << endl;
+//      //for each file we get all the alignments in a vvseq
+//      vvseq falign;
+//      cout << "Reading file..." << endl;
+//      getseqs(file,falign);
+//      cout << "Writing align files..." << endl;
+//      writefiles(falign);
+//      getline(inf,file);
+//   } 
+//	return(0);
+//}

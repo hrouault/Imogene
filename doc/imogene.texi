@@ -1,6 +1,7 @@
 \input texinfo   @c -*-texinfo-*-
 @c %**start of header
 @setfilename imogene.info
+@include version.texi
 @settitle Imogene Manual @value{VERSION}
 @c @include version.texi
 @c %**end of header
@@ -9,7 +10,7 @@
 This manual is for Imogene
 (version @value{VERSION}, @value{UPDATED}).
 
-Copyright @copyright{} 2006,2007,2008,2009,2010 Hervé Rouault
+Copyright @copyright{} 2005-2011 Hervé Rouault
 
 
 @quotation
@@ -77,9 +78,9 @@ This is the second item.
 @node Copying This Manual
 @appendix Copying This Manual
 
-@menu
-* GNU Free Documentation License::  License for copying this manual.
-@end menu
+@c @menu
+@c * GNU Free Documentation License::  License for copying this manual.
+@c @end menu
 
 @include fdl.texi
 
