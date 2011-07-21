@@ -145,7 +145,7 @@ TSS::TSS(int position,char dir,string chr,string gname)
 string
 chromfromint(int chr)
 {
-   if (species==1){
+   if (species=="droso"){
       if (chr==0){
          return "2L";
       } else if (chr==1){
@@ -162,7 +162,7 @@ chromfromint(int chr)
          return "unknown";
       }
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       if (chr==0){
          return "1";
       } else if (chr==1){
@@ -214,7 +214,7 @@ chromfromint(int chr)
 int
 intfromchrom(string chrname)
 {
-   if (species==1){	
+   if (species=="droso"){	
       if (chrname=="2L"){
          return 0;
       } else if (chrname=="2R"){
@@ -231,7 +231,7 @@ intfromchrom(string chrname)
          return -1;
       }
    }
-   else if (species==2){	
+   else if (species=="eutherian"){	
       if (chrname=="1"){
          return 0;
       } else if (chrname=="2"){
@@ -610,9 +610,7 @@ loadsequences(ifstream & list)
       seq.nbN=compN(iseq);
       seq.nbtb=curline.size()-seq.nbN;
       seqs.push_back(seq);
-//      cout << i << endl;
       i++;
-//      cout << seq.name << endl;
       getline(list,tmpstring);
    }
    return seqs;
@@ -1064,7 +1062,7 @@ coordtoseq(Coordinate & coord)
 
            }
 
-           if (species==1 && isnextali==1) continue; // pb with coordinates
+           if (species=="droso" && isnextali==1) continue; // pb with coordinates *** To be corrected ??
 
 
            Sequence trueali;
@@ -1305,14 +1303,14 @@ iscons(vint & spe)
    
    int nbfr=0;
    
-   if (species==1){
+   if (species=="droso"){
       if (boolspe[5]) nbfr++; 
       if (boolspe[6] || boolspe[7]) nbfr++;
       if (boolspe[8]) nbfr++;
       if (boolspe[9] || boolspe[10] || boolspe[11]) nbfr++;
       if (nbfr>1) return true;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       if (boolspe[2] || boolspe[3] || boolspe[4] || boolspe[5]) nbfr++;
       if (boolspe[6] || boolspe[7]) nbfr++;
       if (boolspe[8]) nbfr++;

@@ -25,7 +25,7 @@
 #include "sequence.hpp"
 #include "scangen.hpp"
 #include "tree.hpp"
-#include "montecarlo.hpp"
+//#include "montecarlo.hpp" *** see how to include it
 
 using namespace std;
 
@@ -748,8 +748,8 @@ Motif::testpwmcv(ofstream & outf,ofstream & motmeldb)
    ///*
    cout << "Testing conserved sites convergence on each species..." << endl;
    unsigned int Neff;
-   if (species==1) Neff=4;
-   else if (species==2) Neff=2;
+   if (species=="droso") Neff=4; // *** hardcoded???
+   else if (species=="eutherian") Neff=2;
    for (unsigned int k=0;k<nshufflecons;k++){
       // RANDOM SHUFFLING
       random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
@@ -2324,7 +2324,7 @@ Motif::matinithamming(double scth,unsigned int numhamm)
    bool
 Motalign::iscons()
 {
-   if (species==1){
+   if (species=="droso"){
       int nbfr=0;
       if (matches[5]) nbfr++; 
       if (matches[6] || matches[7]) nbfr++;
@@ -2332,7 +2332,7 @@ Motalign::iscons()
       if (matches[9] || matches[10] || matches[11]) nbfr++;
       if (nbfr>1) return true;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       int nbfr=0;
       //     if (matches[0] || matches[1]) nbfr++;
       if (matches[2] || matches[3] || matches[4] || matches[5]) nbfr++;
@@ -3845,7 +3845,7 @@ colmean_testCV(unsigned int pos,Motif * mot)
    vdcutoff.push_back(.0008);
    vdcutoff.push_back(.0009);
    for (int iex=-3;iex<=-1;iex++){
-      for (int i=1;i<10;i++) vdcutoff.push_back(i*pow(10,iex));
+      for (int i=1;i<10;i++) vdcutoff.push_back(i*pow(10.,iex));
    }
 
    vd dum(4,0.);
@@ -5087,7 +5087,6 @@ compalpha()
    beta=concc/conca*alpha;
 
 
-   fconf << "computed priors : alpha=" << alpha << ", beta=" << beta endl;
    gsl_root_fdfsolver_free (s);
    return status;
 }

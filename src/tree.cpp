@@ -1591,7 +1591,7 @@ evolve_forward(Motif & mot,vint & site)
 
             gsl_matrix_memcpy(pij,id);
 
-            if (species==1){
+            if (species=="droso"){
                for (unsigned int i=1;i<117;i++){
                   //integration
                   gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
@@ -1641,7 +1641,7 @@ evolve_forward(Motif & mot,vint & site)
                   }
                }
             }
-            else if (species==2){
+            else if (species=="eutherian"){
                // approx, integr_step=0.01
                for (unsigned int i=1;i<26;i++){
                   gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
@@ -2160,7 +2160,7 @@ evolvesite(Motif & mot)
 
    //distances to ref
    vd distances(nbspecies,0);
-   if (species==1){
+   if (species=="droso"){
       distances[0]=0;
       distances[1]=0.0968;
       distances[2]=0.1008;
@@ -2174,7 +2174,7 @@ evolvesite(Motif & mot)
       distances[10]=1.5203;
       distances[11]=1.4661;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       distances[0]=0;
       distances[1]=0.1587;
       distances[2]=0.4653;
@@ -2403,7 +2403,7 @@ evolvesite(vmot & mots)
 
    //distances to ref
    vd distances(nbspecies,0);
-   if (species==1){
+   if (species=="droso"){
       distances[0]=0;
       distances[1]=0.0968;
       distances[2]=0.1008;
@@ -2417,7 +2417,7 @@ evolvesite(vmot & mots)
       distances[10]=1.5203;
       distances[11]=1.4661;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       distances[0]=0;
       distances[1]=0.1587;
       distances[2]=0.4653;
@@ -2762,7 +2762,7 @@ evolvebase(Motif & mot)
 
          //distances to ref
          vd distances(nbspecies,0);
-         if (species==1){
+         if (species=="droso"){
             distances[0]=0;
             distances[1]=0.0968;
             distances[2]=0.1008;
@@ -2776,7 +2776,7 @@ evolvebase(Motif & mot)
             distances[10]=1.5203;
             distances[11]=1.4661;
          }
-         else if (species==2){
+         else if (species=="eutherian"){
             distances[0]=0;
             distances[1]=0.1587;
             distances[2]=0.4653;
@@ -2838,7 +2838,7 @@ fitdistperbase(Motif & mot)
    double distance;
    vd distances(nbspecies,0);
    vd newdist(nbspecies,0);
-   if (species==1){
+   if (species=="droso"){
       distances[0]=0;
       distances[1]=0.0968;
       distances[2]=0.1008;
@@ -2852,7 +2852,7 @@ fitdistperbase(Motif & mot)
       distances[10]=1.5203;
       distances[11]=1.4661;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       distances[0]=0;
       distances[1]=0.1587;
       distances[2]=0.4653;
@@ -3024,7 +3024,7 @@ fitdistpersite(Motif & mot)
    double distance;
    vd distances(nbspecies,0);
    vd newdist(nbspecies,0);
-   if (species==1){
+   if (species=="droso"){
       distances[0]=0;
       distances[1]=0.0968;
       distances[2]=0.1008;
@@ -3038,7 +3038,7 @@ fitdistpersite(Motif & mot)
       distances[10]=1.5203;
       distances[11]=1.4661;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       distances[0]=0;
       distances[1]=0.1587;
       distances[2]=0.4653;
@@ -3342,7 +3342,7 @@ fitkmeanspersite(Motif & mot,const char * filename)
    //distances to ref
    double distance;
    vd distances(nbspecies,0);
-   if (species==1){
+   if (species=="droso"){
       distances[0]=0;
       distances[1]=0.0968;
       distances[2]=0.1008;
@@ -3356,7 +3356,7 @@ fitkmeanspersite(Motif & mot,const char * filename)
       distances[10]=1.5203;
       distances[11]=1.4661;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       distances[0]=0;
       distances[1]=0.1587;
       distances[2]=0.4653;
@@ -3617,7 +3617,7 @@ fitdistkmeanspersite(Motif & mot,const char * filename)
    double distance;
    vd distances(nbspecies,0);
    vd newdist(nbspecies,0);
-   if (species==1){
+   if (species=="droso"){
       distances[0]=0;
       distances[1]=0.0968;
       distances[2]=0.1008;
@@ -3631,7 +3631,7 @@ fitdistkmeanspersite(Motif & mot,const char * filename)
       distances[10]=1.5203;
       distances[11]=1.4661;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       distances[0]=0;
       distances[1]=0.1587;
       distances[2]=0.4653;
@@ -3895,7 +3895,7 @@ fitscorepersite(Motif & mot)
    //distances to ref
    double distance;
    vd distances(nbspecies,0);
-   if (species==1){
+   if (species=="droso"){
       distances[0]=0;
       distances[1]=0.0968;
       distances[2]=0.1008;
@@ -3909,7 +3909,7 @@ fitscorepersite(Motif & mot)
       distances[10]=1.5203;
       distances[11]=1.4661;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       distances[0]=0;
       distances[1]=0.1587;
       distances[2]=0.4653;
@@ -4160,15 +4160,14 @@ fitscorepersite(Motif & mot)
 }
 
 
-   void   // Attention, changement d'arbre : Utilisation de Heger and Pontig 2007
+   void   // Currently used phylogenetic tree for drosophilae :  Heger and Pontig, 2007
 inittreedist()
 {
    pa=conca;
    pc=concc;
 
    treedist.clear();
-   if (species==1){
-      //  Utilisation de l'arbre de l'article des 12 drosos:
+   if (species=="droso"){
       treedist.push_back(noeud(1,2,12,0.017,0.021)); // 12
       treedist.push_back(noeud(0,12,13,0.0518,0.028)); // 13
       treedist.push_back(noeud(3,4,14,0.0885,0.0780)); // 14
@@ -4183,8 +4182,8 @@ inittreedist()
 
       noemax=22;
    } 
-   else if (species==2){
-      // Arbre de ensembl epo 10 eutharian
+   else if (species=="eutherian"){
+      // Arbre de ensembl epo 10 eutharian  *** To be translated
       treedist.push_back(noeud(0,1,10,0.0770,0.0817)); // 10 mus and rat
       treedist.push_back(noeud(2,3,11,0.0067,0.0076)); // 11 hom and pan
       treedist.push_back(noeud(4,11,12,0.0220,0.0098)); // 12 pon and 11
@@ -4252,10 +4251,7 @@ inittreedist()
                break;
             }
          }
-         //cout << j << " ";
       }
-      //cout << endl;
-      //cout << numtospecies(i) << " " << distca[i] << endl;
    }
 
    dlca=distca;
@@ -4264,7 +4260,7 @@ inittreedist()
    int
 speciestonum(string name)//drosonum
 {
-   if (species==1){
+   if (species=="droso"){
       if (name=="DroMel") return 0;
       else if (name=="DroSim") return 1;
       else if (name=="DroSec") return 2;
@@ -4279,7 +4275,7 @@ speciestonum(string name)//drosonum
       else if (name=="DroGri") return 11;
       else return -1;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       if (name == "MusMus") return 0;
       else if (name == "RatNor") return 1;
       else if (name == "HomSap") return 2;
@@ -4296,7 +4292,7 @@ speciestonum(string name)//drosonum
 
 string numtospecies(int num)//numdroso
 {
-   if (species==1){
+   if (species=="droso"){
       if (num==0) return "DroMel";
       else if (num==1) return "DroSim";
       else if (num==2) return "DroSec";
@@ -4311,7 +4307,7 @@ string numtospecies(int num)//numdroso
       else if (num==11) return "DroGri";
       else return "No name";
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       if (num == 0) return "MusMus";
       else if (num == 1) return "RatNor";
       else if (num == 2) return "HomSap";
@@ -4659,7 +4655,7 @@ loglikely(const gsl_vector *w, void *params)
 
       gsl_matrix_memcpy(pij,id);
 
-      if (species==1){
+      if (species=="droso"){
          for (unsigned int i=1;i<117;i++){
             gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
             pmattemp=pij;
@@ -4708,7 +4704,7 @@ loglikely(const gsl_vector *w, void *params)
             }
          }
       }
-      else if (species==2){
+      else if (species=="eutherian"){
          //         for (unsigned int i=1;i<254;i++){
          //            gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
          //            pmattemp=pij;
@@ -4833,7 +4829,7 @@ likelyhood(vd x, void *params)
 
       gsl_matrix_memcpy(pij,id);
 
-      if (species==1){
+      if (species=="droso"){
          for (unsigned int i=1;i<117;i++){
             gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
             pmattemp=pij;
@@ -4882,7 +4878,7 @@ likelyhood(vd x, void *params)
             }
          }
       }
-      else if (species==2){
+      else if (species=="eutherian"){
          //         for (unsigned int i=1;i<254;i++){
          //            gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
          //            pmattemp=pij;
@@ -5004,7 +5000,7 @@ loglikelyhood(vd x, void *params)
 
       gsl_matrix_memcpy(pij,id);
 
-      if (species==1){
+      if (species=="droso"){
          for (unsigned int i=1;i<117;i++){
             gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
             pmattemp=pij;
@@ -5053,7 +5049,7 @@ loglikelyhood(vd x, void *params)
             }
          }
       }
-      else if (species==2){
+      else if (species=="eutherian"){
          //         for (unsigned int i=1;i<254;i++){
          //            gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
          //            pmattemp=pij;

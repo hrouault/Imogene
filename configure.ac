@@ -11,34 +11,7 @@ AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/ax_blas.m4])
 
 
-# Choose the genomes to take into account
-AC_ARG_ENABLE([droso],
-            [AS_HELP_STRING([--enable-droso],
-                            [configure the package to handle drosophila genomes])],
-                            [],
-                            [enable_droso=no])
-AS_IF([test "x$enable_droso" != xno], 
-      [AC_DEFINE([ENABLE_DROSO], [1],
-                              [Define if droso support is enabled])],[])
-
-AC_ARG_ENABLE([eutherian],
-            [AS_HELP_STRING([--enable-eutherian],
-                            [configure the package to handle eutherian genomes])],
-                            [],
-                            [enable_eutherian=no])
-AS_IF([test "x$enable_eutherian" != xno], 
-      [AC_DEFINE([ENABLE_EUTHERIAN], [1],
-                              [Define if eutherian support is enabled])],[])
-
-AS_IF([test "x$enable_droso" == xno && test "x$enable_eutherian" == xno], 
-      [ AC_MSG_ERROR([neither --enable-droso nor --enable-eutherian was given]) ],
-                     [])
-
-
-
 # Check for python
-#AM_PATH_PYTHON ([2.5], [], [AC_MSG_ERROR(
-#                     [no python version >=2.5 detected])])
 AM_PATH_PYTHON([2.5],,[AC_MSG_ERROR([no python version >=2.5 detected])])
 
 # Checks for programs.

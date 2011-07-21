@@ -7,7 +7,5 @@ cd build
 ../configure --enable-droso --prefix=$PWD/imogene
 
 Once the package is installed, the first thing to do is to download the required genomes. To help in that task, scripts have been added in the script folder.
-Create then a folder where to stock the alignments :
-mkdir align
-cd align
-../test/bin/generate-droso-alignlist.sh
+execute $prefix/bin/generate-droso-align.py
+Files will be automatically installed in $prefix/share/imogene

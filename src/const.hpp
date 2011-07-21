@@ -1,6 +1,8 @@
 #ifndef Const_H
 #define Const_H
 
+#include <string>
+
 
 using namespace std;
 
@@ -14,7 +16,7 @@ const unsigned int coopext=250;
 
 const unsigned int nbiter=3;
 
-extern int species;
+extern string species;
 extern int evolutionary_model;
 //const unsigned int nbspecies=4;
 extern int nbspecies;

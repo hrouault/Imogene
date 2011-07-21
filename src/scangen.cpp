@@ -6044,13 +6044,13 @@ main(int argc, char** argv)
 
          }
          //      cout << vscore << endl;
-         
+
          // UNCOMMENT AND COMMENT NBMATCHCONS UPSTREAM FOR BEST 1kb SEARCH
-//         cout << "Keeping best1kb..." << endl;
-//         vseq vscorebest;      
-//         vscorebest=findbestseqs(motsdef,vscore);
-//         sort(vscorebest.begin(),vscorebest.end());
-//         vscore=vscorebest;
+         //         cout << "Keeping best1kb..." << endl;
+         //         vseq vscorebest;      
+         //         vscorebest=findbestseqs(motsdef,vscore);
+         //         sort(vscorebest.begin(),vscorebest.end());
+         //         vscore=vscorebest;
 
          for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
             i=0;
@@ -6712,31 +6712,31 @@ main(int argc, char** argv)
    outf.close();
 
 }
-   else if (args_info.rank_given){
-      
-      cout << "Loading Motifs..." << endl;
-      if (args_info.mots_w_names_given){
-         loadmotswnames(args_info.mots_w_names_arg,motsdef);
-      }
-      else {
-         loadmots(args_info.motifs_arg,motsdef);
-      }
-      cout << "Loaded " << motsdef.size() << " motifs." << endl;
-      nbmots_for_score=motsdef.size();
+else if (args_info.rank_given){
 
-      cout << "Loading sequences..." << endl;
-      loadseqsforscorenotmasked(regints);
-      cout << "Number of sequences: " << regints.size() << endl;
+   cout << "Loading Motifs..." << endl;
+   if (args_info.mots_w_names_given){
+      loadmotswnames(args_info.mots_w_names_arg,motsdef);
+   }
+   else {
+      loadmots(args_info.motifs_arg,motsdef);
+   }
+   cout << "Loaded " << motsdef.size() << " motifs." << endl;
+   nbmots_for_score=motsdef.size();
 
-      if (args_info.fdr_given){
-         cout << "Computing score..." << endl;
-         ofstream outf("motifs-tpr-fdr.txt");
-         double fdr=args_info.fdr_arg;
-         for (ivmot iv=motsdef.begin();iv!=motsdef.end();iv++){
-            calcoptthr(*iv,fdr,outf);
-         }
-         outf.close();
+   cout << "Loading sequences..." << endl;
+   loadseqsforscorenotmasked(regints);
+   cout << "Number of sequences: " << regints.size() << endl;
+
+   if (args_info.fdr_given){
+      cout << "Computing score..." << endl;
+      ofstream outf("motifs-tpr-fdr.txt");
+      double fdr=args_info.fdr_arg;
+      for (ivmot iv=motsdef.begin();iv!=motsdef.end();iv++){
+         calcoptthr(*iv,fdr,outf);
       }
+      outf.close();
+   }
 }
 else if (args_info.neargene_given){
 
@@ -6924,7 +6924,7 @@ else if (args_info.comp_given){
                      (ivs->stop >= ivc->start && ivs->stop <= ivc->stop) || 
                      ((ivc->start+ivc->stop)/2-ivs->stop<=cutoff && (ivc->start+ivc->stop)/2-ivs->stop>0 ) || // CAS DE CHIP VS GENE : centre CHIP a moins de cutoff de fin gene
                      (ivs->start-(ivc->start+ivc->stop)/2<=cutoff && ivs->start-(ivc->start+ivc->stop)/2>0) ){ // CAS DE CHIP VS GENE : centre CHIP a moins de cutoff de debut gene
-                     //(abs((ivs->start+ivs->stop)/2-(ivc->start+ivc->stop)/2)<=cutoff) ){} // CAS DE CHIP VS CHIP : centres a moins de cutoff=1kb
+                  //(abs((ivs->start+ivs->stop)/2-(ivc->start+ivc->stop)/2)<=cutoff) ){} // CAS DE CHIP VS CHIP : centres a moins de cutoff=1kb
 
                   start =  min(ivs->start,ivc->start);
                   stop  =  max(ivs->stop,ivc->stop);

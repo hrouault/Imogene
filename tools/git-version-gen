@@ -102,13 +102,8 @@ if test -n "$v"
 then
     : # use $v
 elif test -d .git \
-    && v=`git describe --abbrev=4 --match='v*' HEAD 2>/dev/null \
-          || git describe --abbrev=4 HEAD 2>/dev/null` \
-    && v=`printf '%s\n' "$v" | sed "$tag_sed_script"` \
-    && case $v in
-         v[0-9]*) ;;
-         *) (exit 1) ;;
-       esac
+    && v=`git describe --abbrev=4 HEAD 2>/dev/null` \
+    && v=`printf '%s\n' "$v" | sed "$tag_sed_script"`
 then
     # Is this a new git that lists number of commits since the last
     # tag or the previous older version that did not?

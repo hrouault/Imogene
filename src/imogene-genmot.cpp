@@ -1,5 +1,34 @@
+/**    
+ * Copyright (C) 2003-2011 Hervé Rouault
+ *
+ * This file is part of Imogene.
+ *
+ * Imogene is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Imogene is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <iostream>
+#include <string>
+
+#include "cmdline.h"
+
+
+// *** See if the following are required...
 #include<cmath>
-#include<iostream>
 #include<iomanip>
 #include<vector>
 #include<string>
@@ -15,13 +44,15 @@
 
 using namespace std;
 
+#include "config.h"
+
 #include "const.hpp"
 #include "vectortypes.hpp"
 #include "random.hpp"
 #include "sequence.hpp"
 #include "motif.hpp"
 #include "tree.hpp"
-#include "montecarlo.hpp"
+//#include "montecarlo.hpp"
 #include "scangen.hpp"
 #include "cmdline.h"
 
@@ -35,52 +66,6 @@ vchrom chromints;
 
 unsigned int sizepos,sizeneg;
 unsigned int cutoff_for_combination=3;
-
-   void
-printsvmheader(ofstream & svm)
-{
-   svm << "## Support Vector Machine training set (chip VS background)" << endl;
-   svm << "# crm_id:name of the nearest gene" << endl;
-   svm << "# chr, start, stop: genomic coordinates." << endl;
-   svm << "# {ChIP, Background}: Does the CRM belong (1) or not (0) to the class {'ChIP', 'Background'}" << endl;
-   svm << "# mot_1,...,mot_n: number of sites for each motif" << endl;
-   svm << "crm_id" << "\t";
-   svm << "chr" << "\t";
-   svm << "start" << "\t";
-   svm << "stop" << "\t";
-   svm << "ChIP" << "\t";
-   svm << "Background";
-   for (ivmot ivm=motsdef.begin();ivm!=min(motsdef.end(),motsdef.begin()+nbmots_for_score);ivm++){
-      svm << "\t" << ivm->name;
-   }
-   svm << "\n";
-}
-
-   void
-printforsvm(vseq & vscore)
-{
-   ofstream svm;
-   svm.open("score/svm.dat");
-   printsvmheader(svm);
-   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-      svm << ivs->name << "\t";
-      svm << chromfromint(ivs->chrom) << "\t";
-      svm << ivs->start << "\t";
-      svm << ivs->stop << "\t";
-      if (ivs->sign==1){
-         svm << 1 << "\t";
-         svm << 0;
-      } else {
-         svm << 0 << "\t";
-         svm << 1;
-      }
-      for (ivint iv=ivs->motis.begin();iv!=ivs->motis.end();iv++){
-         svm << "\t" << *iv;
-      }
-      svm << "\n";
-   }
-   svm.close();
-}
 
    void
 findnearestgene_sides(vcoord & vgenes, vcoord & vpeaks)
@@ -325,14 +310,14 @@ printbackregwcoords(vcoord & vcds,string folder){
             int nbfr=0;
             bool bc=0;
 
-            if (species==1){
+            if (species=="droso"){
                if (seq.species[5]) nbfr++; 
                if (seq.species[6] || seq.species[7]) nbfr++;
                if (seq.species[8]) nbfr++;
                if (seq.species[9] || seq.species[10] || seq.species[11]) nbfr++;
                if (nbfr>1) bc=1;
             }
-            else if (species==2){
+            else if (species=="eutherian"){
                if (seq.species[2] || seq.species[3] || seq.species[4] || seq.species[5]) nbfr++;
                if (seq.species[6] || seq.species[7]) nbfr++;
                if (seq.species[8]) nbfr++;
@@ -1218,8 +1203,8 @@ scanseqs(ifstream & list,vcoord & coords)
 scanmots()
 {
    ifstream potregs;
-   if (species==1) potregs.open("/home/santolin/these/files/droso/align/all/align-files.dat");
-   else if (species==2) potregs.open("/home/santolin/these/files/mus/epo/align-files.dat");
+   if (species=="droso") potregs.open("/home/santolin/these/files/droso/align/all/align-files.dat");
+   else if (species=="eutherian") potregs.open("/home/santolin/these/files/mus/epo/align-files.dat");
    //else if (species==2) potregs.open("/home/santolin/these/files/transfac/matrices/align-test.dat");
    vstring regs;
    back_insert_iterator<vstring> dest(regs);
@@ -2119,8 +2104,8 @@ loadannots()
       glist.open(args_info.phenoback_arg);
    }
    else {
-      if (species==1) glist.open("/home/rouault/these/sequence/genomes/genelist.dat");
-      else if (species==2) glist.open("/home/santolin/these/files/mus/biomart/genelist-protein-coding+miRNA.dat");
+      if (species=="droso") glist.open("/home/rouault/these/sequence/genomes/genelist.dat");
+      else if (species=="eutherian") glist.open("/home/santolin/these/files/mus/biomart/genelist-protein-coding+miRNA.dat");
    }
 
    back_insert_iterator<vstring> destg(gbacks);
@@ -2158,9 +2143,9 @@ loadcoords()
 loadchroms()
 {
    ifstream chromsf;
-   if (species==1){
+   if (species=="droso"){
       chromsf.open("/home/rouault/these/sequence/genomes/melano-only/dmel-all-chromosome-r4.3.fasta");
-   } else if (species==2){
+   } else if (species=="eutherian"){
       chromsf.open("/home/santolin/these/files/mus/genome/fasta/all/all.chromosome_no_MT.fasta");
       //chromsf.open("/home/santolin/these/files/mus/genome/fasta/all/chr4.fa");
       //chromsf.open("/home/santolin/these/files/mus/genome/fasta/repeat_masked/all.chromosome_no_MT.fa");
@@ -2187,7 +2172,7 @@ loadlengthchrom()
 
    vint lchr(nbchrom,0);
 
-   if (species==1){
+   if (species=="droso"){ // *** to be corrected to be easily updated
 
       lchr[0]=22410834;//chr2L
       lchr[1]=20769785;//chr2R
@@ -2197,7 +2182,7 @@ loadlengthchrom()
       lchr[5]=22227390;//chrX
 
 
-   } else if (species==2){
+   } else if (species=="eutherian"){
 
       lchr[0]=197195432;
       lchr[1]=181748087;
@@ -2240,9 +2225,9 @@ initgroupedinst()
       }
    }
    ifstream annots;
-   if (species==1){
+   if (species=="droso"){
       annots.open("/home/rouault/these/sequence/genomes/regres-wellform-all.dat");
-   } else if (species==2){
+   } else if (species=="eutherian"){
       annots.open("/home/santolin/these/files/mus/biomart/genes-n-strand-protein-coding+miRNA-no-MT-n-NT-TSS.dat");
    }
    importTSS(TSSall,annots);
@@ -3356,8 +3341,8 @@ loadseqsforscore(vseq & vscore)
    if (args_info.poscoords_given){
       //Working on coordinate files
       ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align-masked.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align-masked.dat");
+      if (species=="droso") align.open("/home/santolin/these/files/droso/align/all/align-masked.dat"); // *** To be changed...
+      else if (species=="eutherian") align.open("/home/santolin/these/files/mus/epo/align-masked.dat");
 
       //POSITIVES
       ifstream inf;
@@ -3397,8 +3382,8 @@ loadseqsforscore(vseq & vscore)
 
    if (args_info.negcoords_given){
       ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align-masked.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align-masked.dat");
+      if (species=="droso") align.open("/droso/align/all/align-masked.dat");
+      else if (species=="eutherian") align.open("/mus/epo/align-masked.dat");
 
       //NEGATIVES
       ifstream inf;
@@ -3423,8 +3408,8 @@ loadseqsforscore(vseq & vscore)
    if (!(args_info.negcoords_given||args_info.negalign_given)){
       cout << "Using background as negative" << endl;
       ifstream inf;
-      if (species==1) inf.open("/home/santolin/these/files/droso/backreg/regs2000-align-1000.dat"); 
-      else if (species==2) inf.open("/home/santolin/these/files/mus/backreg/regs2000-align-1000.dat");//regs2000.fa");
+      if (species=="droso") inf.open("/droso/backreg/regs2000-align-1000.dat"); 
+      else if (species=="eutherian") inf.open("/mus/backreg/regs2000-align-1000.dat");//regs2000.fa");
       vseq seqs;
       seqs=loadsequencesconserv(inf);
       for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
@@ -3486,8 +3471,8 @@ loadseqsforscorenotmasked(vseq & vscore)
    if (args_info.poscoords_given){
       //Working on coordinate files
       ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align.dat");
+      if (species=="droso") align.open("/home/santolin/these/files/droso/align/all/align.dat");
+      else if (species=="eutherian") align.open("/home/santolin/these/files/mus/epo/align.dat");
 
       //POSITIVES
       ifstream inf;
@@ -3527,8 +3512,8 @@ loadseqsforscorenotmasked(vseq & vscore)
 
    if (args_info.negcoords_given){
       ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align.dat");
+      if (species=="droso") align.open("/droso/align/all/align.dat");
+      else if (species=="eutherian") align.open("/mus/epo/align.dat");
 
       //NEGATIVES
       ifstream inf;
@@ -3553,8 +3538,8 @@ loadseqsforscorenotmasked(vseq & vscore)
    if (!(args_info.negcoords_given||args_info.negalign_given)){
       cout << "Using background as negative" << endl;
       ifstream inf;
-      if (species==1) inf.open("/home/santolin/these/files/droso/backreg/regs2000-align-1000.dat"); 
-      else if (species==2) inf.open("/home/santolin/these/files/mus/backreg/regs2000-align-1000.dat");//regs2000.fa");
+      if (species=="droso") inf.open("/droso/backreg/regs2000-align-1000.dat"); 
+      else if (species=="eutherian") inf.open("/mus/backreg/regs2000-align-1000.dat");
       vseq seqs;
       seqs=loadsequencesconserv(inf);
       for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
@@ -3612,8 +3597,8 @@ loadseqs()
       inf.open(args_info.coord_file_arg);
 
       ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align-masked.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align-masked.dat");
+      if (species=="droso") align.open("/droso/align/all/align-masked.dat");
+      else if (species=="eutherian") align.open("/mus/epo/align-masked.dat");
 
       alignscoord=loadcoordconserv(align);
 
@@ -3662,8 +3647,8 @@ loadseqscons()
       inf.open(args_info.coord_file_arg);
 
       ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align-masked.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align-masked.dat");
+      if (species=="droso") align.open("/droso/align/all/align-masked.dat");
+      else if (species=="eutherian") align.open("/mus/epo/align-masked.dat");
 
       alignscoord=loadcoordconserv(align);
 
@@ -3719,8 +3704,8 @@ loadseqsnotmasked()
       inf.open(args_info.coord_file_arg);
 
       ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align.dat");
+      if (species=="droso") align.open("/droso/align/all/align.dat");
+      else if (species=="eutherian") align.open("/mus/epo/align.dat");
 
       alignscoord=loadcoordconserv(align);
 
@@ -3784,8 +3769,8 @@ loadseqsnotmaskedcons()
       inf.open(args_info.coord_file_arg);
 
       ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align.dat");
+      if (species=="droso") align.open("/droso/align/all/align.dat");
+      else if (species=="eutherian") align.open("/mus/epo/align.dat");
 
       alignscoord=loadcoordconserv(align);
 
@@ -4045,9 +4030,9 @@ surrounding_score_stat(vseq & align, vmot & mots)
    void
 motcorr(vseq & align)
 {
-   //FOR TWO MOTIFS
+   //FOR TWO MOTIFS *** Please comment better
    int distmax=5e2;
-   if (species==2){ 
+   if (species=="eutherian"){  // *** Why not condition on droso
       distmax=2000;
    }
    int indextocomp=1;
@@ -5091,8 +5076,8 @@ scangen2cons(){
    inf.open(args_info.coord_file_arg);
 
    ifstream align;
-   if (species==1) align.open("/home/santolin/these/files/droso/align/all/align.dat");
-   else if (species==2) align.open("/home/santolin/these/files/mus/epo/align.dat");
+   if (species=="droso") align.open("/droso/align/all/align.dat");
+   else if (species=="eutherian") align.open("/mus/epo/align.dat");
    alignscoord=loadcoordconserv(align);
    align.close();
 
@@ -5181,13 +5166,13 @@ args_init()
    width=args_info.width_arg;
    scorethr2=args_info.threshold_arg;
    species=args_info.species_arg;
-   if (species==1){
+   if (species=="droso"){ // *** Shouldn't be hardcoded??
       conca=0.3; 
-      concc=0.2;
+      concc=0.5-conca;
       nbspecies=12;
       cout << "Species: droso" << endl;
    }
-   else if (species==2){
+   else if (species=="eutherian"){
       conca=0.263; 
       concc=0.5-conca;
       nbspecies=10;
@@ -5204,8 +5189,8 @@ args_init()
    nbmots_for_score=args_info.nbmots_arg;
    scanwidth=args_info.scanwidth_arg;
 
-   if (species==1) nbchrom=6;
-   else if (species==2) nbchrom=21;
+   if (species=="droso") nbchrom=6;
+   else if (species=="eutherian") nbchrom=21;
 
 }
 
@@ -5216,6 +5201,39 @@ args_init_scangen()
    scanstep=args_info.scanstep_arg;
 
    nbmots_for_score=args_info.nbmots_arg;
+}
+
+
+   void
+print_reportbugs()
+{
+   cout << endl;
+   cout << "Maintained by Hervé Rouault rouault@lps.ens.fr and" << endl;
+   cout << "Marc Santolini santolin@lps.ens.fr" << endl;
+   cout << "Report bugs to one of us." << endl;
+}
+
+   void
+print_copyright ()
+{
+
+cout << " Copyright (C) 2003-2011 Hervé Rouault" << endl;
+cout << endl;
+cout << " Imogene is free software: you can redistribute it and/or modify" << endl;
+cout << " it under the terms of the GNU General Public License as published by" << endl;
+cout << " the Free Software Foundation, either version 3 of the License, or" << endl;
+cout << " (at your option) any later version." << endl;
+cout << endl;
+cout << " Imogene is distributed in the hope that it will be useful," << endl;
+cout << " but WITHOUT ANY WARRANTY; without even the implied warranty of" << endl;
+cout << " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" << endl;
+cout << " GNU General Public License for more details." << endl;
+cout << endl;
+cout << " You should have received a copy of the GNU General Public License" << endl;
+cout << " along with Imogene.  If not, see <http://www.gnu.org/licenses/>." << endl;
+cout << endl;
+cout << " Written by Hervé Rouault and Marc Santolini." << endl;
+
 }
 
 
@@ -5230,1806 +5248,67 @@ args_init_scangen()
    int
 main(int argc, char** argv)
 {
-   if ( cmdline_parser(argc,argv, & args_info)!=0) 
-      exit(1);
+   if (cmdline_parser (argc, argv, &args_info) != 0){
+      fprintf (stderr, "Run imogene-genmot --help to see the list of options.\n");
+      exit(1) ;
+   }
+
+   if (args_info.help_given){
+      cmdline_parser_print_help ();
+      print_reportbugs ();
+      exit (0);
+   }
+
+   if (args_info.version_given){
+      cmdline_parser_print_version ();
+      print_copyright ();
+      exit (0);
+   }
+
    args_init();
 
    rnginit();
 
-   printconfig();
+   //   printconfig(); *** to be written so that one can rerun exacltly the same instance
 
-   if (args_info.scangen_given){
+   scorethr=scorethr2-2.*(double)width/10;
+   scorethrcons=scorethr2-1.*(double)width/10;
+   compalpha();
+   //   printpriorsandthrs(); *** to be written
 
-   } 
-   else if (args_info.scangen2cons_given){
-   else if (args_info.scanmots_given){
-
-   }
-   else if (args_info.display_given){
-   }
-   else if (args_info.disp_mean_info_given){
-   else if (args_info.dispscore_given){
-   else if (args_info.motgen_given){
-
-      scorethr=scorethr2-2.*(double)width/10;//(double)width/10*6.5;
-      scorethrcons=scorethr2-1.*(double)width/10;//(double)width/10*6.5;
-      compalpha();
-      cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-      cout << "alpha: " << alpha << endl;
-      ofstream motmeldb;
-      motmeldb.open("motmeldb.txt");
-
-      cout << "Loading background set..." << endl;
-      ifstream backreg;
-      //      if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000-align.dat"); //regs2000.fa");
-      //      else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000-align.dat");//regs2000.fa");
-      //      regtests=loadsequencesconserv(backreg);//loadsequences(backreg);
-      if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000.fa");
-      else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000-masked.fa");
-      regtests=loadsequences(backreg);
-      backreg.close();
-      cout << "Background set size : " << regtests.size() << endl;
-
-      cout << "Loading training set..." << endl;
-      regints=loadseqs();
-      cout << "Training set size : " << regints.size() << endl;
-      inittreedist();
-
-      for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
-         cout << (*iseq).name << endl;
-         if (args_info.ref_given){
-            refseqanalysis(*iseq,motmeldb);
-         }
-         else{
-            seqanalysis(*iseq,motmeldb);
-         }
-         cout << endl;
-      }
-      motmeldb.close();
-   }
-   else if (args_info.motaffin_given){
-
-      ofstream motmeldb;
-      motmeldb.open("motmeldb.txt");
-
-      cout << "Loading background set..." << endl;
-      ifstream backreg;
-      if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000.fa");
-      else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000.fa");
-      regtests=loadsequences(backreg);
-      backreg.close();
-      cout << "Background set size : " << regtests.size() << endl;
-
-      cout << "Loading training set..." << endl;
-      regints=loadseqs();
-      cout << "Training set size : " << regints.size() << endl;
-
-      inittreedist();
-
-      vmot motinit;
-      cout << "Loading Motifs..." << endl;
-      loadmots(args_info.motifs_arg,motinit);
-
-      cout << "Raffinement..." << endl;
-      motaffin(motinit,motmeldb);
-      motmeldb.close();
-
-   }
-   else if (args_info.motcorr_given){
-      cout << "Loading Motifs" << endl;
-      if (args_info.mots_w_names_given){
-         loadmotswnames(args_info.mots_w_names_arg,motsdef);
-      } 
-      else{
-         loadmots(args_info.motifs_arg,motsdef); 
-      }
-      cout << "Loaded " << motsdef.size() << " motifs." << endl;
-      cout << "Nb mots for corr: " << nbmots_for_score  << endl;
-      if (nbmots_for_score==1){
-         motsdef.erase(motsdef.begin()+1,motsdef.end());
-      }
-
-      if (args_info.opt_thr_file_given){
-         ifstream opt;
-         opt.open(args_info.opt_thr_file_arg);
-         string dum;
-         getline(opt,dum);
-         int index=0;
-         while (getline(opt,dum)){
-            istringstream line(dum);
-            line >> dum;
-            double thr;
-            line >> thr;
-            motsdef[index].motscorethr2=motsdef[index].motwidth*thr/10;
-            motsdef[index].motscorethr=motsdef[index].motwidth*(thr-1)/10;
-            motsdef[index].motscorethrcons=motsdef[index].motwidth*(thr-1)/10;
-            index++;
-         }
-         opt.close();
-      }
-
-      cout << "Loading alignments " << endl;
-      vseq align;
-      if (args_info.repeat_masker_given){
-         cout << "Using repeat masker..." << endl;
-         align=loadseqs();
-      }
-      else {
-         cout << "No repeat masker..." << endl;
-         align=loadseqsnotmasked();
-      }
-      cout << "Nb sequences to scan: " << align.size() << endl;
-
-      //OLD VERSION FOR ENRICHMENT      
-      //      cout << "Loading background set..." << endl;
-      //      ifstream backreg;
-      //      if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000-align-1000.dat"); 
-      //      else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs100000-align-100.dat");//regs2000.fa");
-      //      regtests=loadsequencesconserv(backreg);//loadsequences(backreg);
-      //      cout << "Loaded " << regtests.size() << " sequences." << endl;
-      //      backreg.close();
-
-      cout << "Scanning sequences for instances..." << endl;
-      //scanseqsforinstancesnmask(align,motsdef);
-      // NO MASKING FOR THE CORRELATION
-      scanseqsforinstances(align,motsdef);
-      //      scanseqsforinstancesnmask(regtests,motsdef);
-
-      cout << "Defining conserved instances..." << endl;
-      for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-         ivs->instances2instancescons();
-         //cout << ivs->name << "\n" << ivs->instancescons;
-      }
-      //      for (ivseq ivs=regtests.begin();ivs!=regtests.end();ivs++){
-      //         ivs->instances2instancescons();
-      //cout << ivs->name << "\n" << ivs->instancescons;
-      //      }
-
-      cout << "Computing correlations..." << endl;
-      motcorr(align);
-      //motcorr(align,regtests);
-
-   }
-   else if (args_info.pwmcorr_given){
-
-      cout << "Loading Motif" << endl;
-      if (args_info.mots_w_names_given){
-         loadmotswnames(args_info.mots_w_names_arg,motsdef);
-      } 
-      else{
-         loadmots(args_info.motifs_arg,motsdef); 
-      }
-      Motif mot=motsdef[0];
-      if (args_info.mean_info_given){
-         cout << "Setting scorethr2 to mean info..." << endl;
-         mot.setscorethr2meaninfo();
-      }
-      mot.motscorethrcons=mot.motscorethr2;
-      mot.motscorethr=mot.motscorethr2;
-      scorethr2=mot.motscorethr2;
-      cout << "scorethr2=" << scorethr2 << endl;
-      scorethr=scorethr2;
-      scorethrcons=scorethr2;
-      width=mot.motwidth;
-      compalpha();
-      cout << "Loading alignments " << endl;
-      regints=loadseqs();
-      cout << "Nb sequences to scan: " << regints.size() << endl;
-
-      cout << "Computing base correlations..." << endl;
-      mot.correlations();
-
-   }
-   else if (args_info.peakcorr_given){
-
-      vcoord vpeaks1,vpeaks2;
-
-      cout << "Loading peaks 1 coords..." << endl;
-      ifstream ifc;
-      ifc.open(args_info.peaks1_arg);
-      vpeaks1=loadcoordpeaks(ifc);
-      ifc.close();
-      cout << "Nb peaks 1 for corr: " << vpeaks1.size() << endl;
-
-      cout << "Loading peaks 2 coords..." << endl;
-      ifc.open(args_info.peaks2_arg);
-      vpeaks2=loadcoordpeaks(ifc);
-      ifc.close();
-      cout << "Nb peaks 2 for corr: " << vpeaks2.size() << endl;
-
-      cout << "Computing correlations..." << endl;
-      peakcorr(vpeaks1,vpeaks2);
-
-   }
-   else if (args_info.roc_given){
-      //      compalpha();
-      cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-
-      system("if ! test -d score;then mkdir score;fi;");      
-
-      cout << "Loading Motifs..." << endl;
-      if (args_info.mots_w_names_given) loadmotswnames(args_info.mots_w_names_arg,motsdef);
-      else loadmots(args_info.motifs_arg,motsdef);
-      cout << "Loaded " << motsdef.size() << " motifs." << endl;
-      cout << "Nb mots for score: " << nbmots_for_score  << endl;
-
-      if (args_info.opt_thr_file_given){
-         ifstream opt;
-         opt.open(args_info.opt_thr_file_arg);
-         string dum;
-         getline(opt,dum);
-         int index=0;
-         while (getline(opt,dum)){
-            istringstream line(dum);
-            line >> dum;
-            double thr;
-            line >> thr;
-            motsdef[index].motscorethr2=motsdef[index].motwidth*thr/10;
-            motsdef[index].motscorethr=motsdef[index].motwidth*(thr-1)/10;
-            motsdef[index].motscorethrcons=motsdef[index].motwidth*(thr-1)/10;
-            index++;
-         }
-         opt.close();
-      }
-      else if (args_info.mean_info_given){
-         cout << "Setting threshold to mean info..." << endl;
-         for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-            ivm->setscorethr2meaninfo();
-            ivm->motscorethrcons=ivm->motscorethr2;
-            cout << ivm->name << " mean thr = " << ivm->motscorethr2 << endl;
-         }
-      }
-      else {
-         for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-            ivm->motscorethrcons=ivm->motscorethr2;
-         }
-      }
-
-      cout << "Loading background set..." << endl;
-      ifstream backreg;
-      if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000-align-100.dat"); 
-      else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000-align-100.dat");//regs2000.fa");
-      regtests=loadsequencesconserv(backreg);//loadsequences(backreg);
-      cout << "Loaded " << regtests.size() << " sequences." << endl;
-      backreg.close();
-
-      cout << "Computing lambda background..." << endl;
-      for (ivmot im=motsdef.begin();im!=min(motsdef.end(),motsdef.begin()+nbmots_for_score);im++){
-         width=im->bsinit.size();
-         scorethr2=im->motscorethr2;
-         scorethr=im->motscorethr;
-         scorethrcons=im->motscorethrcons;
-         im->calclambdaback();
-      }
-
-      vseq vscore;
-      cout << "Loading pos/neg sequences..." << endl;
-      loadseqsforscore(vscore);
-
-
-      if (args_info.rocopti_given){
-         //
-         //         cout << "Loading training set (for lambda)..." << endl;
-         //         regints=loadseqs();
-         //         cout << "Training set size : " << regints.size() << endl;
-
-         cout << "Optimizing motifs..." << endl;
-         motopti(vscore);
-
-      }
-      if (args_info.combine_mot_given){
-
-         system("if ! test -d score/roc-combine;then mkdir score/roc-combine;fi;");      
-         cout << "Combining motifs..." << endl;
-         vmot motsdeftmp(motsdef);
-         ofstream auc;
-         auc.open("score/roc-combine/auc.dat");
-         for (ivmot ivm=motsdeftmp.begin();ivm!=motsdeftmp.begin()+nbmots_for_score;ivm++){
-            for (ivmot ivm1=ivm;ivm1!=motsdeftmp.begin()+nbmots_for_score;ivm1++){
-               ofstream outf;
-               ofstream outf1;
-               ostringstream outfs;
-               ostringstream outfs1;
-               outfs << "score/roc-combine/bestseqs-coords-";
-               outfs1 << "score/roc-combine/bestseqs-";
-               motsdef.clear();
-               motsdef.push_back(*ivm);
-               auc << ivm->index;
-               outfs << ivm->index;
-               outfs1 << ivm->index;
-               cout << ivm->index;
-               if (ivm1!=ivm) {
-                  motsdef.push_back(*ivm1);
-                  auc << "+" << ivm1->index;
-                  outfs << "+" << ivm1->index;
-                  outfs1 << "+" << ivm1->index;
-                  cout << "+" << ivm1->index;
-               }
-               cout << endl;
-               outfs << ".dat" ;
-               outfs1 << ".dat" ;
-               vseq vscorebest;
-               vscorebest=findbestseqs(motsdef,vscore);
-               sort(vscorebest.begin(),vscorebest.end());
-               roccombine(vscorebest);
-               outf.open(outfs.str().c_str());
-               outf1.open(outfs1.str().c_str());
-               vseq vscorepos;
-               for (ivseq ivs=vscorebest.begin();ivs!=vscorebest.end();ivs++){
-                  if (ivs->sign==1){
-                     vscorepos.push_back(*ivs);
-                  }
-               }
-               dispbestseqs(vscorepos,outf);
-               outf1 << vscorepos << endl;
-               cout << vscorepos << endl;
-               outf.close();
-               outf1.close();
-               auc << "\t" << calcareaforscore(vscorebest) << endl;
-            }
-            cout << endl;
-         }
-         motsdef=motsdeftmp;
-         auc.close();
-      }
-      else if(args_info.roc_on_sites_given){
-         system("if ! test -d score/roc-on-sites;then mkdir score/roc-on-sites;fi;");      
-
-         cout << "Computing ROCs..." << endl;
-         roconsites(vscore,motsdef);
-
-      }
-      else if(args_info.best_pwm_given){
-
-         cout << "Computing AUCs..." << endl;
-         bestpwm(vscore,motsdef);
-
-      }
-      else if(args_info.info_given){
-
-         cout << "Computing ROC infos..." << endl;
-         rocinfo(vscore,motsdef);
-
-      }
-      else if (args_info.per_mot_given){
-
-         cout << "Computing ROCs..." << endl;
-         rocpermot(vscore,motsdef);
-      }
-      else if (args_info.per_mot_var_thr_given){
-
-         cout << "Computing ROCs (we show nb of conserved motifs)..." << endl;
-         rocpermotvarthr(vscore,motsdef);
-      }
-      else if (args_info.cumul_mot_var_thr_given){
-
-         cout << "Computing ROCs (we show nb of conserved motifs)..." << endl;
-         roccumulmotvarthr(vscore,motsdef);
-      }
-      else if (args_info.correlations_given){
-         cout << "Computing correlations..." << endl;
-         correlations(vscore,motsdef);
-      }
-      else if (args_info.cumul_mot_given){
-
-         cout << "Computing ROCs (we show nb of conserved motifs)..." << endl;
-         roccumulmot(vscore,motsdef);
-      }
-      else if (args_info.bestcombi_given){
-         //system("if test -d score;then rm -r score;fi;");      
-
-         cout << "Computing number of conserved binding sites for each motif..." << endl;
-         int i=0;
-         vint motis_max(nbmots_for_score,0);
-
-         for (ivmot ivm=motsdef.begin();ivm!=min(motsdef.end(),motsdef.begin()+nbmots_for_score);ivm++){
-
-            double maxinfo(0);
-            double meaninfo(0);
-            int j(0);
-
-            if (!(args_info.threshold_given||args_info.opt_thr_file_given)){
-               for (ivvd ivv=ivm->matprec.begin();ivv!=ivm->matprec.end();ivv++){
-                  int i(0);
-                  double maxcol(-10);
-                  for (ivd iv=ivv->begin();iv!=ivv->end();iv++){
-                     if (*iv>maxcol) maxcol=*iv;
-                     meaninfo+=ivm->matfreq[j][i]*(*iv);
-                     i++;
-                  }
-                  j++;
-                  maxinfo+=maxcol;
-               }
-
-               ivm->motscorethr2=min(0.95*maxinfo,meaninfo);
-               ivm->motscorethr=ivm->motwidth*(ivm->motscorethr2-1)/10;
-               ivm->motscorethrcons=ivm->motwidth*(ivm->motscorethr2-1)/10;
-            }
-            scorethr2=ivm->motscorethr2;
-            scorethr=ivm->motscorethr;
-            scorethrcons=ivm->motscorethrcons;
-            cout << ivm->name << "\t" << "at threshold " << scorethr2 << endl;
-
-
-            for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-               ivs->motis[i]=ivm->nbmatchcons(*ivs);
-               if (ivs->motis[i]>motis_max[i]){
-                  motis_max[i]=min(ivs->motis[i],cutoff_for_combination);
-               }
-            }
-            i++;
-
-
-         }
-         //      cout << vscore << endl;
-         
-         // UNCOMMENT AND COMMENT NBMATCHCONS UPSTREAM FOR BEST 1kb SEARCH
-//         cout << "Keeping best1kb..." << endl;
-//         vseq vscorebest;      
-//         vscorebest=findbestseqs(motsdef,vscore);
-//         sort(vscorebest.begin(),vscorebest.end());
-//         vscore=vscorebest;
-
-         for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-            i=0;
-            for (ivmot ivm=motsdef.begin();ivm!=min(motsdef.end(),motsdef.begin()+nbmots_for_score);ivm++){
-               if (ivs->motis[i]>motis_max[i]){
-                  motis_max[i]=min(ivs->motis[i],cutoff_for_combination);
-               }
-               i++;
-            }
-         }
-         //cout << vscorebest << endl;
-         //cout << "sizepos=" <<sizepos << " sizeneg=" << sizeneg << endl;
-
-         //cout << "Writing file for SVM..." << endl;
-         //printforsvm(vscore);
-
-
-         cout << "Computing combinations scores..." << endl;
-         vcombi vcomb;
-         vint motis_curr;
-         recursive_combination(0,motis_max,motis_curr,vscore,vcomb);
-
-         cout << "Sorting combinations..." << endl;
-         sort(vcomb.begin(),vcomb.end());
-
-         cout << "Writing results file..." << endl;
-         ofstream outf;
-         outf.open("score/combis.dat");
-         for (ivmot ivm=motsdef.begin();ivm!=min(motsdef.end(),motsdef.begin()+nbmots_for_score);ivm++){
-            outf  << ivm->name << "\t";
-         }
-         outf << "TPR" << "\t";
-         outf << "TP" << "\t";
-         outf << "FPR" << "\t";
-         outf << "FP" << "\t";
-         outf << "score" << "\n";
-         outf << vcomb << endl;
-         outf.close();
-
-         //         for (ivstring ivs=vcomb[0].posnames.begin();ivs!=vcomb[0].posnames.end();ivs++){
-         //            cout << *ivs << endl;
-         //         }
-
-         outf.open("score/combis-enhancers.dat");
-         for (ivmot ivm=motsdef.begin();ivm!=min(motsdef.end(),motsdef.begin()+nbmots_for_score);ivm++){
-            outf  << ivm->name << "\t";
-         }
-         outf << "TPR" << "\t";
-         outf << "TP" << "\t";
-         outf << "FPR" << "\t";
-         outf << "FP" << "\t";
-         outf << "score" << "\n";
-         // not the last one, which gives all the sequences
-         for (ivcombi ivc=vcomb.begin();ivc!=vcomb.end()-1;ivc++){
-            outf << "========" << endl;
-            outf << *ivc << endl;
-            outf << "========" << endl;
-            for (ivseq ivs=ivc->posseqs.begin();ivs!=ivc->posseqs.end();ivs++){
-               outf << ivs->name << "\t";
-               outf << chromfromint(ivs->chrom) << "\t";
-               outf << ivs->start << "\t";
-               outf << ivs->stop << "\n";
-            }
-         }
-         outf.close();
-      }
-   }
-   else if (args_info.pwm_given){
-
-      Sequence bds;
-
-      //extract the sites
-      if (args_info.tfbs_given)
-      {
-         ifstream filesites(args_info.tfbs_arg);
-
-         getsites(filesites,bds);// to get the width
-
-         if (bds.iseqs[0].size()==0 && !args_info.width_given){
-            cout << "Error: give a site sequence or precise a site width" << endl;
-            exit(1);
-         } else {
-            width=bds.iseqs[0].size();
-         }
-      }
-      else{
-         if (!args_info.width_given){
-            cout << " You have to precise a width" << endl;
-            exit(1);
-         }
-         cout << "Width: " << width << endl;
-      }
-
-      scorethr2=width*scorethr2/10; //we set the score to 0.9 per base
-
-      Motif mot;
-      vd dum(4,0.0);
-      mot.matrice=vvd(width,dum);
-
-      //!!!!!!!!!!!!!!!!!!!!!! HERE I HAVE TO CHANGE THE FUNCTION !!!!!!!!!!!!!!!!!!!!
-
-      if (args_info.mat_given){
-         ifstream filemat(args_info.mat_arg);
-         getmatrices(filemat,mot);
-      }
-
-      if (args_info.tfbs_given){
-         // we count the bases in the sites
-         countbases(mot,bds);
-      }
-
-      // we get the bayesian frequency count
-      //   vvd matnorm=vvd(width,dum);
-      //cout << "\n sites width : " << width << endl;
-      if (args_info.nopseudocount_given){
-         alpha=0;
-         beta=0;
-      }
-      else{
-         compalpha();
-      }
-      countfreq(mot.matrice);
-
-      //we convert to pwm
-      freqtolog(mot.matrice);
-
-      //  displaymat(mot.matrice);
-      //ofstream outnorm("matnorm.txt");
-      ofstream outbayes("matbayes.dat");
-      mot.matprec=mot.matrice;
-
-
-      //Consensus sequence
-      for (int i=0;i<width;i++){
-         string letter="A";
-         double max(mot.matprec[i][0]);
-         if (mot.matprec[i][1]>max) letter="T";
-         else if (mot.matprec[i][2]>max) letter="C";
-         else if (mot.matprec[i][3]>max) letter="G";
-         mot.bsinit.append(letter);
-      }
-
-      motsdef.push_back(mot);
-      if (args_info.coord_file_given||args_info.align_file_given){
-         cout << "Loading background set..." << endl;
-         ifstream backreg;
-         if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000.fa");
-         else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000-masked.fa");
-         regtests=loadsequences(backreg);
-         backreg.close();
-         cout << "Background set size : " << regtests.size() << endl;
-         cout << "Loading training set..." << endl;
-         regints=loadseqs();
-         cout << "Training set size : " << regints.size() << endl;
-         mot.matinit(scorethr2);
-         mot.pvaluecomp();
-      }
-      else {
-         mot.pvalue=0;
-         mot.scorepoiss=0;
-         mot.nbmot=0;
-         mot.ntrain=0;
-      }
-
-
-      displaymat(mot.matrice);
-      mot.display(outbayes);
-
-      mot.matprec=reversecomp(mot.matrice);
-      mot.bsinit="";
-      for (int i=0;i<width;i++){
-         string letter="A";
-         double max(mot.matprec[i][0]);
-         if (mot.matprec[i][1]>max) letter="T";
-         else if (mot.matprec[i][2]>max) letter="C";
-         else if (mot.matprec[i][3]>max) letter="G";
-         mot.bsinit.append(letter);
-      }
-
-      mot.display(outbayes);
-
-   }		
-   else if (args_info.extract_given){
-      //!!!!!!!!!!names have to be in alphabetical order!!!
-
-      // training set
-      if (args_info.onlyref_given){ // EXTRACTS ONLY REFERENCE SPECIES SEQUENCE
-         //         ifstream inf;
-         //         inf.open(args_info.coord_file_arg);
-         //         extractcoordstofasta(inf);
-         //         inf.close();
-         cout  << "Extracting sequences" << endl;
-         vseq align;
-         if (args_info.repeat_masker_given){
-            cout << "Using repeat masker..." << endl;
-            align=loadseqs();
-         }
-         else {
-            cout << "No repeat masker..." << endl;
-            align=loadseqsnotmasked();
-         }
-
-         cout << "Writing Sequences..." << endl;
-         ofstream outf("seqs.dat");
-         for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-
-            outf << ">";
-            outf << ivs->name << "\t";
-            outf << chromfromint(ivs->chrom) << "\t";
-            outf << ivs->start << "\t";
-            outf << ivs->stop << "\n";
-            outf << ivs->seqs[0] << "\n";
-         }
-
-         outf.close();
-      } 
-      else if (args_info.cons_motifs_given){ // RETURNS ONLY COORDINATES (OR ALIGNMENT FILES NAMES) OF SEQUENCES MATCHED BY GIVEN MOTIFS
-
-         cout << "Loading Motifs" << endl;
-         if (args_info.mots_w_names_given){
-            loadmotswnames(args_info.mots_w_names_arg,motsdef);
-         } 
-         else{
-            loadmots(args_info.motifs_arg,motsdef); 
-         }
-         cout << "Nb mots for score: " << nbmots_for_score  << endl;
-         if (nbmots_for_score<motsdef.size()) motsdef.erase(motsdef.begin()+nbmots_for_score,motsdef.end());
-         cout << "Loaded " << motsdef.size() << " motifs." << endl;
-
-         if (args_info.opt_thr_file_given){
-            cout << "Setting threshold to optimum..." << endl;
-            ifstream opt;
-            opt.open(args_info.opt_thr_file_arg);
-            string dum;
-            getline(opt,dum);
-            int index=0;
-            while (getline(opt,dum)){
-               istringstream line(dum);
-               line >> dum;
-               double thr;
-               line >> thr;
-               motsdef[index].motscorethr2=motsdef[index].motwidth*thr/10;
-               motsdef[index].motscorethr=motsdef[index].motwidth*(thr-1)/10;
-               motsdef[index].motscorethrcons=motsdef[index].motwidth*(thr-1)/10;
-               index++;
-            }
-            opt.close();
-         }
-         else if (args_info.mean_info_given){
-            cout << "Setting threshold to mean info..." << endl;
-            for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-               ivm->setscorethr2meaninfo();
-               cout << ivm->name << " mean thr = " << ivm->motscorethr2 << endl;
-            }
-         }
-         else {
-            cout << "Setting threshold to given value..." << endl;
-            cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-         }
-
-         cout  << "Extracting input sequences..." << endl;
-         vseq align;
-         if (args_info.repeat_masker_given){
-            cout << "Using repeat masker..." << endl;
-            align=loadseqs();
-         }
-         else {
-            cout << "No repeat masker..." << endl;
-            align=loadseqsnotmasked();
-         }
-
-         cout << "Scanning sequences for conserved instances..." << endl;
-         ofstream outfc;
-         outfc.open("coords-cons-motifs.dat");
-         ofstream outfa;
-         if (args_info.align_file_given) outfa.open("align-file-cons-motifs.dat");
-         unsigned int numseqs(0);
-
-         for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-            int isbound=1;
-
-            for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-               unsigned int nmot;
-               if (args_info.wocons_given) nmot=ivm->nbmatchmat(*ivs);
-               else nmot=ivm->nbmatchcons(*ivs);
-
-               if (nmot>0) continue;
-               else {
-                  isbound=0;
-                  break;
-               }
-            }
-
-            if (isbound){
-               if (args_info.align_file_given) outfa << ivs->finame << endl ;
-               outfc << ivs->name << "\t";
-               outfc << chromfromint(ivs->chrom) << "\t";
-               outfc << ivs->start << "\t";
-               outfc << ivs->stop << "\n";
-               numseqs++;
-            }
-         }
-         outfc.close();
-         if (args_info.align_file_given) outfa.close();
-
-         cout << "Yields " << numseqs << " sequences out of " << align.size() << "!" << endl;
-      }
-      else{ // EXTRACTS ALIGNMENTS, WITH (ONLYCONS OR ALSOCONS) OR WITHOUT TAKING INTO ACCOUNT CONSERVATION
-         cout << "Loading sequences..." << endl;
-         if (args_info.onlycons_given){
-            if (args_info.repeat_masker_given){
-               cout << "Using repeat masker..." << endl;
-               regints=loadseqscons();
-            }
-            else {
-               cout << "No repeat masker..." << endl;
-               regints=loadseqsnotmaskedcons();
-            }
-         } 
-         else {
-            if (args_info.repeat_masker_given){
-               cout << "Using repeat masker..." << endl;
-               regints=loadseqs();
-            }
-            else {
-               cout << "No repeat masker..." << endl;
-               regints=loadseqsnotmasked();
-            }
-         }
-         cout << "Number of sequences to extract : " << regints.size() << endl;
-
-         cout << "Extracting..." << endl;
-         system("if ! test -d align;then mkdir align;fi;");      
-         extracttofastawfullname("./align/");
-         if (args_info.alsocons_given){
-
-            system("if ! test -d align-cons;then mkdir align-cons;fi;");      
-            vseq tmp;
-            for (ivseq ivs=regints.begin();ivs!=regints.end();ivs++){
-               if (ivs->cons==1) tmp.push_back(*ivs);
-            }
-            regints=tmp;
-            extracttofastawfullname("./align-cons/");
-         }
-      }
-
-   }
-   else if (args_info.pwm2jaspar_given){
-      compalpha();
-      /*
-         typedef vector<double> vd;
-         typedef vd::iterator ivd;
-         typedef vector<vd> vvd;
-         typedef vvd::iterator ivvd;
-
-         istream&
-         operator >>(istream &is,vvd &matrice)
-         {
-         char dummy;
-         for (vvd::iterator imat=matrice.begin();imat!=matrice.end();imat++){
-         is >> (*imat)[0] >> dummy;
-         }
-         for (vvd::iterator imat=matrice.begin();imat!=matrice.end();imat++){
-         is >> (*imat)[1] >> dummy;
-         }
-         for (vvd::iterator imat=matrice.begin();imat!=matrice.end();imat++){
-         is >> (*imat)[2] >> dummy;
-         }
-         for (vvd::iterator imat=matrice.begin();imat!=matrice.end();imat++){
-         is >> (*imat)[3] >> dummy;
-         }
-         return is;
-         }
-
-         ostream&
-         operator <<(ostream &os,const vvd &matrice)
-         {
-         for (vvd::const_iterator imat=matrice.begin();imat!=matrice.end();imat++){
-         os << (*imat)[0] << " ";
-         }
-         os << "\n";
-         for (vvd::const_iterator imat=matrice.begin();imat!=matrice.end();imat++){
-         os << (*imat)[1] << " ";
-         }
-         os << "\n";
-         for (vvd::const_iterator imat=matrice.begin();imat!=matrice.end();imat++){
-         os << (*imat)[2] << " ";
-         }
-         os << "\n";
-         for (vvd::const_iterator imat=matrice.begin();imat!=matrice.end();imat++){
-         os << (*imat)[3] << " ";
-         }
-         os << "\n";
-         return os;
-         }
-         */
-      int width=10;
-      ofstream out;
-      out.open("jaspar.dat");
-      ifstream fmotifs;
-      fmotifs.open(argv[1]);
-      string dum;
-      getline(fmotifs,dum);
-      for (int i=1;i<6;i++)
-      {
-         istringstream fmot(dum);
-         for (int j=1;j<8;j++)
-         {
-            fmot >> dum;
-         } 
-         vd dumd(4,0.0);
-         vvd mat(width,dumd);
-         fmot >> mat;
-         for (ivvd iv=mat.begin();iv!=mat.end();iv++){
-            vd & col=*iv;
-            double col0=0.3*exp(col[0]);//A
-            double col1=0.3*exp(col[1]);//T
-            double col2=0.2*exp(col[2]);//C
-            double col3=0.2*exp(col[3]);//G
-            //convert in A/C/G/T format.
-            col[0]=col0;//floor(100*col0);//A
-            col[1]=col2;//floor(100*col2);//C
-            col[2]=col3;//floor(100*col3);//G
-            col[3]=col1;//floor(100*col1);//T
-         }
-         out << setprecision(2) << mat << endl;
-
-         getline(fmotifs,dum);
-      }
-      fmotifs.close();
-      out.close();
-   }
-   else if (args_info.jaspar2pwm_given){
-      cout << "Converting file..." << endl;
-      jaspar2pwm();
-   }
-   else if (args_info.transfac2pwm_given){
-      cout << "Converting file..." << endl;
-      transfac2pwm();
-   }
-   else if (args_info.furlong2pwm_given){
-      cout << "Converting file..." << endl;
-      furlong2pwm();
-   }
-   else if (args_info.jaspar_rank_given){
-
-      cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-
-      //      cout << "Loading background set for chi2..." << endl;
-      //      ifstream backreg;
-      //      if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000-align-1000.dat"); 
-      //      else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000-align-1000.dat");
-      //      regtests=loadsequencesconserv(backreg);
-      //      cout << "Loaded " << regtests.size() << " sequences." << endl;
-      //      backreg.close();
-
-      cout << "Loading Jaspar Motifs..." << endl;
-      loadjaspardb(motsdef);
-      cout << "Loaded " << motsdef.size() << " motifs." << endl;
-
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         ivm->setscorethr2meaninfo();
-      }
-
-      vseq vscore;
-      cout << "Loading pos/neg sequences..." << endl;
-      loadseqsforscore(vscore);
-
-      cout << "Defining neg sequences as background set for chi2..." << endl;
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-         if (ivs->sign==-1) regtests.push_back(*ivs);
-      }
-
-      cout << "Scanning sequences..." << endl;
-      cout << "Motif ";
-      ofstream outf("results.dat");
-      ofstream outf2("motmeldb.txt");
-
-      outf << "ID" << "\t";
-      outf << "Name" << "\t";
-      outf << "Consensus" << "\t";
-      outf << "enrich" << "\t";
-      outf << "nbcons" << "\t";
-      outf << "pvalue" << "\t";
-      outf << "chi2" << "\n";
-
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         cout << "\r";
-         cout << ivm->index+1 << "/" << motsdef.size() << " ";
-         cout.flush();
-         if (ivm->motwidth>20) continue;
-
-         //reset nb of conserved motifs
-         ivm->nbmot=0;
-         width=ivm->motwidth;
-         scorethr2=ivm->motscorethr2;
-         ivm->calclambdaposneg(vscore);
-         //         cout << ivm->name << " " << ivm->pvalue << endl;
-
-         double enrich;
-         if (ivm->lambdatrain==0 || ivm->lambda==0) enrich=0;
-         else enrich=ivm->lambdatrain/ivm->lambda;
-
-         //computing chi2 on conserved sites
-         ivm->lambdacompcons();
-         ivm->calcscorepoiss();
-
-         outf << ivm->id << "\t";
-         outf << ivm->name << "\t";
-         outf << ivm->bsinit << "\t";
-         outf << enrich << "\t";
-         outf << ivm->nbmot << "\t";
-         outf << ivm->pvalue << "\t";
-         outf << ivm->scorepoiss << "\t";
-         //         for (unsigned int i=0;i<distwidth;i++){
-         //            outf << ivm->distmot[i];
-         //            if (i!=distwidth-1) outf << ",";
-         //         }
-         //         for (ivinst iv=ivm->instances[0].begin();iv!=ivm->instances[0].end();iv++){
-         //            outf << "chr:" << iv->chrom << ":";
-         //            outf << iv->coord << "-";
-         //            if (iv->sens==1) outf << iv->coord+ivm->motwidth-1;
-         //            else outf << iv->coord-ivm->motwidth+1;
-         //            if (iv!=ivm->instances[0].end()-1) outf << ",";
-         //         }
-         outf << endl;
-
-         ivm->id+="_";
-         ivm->id+=ivm->name;
-         ivm->name=ivm->id;
-         ivm->displaywname(outf2);
-      }
-      cout << endl;
-      outf.close();
-      outf2.close();
-   }
-   else if (args_info.backreg_given){
-
-      cout << "Loading genomic alignments..." << endl;
-
-      ifstream align;
-      if (species==1) align.open("/home/santolin/these/files/droso/align/all/align.dat");
-      else if (species==2) align.open("/home/santolin/these/files/mus/epo/align.dat");//-masked.dat");
-      alignscoord=loadcoordconserv(align);
-      align.close();
-
-      cout << "Loading intergenic coordinates..." << endl;
-      vcoord vcds;
-
-      ifstream intgen;
-      if (species==1) intgen.open("/home/santolin/these/files/droso/genome/noncoding/nonCDS.dat");
-      else if (species==2) intgen.open("/home/santolin/these/files/mus/all/files/noncoding.dat");
-      vcds=loadcoordconserv(intgen);
-      intgen.close();
-
-      cout << "Random shuffling intergenic sequences..." << endl;
-
-      random_shuffle(vcds.begin(),vcds.end());
-
-      if (args_info.coord_file_given){
-         //cout << "Loading available and conserved sequences from coordinate file..." << endl;
-         //regints=loadseqsnotmaskedcons();
-         cout << "Loading available sequences from coordinate file..." << endl;
-         regints=loadseqsnotmasked();
-         cout << "Loaded " << regints.size() << " sequences" << endl;
-      }
-
-      cout << "Writing background files..." << endl;
-      system("if ! test -d backreg;then mkdir backreg;fi;");      
-      string folder="backreg/";//"/home/santolin/these/files/mus/backreg/align/reg_";
-      if (args_info.coord_file_given){
-         printbackregwcoords(vcds,folder);
-
-      } else{
-         printbackreg(vcds,folder);
-      }
-   }
-   else if (args_info.byscore_given){
-      compalpha();
-      cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-
-      cout << "Loading Motifs..." << endl;
-      if (args_info.mots_w_names_given){
-         loadmotswnames(args_info.motifs_arg,motsdef);
-      }
-      else {
-         loadmots(args_info.motifs_arg,motsdef);
-      }
-      if (nbmots_for_score<motsdef.size()) motsdef.erase(motsdef.begin()+nbmots_for_score,motsdef.end());
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         if (ivm->name.find('_')!=string::npos)
-         {
-            (*ivm).name.insert((*ivm).name.find('_'),"\\");
-         }
-      }
-      cout << "Loaded " << motsdef.size() << " motifs." << endl;
-      cout << "Nb mots for score: " << nbmots_for_score  << endl;
-
-      cout << "Loading sequences..." << endl;
-      regints=loadseqs();
-      cout << "Number of sequences: " << regints.size() << endl;
-
-      cout << "Computing score..." << endl;
-      vseq vscr;
-      for (ivseq ivs=regints.begin();ivs!=regints.end();ivs++){
-         if (ivs->name.find('_')!=string::npos)
-         {
-            (*ivs).name.insert((*ivs).name.find('_'),"\\");
-         }
-         // for motis filling
-         calcscore(motsdef,*ivs);
-         if (ivs->motis[0]>0){// || ivs->motis[1]>0){}
-            //        // if (ivs->motis[2]>0 || ivs->motis[3]>0){}
-            ////         if (ivs->motis[7]>0){}
-            //            vmot motstmp;
-            //            motstmp.push_back(motsdef[0]);
-            //    //        motstmp.push_back(motsdef[1]);
-            ////            motstmp.push_back(motsdef[7]);
-            //            vint motis;
-            //            motis=ivs->motis;
-            //            calcscore(motstmp,*ivs);
-            //            ivs->motis=motis;
-            vscr.push_back(*ivs);
-         }
-         //      }
-   }
-
-   //   cout << "Adding scores for each gene..." << endl;
-   //   vseq vuniq;
-   //   vuniq=addscorepergene(vscr);
-   //   vscr=vuniq;
-
-   cout << "Sorting" << endl;
-   sort(vscr.begin(),vscr.end());
-
-
-   cout << "Writing file ..." << endl;
-
-   ofstream disp;
-   ostringstream disps;
-   disps << "ranking.tex";
-   disp.open(disps.str().c_str());
-   dispscoreforrank(vscr,motsdef,disp);
-   disp.close();
-   ofstream outf("ranking.dat");
-   for (ivseq ivs=vscr.begin();ivs!=vscr.end();ivs++){
-      if (ivs->name.find('_')!=string::npos)
-      {
-         (*ivs).name.erase((*ivs).name.find('\\'),2);
-      }
-      outf << ivs->name << "\t";
-      outf << chromfromint(ivs->chrom) << "\t";
-      outf << ivs->start << "\t";
-      outf << ivs->stop << "\n";
-      //      outf << ivs->motis[0] << "\t";
-      //      outf << ivs->motis[1] << "\t";
-      //      outf << ivs->score << "\n";
-   }
-   outf.close();
-
-}
-   else if (args_info.rank_given){
-      
-      cout << "Loading Motifs..." << endl;
-      if (args_info.mots_w_names_given){
-         loadmotswnames(args_info.mots_w_names_arg,motsdef);
-      }
-      else {
-         loadmots(args_info.motifs_arg,motsdef);
-      }
-      cout << "Loaded " << motsdef.size() << " motifs." << endl;
-      nbmots_for_score=motsdef.size();
-
-      cout << "Loading sequences..." << endl;
-      loadseqsforscorenotmasked(regints);
-      cout << "Number of sequences: " << regints.size() << endl;
-
-      if (args_info.fdr_given){
-         cout << "Computing score..." << endl;
-         ofstream outf("motifs-tpr-fdr.txt");
-         double fdr=args_info.fdr_arg;
-         for (ivmot iv=motsdef.begin();iv!=motsdef.end();iv++){
-            calcoptthr(*iv,fdr,outf);
-         }
-         outf.close();
-      }
-}
-else if (args_info.neargene_given){
-
-   //!! Here we load TSS, i.e start=stop
-   cout << "Loading genes coordinates..." << endl;
-   vcoord vcdg;
-   ifstream gen;
-   if (species==1){
-      gen.open("/home/santolin/these/files/droso/annot/coords/regres-coords.dat");
-      vcdg=loadcoordpeaks(gen);
-   }
-   else if (species==2){
-      //gen.open("/home/santolin/these/files/mus/biomart/genes-n-strand-protein-coding+miRNA.dat");
-      //               gen.open("/home/santolin/these/files/mus/biomart/genes-n-strand-only-protein-coding.dat");
-      //               vcdg=loadcoordconservwstrand(gen);
-      gen.open("/home/santolin/these/files/mus/biomart/genes-n-strand-only-protein-coding-TSS.dat");
-      vcdg=loadcoordfromTSS(gen);
-   }
-   gen.close();
-
-   if (args_info.define_peak_given){
-      cout << "Loading peaks coordinates..." << endl;
-      vcoord vcdp;
-      ifstream pea;
-      pea.open(args_info.coord_file_arg);
-      vcdp=loadcoordpeaks(pea);
-      pea.close();
-
-      cout << "Finding nearest gene..." << endl;
-      findnearestgene(vcdg,vcdp);
-
-      cout << "Writing file ..." << endl;
-      ofstream outf("neargene.dat");
-      for (ivcoord ivc=vcdp.begin();ivc!=vcdp.end();ivc++){
-         outf << ivc->name << "\t";
-         outf << chromfromint(ivc->chrom) << "\t";
-         outf << ivc->start-100 << "\t";
-         outf << ivc->start+100 << "\n";
-      }
-      outf.close();
-   } 
-   else {
-      cout << "Loading coordinates..." << endl;
-      vcoord vcdp;
-      ifstream pea;
-      pea.open(args_info.coord_file_arg);
-      vcdp=loadcoordconserv(pea);
-      cout << "Loaded " << vcdp.size() << " coords." << endl;
-      pea.close();
-
-      cout << "Finding nearest gene..." << endl;
-      if (args_info.on_each_side_given){
-         findnearestgene_sides(vcdg,vcdp);
-      }
-      else{
-         findnearestgene(vcdg,vcdp);
-      }
-
-      cout << "Writing file ..." << endl;
-      ofstream outf("neargene.dat");
-      if (args_info.on_each_side_given){
-         for (ivcoord ivc=vcdp.begin();ivc!=vcdp.end();ivc++){
-            outf << ivc->name << "\t";
-            outf << chromfromint(ivc->chrom) << "\t";
-            outf << ivc->start << "\t";
-            outf << ivc->stop << "\t";
-            for (ivstring ivs=ivc->neargenes.begin();ivs!=ivc->neargenes.end();ivs++){
-               outf << *ivs << "\t";
-            }
-            outf << "\n";
-         }
-      }
-      else{
-         for (ivcoord ivc=vcdp.begin();ivc!=vcdp.end();ivc++){
-            outf << ivc->name << "\t";
-            outf << chromfromint(ivc->chrom) << "\t";
-            outf << ivc->start << "\t";
-            outf << ivc->stop << "\n";
-         }
-      }
-      outf.close();
-
-
-   }
-}
-else if (args_info.comp_given){
-
-
-   int stat1(0),stat2(0);
-   vstring vpos1,vpos2;
-   vcoord vcds1,vcds2;
-
-   if (args_info.refnames_given){
-      cout << "Loading ref genes names..." << endl;
-      string dum;
-      ifstream pos(args_info.refnames_arg);
-      getline(pos,dum);
-      while (!pos.eof()){
-         vpos1.push_back(dum);
-         getline(pos,dum);
-      }
-      pos.close();
-      stat1=1;
-   } 
-   else if (args_info.refcoords_given){
-      cout << "Loading ref genes coordinates..." << endl;
-      ifstream gen;
-      gen.open(args_info.refcoords_arg);
-      vcds1=loadcoordconserv(gen);
-      sort(vcds1.begin(),vcds1.end());
-      //               for (ivcoord ivc=vcds1.begin();ivc!=vcds1.end();ivc++){
-      //                  cout << *ivc << endl;
-      //               }
-      gen.close();
-      stat1=2;
-   } 
-   else {
-      cout << "Please give a ref file. Exiting." << endl;
-      exit(2);
-   }
-
-
-   if (args_info.compnames_given){
-      cout << "Loading comp genes names..." << endl;
-      string dum;
-      ifstream pos(args_info.compnames_arg);
-      getline(pos,dum);
-      while (!pos.eof()){
-         vpos2.push_back(dum);
-         getline(pos,dum);
-      }
-      pos.close();
-      stat2=1;
-   } 
-   else if (args_info.compcoords_given){
-      cout << "Loading comp genes coordinates..." << endl;
-      ifstream gen;
-      gen.open(args_info.compcoords_arg);
-      vcds2=loadcoordconserv(gen);
-      sort(vcds2.begin(),vcds2.end());
-      gen.close();
-      stat2=2;
-   } 
-   else {
-      cout << "Please give a comp file. Exiting." << endl;
-      exit(2);
-   }
-
-   cout << "Comparing and writing file..." << endl;
-   ofstream outf("genecomp.dat");
-   if (stat1==1 && stat2==2){
-      for (ivcoord ivc=vcds2.begin();ivc!=vcds2.end();ivc++){
-         for (ivstring ivs=vpos1.begin();ivs!=vpos1.end();ivs++){
-            if (*ivs==ivc->name){
-               outf << *ivc;
-               break;
-            }
-         }
-      }
-   } 
-   else if (stat1==2 && stat2==2){
-
-      int cutoff;
-      cutoff=args_info.cutoff_for_comp_arg;
-
-      //      outf << "Ref_name\tChrom\tStart\tStop\tComp_name\n";
-      int crmcount=1;
-      int start,stop;
-      int pstart,pstop,pchrom;
-      string pname;
-      int pending=0;
-      int numchip(1);
-      pstart=vcds2.begin()->start;
-      pstop=vcds2.begin()->stop;
-      pchrom=vcds2.begin()->chrom;
-      pname=vcds2.begin()->name;
-      for (ivcoord ivc=vcds2.begin();ivc!=vcds2.end();ivc++){
-         for (ivcoord ivs=vcds1.begin();ivs!=vcds1.end();ivs++){
-            if (ivs->chrom==ivc->chrom){
-
-               //if ((ivs->start<=ivc->start && ivs->stop>=ivc->stop) || (ivs->start <= ivc->stop+1000 && ivs->start >= ivc->start) || (ivs->stop >= ivc->start-1000 && ivs->stop <= ivc->stop)){}
-               // 2 inclus dans 1, 2 à gauche de 1, 2 à droite de 1, 
-               if (  (ivs->start<=ivc->start && ivs->stop>=ivc->stop) || 
-                     (ivs->start <= ivc->stop && ivs->start >= ivc->start) ||
-                     (ivs->stop >= ivc->start && ivs->stop <= ivc->stop) || 
-                     ((ivc->start+ivc->stop)/2-ivs->stop<=cutoff && (ivc->start+ivc->stop)/2-ivs->stop>0 ) || // CAS DE CHIP VS GENE : centre CHIP a moins de cutoff de fin gene
-                     (ivs->start-(ivc->start+ivc->stop)/2<=cutoff && ivs->start-(ivc->start+ivc->stop)/2>0) ){ // CAS DE CHIP VS GENE : centre CHIP a moins de cutoff de debut gene
-                     //(abs((ivs->start+ivs->stop)/2-(ivc->start+ivc->stop)/2)<=cutoff) ){} // CAS DE CHIP VS CHIP : centres a moins de cutoff=1kb
-
-                  start =  min(ivs->start,ivc->start);
-                  stop  =  max(ivs->stop,ivc->stop);
-                  numchip++;
-
-                  //check we do not cover previous crm
-                  if ((start <= pstop && start >= pstart) || (stop >= pstart && stop <=pstop)){
-                     if (pchrom==ivc->chrom){
-                        pstart=min(start,pstart);
-                        pstop=max(stop,pstop);
-                     }
-                     else {
-                        pstart=start;
-                        pstop=stop;
-                     }
-                     pchrom=ivc->chrom;
-                     pending=1;
-                  }
-                  else {
-
-                     outf << chromfromint(pchrom) << "\t";
-                     outf << pstart << "\t";
-                     outf << pstop << "\t";
-                     //outf << "crm_" << crmcount << "\n";
-                     outf << pname << "\n";
-                     //                        outf << numchip << "\n";
-                     pstart=start;
-                     pstop=stop;
-                     pchrom=ivc->chrom;
-                     pname=ivc->name;
-                     crmcount++;
-                     pending=0;
-                     numchip=1;
-                     //ivs->check=1;
-                     //             break;
-
-                  }
-
-               }
-            }
-         }
-      }
-      if (pending){
-         outf << chromfromint(pchrom) << "\t";
-         outf << pstart << "\t";
-         outf << pstop << "\t";
-         //outf << "crm_" << crmcount << "\n";
-         outf << pname << "\n";
-      }
-
-      //
-      //                  ofstream outf1("genecomp-ref-wo-comp.dat");
-      //                  for (ivcoord ivs=vcds1.begin();ivs!=vcds1.end();ivs++){
-      //                     if (ivs->check==0){
-      //                        outf1 << ivs->name << "\t";
-      //                        outf1 << chromfromint(ivs->chrom) << "\t";
-      //                        outf1 << ivs->start << "\t";
-      //                        outf1 << ivs->stop << "\n";
-      //                     }
-      //                  }
-      //                  outf1.close();
-   } 
-   else if (stat1==1 && stat2==1){
-      for (ivstring ivc=vpos1.begin();ivc!=vpos1.end();ivc++){
-         for (ivstring ivs=vpos2.begin();ivs!=vpos2.end();ivs++){
-            if (*ivs==*ivc){
-               outf << *ivs << endl;
-               break;
-            }
-         }
-      }
-   }
-   else if (stat1==2 && stat2==1){
-      for (ivcoord ivc=vcds1.begin();ivc!=vcds1.end();ivc++){
-         for (ivstring ivs=vpos2.begin();ivs!=vpos2.end();ivs++){
-            if (*ivs==ivc->name){
-               outf << *ivc;
-               break;
-            }
-         }
-      }
-   }
-   outf.close();
-
-
-   //   cout << "Writing file ..." << endl;
-   //   ofstream outf("neargene.dat");
-   //   for (ivcoord ivc=vcdp.begin();ivc!=vcdp.end();ivc++){
-   //      outf << ivc->name << "\t";
-   //      outf << chromfromint(ivc->chrom) << "\t";
-   //      outf << ivc->start-100 << "\t";
-   //      outf << ivc->start+100 << "\n";
-   //   }
-   //   outf.close();
-}
-else if (args_info.stats_given){
-   cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-
-   cout << "Loading Motifs..." << endl;
-   loadmots(args_info.motifs_arg,motsdef);
-   cout << "Loaded " << motsdef.size() << " motifs." << endl;
-   cout << "Nb mots for stats: " << nbmots_for_score  << endl;
-
-   cout << "Loading alignments " << endl;
-   vseq align;
-   align=loadseqsnotmasked();
-   cout << "Nb sequences to scan: " << align.size() << endl;
+   ofstream motmeldb("motmeldb.txt");
 
    cout << "Loading background set..." << endl;
    ifstream backreg;
-   if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000-align-short.dat");
-   else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000-align-short.dat");
-   regtests=loadsequencesconserv(backreg);
+
+   if (species=="droso") backreg.open("DATA_PATH/droso/background2000.fa");
+   else if (species=="eutherian") backreg.open("DATA_PATH/eutherian/background2000.fa");
+   regtests=loadsequences(backreg);
    backreg.close();
    cout << "Background set size : " << regtests.size() << endl;
 
-   cout << "Scanning sequences for instances..." << endl;
-   scanseqsforinstancesnmask(align,motsdef);
+   cout << "Loading training set..." << endl;
+   regints=loadseqs();
+   cout << "Training set size : " << regints.size() << endl;
+   inittreedist();
 
-   cout << "Defining conserved instances..." << endl;
-   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-      ivs->instances2instancescons();
-      cout << ivs->instancescons;
-   }
-
-   vseq vbest;
-   //      cout << "Keeping best 1kbs..." << endl;
-   //      vbest=findbestseqs(motsdef,align);
-   //      
-   //      for (ivseq iv=vbest.begin();iv!=vbest.end();iv++){
-   //         iv->instances.clear();
-   //         iv->instancescons.clear();
-   //      }
-   //      
-   //      cout << "Scanning best 1kbs for instances..." << endl;
-   //      scanseqsforinstancesnmask(vbest,motsdef);
-   //
-   //      cout << "Defining best 1kbs conserved instances..." << endl;
-   //      for (ivseq ivs=vbest.begin();ivs!=vbest.end();ivs++){
-   //         ivs->instances2instancescons();
-   //      }
-   vbest=align;
-
-   if (args_info.counts_given){
-      cout << "Counts statistics..." << endl;
-      statcounts(align,motsdef);
-   } 
-   else if(args_info.shifts_given){
-      cout << "Shifts statistics..." << endl;
-      system("if ! test -d data;then mkdir data;fi;");      
-      statshifts(align,motsdef);
-   } 
-   else {
-      cout << "Please give an option" << endl;
-   }
-}
-else if (args_info.surround_given){
-
-   cout << "Loading Motifs" << endl;
-   if (args_info.mots_w_names_given){
-      loadmotswnames(args_info.mots_w_names_arg,motsdef);
-   } 
-   else{
-      loadmots(args_info.motifs_arg,motsdef); 
-   }
-   if (args_info.mean_info_given){
-      cout << "Setting scorethr2 to mean info..." << endl;
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         ivm->setscorethr2meaninfo();
-      }
-   }
-   cout << "Nb mots for score: " << nbmots_for_score  << endl;
-   if (nbmots_for_score<motsdef.size()) motsdef.erase(motsdef.begin()+nbmots_for_score,motsdef.end());
-   cout << "Loaded " << motsdef.size() << " motifs." << endl;
-
-   if (args_info.opt_thr_file_given){
-      ifstream opt;
-      opt.open(args_info.opt_thr_file_arg);
-      string dum;
-      getline(opt,dum);
-      int index=0;
-      while (getline(opt,dum)){
-         istringstream line(dum);
-         line >> dum;
-         double thr;
-         line >> thr;
-         motsdef[index].motscorethr2=motsdef[index].motwidth*thr/10;
-         motsdef[index].motscorethr=motsdef[index].motwidth*(thr-1)/10;
-         motsdef[index].motscorethrcons=motsdef[index].motwidth*(thr-1)/10;
-         index++;
-      }
-      opt.close();
-   }
-   else {
-      scorethr2=motsdef[0].motscorethr2;
-      scorethr=motsdef[0].motscorethr2;
-      scorethrcons=motsdef[0].motscorethr2;
-      cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-   }
-   if (motsdef.size()==1){
-      cout << "One motif auto-correlation" << endl;
-   }
-   else if (motsdef.size()==2){
-      cout << "Two motifs cross-correlation" << endl;
-   }
-   else if (motsdef.size()>1){
-      cout << "Please give a maximum of two motifs. Exiting." << endl;
-      exit(1);
-   }
-
-   cout << "Loading alignments " << endl;
-   vseq align;
-   align=loadseqsnotmasked();
-   cout << "Nb sequences to scan: " << align.size() << endl;
-
-   //      cout << "Loading background set..." << endl;
-   //      ifstream backreg;
-   //      if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000-align-short.dat");
-   //      else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000-align-short.dat");
-   //      regtests=loadsequencesconserv(backreg);
-   //      backreg.close();
-   //      cout << "Background set size : " << regtests.size() << endl;
-
-   cout << "Scanning sequences for instances..." << endl;
-   vmot motstmp;
-   motstmp.push_back(motsdef[0]);
-   scanseqsforinstances(align,motstmp);
-
-   cout << "Defining conserved instances..." << endl;
-   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-      ivs->instances2instancescons();
-      //cout << ivs->instancescons;
-   }
-
-   cout << "Surrounding score statistics..." << endl;
-   surrounding_score_stat(align,motsdef);
-}
-else if (args_info.testevol_given){
-   // tests similarity between ref_species_only PWM and evolved_PWM
-   //
-   ofstream motmeldb;
-   motmeldb.open("motmeldb.txt");
-   cout << "Loading Motif(s)..." << endl;
-   if (args_info.mots_w_names_given){
-      loadmotswnames(args_info.mots_w_names_arg,motsdef);
-   }
-   else {
-      loadmots(args_info.motifs_arg,motsdef);
-   }
-   if (args_info.mean_info_given){
-      cout << "Setting scorethr2 to mean info..." << endl;
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         ivm->setscorethr2meaninfo();
-      }
-   }
-
-   for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-      ivm->motscorethrcons=ivm->motscorethr2;
-      ivm->motscorethr=ivm->motscorethr2;
-      cout << ivm->name << " thr = " << ivm->motscorethr2 << endl;
-   }
-   scorethr2=motsdef[0].motscorethr2;
-   cout << "scorethr2=" << scorethr2 << endl;
-   scorethr=scorethr2;
-   scorethrcons=scorethr2;
-   width=motsdef[0].motwidth;
-   compalpha();
-
-   //cout << scorethr2 << " " << alpha << " " << width << endl;
-
-   if (args_info.synthetic_given){
-
-
-      cout << "Loading alignments " << endl;
-      regints=loadseqs();
-
-      cout << "Nb sequences to scan: " << regints.size() << endl;
-
-      //                  for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-      //                     ivm->matinit(ivm->motscorethr2);
-      //                  }
-
-      motsdef[0].comprefinstances(regints,0);
-      motsdef[0].comprefmot();
-      motsdef[0].setscorethr2meaninfo();
-      cout << motsdef[0].name << " refined on ref, new thr = " << motsdef[0].motscorethr2 << endl;
-      motsdef[0].matinit(motsdef[0].motscorethr2);
-      cout << motsdef[0].name << " has " << motsdef[0].refinstances.seqs.size() << " instances." << endl;
-      cout << motsdef[0].name << " has " << motsdef[0].seqs.size() << " conserved instances." << endl;
-      //                  for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-      //                     ivm->matinit(ivm->motscorethr2);
-      //                     cout << ivm->name << " has " << ivm->seqs.size() << " conserved instances." << endl;
-      //                  }
-
-      Motif mot=motsdef[0];
-      //                  for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
-      //                     ivm->print();
-      //                  }
-      //                  exit(9);
-      if (args_info.fitdist_given){
-         //fitdistperbase(mot);
-         fitdistpersite(mot);
-
-      }
-      else if (args_info.fitscore_given){
-         //fitdistperbase(mot);
-         fitscorepersite(mot);
-
-      }
-      else if (args_info.fitkmeans_given){
-         fitkmeanspersite(mot,args_info.fitkmeans_arg);
-      }
-      else if (args_info.fitdist_kmeans_given){
-         fitdistkmeanspersite(mot,args_info.fitdist_kmeans_arg);
+   // *** What is it for?? (please comment)
+   for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
+      cout << (*iseq).name << endl;
+      if (args_info.ref_given){
+         refseqanalysis(*iseq,motmeldb);
       }
       else{
-         if (motsdef.size()==1){
-            //evolvebase(mot);
-            evolvesite(mot);
-            //phylotest(mot);
-         } 
-         else{
-            // FOR MIXTURE MODEL
-            evolvesite(motsdef);
-         }
+         seqanalysis(*iseq,motmeldb);
       }
+      cout << endl;
    }
-   else {
-
-      cout << "Loading background set..." << endl;
-      ifstream backreg;
-      if (species==1) backreg.open("/home/santolin/these/files/droso/backreg/regs2000.fa");
-      else if (species==2) backreg.open("/home/santolin/these/files/mus/backreg/regs2000.fa");
-      regtests=loadsequences(backreg);
-      backreg.close();
-      cout << "Background set size : " << regtests.size() << endl;
-
-      cout << "Loading alignments " << endl;
-      regints=loadseqs();
-      cout << "Nb sequences to scan: " << regints.size() << endl;
+   motmeldb.close();
 
 
-      inittreedist();
-      scanseqsforinstances(regints,motsdef);
-      ofstream outf;
-      if (args_info.pseudocount_given){
-         outf.open("testcv.dat");
-         width=motsdef[0].motwidth;
-         for (double al=0.01;al<1;al+=.1){
-            alpha=al;
-            beta=concc/conca*alpha;
-            motsdef[0].testpseudocount(outf);
-         }
-         outf.close();
-      }
-      else if (args_info.timer_given){
-         outf.open("testcv-timer.dat");
-         motsdef[0].testpwmcvtimer(outf);
-         outf.close();
-      }
-      else{
-         outf.open("testcv.dat");
-         cout << "Testing convergence..." << endl;
-         motsdef[0].testpwmcv(outf,motmeldb);
-         outf.close();
-      }
-   }
-}
-else if (args_info.countwords_given){
-   // First motif = total PWM
-   // Following motifs = with k-means
-
-
-   cout << "Loading Motifs..." << endl;
-   if (args_info.mots_w_names_given){
-      loadmotswnames(args_info.mots_w_names_arg,motsdef);
-   }
-   else {
-      loadmots(args_info.motifs_arg,motsdef);
-   }
-   if (args_info.mean_info_given){
-      cout << "Setting scorethr2 to mean info..." << endl;
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         ivm->setscorethr2meaninfo();
-         cout << ivm->name << " mean info = " << ivm->motscorethr2 << endl;
-      }
-   }
-   Motif mot=motsdef[0];
-   if (args_info.kprobs_given || args_info.numk_given)  cout << "Using k-means generated motifs to fit sites distribution" << endl;
-   //displaymat(mot.matfreq);
-   scorethr2=mot.motscorethr2;
-   width=mot.motwidth;
-   compalpha();
-
-   cout << "Loading alignments " << endl;
-   regints=loadseqs();
-   cout << "Nb sequences to scan: " << regints.size() << endl;
-
-   if (args_info.kprobs_given){
-      vd kprobs;
-      ifstream inf;
-      inf.open(args_info.kprobs_arg);
-      back_insert_iterator<vd> dest(kprobs);
-      copy(iidouble(inf),iidouble(),dest);
-      inf.close();
-      countwords_mixture(motsdef,kprobs);
-   } 
-   else if (args_info.numk_given){
-      unsigned int numk=args_info.numk_arg;
-      countwords_numk(mot,numk);
-   }
-   else if (args_info.compare_pseudo_count_given){
-      countwords_compare_pseudocount(mot);
-   }
-   else countwords(mot);
-
-}
-else if (args_info.nmers_given){
-
-   cout << "Loading alignments " << endl;
-   regints=loadseqs();
-   cout << "Nb sequences to scan: " << regints.size() << endl;
-
-   // just display nmers, sort and counting procedures can be done easily in bash
-   ofstream outf("nmers.dat");
-   countnmers(outf);
-   outf.close();
-
-}
-else if (args_info.numseq_given){
-
-   cout << "Loading Motif(s)..." << endl;
-   if (args_info.mots_w_names_given){
-      loadmotswnames(args_info.mots_w_names_arg,motsdef);
-   }
-   else {
-      loadmots(args_info.motifs_arg,motsdef);
-   }
-   if (args_info.mean_info_given){
-      cout << "Setting scorethr2 to mean info..." << endl;
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         ivm->setscorethr2meaninfo();
-      }
-   }
-
-   for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-      ivm->motscorethrcons=ivm->motscorethr2;
-      ivm->motscorethr=ivm->motscorethr2;
-      cout << ivm->name << " thr = " << ivm->motscorethr2 << endl;
-   }
-
-   nbmots_for_score=motsdef.size();
-
-   cout << "Loading alignments " << endl;
-   regints=loadseqs();
-   cout << "Nb sequences to scan: " << regints.size() << endl;
-
-   ofstream outf("numcons.dat");
-   outf << "numseq" << "\t";
-   outf << regints.size() << "\n";
-   for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-      ivm->matinit(ivm->motscorethr2);
-      unsigned int numcons=0;
-      unsigned int num=0;
-      for (ivseq ivs=regints.begin();ivs!=regints.end();ivs++){
-         if (ivs->motis[ivm->index]>0) numcons++;
-         if (ivs->nmot>0) num++;
-      }
-      outf << ivm->name << "\t";
-      outf << num << "\t";
-      outf << numcons << "\n";
-   }
-   outf.close();
-
-}
-else if (args_info.test_given){
-   cout << "Testing rng convergence..." << endl;
-   rngtest();
-}
-else {
-   cout << "No mode given" << endl;
-}
-
-
-gsl_rng_free(gslran);
-cmdline_parser_free(&args_info);
-cout << "exit normally" << endl;
-return 0;
+   gsl_rng_free(gslran);
+   cmdline_parser_free(&args_info);
+   cout << "exit normally" << endl;
+   return 0;
 }
 

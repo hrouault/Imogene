@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename imogene.info
 @settitle Imogene Manual @value{VERSION}
-@include version.texi
+@c @include version.texi
 @c %**end of header
 
 @copying
@@ -89,4 +89,3 @@ This is the second item.
 @printindex cp
 
 @bye
-

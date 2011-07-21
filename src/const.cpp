@@ -16,6 +16,9 @@
  * =====================================================================================
  */
 
+#include <string>
+
+using namespace std;
 
 
 unsigned int width;
@@ -27,7 +30,7 @@ double scorethrcons;
 
 double conca,conct,concc,concg;
 unsigned int evolutionary_model;
-unsigned int species;
+string species;
 unsigned int nbspecies;
 
 unsigned int neighbext=20;
