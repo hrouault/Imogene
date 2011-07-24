@@ -1,16 +1,16 @@
 \input texinfo   @c -*-texinfo-*-
 @c %**start of header
 @setfilename imogene.info
+@c @documentencoding ISO-8859-15
 @include version.texi
 @settitle Imogene Manual @value{VERSION}
-@c @include version.texi
 @c %**end of header
 
 @copying
 This manual is for Imogene
 (version @value{VERSION}, @value{UPDATED}).
 
-Copyright @copyright{} 2005-2011 Hervé Rouault
+Copyright @copyright{} 2005-2011 Herv@'e Rouault
 
 
 @quotation
@@ -32,6 +32,7 @@ Software Foundation raise funds for GNU development.''
 @title Imogene
 @subtitle for version @value{VERSION}, @value{UPDATED}
 @author H. Rouault (@email{rouault@@lps.ens.fr})
+@author M. Santolini (@email{santolin@@lps.ens.fr})
 @page
 @vskip 0pt plus 1filll
 @insertcopying
