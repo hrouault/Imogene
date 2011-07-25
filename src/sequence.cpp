@@ -832,28 +832,6 @@ loadcoordconserv(ifstream & list)
    return vcds;
 }
 
-   vcoord
-loadcoordpeaks(ifstream & list)
-{
-   vcoord vcds;
-   string dum;
-   getline(list,dum);
-   while(!list.eof()){
-      Coordinate coord;
-      stringstream line(dum);
-      line>>coord.name;
-      string chrom;
-      line>>chrom;
-      coord.chrom=intfromchrom(chrom);
-      line>>coord.start;
-      coord.stop=coord.start;
-      if (coord.chrom!=-1){
-         vcds.push_back(coord);
-      }
-      getline(list,dum);
-   }
-   return vcds;
-}
 
    double
 scorefshift(vint & seqint, vvd &matrice)
@@ -884,7 +862,6 @@ scorefshift(vint & seqint, vvd &matrice)
    return score;
 }
    
-
 // the matrice is a scoring PWM (matprec)
    double
 scoref(vint::const_iterator &iseq, vvd &matrice)
@@ -916,19 +893,6 @@ scoref(vint site, vvd &matrice)
       pos++;
    }
    return sc;
-}
-   
-   double
-scorefhamming(vint site1, vint site2)
-{
-   unsigned int dist=0;
-   unsigned int pos=0;
-   for (ivint iv=site1.begin();iv!=site1.end();iv++){
-      const int base=*iv;
-      if (site2[pos]!=base) dist++;
-      pos++;
-   }
-   return dist;
 }
    
 // here give a frequency matrix
@@ -973,24 +937,6 @@ shift(vint::const_iterator iseq,vvd & matrice, vint::const_iterator &seq_end, un
 //         }
 //      }
 //   }
-
-   return shift;
-}
-
-unsigned int
-shifthamming(vint::const_iterator iseq, vint seqmel, vint::const_iterator &seq_end, unsigned int extent)
-{
-   unsigned int shift=0;
-   unsigned int min=100;
-   for (unsigned int i=0;i<extent && iseq+i!=seq_end;i++){
-      vint::const_iterator seqposi=iseq+i;
-      vint seqt=vint(seqposi,seqposi+seqmel.size());
-      unsigned int numhamm=scorefhamming(seqmel,seqt);
-      if (numhamm<min){
-         min=numhamm;
-         shift=i;
-      }
-   }
 
    return shift;
 }

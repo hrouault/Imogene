@@ -164,12 +164,10 @@ vseq loadsequencesconservonly(ifstream & list);
 
 double scoref(vint::const_iterator &iseq, vvd &matrice);
 double scoref(vint site, vvd &matrice);
-double scorefhamming(vint site1, vint site2);
 double compprob(vint site, vvd &matrice);
 double scorefshift(vint &iseq, vvd &matrice);
 
 unsigned int shift(vint::const_iterator iseq,vvd & matrice, vint::const_iterator &seq_end, unsigned int extent);
-unsigned int shifthamming(vint::const_iterator iseq, vint seqmel, vint::const_iterator &seq_end, unsigned int extent);
 
 int basetoint(char base);
 
@@ -180,8 +178,6 @@ int intfromchrom(string chrname);
 vcoord loadcoordconservwstrand(ifstream & list);
 vcoord loadcoordfromTSS(ifstream & list);
 vcoord loadcoordconserv(ifstream & list);
-
-vcoord loadcoordpeaks(ifstream & list);
 
 Sequence coordtoseq(Coordinate & coord);
 

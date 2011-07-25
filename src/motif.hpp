@@ -129,7 +129,6 @@ class Motif
       void matinithamming(double scth,unsigned int numhamm);
       void compprec();
       void compprec_MCMC();
-      void compprec_test();
       void comprefinstances(vseq & regs,unsigned int nspe);
       void comprefinstancescons(unsigned int nspe);
       void comprefmot();
@@ -147,7 +146,6 @@ class Motif
       int nbmatchcons(Sequence & seq);
       double scorematchcons (Sequence & seq);
       int nbmatchconsnmask(Sequence & seq);
-      int nbmatchconsbest1kb(Sequence & seq);
       int nbmatchnmask(Sequence & seq,unsigned int moti);
       int nbmatchwomask(Sequence & seq,unsigned int moti);
       void findinstancesnmask(Sequence &seq);
@@ -163,21 +161,13 @@ class Motif
       int nbmatchnmaskforsvg (Sequence & seq,unsigned int moti);
       void setscorethr2meaninfo();
       vvvd correlations(); //returns width matrices of correlation
-      void enumeratewthres(int n,vint & site,vtfbs & sites);
       vint drawsite(double scorethr);// draws a site with matfreq probs
-
-      void testpwmcv(ofstream & testcv,ofstream & motmeldb);
-      void testpwmcvtimer(ofstream & testcv);
-      void testpseudocount(ofstream & outf);
 };
 
 typedef vector<Motif> vmot;
 typedef vector<vmot> vvmot;
 typedef vmot::iterator ivmot;
       
-void enumerateallsitesncomp(int n,vint & site,vtfbs & sites,Motif & motini,Motif & refmot,vmot & motmix,vd & kprobs,ofstream & outf);
-void enumeratesitesforkmeans(int n,vint & site,vtfbs & sites,Motif & motini,Motif & refmot,vvmot & vmotmix,vvd & vkprobs,ofstream & outf);
-
 class GroupInstance
 {
    public:
@@ -232,20 +222,6 @@ ostream &operator <<(ostream &os,const vcombi &vcomb);
 
 
 vd colmean(unsigned int pos,Motif * mot);
-vd colmean_test_window_for_mean(unsigned int pos,Motif * mot);
-vvd colmean_RW(unsigned int pos,Motif * mot);
-vd colmean_dirichlet(unsigned int pos,Motif * mot);
-vd colmean_dirichlet_metropolis(unsigned int pos,Motif * mot);
-vd colmean_t_test(unsigned int pos,Motif * mot);
-vd colmean_test_numiter(unsigned int pos,Motif * mot);
-vd colmean_test_numiter_w_dirichlet(unsigned int pos,Motif * mot);
-vd colmean_test_numiter_w_dirichlet_metropolis(unsigned int pos,Motif * mot);
-void colmean_test_autocorr_w_dirichlet(unsigned int pos,Motif * mot);
-vd colmean_test_likelihood_w_dirichlet(unsigned int pos,Motif * mot);
-vd colmean_test_rejection_w_dirichlet_metropolis(unsigned int pos,Motif * mot);
-vd colmean_test_rejection_n_autocorr(unsigned int pos,Motif * mot);
-vd colmean_testCV(unsigned int pos,Motif * mot);
-void colmean_testCV_w_dirichlet(unsigned int pos,Motif * mot);
 vd colopti(unsigned int pos,Motif * mot);
 double likelyhood(vd x, void *params);
 double loglikelyhood(vd x, void *params);
@@ -269,6 +245,5 @@ vvd mattofreq(vvd & mat);
 void  matfreqdisp(vvd& matrice);
 void displaymat(vvd & mat);
 
-Motalign mahamming(unsigned int pos, Sequence & seq, Motif & mot,int sens,unsigned int numhamm);
 
 #endif // Motif_H
