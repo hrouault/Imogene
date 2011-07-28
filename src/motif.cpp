@@ -58,6 +58,99 @@ Motif::Motif()
    optauc=0.5;
 }
 
+// !! Initialize instances first with comprefinstances
+   void 
+Motif::comprefmot()
+{
+   vd dum(4,0.0);
+   matrice=vvd(width,dum);
+   countbases(*this,refinstances);
+   countfreq(matrice);
+   matfreq=matrice;
+   freqtolog(matrice);
+   matprec=matrice;
+   //Consensus sequence
+   bsinit="";
+   for (int i=0;i<width;i++){
+      string letter="A";
+      double max(matprec[i][0]);
+      if (matprec[i][1]>max) letter="T";
+      else if (matprec[i][2]>max) letter="C";
+      else if (matprec[i][3]>max) letter="G";
+      bsinit.append(letter);
+   }
+
+   pvaluecomp();
+
+   return;
+}
+
+   void
+Motif::comprefinstances(vseq & regs,unsigned int nspe)
+{
+   findinstances(regs);
+   refinstances.iseqs.clear();
+   refinstances.seqs.clear();
+   for (ivseq ivs=regs.begin();ivs!=regs.end();ivs++){
+      ivs->nmot=0;
+      for (ivinstseq ivi=ivs->instances.begin();ivi!=ivs->instances.end();ivi++){
+         if (ivi->species==nspe){
+            ivs->nmot++;
+            vint iv=ivi->iseq;
+            if (ivi->sens==-1) iv=reversecomp(ivi->iseq);
+            refinstances.iseqs.push_back(iv);
+            refinstances.seqs.push_back(vinttostring(iv));
+         }
+      }
+   }
+   nbmot=refinstances.iseqs.size(); // NON conserved here
+   return;
+
+}
+
+   void
+Motif::matinitforscanmots(Sequence & seq)
+{
+   unsigned int len=seq.iseqs[0].size();
+   unsigned int i=0;
+   for (vint::const_iterator istr=seq.iseqs[0].begin();istr!=seq.iseqs[0].end()-motwidth+1;istr++){
+      if (scoref(istr,matprec)>motscorethr2){
+         vint::const_iterator endci=seq.iseqs[0].end()-motwidth+1;
+         unsigned int sh=shift(istr,matprec,endci,motwidth);
+         Motalign ma(i+sh,seq,*this, 1);
+         if (ma.iscons()){
+            Instance refinst(seq.chrom,seq.start+i+sh,1,index,scoref(istr,matprec),vinttostring(ma.alignseq[0]));
+            refinstances_short.push_back(refinst);
+            if (i+sh<len-2*motwidth){
+               istr+=motwidth-1+sh;
+               i+=motwidth-1+sh;
+            }
+            else {
+               break;
+            }
+         }
+      }
+      else if (scoref(istr,matprecrevcomp)>motscorethr2){ 
+         vint::const_iterator endci=seq.iseqs[0].end()-motwidth+1;
+         unsigned int sh=shift(istr,matprecrevcomp,endci,motwidth);
+         Motalign ma(i+sh,seq,*this,-1);
+         if (ma.iscons()){
+            Instance refinst(seq.chrom,seq.start+i+sh,-1,index,scoref(istr,matprecrevcomp),vinttostring(ma.alignseq[0]));
+            refinstances_short.push_back(refinst);
+            if (i+sh<len-2*motwidth){
+               istr+=motwidth-1+sh;
+               i+=motwidth-1+sh;
+            }
+            else {
+               break;
+            }
+         }
+      }
+      i++;
+      if (istr>seq.iseqs[0].end()-motwidth) break;
+   }
+}
+
 
 TFBS::TFBS()
 {

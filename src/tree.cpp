@@ -3879,285 +3879,286 @@ fitdistkmeanspersite(Motif & mot,const char * filename)
    outf.close();
 }
 
-   void
-fitscorepersite(Motif & mot)
-{
-
-   unsigned int numhamm=2;
-
-   //number of sites for IC stat:
-   unsigned int numforstat(50);
-
-   double time_step=0.01; // for barrier
-   vd dum(4,0.);
-   vd w(dum),pdisp(dum);
-
-   //distances to ref
-   double distance;
-   vd distances(nbspecies,0);
-   if (species=="droso"){
-      distances[0]=0;
-      distances[1]=0.0968;
-      distances[2]=0.1008;
-      distances[3]=0.2334;
-      distances[4]=0.2229;
-      distances[5]=1.5141;
-      distances[6]=1.2973;
-      distances[7]=1.3057;
-      distances[8]=1.5334;
-      distances[9]=1.4741;
-      distances[10]=1.5203;
-      distances[11]=1.4661;
-   }
-   else if (species=="eutherian"){
-      distances[0]=0;
-      distances[1]=0.1587;
-      distances[2]=0.4653;
-      distances[3]=0.4662;
-      distances[4]=0.4708;
-      distances[5]=0.496;
-      distances[6]=0.5512;
-      distances[7]=0.5512;
-      distances[8]=0.5397;
-      distances[9]=0.4971;
-   }
-
-
-   evolutionary_model=2;
-   inittreedist();
-   vvd vdum(4,dum);
-   vvd wdum(mot.motwidth,dum);
-   vvvd M_h(mot.motwidth,vdum);
-   vvvd M_f(mot.motwidth,vdum);
-
-   for (unsigned int i=0;i<mot.motwidth;i++){
-      M_h[i]=instant_rates_halpern (mot.matfreq[i], time_step);
-      M_f[i]=instant_rates_felsen (mot.matfreq[i], time_step);
-   }
-
-   double initscore;
-
-   // find best score for Felsen model
-   cout << "Finding optimal score..." << endl;
-   double scorebest,btotbest(1e6);
-   ofstream chi2("chi2.dat");
-   
-   double maxinfo(0);
-   int j(0);
-   for (ivvd ivv=mot.matprec.begin();ivv!=mot.matprec.end();ivv++){
-      int i(0);
-      double maxcol(-10);
-      for (ivd iv=ivv->begin();iv!=ivv->end();iv++){
-         if (*iv>maxcol) maxcol=*iv;
-         i++;
-      }
-      j++;
-      maxinfo+=maxcol;
-   }
-
-   for (double score=3;score<.9*maxinfo;score+=0.05){
-
-      mot.motscorethr2=score/10*mot.motwidth;
-      mot.motscorethrcons=mot.motscorethr2;
-      mot.matinithamming(mot.motscorethr2,numhamm);
-
-      int index=0;
-      double btot(0);
-      for (unsigned int n=1;n<nbspecies;n++){
-         vd distscore(80,0.); // between -4 and +4 with step 0.1
-         vd distscore_f(80,0.); // between -4 and +4 with step 0.1
-         //for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){}
-         for (ivma ivm=mot.seqs.begin();ivm!=min(mot.seqs.begin()+numforstat,mot.seqs.end());ivm++){
-
-            if (!ivm->matches[n]) continue;
-
-            initscore=scoref(ivm->alignseq[0],mot.matprec);
-
-            // previous m initialized to Id
-            vvd pm(vdum);
-            pm[0][0]=1.;
-            pm[1][1]=1.;
-            pm[2][2]=1.;
-            pm[3][3]=1.;
-
-            // initial probability initialized to TFBS
-            vvd Pdisp_f(wdum);
-            vvd Initprob(wdum);
-            for (unsigned int i=0;i<mot.motwidth;i++) 
-               Initprob[i][ivm->alignseq[0][i]]=1;
-            Pdisp_f=Initprob;
-            vint site(ivm->alignseq[0]);
-
-            // FELSEN
-            for (unsigned int i=0;i<mot.motwidth;i++){
-               Pdisp_f[i]=evolvedist_felsen(Initprob[i],mot.matfreq[i],distances[n]);
-            }
-
-            // SCORES COMPUTATION
-            // First, the "true" TFBS
-            index=(int)(10*(4+(scoref(ivm->alignseq[n],mot.matprec)-initscore)));
-            if (index>=0 && index<80) distscore[index]++;
-            // draw numforstat sites for ICs computation
-            for (unsigned int ks=0;ks<numforstat;ks++){
-
-               vint dumsite(mot.motwidth,4);
-               vint tempsite(dumsite);
-
-               // FELSEN
-               tempsite=dumsite;
-               while (scorefhamming(tempsite,site)>numhamm){
-                  for (unsigned int j=0;j<mot.motwidth;j++){
-                     double pdist[4]={Pdisp_f[j][0],Pdisp_f[j][1],Pdisp_f[j][2],Pdisp_f[j][3]};
-                     gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
-                     unsigned int base=gsl_ran_discrete (gslran,gsldist);
-                     gsl_ran_discrete_free (gsldist);
-                     site[j]=base;
-                  }
-                  tempsite=site;
-               }
-               index=(int)(10*(4+(scoref(site,mot.matprec)-initscore)));
-               if (index>=0 && index<80) distscore_f[index]+=1./numforstat;
-
-            }
-         }
-
-         for (unsigned int id=0;id!=distscore.size();id++){
-            btot+=pow(distscore[id]-distscore_f[id],2)/min(numforstat,mot.seqs.size());
-         }
-      }
-      chi2 << score << "\t" << btot << endl;
-      cout << score << "\t" << btot << endl;
-      if (btot<btotbest && scorebest<10){
-         scorebest=score;
-         btotbest=btot;
-      }
-   }
-   cout << "Best score is " << scorebest << endl;
-   chi2.close();
-
-
-   scorebest=10;
-
-   mot.motscorethr2=scorebest/10*mot.motwidth;
-   mot.motscorethrcons=mot.motscorethr2;
-   mot.matinithamming(mot.motscorethr2,numhamm);
-
-   if (mot.seqs.size()<10){
-      cout << "No sequences! Lowering threshold..." << endl;
-      while (mot.seqs.size()<10){
-         scorebest-=0.05;
-         mot.motscorethr2=scorebest/10*mot.motwidth;
-         mot.motscorethrcons=mot.motscorethr2;
-         mot.matinithamming(mot.motscorethr2,numhamm);
-      }
-
-   }
-   cout << "Best score is " << scorebest << endl;
-   cout << "There are " << mot.seqs.size() << " sequences " << endl;
-   // mot.compprec();
-   //
-
-   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
-      ivm->print();
-   }
-
-   cout << "Computing plots at best score..." << endl;
-   ofstream outf("fitscore_site.dat");
-   for (unsigned int n=1;n<nbspecies;n++){
-      //for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){}
-      for (ivma ivm=mot.seqs.begin();ivm!=min(mot.seqs.begin()+numforstat,mot.seqs.end());ivm++){
-
-         if (!ivm->matches[n]) continue;
-
-         initscore=scoref(ivm->alignseq[0],mot.matprec);
-
-         // previous m initialized to Id
-         vvd pm(vdum);
-         pm[0][0]=1.;
-         pm[1][1]=1.;
-         pm[2][2]=1.;
-         pm[3][3]=1.;
-
-         // initial probability initialized to TFBS
-         vvd Pdisp_f(wdum);
-         vvd Pdisp_h(wdum);
-         vvd Initprob(wdum);
-         for (unsigned int i=0;i<mot.motwidth;i++) 
-            Initprob[i][ivm->alignseq[0][i]]=1;
-         Pdisp_f=Initprob;
-         Pdisp_h=Initprob;
-
-
-         // HALPERN
-         for (unsigned int i=0;i<mot.motwidth;i++){
-            Pdisp_h[i]=evolvedist_halpern(Initprob[i],mot.matfreq[i],distances[n]);
-         }
-
-         // FELSEN
-         for (unsigned int i=0;i<mot.motwidth;i++){
-            Pdisp_f[i]=evolvedist_felsen(Initprob[i],mot.matfreq[i],distances[n]);
-         }
-
-
-         // SCORES COMPUTATION
-         //
-         // First, the "true" TFBS
-         //
-
-         outf << numtospecies(n) << " ";
-         outf << "Data" << " ";
-         outf << scoref(ivm->alignseq[n],mot.matprec)-initscore << endl;
-
-
-         // draw numforstat sites for ICs computation
-         //cout << "data " << vinttostring(ivm->alignseq[n]) << endl;
-         for (unsigned int ks=0;ks<numforstat;ks++){
-
-            vint dumsite(mot.motwidth,4);
-            vint site(ivm->alignseq[0]);
-
-            // HALPERN
-            vint tempsite(dumsite);
-            while (scorefhamming(tempsite,site)>numhamm){
-               for (unsigned int j=0;j<mot.motwidth;j++){
-                  double pdist[4]={Pdisp_h[j][0],Pdisp_h[j][1],Pdisp_h[j][2],Pdisp_h[j][3]};
-                  gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
-                  unsigned int base=gsl_ran_discrete (gslran,gsldist);
-                  gsl_ran_discrete_free (gsldist);
-                  site[j]=base;
-               }
-               tempsite=site;
-            }
-            outf << numtospecies(n) << " ";
-            outf << "Halpern" << " ";
-            outf << scoref(site,mot.matprec)-initscore << endl;
-
-            //cout << "halpern " << vinttostring(site) << endl;
-
-            // FELSEN
-            tempsite=dumsite;
-            while (scorefhamming(tempsite,site)>numhamm){
-               for (unsigned int j=0;j<mot.motwidth;j++){
-                  double pdist[4]={Pdisp_f[j][0],Pdisp_f[j][1],Pdisp_f[j][2],Pdisp_f[j][3]};
-                  gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
-                  unsigned int base=gsl_ran_discrete (gslran,gsldist);
-                  gsl_ran_discrete_free (gsldist);
-                  site[j]=base;
-               }
-               tempsite=site;
-            }
-            outf << numtospecies(n) << " ";
-            outf << "Felsen" << " ";
-            outf << scoref(site,mot.matprec)-initscore << endl;
-
-
-
-         }
-         //         getchar();
-      }
-   }
-   outf.close();
-}
+/*    void
+ * fitscorepersite(Motif & mot)
+ * {
+ * 
+ *    unsigned int numhamm=2;
+ * 
+ *    //number of sites for IC stat:
+ *    unsigned int numforstat(50);
+ * 
+ *    double time_step=0.01; // for barrier
+ *    vd dum(4,0.);
+ *    vd w(dum),pdisp(dum);
+ * 
+ *    //distances to ref
+ *    double distance;
+ *    vd distances(nbspecies,0);
+ *    if (species=="droso"){
+ *       distances[0]=0;
+ *       distances[1]=0.0968;
+ *       distances[2]=0.1008;
+ *       distances[3]=0.2334;
+ *       distances[4]=0.2229;
+ *       distances[5]=1.5141;
+ *       distances[6]=1.2973;
+ *       distances[7]=1.3057;
+ *       distances[8]=1.5334;
+ *       distances[9]=1.4741;
+ *       distances[10]=1.5203;
+ *       distances[11]=1.4661;
+ *    }
+ *    else if (species=="eutherian"){
+ *       distances[0]=0;
+ *       distances[1]=0.1587;
+ *       distances[2]=0.4653;
+ *       distances[3]=0.4662;
+ *       distances[4]=0.4708;
+ *       distances[5]=0.496;
+ *       distances[6]=0.5512;
+ *       distances[7]=0.5512;
+ *       distances[8]=0.5397;
+ *       distances[9]=0.4971;
+ *    }
+ * 
+ * 
+ *    evolutionary_model=2;
+ *    inittreedist();
+ *    vvd vdum(4,dum);
+ *    vvd wdum(mot.motwidth,dum);
+ *    vvvd M_h(mot.motwidth,vdum);
+ *    vvvd M_f(mot.motwidth,vdum);
+ * 
+ *    for (unsigned int i=0;i<mot.motwidth;i++){
+ *       M_h[i]=instant_rates_halpern (mot.matfreq[i], time_step);
+ *       M_f[i]=instant_rates_felsen (mot.matfreq[i], time_step);
+ *    }
+ * 
+ *    double initscore;
+ * 
+ *    // find best score for Felsen model
+ *    cout << "Finding optimal score..." << endl;
+ *    double scorebest,btotbest(1e6);
+ *    ofstream chi2("chi2.dat");
+ *    
+ *    double maxinfo(0);
+ *    int j(0);
+ *    for (ivvd ivv=mot.matprec.begin();ivv!=mot.matprec.end();ivv++){
+ *       int i(0);
+ *       double maxcol(-10);
+ *       for (ivd iv=ivv->begin();iv!=ivv->end();iv++){
+ *          if (*iv>maxcol) maxcol=*iv;
+ *          i++;
+ *       }
+ *       j++;
+ *       maxinfo+=maxcol;
+ *    }
+ * 
+ *    for (double score=3;score<.9*maxinfo;score+=0.05){
+ * 
+ *       mot.motscorethr2=score/10*mot.motwidth;
+ *       mot.motscorethrcons=mot.motscorethr2;
+ *       mot.matinithamming(mot.motscorethr2,numhamm);
+ * 
+ *       int index=0;
+ *       double btot(0);
+ *       for (unsigned int n=1;n<nbspecies;n++){
+ *          vd distscore(80,0.); // between -4 and +4 with step 0.1
+ *          vd distscore_f(80,0.); // between -4 and +4 with step 0.1
+ *          //for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){}
+ *          for (ivma ivm=mot.seqs.begin();ivm!=min(mot.seqs.begin()+numforstat,mot.seqs.end());ivm++){
+ * 
+ *             if (!ivm->matches[n]) continue;
+ * 
+ *             initscore=scoref(ivm->alignseq[0],mot.matprec);
+ * 
+ *             // previous m initialized to Id
+ *             vvd pm(vdum);
+ *             pm[0][0]=1.;
+ *             pm[1][1]=1.;
+ *             pm[2][2]=1.;
+ *             pm[3][3]=1.;
+ * 
+ *             // initial probability initialized to TFBS
+ *             vvd Pdisp_f(wdum);
+ *             vvd Initprob(wdum);
+ *             for (unsigned int i=0;i<mot.motwidth;i++) 
+ *                Initprob[i][ivm->alignseq[0][i]]=1;
+ *             Pdisp_f=Initprob;
+ *             vint site(ivm->alignseq[0]);
+ * 
+ *             // FELSEN
+ *             for (unsigned int i=0;i<mot.motwidth;i++){
+ *                Pdisp_f[i]=evolvedist_felsen(Initprob[i],mot.matfreq[i],distances[n]);
+ *             }
+ * 
+ *             // SCORES COMPUTATION
+ *             // First, the "true" TFBS
+ *             index=(int)(10*(4+(scoref(ivm->alignseq[n],mot.matprec)-initscore)));
+ *             if (index>=0 && index<80) distscore[index]++;
+ *             // draw numforstat sites for ICs computation
+ *             for (unsigned int ks=0;ks<numforstat;ks++){
+ * 
+ *                vint dumsite(mot.motwidth,4);
+ *                vint tempsite(dumsite);
+ * 
+ *                // FELSEN
+ *                tempsite=dumsite;
+ *                while (scorefhamming(tempsite,site)>numhamm){
+ *                   for (unsigned int j=0;j<mot.motwidth;j++){
+ *                      double pdist[4]={Pdisp_f[j][0],Pdisp_f[j][1],Pdisp_f[j][2],Pdisp_f[j][3]};
+ *                      gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
+ *                      unsigned int base=gsl_ran_discrete (gslran,gsldist);
+ *                      gsl_ran_discrete_free (gsldist);
+ *                      site[j]=base;
+ *                   }
+ *                   tempsite=site;
+ *                }
+ *                index=(int)(10*(4+(scoref(site,mot.matprec)-initscore)));
+ *                if (index>=0 && index<80) distscore_f[index]+=1./numforstat;
+ * 
+ *             }
+ *          }
+ * 
+ *          for (unsigned int id=0;id!=distscore.size();id++){
+ *             btot+=pow(distscore[id]-distscore_f[id],2)/min(numforstat,mot.seqs.size());
+ *          }
+ *       }
+ *       chi2 << score << "\t" << btot << endl;
+ *       cout << score << "\t" << btot << endl;
+ *       if (btot<btotbest && scorebest<10){
+ *          scorebest=score;
+ *          btotbest=btot;
+ *       }
+ *    }
+ *    cout << "Best score is " << scorebest << endl;
+ *    chi2.close();
+ * 
+ * 
+ *    scorebest=10;
+ * 
+ *    mot.motscorethr2=scorebest/10*mot.motwidth;
+ *    mot.motscorethrcons=mot.motscorethr2;
+ *    mot.matinithamming(mot.motscorethr2,numhamm);
+ * 
+ *    if (mot.seqs.size()<10){
+ *       cout << "No sequences! Lowering threshold..." << endl;
+ *       while (mot.seqs.size()<10){
+ *          scorebest-=0.05;
+ *          mot.motscorethr2=scorebest/10*mot.motwidth;
+ *          mot.motscorethrcons=mot.motscorethr2;
+ *          mot.matinithamming(mot.motscorethr2,numhamm);
+ *       }
+ * 
+ *    }
+ *    cout << "Best score is " << scorebest << endl;
+ *    cout << "There are " << mot.seqs.size() << " sequences " << endl;
+ *    // mot.compprec();
+ *    //
+ * 
+ *    for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
+ *       ivm->print();
+ *    }
+ * 
+ *    cout << "Computing plots at best score..." << endl;
+ *    ofstream outf("fitscore_site.dat");
+ *    for (unsigned int n=1;n<nbspecies;n++){
+ *       //for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){}
+ *       for (ivma ivm=mot.seqs.begin();ivm!=min(mot.seqs.begin()+numforstat,mot.seqs.end());ivm++){
+ * 
+ *          if (!ivm->matches[n]) continue;
+ * 
+ *          initscore=scoref(ivm->alignseq[0],mot.matprec);
+ * 
+ *          // previous m initialized to Id
+ *          vvd pm(vdum);
+ *          pm[0][0]=1.;
+ *          pm[1][1]=1.;
+ *          pm[2][2]=1.;
+ *          pm[3][3]=1.;
+ * 
+ *          // initial probability initialized to TFBS
+ *          vvd Pdisp_f(wdum);
+ *          vvd Pdisp_h(wdum);
+ *          vvd Initprob(wdum);
+ *          for (unsigned int i=0;i<mot.motwidth;i++) 
+ *             Initprob[i][ivm->alignseq[0][i]]=1;
+ *          Pdisp_f=Initprob;
+ *          Pdisp_h=Initprob;
+ * 
+ * 
+ *          // HALPERN
+ *          for (unsigned int i=0;i<mot.motwidth;i++){
+ *             Pdisp_h[i]=evolvedist_halpern(Initprob[i],mot.matfreq[i],distances[n]);
+ *          }
+ * 
+ *          // FELSEN
+ *          for (unsigned int i=0;i<mot.motwidth;i++){
+ *             Pdisp_f[i]=evolvedist_felsen(Initprob[i],mot.matfreq[i],distances[n]);
+ *          }
+ * 
+ * 
+ *          // SCORES COMPUTATION
+ *          //
+ *          // First, the "true" TFBS
+ *          //
+ * 
+ *          outf << numtospecies(n) << " ";
+ *          outf << "Data" << " ";
+ *          outf << scoref(ivm->alignseq[n],mot.matprec)-initscore << endl;
+ * 
+ * 
+ *          // draw numforstat sites for ICs computation
+ *          //cout << "data " << vinttostring(ivm->alignseq[n]) << endl;
+ *          for (unsigned int ks=0;ks<numforstat;ks++){
+ * 
+ *             vint dumsite(mot.motwidth,4);
+ *             vint site(ivm->alignseq[0]);
+ * 
+ *             // HALPERN
+ *             vint tempsite(dumsite);
+ *             while (scorefhamming(tempsite,site)>numhamm){
+ *                for (unsigned int j=0;j<mot.motwidth;j++){
+ *                   double pdist[4]={Pdisp_h[j][0],Pdisp_h[j][1],Pdisp_h[j][2],Pdisp_h[j][3]};
+ *                   gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
+ *                   unsigned int base=gsl_ran_discrete (gslran,gsldist);
+ *                   gsl_ran_discrete_free (gsldist);
+ *                   site[j]=base;
+ *                }
+ *                tempsite=site;
+ *             }
+ *             outf << numtospecies(n) << " ";
+ *             outf << "Halpern" << " ";
+ *             outf << scoref(site,mot.matprec)-initscore << endl;
+ * 
+ *             //cout << "halpern " << vinttostring(site) << endl;
+ * 
+ *             // FELSEN
+ *             tempsite=dumsite;
+ *             while (scorefhamming(tempsite,site)>numhamm){
+ *                for (unsigned int j=0;j<mot.motwidth;j++){
+ *                   double pdist[4]={Pdisp_f[j][0],Pdisp_f[j][1],Pdisp_f[j][2],Pdisp_f[j][3]};
+ *                   gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
+ *                   unsigned int base=gsl_ran_discrete (gslran,gsldist);
+ *                   gsl_ran_discrete_free (gsldist);
+ *                   site[j]=base;
+ *                }
+ *                tempsite=site;
+ *             }
+ *             outf << numtospecies(n) << " ";
+ *             outf << "Felsen" << " ";
+ *             outf << scoref(site,mot.matprec)-initscore << endl;
+ * 
+ * 
+ * 
+ *          }
+ *          //         getchar();
+ *       }
+ *    }
+ *    outf.close();
+ * }
+ */
 
 
    void   // Currently used phylogenetic tree for drosophilae :  Heger and Pontig, 2007

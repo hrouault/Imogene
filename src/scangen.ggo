@@ -60,7 +60,7 @@ option "mean-info" - "Set score threshold to PWM mean info" optional
 
 option "wocons" - "Do NOT use conservation" optional
 
-option "MCMCtest" - "Test Likelihood average with MCMC" optional
+## option "MCMCtest" - "Test Likelihood average with MCMC" optional  ## 
 
 defgroup "discarding"   groupdesc="The way enhancers are grouped for the definitive sorting" 
 groupoption "discard-on-gene-names" -  "" group="discarding"
