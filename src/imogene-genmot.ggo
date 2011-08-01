@@ -75,8 +75,6 @@ defmode "motgen" modedesc="Generate motifs from a training set (de novo)."
 modeoption "motgen" -  "Triggers motgen mode" mode="motgen" required
 modeoption "ref" -  "Do NOT use conservation for motif generation nor selection" mode="motgen" optional
 
-modeoption "motaffin" - "Affinates PWMs" mode="motaffin" required
-
 modeoption "motcorr" - "Triggers motcorr mode" mode="motcorr" required
 modeoption "first-interval" - "Only nearest motif" mode="motcorr" optional
 
