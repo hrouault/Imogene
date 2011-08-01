@@ -24,7 +24,7 @@
 #include <iostream>
 #include <string>
 
-#include "cmdline.h"
+#include "imogene-genmot_cmdline.h"
 
 
 // *** See if the following are required...
@@ -54,7 +54,6 @@ using namespace std;
 #include "tree.hpp"
 //#include "montecarlo.hpp"
 #include "scangen.hpp"
-#include "cmdline.h"
 
 gengetopt_args_info args_info;
 vmot motsdef;

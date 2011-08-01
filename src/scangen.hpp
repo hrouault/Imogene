@@ -1,7 +1,7 @@
 #ifndef Motsearch_H 
 #define Motsearch_H 
 
-#include "cmdline.h"
+#include "imogene-genmot_cmdline.h"
 #include <vector>
 #include <string>
 #include <gsl/gsl_rng.h>
