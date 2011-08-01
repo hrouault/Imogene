@@ -12,7 +12,6 @@ missing
 py-compile
 aclocal.m4
 autom4te.cache
-*cmdline.[ch]
 depcomp
 compile
 mdate-sh
