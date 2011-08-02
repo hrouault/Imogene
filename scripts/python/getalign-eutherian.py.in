@@ -33,14 +33,98 @@ print
 print "[",datetime.datetime.now(),"]  Converting EMF files to fasta..."
 print
 
+def spe2short(name):
+   if name == "mus_musculus":
+      return "MusMus"
+   elif name == "pan_troglodytes":
+      return "PanTro"
+   elif name == "pongo_abelii":
+      return "PonAbe"
+   elif name == "macaca_mulatta":
+      return "MacMul"
+   elif name == "homo_sapiens":
+      return "HomSap"
+   elif name == "rattus_norvegicus":
+      return "RatNor"
+   elif name == "equus_caballus":
+      return "EquCab"
+   elif name == "canis_familiaris":
+      return "CanFam"
+   elif name == "bos_taurus":
+      return "BosTau"
+   elif name == "sus_scrofa":
+      return "SusScr"
+   elif name == "gorilla_gorilla":
+      return "GorGor"
+   elif name == "callithrix_jacchus":
+      return "CalJac"
+   else:
+      return "NA"
+
+def spe2num(name):
+   if name == "mus_musculus":
+      return 0
+   elif name == "pan_troglodytes":
+      return 1
+   elif name == "pongo_abelii":
+      return 2
+   elif name == "macaca_mulatta":
+      return 3
+   elif name == "homo_sapiens":
+      return 4
+   elif name == "rattus_norvegicus":
+      return 5
+   elif name == "equus_caballus":
+      return 6
+   elif name == "canis_familiaris":
+      return 7
+   elif name == "bos_taurus":
+      return 8
+   elif name == "sus_scrofa":
+      return 9
+   elif name == "gorilla_gorilla":
+      return 10
+   elif name == "callithrix_jacchus":
+      return 11
+   else:
+      return -1
+
 for file in glob.glob('*.emf'):
    with open(file) as femf:
       while 1:
          line=femf.readline()
          while line[0:3] != 'SEQ':
             line=femf.readline()
-         print line
+         col=0
+         cols=[-1 for i in range(12)]
+         seqs=["" for i in range(12)]
+         chrs=["" for i in range(12)]
+         while line[0:3] == 'SEQ':
+            coords=line.rstrip().split(" ")
+            if coords[1] != "ancestral_sequences":
+               cols[spe2num(coords[1])]=col
+               chrs[spe2num(coords[1])]=coords[2]
+            col+=1
+            line=femf.readline()
+         
+         if cols[spe2num("mus_musculus")]==-1 or chrs[spe2num("mus_musculus")]=="":
+            continue
+         
+         femf.readline()
+         line=femf.readline()
+         counter=0
+         while line[0:2] != '//':
+            for i in range(12):
+               if cols[i] != -1:
+                  seqs[i]+=line[cols[i]]
+            counter+=1
+            if counter==50000:
+               break
+            line=femf.readline()
+         print seqs
+         sys.exit()
          if not line: break
+         print cols
          sys.exit(1)
 
 
