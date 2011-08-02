@@ -114,6 +114,7 @@ def reversecomp(seq):
 
 for file in glob.glob('*.emf'):
    with open(file) as femf:
+      print file
       line=femf.readline()
       while 1:
          while line[0:3] != 'SEQ':
@@ -125,6 +126,7 @@ for file in glob.glob('*.emf'):
          stos = [ -1 for i in range(12) ]
          strs = [ 0 for i in range(12) ]
          seqs = [ "" for i in range(12) ]
+         vseqs = [ [] for i in range(12) ]
          col=0
          while line[0:3] == 'SEQ':
             coords=line.rstrip().split(" ")
@@ -146,8 +148,11 @@ for file in glob.glob('*.emf'):
          
          nref=spe2num("mus_musculus")
 
+
          if cols[nref]==-1 or chrs[nref]=="":
             continue
+         
+         print chrs[nref],stas[nref],stos[nref],"length =",int(stos[nref])-int(stas[nref])+1
          
          femf.readline()
          line=femf.readline()
@@ -155,11 +160,14 @@ for file in glob.glob('*.emf'):
          while line[0:2] != '//':
             for i in range(12):
                if cols[i] != -1:
-                  seqs[i] += line[cols[i]]
+                  vseqs[i].append(line[cols[i]])
             counter += 1
             if not counter % 10000:
                print counter
             line=femf.readline()
+         
+         for i in range(12):
+            seqs[i]=''.join(vseqs[i])
 
          folder=chrs[nref]
          mkdir(folder)
@@ -168,7 +176,6 @@ for file in glob.glob('*.emf'):
          
          strand=strs[nref]
          for i in range(12):
-            print spes[i],strs[i]
             if spes[i] != "":
                if spes[i] == 'MusMus':
                   fasta.write('>'+spes[i]+' '+chrs[i]+' '+stas[i]+' '+stos[i]+'\n')
