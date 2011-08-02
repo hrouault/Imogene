@@ -5,7 +5,7 @@ AC_PREREQ([2.61])
 #AC_INIT(Imogene, 1.0, [Hervé Rouault rouault@lps.ens.fr Marc Santolini marc.santolini@lps.ens.fr])
 AC_INIT(Imogene, m4_esyscmd([tools/git-version-gen .tarball-version]), [rouault@lps.ens.fr marc.santolini@lps.ens.fr])
 AM_INIT_AUTOMAKE()
-AC_CONFIG_SRCDIR([src/alignments/align.cpp])
+AC_CONFIG_SRCDIR([src/imogene-genmot.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/ax_blas.m4])
@@ -18,6 +18,7 @@ AM_PATH_PYTHON([2.5],,[AC_MSG_ERROR([no python version >=2.5 detected])])
 AC_PROG_CXX
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_RANLIB
 
 # Checks for libraries.
 AC_CHECK_LIB([m],[cos],,[AC_MSG_ERROR([math functions required.])])
@@ -43,8 +44,7 @@ AC_CONFIG_FILES([Makefile
                  scripts/sh/Makefile
                  data/Makefile
                  doc/Makefile
-                 src/Makefile
-                 src/alignments/Makefile])
+                 src/Makefile])
 
 AC_MSG_NOTICE([ Next step instruction
                Launch the script for alignment generation...

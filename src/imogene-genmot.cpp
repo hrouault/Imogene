@@ -24,6 +24,8 @@
 #include <iostream>
 #include <string>
 
+#include <algorithm> // used by sort
+
 #include "imogene-genmot_cmdline.h"
 
 
@@ -1937,6 +1939,67 @@ seqanalysis(Sequence & currseq,ofstream & streamfile)
    }
    cout << endl;
 }
+
+   void
+seqanalysis(Sequence & currseq,vmot & genmots)
+{
+   unsigned int i=0;
+//      for (int j=0;j<nbspecies;j++){
+//      cout << currseq.iseqs[j] << endl;
+//      }
+   for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
+      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
+      vint bs(istr,istr+width);
+     //cout << i << " " << bs << endl;
+      if (compN(bs)>0) continue;
+      Motif currmot;
+      currmot.bsinit=vinttostring(bs);
+      currmot.seqinit=currseq.name;
+      currmot.pos=i;
+      motiftomat(bs,currmot);
+      currmot.matricerevcomp=reversecomp(currmot.matrice);
+      currmot.matprec=currmot.matrice;
+      currmot.matprecrevcomp=currmot.matricerevcomp;
+      vvd pmat=currmot.matprec;
+      unsigned int nbconv(0);
+      for (int nb=1;nb<=nbiter;nb++){
+         double max=0.01;
+         int iter(0);
+         while(max>0){
+            if (nb>2) currmot.matinit(scorethr2);
+            else currmot.matinit(scorethr);
+            if (currmot.nbmot<1) break;
+            
+            currmot.compprec();
+            max=distcv(currmot.matprec,pmat);
+            pmat=currmot.matprec;
+            iter++;
+            if (iter==20) break;
+            nbconv++;
+         }
+         if (nb==1){
+            currmot.corrprec();
+            pmat=currmot.matprec;
+            currmot.matprecrevcomp=reversecomp(currmot.matprec);
+         }
+      }
+      //cout << currmot.nbmot << " " ; 
+      //cout.flush();
+
+      currmot.matinit(scorethr2);
+      if (currmot.nbmot>2){
+         currmot.pvaluecomp();
+         //currmot.display(streamfile);
+         //		for (ivma ima=currmot.seqs.begin();ima!=currmot.seqs.end();ima++){
+         //  cout << (*ima).alignseq[0] << endl;
+         //		}
+         //cout << currmot.matprec << endl;
+         genmots.push_back(currmot);
+      }
+      i++;
+   }
+   cout << endl;
+}
    
    void
 refseqanalysis(Sequence & currseq,ofstream & streamfile)
@@ -3628,6 +3691,18 @@ print_copyright ()
 
 /** 
  * ===  FUNCTION  ======================================================================
+ *         Name:  motscoreorder
+ *  Description:  Compare motif overrepresentation
+ * =====================================================================================
+ */
+   void
+motscoreorder ( motif mot1, motif mot2 )
+{
+   return mot1.score<mot2.score;
+}		/* -----  end of function motscoreorder  ----- */
+
+/** 
+ * ===  FUNCTION  ======================================================================
  *         Name:  main
  *  Description:  imogene-genmot main file, responsible for the de novo inference of
  *  motifs
@@ -3681,18 +3756,24 @@ main(int argc, char** argv)
    cout << "Training set size : " << regints.size() << endl;
    inittreedist();
 
+   //If the sorting is done within the c file we don't need to write motmeldb.txt
+   // -> Still provide a good way to show progress...
    // *** What is it for?? (please comment)
+   vmots genmots
    for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
       cout << (*iseq).name << endl;
       if (args_info.ref_given){
          refseqanalysis(*iseq,motmeldb);
       }
       else{
-         seqanalysis(*iseq,motmeldb);
+         seqanalysis(*iseq,genmots);
       }
       cout << endl;
    }
    motmeldb.close();
+   sort(genmots.begin(),genmots.end(),motscoreorder);
+
+   // Sort 
 
 
    gsl_rng_free(gslran);
