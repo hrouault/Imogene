@@ -51,6 +51,7 @@ This manual is for Imogene
 @end ifnottex
 
 @menu
+* Installation:: 
 * Generating motifs de novo:: 
 * Copying This Manual::
 * Index::
