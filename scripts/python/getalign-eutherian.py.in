@@ -22,7 +22,7 @@ import mapping
 os.chdir('@pkgdatadir@')
 mkdir('eutherian')
 os.chdir('eutherian')
-print "[",datetime.datetime.now(),"]  Getting Enrendo Pecan Ortheus alignment files from ENSEMBL..."
+print "[",datetime.datetime.now(),"]  Downloading Enrendo Pecan Ortheus alignment files from ENSEMBL..."
 print 
 
 mkdir('alignments')

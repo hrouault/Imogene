@@ -22,7 +22,7 @@ import mapping
 os.chdir('@pkgdatadir@')
 mkdir('droso')
 os.chdir('droso')
-print "[",datetime.datetime.now(),"]  Getting Mavid Mercator alignment files..."
+print "[",datetime.datetime.now(),"]  Downloading Mavid Mercator alignment files..."
 print 
 
 os.system('wget -c "http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/fly_CAF1.1.tar.gz"')
@@ -34,7 +34,7 @@ os.system('tar xzf fly_CAF1.1.tar.gz')
 os.system('mv Dro*.agp map genomes treefile alignments')
 #os.remove("fly_CAF1.1.tar.gz")
 
-print "[",datetime.datetime.now(),"]  Getting Flybase annotation files..."
+print "[",datetime.datetime.now(),"]  Downloading Flybase annotation files..."
 print 
 
 

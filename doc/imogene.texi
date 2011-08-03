@@ -56,6 +56,23 @@ This manual is for Imogene
 * Index::
 @end menu
 
+@node Installation
+@chapter Installation
+
+@cindex installation
+
+The first step is to invoke the usual commands to install a package (once you have extracted to tarball)~:
+@command{mkdir build}
+@command{cd build}
+@command{../configure --prefix="install/full/path"}
+@command{make}
+@command{make install}
+
+
+This mode is selected by invoking @command{imogene genmot}
+on the command line. 
+
+Here are the options :
 
 @node Generating motifs de novo
 @chapter Generating motifs de novo
