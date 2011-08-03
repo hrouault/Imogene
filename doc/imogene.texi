@@ -38,17 +38,16 @@ Software Foundation raise funds for GNU development.''
 @insertcopying
 @end titlepage
 
-@contents
-
-
 @c Output the table of contents at the beginning.
 @contents
+
 
 @ifnottex
 @node Top
 @top Imogene
 
-@insertcopying
+This manual is for Imogene
+(version @value{VERSION}, @value{UPDATED}).
 @end ifnottex
 
 @menu
@@ -61,20 +60,13 @@ Software Foundation raise funds for GNU development.''
 @node Generating motifs de novo
 @chapter Generating motifs de novo
 
-@cindex chapter, first
+@cindex motif, generation
 
-This is the first chapter.
-@cindex index entry, another
+This mode is selected by invoking @command{imogene genmot}
+on the command line. 
 
-Here is a numbered list.
+Here are the options :
 
-@enumerate
-@item
-This is the first item.
-
-@item
-This is the second item.
-@end enumerate
 
 @node Copying This Manual
 @appendix Copying This Manual
@@ -82,7 +74,6 @@ This is the second item.
 @c @menu
 @c * GNU Free Documentation License::  License for copying this manual.
 @c @end menu
-
 @include fdl.texi
 
 @node Index
