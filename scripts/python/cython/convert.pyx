@@ -72,10 +72,17 @@ def convert():
    for file in glob.glob('*.emf'):
       with open(file) as femf:
          print file
-         line=femf.readline()
-         while 1:
-            while line[0:3] != 'SEQ':
-               line=femf.readline()
+         lines=femf.readlines()
+         
+         headers = [ index for index,line in enumerate(lines) if line.find('SEQ') != -1 and lines[index-1].find('SEQ') == -1 ]
+         startseqs = [ index+1 for index,line in enumerate(lines) if line.find('DATA') != -1 ]
+         stopseqs = [ index for index,line in enumerate(lines) if line.find('//') != -1 ]
+
+         index = 0
+         while index < len(startseqs):
+            
+            ## READ HEADER
+
             cols = [ -1 for i in range(12) ]
             spes = [ "" for i in range(12) ]
             chrs = [ "" for i in range(12) ]
@@ -84,6 +91,8 @@ def convert():
             strs = [ 0 for i in range(12) ]
             seqs = [ "" for i in range(12) ]
             vseqs = [ [] for i in range(12) ]
+
+            line=lines[headers[index]]
             col=0
             while line[0:3] == 'SEQ':
                coords=line.rstrip().split(" ")
@@ -101,37 +110,35 @@ def convert():
                   stos[ns] = sto
                   strs[ns] = int(str)
                col+=1
-               line=femf.readline()
+               line=lines[headers[index]+col]
             
-            nref=spe2num("mus_musculus")
+            ## CHECK MUS MUSCULUS IS PRESENT
 
+            nref=spe2num("mus_musculus")
             if cols[nref]==-1 or chrs[nref]=="":
+               index += 1
                continue
            
-            strand=strs[nref]
+            ## READ SEQUENCES
             
-            print chrs[nref],stas[nref],stos[nref],"length =",int(stos[nref])-int(stas[nref])+1
-            
-            femf.readline()
-            line=femf.readline()
-            
-#            counter=0
-            while line[0:2] != '//':
+            strand=strs[nref]            
+            if strand == 1:  
                for i in range(12):
-                  if cols[i] != -1:
-                     vseqs[i].append(line[cols[i]])
-#               counter += 1
-#               if not counter % 10000:
-#                  print counter
-               line=femf.readline()
-            
-            for i in range(12):
-               if strand == -1:
+                  vseqs[i] = [ line[cols[i]] for line in lines[startseqs[index]:stopseqs[index]] if cols[i] != -1 ]
+                  seqs[i] = ''.join(vseqs[i])
+            elif strand == -1:
+               for i in range(12):
+                  vseqs[i] = [ line[cols[i]] for line in lines[startseqs[index]:stopseqs[index]] if cols[i] != -1 ]
                   vseqs[i].reverse()
-               seqs[i]=''.join(vseqs[i])
-               if strand == -1:
+                  seqs[i] = ''.join(vseqs[i])
                   seqs[i]=seqs[i].translate(string.maketrans('AaTtCcGg','TtAaGgCc'))
 
+            print chrs[nref],stas[nref],stos[nref],strand,"length =",int(stos[nref])-int(stas[nref])+1
+            #for i in range(12):
+            #   print i,seqs[i][0:20],"...",seqs[i][len(seqs[i])-20:len(seqs[i])]
+
+            ## WRITE FASTA FORMATTED FILE
+            
             folder=chrs[nref]
             mkdir(folder)
             filename=folder+"/"+stas[nref]+"-"+stos[nref]+".fa"
@@ -143,9 +150,8 @@ def convert():
                      fasta.write('>'+spes[i]+' '+chrs[i]+' '+stas[i]+' '+stos[i]+'\n')
                   else:
                      fasta.write('>'+spes[i]+'\n')
-                  
                   fasta.write(seqs[i]+'\n')
             
-            line=femf.readline()
-            if not line: break
+            index += 1
 
+convert()
