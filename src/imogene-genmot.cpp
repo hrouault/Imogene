@@ -3695,11 +3695,11 @@ print_copyright ()
  *  Description:  Compare motif overrepresentation
  * =====================================================================================
  */
-   void
-motscoreorder ( motif mot1, motif mot2 )
-{
-   return mot1.score<mot2.score;
-}		/* -----  end of function motscoreorder  ----- */
+//   void
+//motscoreorder ( motif mot1, motif mot2 )
+//{
+//   return mot1.score<mot2.score;
+//}		/* -----  end of function motscoreorder  ----- */
 
 /** 
  * ===  FUNCTION  ======================================================================
@@ -3759,19 +3759,19 @@ main(int argc, char** argv)
    //If the sorting is done within the c file we don't need to write motmeldb.txt
    // -> Still provide a good way to show progress...
    // *** What is it for?? (please comment)
-   vmots genmots
-   for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
-      cout << (*iseq).name << endl;
-      if (args_info.ref_given){
-         refseqanalysis(*iseq,motmeldb);
-      }
-      else{
-         seqanalysis(*iseq,genmots);
-      }
-      cout << endl;
-   }
-   motmeldb.close();
-   sort(genmots.begin(),genmots.end(),motscoreorder);
+//   vmots genmots
+//   for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
+//      cout << (*iseq).name << endl;
+//      if (args_info.ref_given){
+//         refseqanalysis(*iseq,motmeldb);
+//      }
+//      else{
+//         seqanalysis(*iseq,genmots);
+//      }
+//      cout << endl;
+//   }
+//   motmeldb.close();
+//   sort(genmots.begin(),genmots.end(),motscoreorder);
 
    // Sort 
 

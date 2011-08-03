@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import sys
 import os
@@ -7,12 +7,20 @@ import string
 import glob
 import datetime
 import bisect
+import errno
+
+def mkdir(path):
+   try:
+      os.mkdir(path)
+   except os.error, e:
+      if e.errno != errno.EEXIST:
+         raise
 
 sys.path.append("@pythondir@")
 import mapping
 
 os.chdir('@pkgdatadir@')
-os.system('[ ! -d droso ] && mkdir droso')
+mkdir('droso')
 os.chdir('droso')
 print "[",datetime.datetime.now(),"]  Getting Mavid Mercator alignment files..."
 print 
@@ -28,7 +36,9 @@ os.system('mv Dro*.agp map genomes treefile alignments')
 
 print "[",datetime.datetime.now(),"]  Getting Flybase annotation files..."
 print 
-os.system('[ ! -d annot ] && mkdir annot')
+
+
+mkdir("annot")
 os.chdir("annot")
 
 os.system("wget -c ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/dmel-2L-r5.38.gff.gz")
@@ -67,14 +77,12 @@ def processcoord(coords):
 fcds=open("CDS-coord.dat")
 cds=[i.rstrip().split(" ") for i in fcds.readlines()]
 processcoord(cds)
-cds
 fcds.close()
 
 ## Open file containing repeated sequence coordinates
 frepeat=open("repeat-coord.dat")
 repeat=[i.rstrip().split(" ") for i in frepeat.readlines()]
 processcoord(repeat)
-#repeat ??
 frepeat.close()
 
 os.chdir("..")
