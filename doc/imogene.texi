@@ -75,6 +75,10 @@ on the command line.
 
 Here are the options :
 
+@section{Alignment files download}
+@subsection{Eutherian}
+@subsection{Drosophilae}
+
 @node Generating motifs de novo
 @chapter Generating motifs de novo
 
