@@ -3,7 +3,7 @@ import glob
 import errno
 import string
 import datetime
-
+import sys
 
 def mkdir(path):
    try:
@@ -69,19 +69,20 @@ def chr2str(chr):
 def emf2fasta():
    for file in glob.glob('*.emf'):
       with open(file) as femf:
-         print "[",datetime.datetime.now(),"] Reading ",file,"..."
+         print "[",datetime.datetime.now(),"] Reading ",file+"..."
          print 
          lines=femf.readlines()
          
          headers = [ index for index,line in enumerate(lines) if line.find('SEQ') != -1 and lines[index-1].find('SEQ') == -1 ]
          startseqs = [ index+1 for index,line in enumerate(lines) if line.find('DATA') != -1 ]
          stopseqs = [ index for index,line in enumerate(lines) if line.find('//') != -1 ]
+         
+         print "[",datetime.datetime.now(),"] Converting to fasta..."
+         print 
 
          index = 0
-         while index < len(startseqs):
-            
+         while index < len(headers):
             ## READ HEADER
-
             cols = [ -1 for i in range(12) ]
             spes = [ "" for i in range(12) ]
             chrs = [ "" for i in range(12) ]
@@ -133,7 +134,11 @@ def emf2fasta():
                   seqs[i]=seqs[i].translate(string.maketrans('AaTtCcGg','TtAaGgCc'))
 
             ### AFFICHER AVANCEMENT
-            print chrs[nref],stas[nref],stos[nref],strand,"length =",int(stos[nref])-int(stas[nref])+1
+            sys.stdout.write('\r')
+            ipc = int(float(index+1)/len(headers)*100)
+            sys.stdout.write("[%-100s] %d%%" % ('='*ipc, ipc))
+            sys.stdout.flush()
+            #print " ",chrs[nref],stas[nref],stos[nref],strand,"length =",int(stos[nref])-int(stas[nref])+1
             #for i in range(12):
             #   print i,seqs[i][0:20],"...",seqs[i][len(seqs[i])-20:len(seqs[i])]
 
@@ -153,5 +158,7 @@ def emf2fasta():
                   fasta.write(seqs[i]+'\n')
             
             index += 1
+         
+         print
 
 emf2fasta()
