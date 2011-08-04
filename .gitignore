@@ -20,3 +20,5 @@ texinfo.tex
 stamp-vti
 version.texi
 tags
+scripts/python/cython/align
+scripts/python/cython/test

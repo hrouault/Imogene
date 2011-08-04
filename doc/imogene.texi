@@ -63,11 +63,13 @@ This manual is for Imogene
 @cindex installation
 
 The first step is to invoke the usual commands to install a package (once you have extracted to tarball)~:
-@command{mkdir build}
-@command{cd build}
-@command{../configure --prefix="install/full/path"}
-@command{make}
-@command{make install}
+@example 
+mkdir build
+cd build
+../configure --prefix="install/full/path"
+make
+make install
+@end example
 
 
 This mode is selected by invoking @command{imogene genmot}
@@ -75,9 +77,11 @@ on the command line.
 
 Here are the options :
 
-@section{Alignment files download}
-@subsection{Eutherian}
-@subsection{Drosophilae}
+@section Alignment files download
+
+@subsection Eutherian
+
+@subsection Drosophilae
 
 @node Generating motifs de novo
 @chapter Generating motifs de novo
