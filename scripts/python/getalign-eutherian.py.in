@@ -27,11 +27,12 @@ print
 
 mkdir('alignments')
 os.chdir("alignments")
-os.system('wget -c -nd ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/*')
+#os.system('wget -c -nd ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/*')
 
 print "[",datetime.datetime.now(),"]  Extracting alignment files..."
 print
 
+#os.system('gunzip -v *.gz')
 
 print "[",datetime.datetime.now(),"]  Converting EMF files to fasta..."
 print
