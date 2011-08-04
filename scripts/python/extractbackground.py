@@ -49,12 +49,6 @@ def isnotin(coord,listcoords):
          return False
    return True
 
-class ToManyTriesError(Exception):
-   def __init__(self, value):
-       self.value = value
-   def __str__(self):
-       return repr(self.value)
-
 ## Record selection functions
 def posrecordleft(coordlist,coord):
    pos=bisect.bisect_left(coordlist,coord)
@@ -84,9 +78,8 @@ while nbextracted<nbtoextract:
          nbextracted+=1
    nbtry+=1
    if nbtry>limittry:
-      print "error"
+      print "Do not manage to extract a sufficient number of background sequence!"
       exit()
-#      raise ToManyTriesError
 
 coords.sort()
 print coords
