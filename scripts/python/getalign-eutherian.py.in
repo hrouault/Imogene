@@ -27,12 +27,12 @@ print
 
 mkdir('alignments')
 os.chdir("alignments")
-#os.system('wget -c -nd ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/*')
+os.system('wget -c -nd ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/*')
 
 print "[",datetime.datetime.now(),"]  Extracting alignment files..."
 print
 
-#os.system('gunzip -v *.gz')
+os.system('gunzip -v *.gz')
 
 print "[",datetime.datetime.now(),"]  Converting EMF files to fasta..."
 print
@@ -49,11 +49,8 @@ except:
    print
    execfile("emf2fasta.pyx")
 
-#os.remove("*.emf")
-
-
-
-
+for file in glob.glob('*.emf'):
+   os.remove(file)
 
 os.chdir('..')
 
@@ -74,14 +71,6 @@ print "[",datetime.datetime.now(),"]  Relevant coordinate extraction."
 print 
 
 os.system('awk \'/\tCDS\t/ {print $1,$4,$5}\' *.gtf | uniq > CDS-coord.dat')
-#os.system('awk \'/FlyBase\tmRNA\t/ {\
-#   if ($7 == "+"){\
-#      print $1,$4\
-#   } else {\
-#      print $1,$5\
-#   }\
-#}\' dmel*.gff | uniq > TSS-coord.dat')
-   
 
 def processcoord(coords):
    for i in coords:
