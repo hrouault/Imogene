@@ -1455,7 +1455,6 @@ colmean(unsigned int pos,Motif * mot)
          }
 
          if (iterok%nsample==0){
-
             vd wprevmean=wmeanforstat;
             for (unsigned int ib=0;ib<4;ib++){
                //wmeanforstat[ib]+=wafter[ib]/nmean;

@@ -1005,11 +1005,9 @@ coordtoseq(Coordinate & coord)
                  if (ivs != alignscoord.end()-1) isnextali=1;
               }
               else continue;
-
            }
 
            if (species=="droso" && isnextali==1) continue; // pb with coordinates *** To be corrected ??
-
 
            Sequence trueali;
            ifstream fileseq(ali.name.c_str());

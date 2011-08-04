@@ -5,6 +5,8 @@ import string
 import datetime
 import sys
 
+nspe = 12
+
 def mkdir(path):
    try:
       os.mkdir(path)
@@ -43,27 +45,27 @@ def spe2num(name):
    else: return -1
 
 def chr2str(chr):
-   if chr == "1": return "chr1"
-   elif chr == "2":  return "chr2"
-   elif chr == "3":  return "chr3"
-   elif chr == "4":  return "chr4"
-   elif chr == "5":  return "chr5"
-   elif chr == "6":  return "chr6"
-   elif chr == "7":  return "chr7"
-   elif chr == "8":  return "chr8"
-   elif chr == "9":  return "chr9"
-   elif chr == "10": return "chr10"
-   elif chr == "11": return "chr11"
-   elif chr == "12": return "chr12"
-   elif chr == "13": return "chr13"
-   elif chr == "14": return "chr14"
-   elif chr == "15": return "chr15"
-   elif chr == "16": return "chr16"
-   elif chr == "17": return "chr17"
-   elif chr == "18": return "chr18"
-   elif chr == "19": return "chr19"
-   elif chr == "X":  return "chrX"
-   elif chr == "Y":  return "chrY"
+   if chr == "1": return "1"
+   elif chr == "2":  return "2"
+   elif chr == "3":  return "3"
+   elif chr == "4":  return "4"
+   elif chr == "5":  return "5"
+   elif chr == "6":  return "6"
+   elif chr == "7":  return "7"
+   elif chr == "8":  return "8"
+   elif chr == "9":  return "9"
+   elif chr == "10": return "10"
+   elif chr == "11": return "11"
+   elif chr == "12": return "12"
+   elif chr == "13": return "13"
+   elif chr == "14": return "14"
+   elif chr == "15": return "15"
+   elif chr == "16": return "16"
+   elif chr == "17": return "17"
+   elif chr == "18": return "18"
+   elif chr == "19": return "19"
+   elif chr == "X":  return "X"
+   elif chr == "Y":  return "Y"
    else: return "others"
 
 def emf2fasta():
@@ -83,14 +85,14 @@ def emf2fasta():
          index = 0
          while index < len(headers):
             ## READ HEADER
-            cols = [ -1 for i in range(12) ]
-            spes = [ "" for i in range(12) ]
-            chrs = [ "" for i in range(12) ]
-            stas = [ -1 for i in range(12) ]
-            stos = [ -1 for i in range(12) ]
-            strs = [ 0 for i in range(12) ]
-            seqs = [ "" for i in range(12) ]
-            vseqs = [ [] for i in range(12) ]
+            cols = [ -1 for i in range(nspe) ]
+            spes = [ "" for i in range(nspe) ]
+            chrs = [ "" for i in range(nspe) ]
+            stas = [ -1 for i in range(nspe) ]
+            stos = [ -1 for i in range(nspe) ]
+            strs = [ 0 for i in range(nspe) ]
+            seqs = [ "" for i in range(nspe) ]
+            vseqs = [ [] for i in range(nspe) ]
 
             line=lines[headers[index]]
             col=0
@@ -123,33 +125,33 @@ def emf2fasta():
             
             strand=strs[nref]            
             if strand == 1:  
-               for i in range(12):
+               for i in range(nspe):
                   vseqs[i] = [ line[cols[i]] for line in lines[startseqs[index]:stopseqs[index]] if cols[i] != -1 ]
                   seqs[i] = ''.join(vseqs[i])
             elif strand == -1:
-               for i in range(12):
+               for i in range(nspe):
                   vseqs[i] = [ line[cols[i]] for line in lines[startseqs[index]:stopseqs[index]] if cols[i] != -1 ]
                   vseqs[i].reverse()
                   seqs[i] = ''.join(vseqs[i])
                   seqs[i]=seqs[i].translate(string.maketrans('AaTtCcGg','TtAaGgCc'))
 
-            ### AFFICHER AVANCEMENT
+            ## DISPLAY PROGRESS BAR
             sys.stdout.write('\r')
             ipc = int(float(index+1)/len(headers)*100)
             sys.stdout.write("[%-100s] %d%%" % ('='*ipc, ipc))
             sys.stdout.flush()
             #print " ",chrs[nref],stas[nref],stos[nref],strand,"length =",int(stos[nref])-int(stas[nref])+1
-            #for i in range(12):
+            #for i in range(nspe):
             #   print i,seqs[i][0:20],"...",seqs[i][len(seqs[i])-20:len(seqs[i])]
 
             ## WRITE FASTA FORMATTED FILE
             
-            folder=chrs[nref]
+            folder="chr"+chrs[nref]
             mkdir(folder)
             filename=folder+"/"+stas[nref]+"-"+stos[nref]+".fa"
             fasta=open(filename,'w')
             
-            for i in range(12):
+            for i in range(nspe):
                if spes[i] != "":
                   if spes[i] == 'MusMus':
                      fasta.write('>'+spes[i]+' '+chrs[i]+' '+stas[i]+' '+stos[i]+'\n')
