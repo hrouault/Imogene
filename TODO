@@ -1,26 +1,3 @@
 
 
-** Hervé
-
-- utiliser les alignements multiz de ucsc
-- tout mettre dans un script python
-- sous repertoire droso et eutherian dans share/imogene (pkgdir)
-
-
-
-- Reprendre le code principal
-    passage int à char
-
-   commenter le code
----
-
-** Marc
-
-- tout mettre dans un script python (align.cpp)
-
-
-
--- commentaire code
-
-
 
