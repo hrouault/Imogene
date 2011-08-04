@@ -1,4 +1,3 @@
-
 import glob
 import os
 import random
@@ -89,4 +88,5 @@ while nbextracted<nbtoextract:
       exit()
 #      raise ToManyTriesError
 
+coords.sort()
 print coords
