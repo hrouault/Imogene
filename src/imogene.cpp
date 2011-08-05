@@ -1,4 +1,4 @@
-/**    
+/*    
  * Copyright (C) 2003-2011 Hervé Rouault
  *
  * This file is part of Imogene.
@@ -2002,72 +2002,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
    cout << endl;
 }
    
-   void
-refseqanalysis(Sequence & currseq,ofstream & streamfile)
-{
-   unsigned int i=0;
-   double scoresave=scorethr2;
-   //   for (int j=0;j<nbspecies;j++){
-   //   cout << currseq.iseqs[j] << endl;
-   //   }
-   for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
-      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
-      vint bs(istr,istr+width);
-      //cout << i << " " << bs << endl;
-      if (compN(bs)>0) continue;
-      Motif currmot;
-      currmot.bsinit=vinttostring(bs);
-      currmot.seqinit=currseq.name;
-      currmot.pos=i;
-      motiftomat(bs,currmot);
-      currmot.matricerevcomp=reversecomp(currmot.matrice);
-      currmot.matprec=currmot.matrice;
-      currmot.matprecrevcomp=currmot.matricerevcomp;
-      vvd pmat=currmot.matprec;
-      unsigned int nbconv(0);
-      for (int nb=1;nb<=nbiter;nb++){
-         double max=0.01;
-         int iter(0);
-         while(max>0){
-            if (nb>2) scorethr2=scoresave;
-            else scorethr2=scorethr;
-            
-            currmot.matinit(scorethr2);
-            if (currmot.nbmot<1) break;
-            
-            currmot.comprefinstances(regints,0);
-            currmot.comprefmot();
-            max=distcv(currmot.matprec,pmat);
-            pmat=currmot.matprec;
-            //        cout << max << endl;
-            iter++;
-            if (iter==20) break;
-            nbconv++;
-         }
-         if (nb==1){
-            currmot.corrprec();
-            pmat=currmot.matprec;
-            currmot.matprecrevcomp=reversecomp(currmot.matprec);
-         }
-      }
-      cout << currmot.nbmot << " " ; 
-      cout.flush();
-
-      currmot.comprefinstances(regints,0);
-      currmot.matinit(scorethr2);
-      if (currmot.nbmot>2){
-         currmot.pvaluecomp();
-         currmot.display(streamfile);
-         //		for (ivma ima=currmot.seqs.begin();ima!=currmot.seqs.end();ima++){
-         //  cout << (*ima).alignseq[0] << endl;
-         //		}
-         //cout << currmot.matprec << endl;
-      }
-      i++;
-   }
-   cout << endl;
-}
-
 vTSS TSSall;
 
    void
@@ -3689,7 +3623,6 @@ print_copyright ()
 
 }
 
-
 /** 
  * ===  FUNCTION  ======================================================================
  *         Name:  motscoreorder
@@ -3702,45 +3635,17 @@ motscoreorder ( Motif mot1, Motif mot2 )
    return mot1.pvalue<mot2.pvalue;
 }		/* -----  end of function motscoreorder  ----- */
 
+
+
 /** 
  * ===  FUNCTION  ======================================================================
- *         Name:  main
- *  Description:  imogene-genmot main file, responsible for the de novo inference of
- *  motifs
+ *         Name:  genmot
+ *  Description:  Motof generation
  * =====================================================================================
  */
-
-   int
-main(int argc, char** argv)
+   void
+genmot ( )
 {
-   string function(argv[1]);
-   cout << function << endl;
-
-   if (function=="genmot"){
-   } else if (function=="scangen"){
-
-   } else {
-      fprintf (stderr, "Run imogene --help to see the list of options.\n");
-      exit(1) ;
-   }
-
-   if (cmdline_parser (argc, argv, &args_info) != 0){
-      fprintf (stderr, "Run imogene-genmot --help to see the list of options.\n");
-      exit(1) ;
-   }
-
-   if (args_info.help_given){
-      cmdline_parser_print_help ();
-      print_reportbugs ();
-      exit (0);
-   }
-
-   if (args_info.version_given){
-      cmdline_parser_print_version ();
-      print_copyright ();
-      exit (0);
-   }
-
    args_init();
 
    rnginit();
@@ -3770,16 +3675,10 @@ main(int argc, char** argv)
 
    //If the sorting is done within the c file we don't need to write motmeldb.txt
    // -> Still provide a good way to show progress...
-   // *** What is it for?? (please comment)
    vmot genmots;
    for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
       cout << (*iseq).name << endl;
-      if (args_info.ref_given){
-         refseqanalysis(*iseq,motmeldb);
-      }
-      else{
-         seqanalysis(*iseq,genmots);
-      }
+      seqanalysis(*iseq,genmots);
       cout << endl;
    }
    motmeldb.close();
@@ -3791,6 +3690,97 @@ main(int argc, char** argv)
    gsl_rng_free(gslran);
    cmdline_parser_free(&args_info);
    cout << "exit normally" << endl;
+   return ;
+}		/* -----  end of function genmot  ----- */
+
+
+/** 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  scangen
+ *  Description:  Enhancer prediction from a list of motifs
+ * =====================================================================================
+ */
+   static void
+scangen (  )
+{
+   return ;
+}		/* -----  end of static function scangen  ----- */
+
+
+/** 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  extract
+ *  Description:  Extract alignments from a list of coordinates
+ * =====================================================================================
+ */
+   void
+extract (  )
+{
+   return ;
+}		/* -----  end of function extract  ----- */
+
+/** 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  main
+ *  Description:  imogene-genmot main file, responsible for the de novo inference of
+ *  motifs
+ * =====================================================================================
+ */
+
+   int
+main(int argc, char** argv)
+{
+   /* No args?  Show usage. */
+   if (argc <= 1)
+   {
+      return EXIT_FAILURE;
+   }
+
+   string function(argv[1]);
+   cout << function << endl;
+
+   if (function=="genmot"){
+
+      if (cmdline_parser (argc-1, argv+1, &args_info) != 0){
+         fprintf (stderr, "Run imogene genmot --help to see the list of options.\n");
+         exit(1) ;
+      }
+
+   } else if (function=="scangen"){
+
+      if (cmdline_parser (argc-1, argv+1, &args_info) != 0){
+         fprintf (stderr, "Run imogene scangen --help to see the list of options.\n");
+         exit(1) ;
+      }
+
+   } else if (function=="extract"){
+
+      if (cmdline_parser (argc-1, argv+1, &args_info) != 0){
+         fprintf (stderr, "Run imogene extract --help to see the list of options.\n");
+         exit(1) ;
+      }
+
+   } else {
+
+      if (cmdline_parser (argc, argv, &args_info) != 0){
+         fprintf (stderr, "Run imogene --help to see the list of options.\n");
+         exit(1) ;
+      }
+
+   }
+
+   if (args_info.help_given){
+      cmdline_parser_print_help ();
+      print_reportbugs ();
+      exit (0);
+   }
+
+   if (args_info.version_given){
+      cmdline_parser_print_version ();
+      print_copyright ();
+      exit (0);
+   }
+
    return 0;
 }
 
