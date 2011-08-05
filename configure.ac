@@ -24,7 +24,7 @@ AC_PROG_RANLIB
 AC_CHECK_LIB([m],[cos],,[AC_MSG_ERROR([math functions required.])])
 
 ##AX_BLAS( [ AC_MSG_NOTICE( [ blas libs variable : x$BLAS_LIBS BLAS_LIBS ] ) ], )
-AX_BLAS(,AC_CHECK_LIB([gslcblas],[cblas_dgemm],,AC_MSG_ERROR([blas library required.])))
+AX_BLAS(LIBS="$BLAS_LIBS $LIBS $FLIBS",AC_CHECK_LIB([gslcblas],[cblas_dgemm],,AC_MSG_ERROR([blas library required.])))
 
 #AX_BLAS([],[AC_MSG_ERROR([blas library required.])])
 AC_CHECK_LIB([gsl],[gsl_blas_dgemm],,[AC_MSG_ERROR([libgsl required.])])
