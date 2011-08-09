@@ -55,6 +55,12 @@ using namespace std;
 #include "motif.hpp"
 #include "tree.hpp"
 //#include "montecarlo.hpp"
+
+#include "imogene.hpp"
+
+#include "extract.hpp"
+#include "genmot.hpp"
+#include "help.hpp"
 #include "scangen.hpp"
 
 gengetopt_args_info args_info;
@@ -67,6 +73,120 @@ vchrom chromints;
 
 unsigned int sizepos,sizeneg;
 unsigned int cutoff_for_combination=3;
+
+
+const char usage_string[] =
+	"imogene [--version] [--help]\n"
+	"           <command> [<args>]";
+
+const char more_info_string[] =
+	"See 'imogene help <command>' for more information on a specific command.";
+
+
+static int handle_options(const char ***argv, int *argc, int *envchanged)
+{
+	const char **orig_argv = *argv;
+
+	while (*argc > 0) {
+		const char *cmd = (*argv)[0];
+		if (cmd[0] != '-')
+			break;
+
+		if (!strcmp(cmd, "--help") || !strcmp(cmd, "--version")){
+			break;
+		} else {
+			fprintf(stderr, "Unknown option: %s\n", cmd);
+			fprintf(stderr, "Usage : %s\n", usage_string);
+		}
+
+		(*argv)++;
+		(*argc)--;
+	}
+	return (*argv) - orig_argv;
+}
+
+struct cmd_struct {
+	const char *cmd;
+	int (*fn)(int, char **);
+   const char *help;
+};
+
+static int run_builtin(struct cmd_struct *p, int argc, char **argv)
+{
+	int status, help;
+//	struct stat st;
+	const char *prefix;
+
+	prefix = NULL;
+	help = argc == 2 && !strcmp(argv[1], "-h");
+
+
+	status = p->fn(argc, argv);
+	if (status)
+		return status;
+
+//	/* Somebody closed stdout? */
+//	if (fstat(fileno(stdout), &st))
+//		return 0;
+//	/* Ignore write errors for pipes and sockets.. */
+//	if (S_ISFIFO(st.st_mode) || S_ISSOCK(st.st_mode))
+//		return 0;
+
+//	/* Check for ENOSPC and EIO errors.. */
+//	if (fflush(stdout))
+//		die_errno("write failure on standard output");
+//	if (ferror(stdout))
+//		die("unknown write failure on standard output");
+//	if (fclose(stdout))
+//		die_errno("close failed on standard output");
+	return 0;
+}
+
+static struct cmd_struct commands[] = {
+   { "extract", cmd_extract, "extract..." },
+   { "genmot", cmd_genmot, "generate motifs" },
+   { "help", cmd_help, "help message" },
+   { "scangen", cmd_scangen, "infere CRMs" }
+};
+
+
+static void
+handle_command(int argc, char **argv)
+{
+	const char *cmd = argv[0];
+   for (int i = 0; i < ARRAY_SIZE(commands); i++) {
+      struct cmd_struct *p = commands+i;
+      if (strcmp(p->cmd, cmd))
+         continue;
+      exit(run_builtin(p, argc, argv));
+   }
+   cout << "error!" << endl;
+}
+
+static inline void mput_char(char c, unsigned int num)
+{
+	while(num--)
+		putchar(c);
+}
+
+
+void list_cmds_help(void)
+{
+	int i, longest = 0;
+
+	for (i = 0; i < ARRAY_SIZE(commands); i++) {
+		if (longest < strlen(commands[i].cmd))
+			longest = strlen(commands[i].cmd);
+	}
+
+	puts("The available Imogene commands are:");
+	for (i = 0; i < ARRAY_SIZE(commands); i++) {
+		printf("   %s   ", commands[i].cmd);
+		mput_char(' ', longest - strlen(commands[i].cmd));
+		puts(commands[i].help);
+	}
+}
+
 
    void
 findnearestgene_sides(vcoord & vgenes, vcoord & vpeaks)
@@ -260,105 +380,105 @@ printbackreg(vcoord & vcds,string folder)
 outf.close();
 }
 
-void
-printbackregwcoords(vcoord & vcds,string folder){
-
-   //vcds is a vector of random shuffled intergenic regions
-   //regints are our interest sequences
-   //
-   ofstream outf;
-   unsigned int i(0);
-   unsigned int numback(1);
-
-   unsigned int repeat=10;
-   if (args_info.numrepeat_given) repeat=args_info.numrepeat_arg;
-
-   for (int j=1;j<=repeat;j++){
-      for (ivseq ivs=regints.begin();ivs!=regints.end();ivs++){
-
-         //size of our interest sequence
-         unsigned int backsize=ivs->stop-ivs->start+1;
-         unsigned int state=0;
-
-         //if we find a corresponding background region, then state=1;
-         while (state==0){
-
-            //if we have searched all intergenic sequences we loop on the first
-            if (i==vcds.size()-1) i=0;
-
-            int range;
-            range=vcds[i].stop-backsize-vcds[i].start+1;
-
-            //intergenic size has to be superior to interest sequence
-            if (range<1){
-               i++;
-               continue;
-            }
-
-            //randomly choose a region of a same size than interest in the intergenic region
-            unsigned int newstart;
-            unsigned int newpos;
-            newpos= gsl_rng_uniform_int (gslran,range);
-            newstart=vcds[i].start+newpos;
-            Coordinate cdtmp;
-            cdtmp.start=newstart;
-            cdtmp.stop=newstart+backsize-1;
-            cdtmp.chrom=vcds[i].chrom;
-            cdtmp.name=vcds[i].name;
-
-            //extract the alignment
-            Sequence seq=coordtoseq(cdtmp);
-            int nbfr=0;
-            bool bc=0;
-
-            if (species=="droso"){
-               if (seq.species[5]) nbfr++; 
-               if (seq.species[6] || seq.species[7]) nbfr++;
-               if (seq.species[8]) nbfr++;
-               if (seq.species[9] || seq.species[10] || seq.species[11]) nbfr++;
-               if (nbfr>1) bc=1;
-            }
-            else if (species=="eutherian"){
-               if (seq.species[2] || seq.species[3] || seq.species[4] || seq.species[5]) nbfr++;
-               if (seq.species[6] || seq.species[7]) nbfr++;
-               if (seq.species[8]) nbfr++;
-               if (seq.species[9]) nbfr++;
-               if (nbfr>1) bc=1;
-            }
-
-
-            //we want mus to be present, the sequence to be conserved, and at least half of bases to be unmasked
-            if (seq.species[0] && bc && seq.nbtb>backsize/2){
-               cout << "->" << numback << ". " <<cdtmp;
-               cout.flush();
-               stringstream os;
-               os << numback;
-               os >> seq.name;
-               string filename=folder;
-               filename+=seq.name;
-               filename.append(".fa");
-               outf.open(filename.c_str());
-               Sequence & s=seq;
-               for (int k=0;k<nbspecies;k++){
-                  if (s.species[k]){
-                     if (k==0) outf << ">" << numtospecies(k) << " " <<
-                        "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-                     else  outf << ">" << numtospecies(k) << endl;
-                     outf << s.seqsrealigned[k] << endl;
-                  }; 
-               }
-               outf.close();
-               numback++;
-               state=1;
-            }
-            i++;
-         }
-
-      }
-   }
-
-   outf.close();
-}
+//void
+//printbackregwcoords(vcoord & vcds,string folder){
+//
+//   //vcds is a vector of random shuffled intergenic regions
+//   //regints are our interest sequences
+//   //
+//   ofstream outf;
+//   unsigned int i(0);
+//   unsigned int numback(1);
+//
+//   unsigned int repeat=10;
+//   if (args_info.numrepeat_given) repeat=args_info.numrepeat_arg;
+//
+//   for (int j=1;j<=repeat;j++){
+//      for (ivseq ivs=regints.begin();ivs!=regints.end();ivs++){
+//
+//         //size of our interest sequence
+//         unsigned int backsize=ivs->stop-ivs->start+1;
+//         unsigned int state=0;
+//
+//         //if we find a corresponding background region, then state=1;
+//         while (state==0){
+//
+//            //if we have searched all intergenic sequences we loop on the first
+//            if (i==vcds.size()-1) i=0;
+//
+//            int range;
+//            range=vcds[i].stop-backsize-vcds[i].start+1;
+//
+//            //intergenic size has to be superior to interest sequence
+//            if (range<1){
+//               i++;
+//               continue;
+//            }
+//
+//            //randomly choose a region of a same size than interest in the intergenic region
+//            unsigned int newstart;
+//            unsigned int newpos;
+//            newpos= gsl_rng_uniform_int (gslran,range);
+//            newstart=vcds[i].start+newpos;
+//            Coordinate cdtmp;
+//            cdtmp.start=newstart;
+//            cdtmp.stop=newstart+backsize-1;
+//            cdtmp.chrom=vcds[i].chrom;
+//            cdtmp.name=vcds[i].name;
+//
+//            //extract the alignment
+//            Sequence seq=coordtoseq(cdtmp);
+//            int nbfr=0;
+//            bool bc=0;
+//
+//            if (species=="droso"){
+//               if (seq.species[5]) nbfr++; 
+//               if (seq.species[6] || seq.species[7]) nbfr++;
+//               if (seq.species[8]) nbfr++;
+//               if (seq.species[9] || seq.species[10] || seq.species[11]) nbfr++;
+//               if (nbfr>1) bc=1;
+//            }
+//            else if (species=="eutherian"){
+//               if (seq.species[2] || seq.species[3] || seq.species[4] || seq.species[5]) nbfr++;
+//               if (seq.species[6] || seq.species[7]) nbfr++;
+//               if (seq.species[8]) nbfr++;
+//               if (seq.species[9]) nbfr++;
+//               if (nbfr>1) bc=1;
+//            }
+//
+//
+//            //we want mus to be present, the sequence to be conserved, and at least half of bases to be unmasked
+//            if (seq.species[0] && bc && seq.nbtb>backsize/2){
+//               cout << "->" << numback << ". " <<cdtmp;
+//               cout.flush();
+//               stringstream os;
+//               os << numback;
+//               os >> seq.name;
+//               string filename=folder;
+//               filename+=seq.name;
+//               filename.append(".fa");
+//               outf.open(filename.c_str());
+//               Sequence & s=seq;
+//               for (int k=0;k<nbspecies;k++){
+//                  if (s.species[k]){
+//                     if (k==0) outf << ">" << numtospecies(k) << " " <<
+//                        "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+//                     else  outf << ">" << numtospecies(k) << endl;
+//                     outf << s.seqsrealigned[k] << endl;
+//                  }; 
+//               }
+//               outf.close();
+//               numback++;
+//               state=1;
+//            }
+//            i++;
+//         }
+//
+//      }
+//   }
+//
+//   outf.close();
+//}
 
    void
 disptexinit(ofstream & outf)
@@ -961,2635 +1081,1760 @@ scanseq(Sequence &seq,vmot & mots)
    //    }
 }
 
-   void
-scanseqs(vstring & regs)
-{
-   vcoord pcoords;
-   if (args_info.masktrain_given){
-
-      cout << "(Masking training set)" << endl;
-      ifstream inf;
-      inf.open(args_info.masktrain_arg);
-      back_insert_iterator<vcoord> pdest(pcoords);
-      copy(iiscoord(inf),iiscoord(),pdest);
-      inf.close();
-
-   }
-   
-   string pchrom("");
-   for (ivstring is=regs.begin();is!=regs.end();is++){
-      //cout << *is << endl;
-      Sequence seq;
-      ifstream fseq;
-      fseq.open((*is).c_str());
-      string fseqline;
-      getline(fseq,fseqline);
-      seq.name=fseqline;
-      stringstream firstline(fseqline);
-      string speciesname;
-      firstline >> speciesname;
-      string chrom;
-      firstline >> chrom;
-      if (chrom!=pchrom){
-         cout << chrom << endl;
-         pchrom=chrom;
-      }
-      seq.chrom=intfromchrom(chrom.substr(3));
-      if (seq.chrom==-1) continue;
-      //cout << "chromosome \"" << seq.chrom << "\"\n";
-      firstline >> seq.start;
-      //cout << "start \"" << seq.start << "\"\n";
-      firstline >> seq.stop;
-      seq.finame=*is;
-      string dum;
-      seq.species=vint(nbspecies,0);
-      vint dumi;
-      seq.iseqs=vvint(nbspecies,dumi);
-      seq.imaps=vvint(nbspecies,dumi);
-      seq.imapsinv=vvint(nbspecies,dumi);
-      while (!fseq.eof()){
-         //                cout << fseqline << endl;
-         int seqnum=speciestonum(fseqline.substr(1,6));
-         getline(fseq,fseqline);
-         seq.imaps[seqnum]=alignedtomap(fseqline);
-         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
-         string seqwogap=remgaps(fseqline);
-         if (seqwogap.size()>30){
-            seq.species[seqnum]=1;
-         }
-         seq.iseqs[seqnum]=stringtoint(seqwogap);
-         getline(fseq,fseqline);
-      }
-      seq.nbN=compN(seq.iseqs[0]);
-      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
-      
-      for (ivcoord ivc=pcoords.begin();ivc!=pcoords.end();ivc++){
-         if (ivc->chrom==seq.chrom){ 
-            if ((ivc->start>=seq.start && ivc->start<=seq.stop) ||
-                  (ivc->stop>=seq.start && ivc->stop <=seq.stop)){
-                  int maskstart=max(ivc->start,seq.start);
-                  int maskstop=min(ivc->stop,seq.stop);
-      //            cout << ivc->name << endl;
-      //            cout << vinttostring(seq.iseqs[0]) << endl;
-                  for (unsigned int base=maskstart-seq.start;base<=maskstop-seq.start;base++){
-                     seq.iseqs[0][base]=4;
-                  }
-      //            cout << vinttostring(seq.iseqs[0]) << endl;
-            }
-         }
-      }
-
-      //check that ref species contains at least 30bp
-      if (seq.species[0]){
-         scanseq(seq,motsdef);
-      }
-
-      fseq.close();
-   }
-   unsigned int i=0;
-
-   cout << "Finding Instances" << endl;
-   for (ivmot im=motsdef.begin();im!=motsdef.begin()+nbmots_for_score;im++){
-      for (unsigned int j=0;j<nbchrom;j++){
-         //           cout << "Instances size : " << (*im).instances.size() << "\n";
-         sort((*im).instances[j].begin(),(*im).instances[j].end());
-         for (ivinst iins=(*im).instances[j].begin();iins!=(*im).instances[j].end();iins++){
-            Instance & curinst=*iins;
-            int start=0;
-            if ((curinst.coord-scanwidth)/scanstep+2>0) start=(curinst.coord-scanwidth)/scanstep+1;
-            for (unsigned int k=start;k<curinst.coord/scanstep+1;k++){
-               groupedinst[curinst.chrom][k].nbmots[i]++;
-               groupedinst[curinst.chrom][k].totmots++;
-               groupedinst[curinst.chrom][k].instances.push_back(curinst);
-            }
-         }
-      }
-      i++;
-   }
-
-   for (unsigned int j=0;j<nbchrom;j++){
-      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
-         if ((*ivg).totmots==0){
-            (*ivg).discarded=1;
-         }
-      }
-   }
-   for (unsigned int j=0;j<nbchrom;j++){
-      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
-         if (!(*ivg).discarded){
-            potregs.push_back(*ivg);
-         }
-      }
-   }
-
-   cout << "output results" << endl;
-   if (args_info.all_mots_only_given){
-         outputresults(nbmots_for_score);
-   }
-   else{
-      for (unsigned int i=1;i<nbmots_for_score+1;i++){
-         cout << "Motif " << i << endl;
-         outputresults(i);
-      }
-   }
-
-}
-
-   void
-scanseqs(ifstream & list,vcoord & coords)
-{
-   
-   vstring regs;
-   back_insert_iterator<vstring> dest(regs);
-   copy(iisstring(list),iisstring(),dest);
-
-   string pchrom("");
-   for (ivstring is=regs.begin();is!=regs.end();is++){
-      Sequence seq;
-      ifstream fseq;
-      fseq.open((*is).c_str());
-      string fseqline;
-      getline(fseq,fseqline);
-      seq.name=fseqline;
-      stringstream firstline(fseqline);
-      string speciesname;
-      firstline >> speciesname;
-      string chrom;
-      firstline >> chrom;
-      if (chrom!=pchrom){
-         cout << chrom << endl;
-         pchrom=chrom;
-      }
-      seq.chrom=intfromchrom(chrom.substr(3));
-      if (seq.chrom==-1) continue;
-      firstline >> seq.start;
-      firstline >> seq.stop;
-      seq.finame=*is;
-      string dum;
-      seq.species=vint(nbspecies,0);
-      vint dumi;
-      seq.iseqs=vvint(nbspecies,dumi);
-      seq.imaps=vvint(nbspecies,dumi);
-      seq.imapsinv=vvint(nbspecies,dumi);
-      while (!fseq.eof()){
-         //                cout << fseqline << endl;
-         int seqnum=speciestonum(fseqline.substr(1,6));
-         getline(fseq,fseqline);
-         seq.imaps[seqnum]=alignedtomap(fseqline);
-         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
-         string seqwogap=remgaps(fseqline);
-         if (seqwogap.size()>30){
-            seq.species[seqnum]=1;
-         }
-         seq.iseqs[seqnum]=stringtoint(seqwogap);
-         getline(fseq,fseqline);
-      }
-      seq.nbN=compN(seq.iseqs[0]);
-      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
-      
-      scanseq(seq,motsdef);
-
-      fseq.close();
-   }
-   unsigned int i=0;
-
-   cout << "Finding Instances" << endl;
-   for (ivmot im=motsdef.begin();im!=motsdef.begin()+nbmots_for_score;im++){
-      for (unsigned int j=0;j<nbchrom;j++){
-         //           cout << "Instances size : " << (*im).instances.size() << "\n";
-         sort((*im).instances[j].begin(),(*im).instances[j].end());
-         for (ivinst iins=(*im).instances[j].begin();iins!=(*im).instances[j].end();iins++){
-            Instance & curinst=*iins;
-            int start=0;
-            if ((curinst.coord-scanwidth)/scanstep+2>0) start=(curinst.coord-scanwidth)/scanstep+1;
-            for (unsigned int k=start;k<curinst.coord/scanstep+1;k++){
-               groupedinst[curinst.chrom][k].nbmots[i]++;
-               groupedinst[curinst.chrom][k].totmots++;
-               groupedinst[curinst.chrom][k].instances.push_back(curinst);
-            }
-         }
-      }
-      i++;
-   }
-
-   cout << "Discarding empty Instances" << endl;
-   for (unsigned int j=0;j<nbchrom;j++){
-      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
-         if ((*ivg).totmots==0){
-            (*ivg).discarded=1;
-         }
-      }
-   }
-   for (unsigned int j=0;j<nbchrom;j++){
-      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
-         if (!(*ivg).discarded){
-            potregs.push_back(*ivg);
-         }
-      }
-   }
-
-   cout << "output results" << endl;
-   if (args_info.all_mots_only_given){
-         outputresults(nbmots_for_score);
-   }
-   else{
-      for (unsigned int i=1;i<nbmots_for_score+1;i++){
-         cout << "Motif " << i << endl;
-         outputresults(i);
-      }
-   }
-}
-   
-   void
-scanmots()
-{
-   ifstream potregs;
-   if (species=="droso") potregs.open("/home/santolin/these/files/droso/align/all/align-files.dat");
-   else if (species=="eutherian") potregs.open("/home/santolin/these/files/mus/epo/align-files.dat");
-   //else if (species==2) potregs.open("/home/santolin/these/files/transfac/matrices/align-test.dat");
-   vstring regs;
-   back_insert_iterator<vstring> dest(regs);
-   copy(iisstring(potregs),iisstring(),dest);
-   potregs.close();
-
-   string pchrom("");
-   system("if ! test -d scanmots;then mkdir scanmots;fi;");      
-   unsigned int totlen(0),totlentb(0);
-   //random_shuffle(regs.begin(),regs.end());
-   for (ivstring is=regs.begin();is!=regs.end();is++){
-      Sequence seq;
-      ifstream fseq;
-      fseq.open((*is).c_str());
-      string fseqline;
-      getline(fseq,fseqline);
-      seq.name=fseqline;
-//cout << seq.name << endl;
-      stringstream firstline(fseqline);
-      string speciesname;
-      firstline >> speciesname;
-      string chrom;
-      firstline >> chrom;
-      if (chrom!=pchrom){
-         cout << chrom << endl;
-         pchrom=chrom;
-      }
-      seq.chrom=intfromchrom(chrom.substr(3));
-      if (seq.chrom==-1) continue;
-      firstline >> seq.start;
-      firstline >> seq.stop;
-      seq.finame=*is;
-      string dum;
-      seq.species=vint(nbspecies,0);
-      vint dumi;
-      seq.iseqs=vvint(nbspecies,dumi);
-      seq.imaps=vvint(nbspecies,dumi);
-      seq.imapsinv=vvint(nbspecies,dumi);
-      while (!fseq.eof()){
-//cout << fseqline << endl;
-         int seqnum=speciestonum(fseqline.substr(1,6));
-         getline(fseq,fseqline);
-         seq.imaps[seqnum]=alignedtomap(fseqline);
-         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
-         string seqwogap=remgaps(fseqline);
-         if (seqwogap.size()>30){
-            seq.species[seqnum]=1;
-         }
-         seq.iseqs[seqnum]=stringtoint(seqwogap);
-         getline(fseq,fseqline);
-      }
-      seq.nbN=compN(seq.iseqs[0]);
-      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
-
-      scanseqforconsinstances(seq,motsdef);
-
-      fseq.close();
-      
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         //sort(ivm->refinstances_short.begin(),ivm->refinstances_short.end());
-         ostringstream outfs;
-         outfs << "scanmots/" << ivm->name << "_" << ivm->motscorethr2 << ".dat";
-         ofstream outf;
-         if (totlen==0) outf.open(outfs.str().c_str());
-         else outf.open(outfs.str().c_str(),ios::app);
-
-         for (ivinst ivi=ivm->refinstances_short.begin();ivi!=ivm->refinstances_short.end();ivi++){
-            outf << ivi->site << "\t";
-            outf << chromfromint(ivi->chrom) << "\t";
-            outf << ivi->coord << "\t";
-            outf << ivi->sens << "\t";
-            outf << ivi->score << endl;
-         }
-         outf.close();
-         ivm->refinstances_short.clear();
-      }
-
-      totlen+=seq.nbtb+seq.nbN;
-      totlentb+=seq.nbtb;
-   }
-
-   cout << "Total length of the alignement: " << totlen << " bp, including " << totlentb << " unmasked bp" << endl;
-
-   return;
-}
-
-bool operator<(const Sequence & seqscr1,const Sequence & seqscr2)
-{
-   if (seqscr1.score == seqscr2.score)
-   {
-      return seqscr1.sign > seqscr2.sign; //for identical scores, we want the negatives first (for ROC consistency)
-   }
-   else
-   {
-      return seqscr1.score > seqscr2.score; 
-   };
-}
-
-bool operator<(const Motif & mot1,const Motif & mot2)
-{
-   if (mot1.optauc == mot2.optauc)
-   {
-      return mot1.index < mot2.index;//the lower index first 
-   }
-   else
-   {
-      return mot1.optauc > mot2.optauc;//the best auc first
-   };
-}
-
-   void
-calcscore(Motif & im,Sequence & seqscr)//(vmot & mots)
-{
-   unsigned int ncons=im.nbmatchcons(seqscr);//seqscr.motis[im->index];
-   //   unsigned int ncons=im.nbmatchmat(seqscr.seq);//seqscr.motis[im->index];
-   //   unsigned int ncons=seqscr.motis[im.index];
-   double lseq=seqscr.nbtb;
-   double score=0;
-   //cout << ncons << " ";
-   //score= ncons;//*log(im.lambdatrain/im.lambda) + lseq*(im.lambda-im.lambdatrain);
-   double lnj=0;
-   for (int i=0;i<ncons;i++){
-      lnj+=log(i+1);
-   }
-   seqscr.motis[im.index]=ncons;
-   score=ncons;
-   //score=ncons*log(im.lambdatrain/im.lambda);
-   //score= lnj-ncons*log(im.lambda*lseq) + lseq*im.lambda;
-   //   score= (double)ncons/lseq;//*log(im.lambdatrain/im.lambda) + lseq*(im.lambda-im.lambdatrain);
-   seqscr.score=score;
-   return;
-   //cout << seqscr.score << endl;
-}
-
-   void
-calcscore(vmot & vm,Sequence & seqscr)//(vmot & mots)
-{
-
-   Sequence seqtmp=seqscr;
-   double lseq=seqscr.nbtb;
-   double score=0;
-   for (ivmot im=vm.begin();im!=min(vm.begin()+nbmots_for_score,vm.end());im++){
-      width=im->bsinit.size();
-      unsigned int ncons;
-      if (args_info.maskforscore_given){
-         ncons=im->nbmatchconsnmask(seqtmp);//seqscr.motis[im->index];
-      } else{
-         ncons=im->nbmatchcons(seqtmp);//seqscr.motis[im->index];
-      }
-      //   score+=ncons;
-      //      double lnj=0;
-      //      for (int i=0;i<ncons;i++){
-      //         lnj+=log(i+1);
-      //      }
-      //   //   score+=lnj-ncons*log(im->lambda*lseq) + lseq*im->lambda;
-      //      if (args_info.byaffinity_given){
-      //         score+=im->scorematchcons(seqtmp);
-      //      } else {
-      //         score+=ncons;
-      //      }
-      if (args_info.weightmots_given){
-
-         score+= ncons*log(im->lambdatrain/im->lambda);// + lseq*(im.lambda-im.lambdatrain);
-      }
-      else {
-         score+= ncons;//*log(im->lambdatrain/im->lambda);// + lseq*(im.lambda-im.lambdatrain);
-      }
-      seqscr.motis[im->index]=ncons;
-   }
-   seqscr.score=score;
-   return;
-   //cout << seqscr.score << endl;
-}
-
-   void
-calcscore(vmot & vm,vseq & vs)//(vmot & mots)
-{
-   for (ivseq ivs=vs.begin();ivs!=vs.end();ivs++){
-      calcscore(vm,*ivs);
-   }
-   return;
-   //cout << seqscr.score << endl;
-}
-
-// allncons is a vint where each int is a number of conserved motifs
-   double
-calcscore(vmot & vm,vint & allncons,int lseq)
-{
-
-   double score=0;
-   for (ivmot im=vm.begin();im!=min(vm.begin()+nbmots_for_score,vm.end());im++){
-      unsigned int ncons=allncons[im->index];
-      double lnj=0;
-      for (int i=0;i<ncons;i++){
-         lnj+=log(i+1);
-      }
-      //score+=lnj-ncons*log(im->lambda*lseq) + lseq*im->lambda;
-      //    score+=allncons[im->index];
-      score+= allncons[im->index];//*log(im->lambdatrain/im->lambda);// + lseq*(im.lambda-im.lambdatrain);
-   }
-   return score;
-}
-
-
-svg::svg()
-{
-   xsize=800;
-   ysize=600;
-   xoffset=140;
-   yoffset=65;
-   pos=0;
-};
-
-   void
-svginit(ofstream & svgfile, svg s)
-{
-   svgfile << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-   svgfile << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\n";
-   svgfile << "<svg version=\"1.0\" id=\"Calque_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n";
-   svgfile << "	 width=\""<< s.xsize <<"px\" height=\""<< s.ysize <<"px\" viewBox=\"0 0 "<< s.xsize <<" "<< s.ysize <<
-      "\" enable-background=\"new 0 0 "<< s.xsize <<" "<< s.ysize <<"\" xml:space=\"preserve\">\n";
-
-   svgfile << "<line fill=\"none\" stroke=\"" << "black" << "\" stroke-width=\"" << 3 << "\" x1=\"" << 0 << "\" y1=\"" << 0 << "\" x2=\"" << 4 << "\" y2=\"" << 0 << "\"/>\n";
-}
-
-   void
-svgdisplay(ofstream & svgfile,Sequence & seq, svg & s)
-{
-   double ytext=s.yoffset+300*s.pos;
-   double xbegin=s.xoffset;
-   double xend=xbegin+0.4*seq.imaps[0].size();
-
-   svgfile << "<text transform=\"matrix(1 0 0 1 55.5 " << ytext << ")\" font-size=\"12\">" << seq.finame << "</text>\n";
-
-   for (unsigned int i=0;i<nbspecies;i++){
-      if (seq.species[i]){
-
-         double yline=s.yoffset+20+300*s.pos+20*i;
-
-         string dro;
-         dro = seq.speciesname[i];
-         svgfile << "<text transform=\"matrix(1 0 0 1 40 " << yline << ")\" font-size=\"12\">" << dro << "</text>\n";
-         svgfile << "<line fill=\"none\" stroke=\"#000000\" stroke-width=\"0.5\" x1=\"" << xbegin << "\" y1=\"" << yline << "\" x2=\"" << xend << "\" y2=\"" << yline << "\"/>\n";
-
-         vvint coords;
-         vint curcoord;
-         int seqorali=0;
-         unsigned int p=0;
-         for (istring is=seq.seqsrealigned[i].begin();is!=seq.seqsrealigned[i].end();is++){
-            if (*is=='-'){
-               if (seqorali==1){
-                  curcoord.push_back(p);
-                  coords.push_back(curcoord);
-                  curcoord.clear();
-                  seqorali=0;
-               }
-            } else {
-               if (seqorali==0){
-                  curcoord.push_back(p);
-                  seqorali=1;
-               }
-               if (seqorali==1 && is==seq.seqsrealigned[i].end()-1){
-                  curcoord.push_back(p);
-                  coords.push_back(curcoord);
-                  curcoord.clear();
-               }
-            }
-            p++;
-         }
-
-         for (ivvint ivv=coords.begin();ivv!=coords.end();ivv++){
-            svgfile << "<line fill=\"none\" stroke=\"#000000\" stroke-width=\"3\" x1=\"" << xbegin+0.4*(*ivv)[0] << 
-               "\" y1=\"" << yline << "\" x2=\"" << xbegin+0.4*(*ivv)[1] << "\" y2=\"" << yline << "\"/>\n";
-         }
-      }
-   }
-
-   for (ivinstseq ivi=seq.instances.begin();ivi!=seq.instances.end();ivi++){
-      int moti=(*ivi).motindex;
-      if (moti<8){
-         string color;
-         if (moti==0){
-            color="red";
-         } else if (moti==1){
-            color="blue";
-         } else if (moti==2){
-            color="green";
-         } else if (moti==3){
-            color="purple";
-         } else if (moti==4){
-            color="gray";
-         } else if (moti==5){
-            color="orange";
-         } else if (moti==6){
-            color="brown";
-         } else if (moti==7){
-            color="gold";
-         }
-         double xmot=xbegin+0.4*(*ivi).pos;
-         double yline=s.yoffset+20+300*s.pos+20*(*ivi).species;
-         string width;
-         if ((*ivi).score>scorethr2) width="3";
-         else width="1";
-         svgfile << "<line fill=\"none\" stroke=\"" << color << "\" stroke-width=\"" << width << "\" x1=\"" << xmot << "\" y1=\"" << yline-5 << "\" x2=\"" << xmot << "\" y2=\"" << yline+5 << "\"/>\n";
-         svgfile << "<text transform=\"matrix(1 0 0 1 " << xmot-2 << " " << yline-8 << ")\" font-size=\"8\">" << fixed << setprecision(1) << (*ivi).score << "</text>\n";
-      }
-   }
-   s.pos++;
-}
-
-
-   void
-svgclose(ofstream & svgfile)
-{
-   svgfile << "</svg>\n";
-}
-
-   void
-scanseqsforsvg(vseq & align)
-{
-
-   system("if ! test -d display;then mkdir display;fi;");      
-   system("if ! test -d display/svg;then mkdir display/svg;fi;");      
-
-   for (ivseq is=align.begin();is!=align.end();is++){
-
-      int xsize(0);
-      int ysize(0);
-      svg s;
-      string filename("display/svg/");
-      filename+=(*is).name;
-      filename+=".svg";
-      ofstream svgfile(filename.c_str());
-
-      scanseq(*is,motsdef);
-
-      //we set the size for the svg file
-      xsize=s.xoffset+(int)(0.4*(*is).imaps[0].size());
-      if (xsize>s.xsize) s.xsize=xsize;
-      s.xsize+=s.xoffset;
-      ysize=s.yoffset+340; 
-      s.ysize=ysize+s.yoffset;
-
-      svginit(svgfile,s);
-      svgdisplay(svgfile,*is,s);
-      svgclose(svgfile);
-
-      //cout << s.xsize << " " << s.ysize << endl; 
-   }
-}
-
-   void
-outputresults(unsigned int nbmots_score)
-{
-   cout << "Shuffling" << endl;
-   random_shuffle(potregs.begin(),potregs.end());
-   for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
-      if (args_info.weightmots_given){
-         (*ivg).compscoreweight(motsdef,nbmots_score);
-      }
-      else{
-         (*ivg).compscore(motsdef,nbmots_score);
-      }
-   }
-   cout << "Sorting" << endl;
-   sort(potregs.begin(),potregs.end());
-   cout << "Discarding" << endl;
-   vstring gnames;
-   vginst potregs_def;
-
-   // Keep best scoring enhancer per gene
-   // OR
-   // Keep all enhancers per gene, removing overlapping low score ones
-   if (args_info.discard_on_gene_names_given){
-      cout << "discard on gene" << endl;
-      int test=0;
-      for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
-         test=0;
-         for (ivstring ivs=gnames.begin();ivs!=gnames.end();ivs++){
-            if ((*ivg).besttss.gene==*ivs){
-               (*ivg).discarded=1;
-               test=1;
-               break;
-            }
-         }
-         if (test==0){
-            gnames.push_back((*ivg).besttss.gene);
-         }
-      }
-   } 
-   else {
-      for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
-         int test=0;
-         for (ivginst ivg2=potregs_def.begin();ivg2!=potregs_def.end();ivg2++){
-            if ((*ivg).distance(*ivg2)<scanwidth){
-               test=1;
-               break;
-            }
-         }
-         if (test==0){
-            potregs_def.push_back(*ivg);
-         }
-      }
-   }
-   cout << "Displaying" << endl;
-   stringstream filename;
-   filename << "result" << nbmots_score << ".dat";
-   ofstream res(filename.str().c_str());
-   for (ivginst ivg=potregs_def.begin();ivg!=potregs_def.end();ivg++){
-      if (!(*ivg).discarded){
-         res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
-         res << (*ivg).besttss.gene << " ";
-         for (ivTSS ivt=(*ivg).TSSs.begin();ivt!=(*ivg).TSSs.end();ivt++){
-            res << (*ivt).gene << ";";
-         }
-         res << " ";
-         for (ivint ivi=(*ivg).nbmots.begin();ivi!=(*ivg).nbmots.end();ivi++){
-            res << *ivi << " ";
-         }
-         res << "\n";
-         //         for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
-         //            cout << "\t" << chromfromint((*ivi).chrom) << ":" << (*ivi).coord << "\n";
-         //         }
-      }
-   }
-   res << "\n";
-   res.close();
-
-   //	stringstream filenameseqs;
-   //	filenameseqs << "seqs-" << nbmots_score << ".dat";
-   //	ofstream seqs(filenameseqs.str().c_str());
-   //	unsigned int count=0;
-   //	for (ivginst ivg=potregs_def.begin();ivg!=potregs_def.end();ivg++){
-   //		if (!(*ivg).discarded){
-   //			unsigned int mini=scanwidth;
-   //			unsigned int max=0;
-   //			seqs << "chrom : " << (*ivg).chrom << "\n";
-   //			seqs << "start : " << (*ivg).start << "\n";
-   //			seqs << "stop : " << (*ivg).stop << "\n";
-   //			for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
-   //				if ((*ivi).coord<mini) mini=(*ivi).coord;
-   //				if ((*ivi).coord>max) max=(*ivi).coord;
-   //			}
-   //			seqs << "mini : " << mini << "\n";
-   //			seqs << "max : " << max << "\n";
-   //			unsigned int start=(mini+max)/2-scanwidth/2;
-   //			unsigned int stop=(mini+max)/2+scanwidth/2;
-   //			for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
-   //				seqs << "motif " << (*ivi).motindex << " at position " << (*ivi).coord-start << "\n";;
-   //			}
-   //			seqs << ">seq_" << count << " annotated " << (*ivg).besttss.gene;
-   //			seqs << " ";
-   //			seqs << "\n";
-   //			seqs << chromints[(*ivg).chrom].seq.substr(start,stop-start) << "\n";
-   //			count++;
-   //			if (count>100) break;
-   //		}
-   //	}
-   //	seqs << "\n";
-   //	seqs.close();
-
-   if (args_info.phenotype_given){
-      stringstream filehist;
-      filehist << "hist" << nbmots_score << ".dat";
-      ofstream histo(filehist.str().c_str());
-      displayhist(potregs_def,histo);
-      histo.close();
-      if (args_info.print_histo_sets_given){
-         stringstream filehist_back;
-         filehist_back << "hist-back" << nbmots_score << ".dat";
-         ofstream histo_back(filehist_back.str().c_str());
-         displayhist_set(potregs_def,gbacks,histo_back);
-         histo_back.close();
-
-         stringstream filehist_interest;
-         filehist_interest << "hist-interest" << nbmots_score << ".dat";
-         ofstream histo_interest(filehist_interest.str().c_str());
-         displayhist_set(potregs_def,phenos,histo_interest);
-         histo_interest.close();
-      }
-   }
-
-}
-
-
-   void
-motiftomat(vint & seq,Motif & mot)
-{
-   vd dum(4,0);
-   mot.matrice=vvd(width,dum);
-   vvd::iterator imat=mot.matrice.begin();
-   for (vint::iterator iseq=seq.begin();iseq!=seq.end();iseq++){
-      int base=*iseq;
-      double a,t,c,g;
-      a=t=alpha/(1+2*alpha+2*beta);
-      c=g=beta/(1+2*alpha+2*beta);
-      if (base==0){
-         a=(1+alpha)/(1+2*alpha+2*beta);
-      }
-      else if (base==1){
-         t=(1+alpha)/(1+2*alpha+2*beta);
-      }
-      else if (base==2){
-         c=(1+beta)/(1+2*alpha+2*beta);
-      }
-      else if (base==3){
-         g=(1+beta)/(1+2*alpha+2*beta);
-      }
-      (*imat)[0]=log(a/conca);
-      (*imat)[1]=log(t/conct);
-      (*imat)[2]=log(c/concc);
-      (*imat)[3]=log(g/concg);
-      imat++;
-   }
-}
-
-
-vseq regtests;
-vseq regints;
-
-   void
-extracttofastawfullname(string folder)
-{
-   ofstream outf;
-   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
-      Sequence seq=*iv;
-      if (seq.species[0] && seq.nbtb>0){ 
-         stringstream file;
-         file << folder;
-         file << seq.name << "_";
-         file << chromfromint(seq.chrom) << "_";
-         file << seq.start << "_";
-         file << seq.stop << ".fa";
-         outf.open(file.str().c_str());
-         Sequence & s=seq;
-         for (int i=0;i<nbspecies;i++){
-            if (s.species[i]){
-               if (i==0) outf << ">" << numtospecies(i) << " " <<
-                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-               else  outf << ">" << numtospecies(i) << endl;
-               outf << s.seqsrealigned[i] << endl;
-            }; 
-         }
-         outf.close();
-      }
-   }
-}
-
-   void
-extracttofasta(string folder)
-{
-   ofstream outf;
-   string pname("");
-   int pnum(1);
-   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
-      Sequence seq=*iv;
-      if (seq.species[0] && seq.nbtb>0){ 
-         stringstream file;
-         file << folder;
-         file << seq.name;
-         if (seq.name==pname){ 
-            file << "_";
-            file << pnum;
-            pnum++;
-         }
-         else {
-            pnum=1;
-            pname=seq.name;
-         }
-         file << ".fa";
-         outf.open(file.str().c_str());
-         Sequence & s=seq;
-         for (int i=0;i<nbspecies;i++){
-            if (s.species[i]){
-               if (i==0) outf << ">" << numtospecies(i) << " " <<
-                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-               else  outf << ">" << numtospecies(i) << endl;
-               outf << s.seqsrealigned[i] << endl;
-            }; 
-         }
-         outf.close();
-      }
-   }
-}
-
-
-   double
-distcv(vvd& mat1, vvd& mat2)
-{
-   double max(0);
-   int col(0);
-   for (ivvd iv=mat1.begin();iv!=mat1.end();iv++){
-      int line(0);
-      for (ivd il=(*iv).begin();il!=(*iv).end();il++){
-         double diff;
-         diff=fabs((*il)-mat2[col][line]);
-         if (diff>max) max=diff;
-         line++;
-      }
-      col++;
-   }
-   return max;
-}
-
-   void
-matflank(Motif & mot,int numflank)
-{
-   vd dum(4,0);
-   vvd flank_left(numflank,dum);
-   vvd flank_right(numflank,dum);
-
-   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
-      vint vdum;
-      for (int i=1;i<=numflank;i++){
-         if ((*ivm).strand==1){
-            ivint iv_left=(*ivm).matchespos[0]-i;
-            if (iv_left>(*ivm).seq_start) flank_left[numflank-i][(*iv_left)]+=1;
-            ivint iv_right=(*ivm).matchespos[0]+width+i;
-            if (iv_right<(*ivm).seq_stop) flank_right[i-1][(*iv_right)]+=1;
-         }
-         else if ((*ivm).strand==-1){
-            ivint iv_left=(*ivm).matchespos[0]+width+i;
-            if (iv_left<(*ivm).seq_stop){
-               int brc;
-               if (*iv_left==0) brc=1;
-               if (*iv_left==1) brc=0;
-               if (*iv_left==2) brc=3;
-               if (*iv_left==3) brc=2;
-               flank_left[numflank-i][brc]+=1;
-            }  
-            ivint iv_right=(*ivm).matchespos[0]-i;
-            if (iv_right>(*ivm).seq_start){ 
-               int brc;
-               if (*iv_right==0) brc=1;
-               if (*iv_right==1) brc=0;
-               if (*iv_right==2) brc=3;
-               if (*iv_right==3) brc=2;
-               flank_right[i-1][brc]+=1;
-            }  
-         }
-      }
-
-      for (ivint iv=(*ivm).matchespos[0];iv!=(*ivm).matchespos[0]+width;iv++){
-         vdum.push_back(*iv);
-      }
-      // cout << flank_left << "\t" << vinttostring(vdum) << "\t" << flank_right << endl; 
-   }
-
-   alpha=conca;
-   beta=concc;
-   countfreq(flank_left);
-   freqtolog(flank_left);
-   countfreq(flank_right);
-   freqtolog(flank_right);
-   //   cout << flank_left <<  "\t" << flank_right << endl; 
-
-   vvd finmat;
-   for (ivvd iv=flank_left.begin();iv!=flank_left.end();iv++){
-      finmat.push_back(*iv);
-   }
-   for (ivvd iv=mot.matprec.begin();iv!=mot.matprec.end();iv++){
-      finmat.push_back(*iv);
-   }
-   for (ivvd iv=flank_right.begin();iv!=flank_right.end();iv++){
-      finmat.push_back(*iv);
-   }
-
-   width+=2*numflank;
-   mot.matprec=finmat;
-   mot.matprecrevcomp=reversecomp(finmat);
-
-   return;
-}
-
-   void
-seqanalysis(Sequence & currseq,ofstream & streamfile)
-{
-   unsigned int i=0;
-//      for (int j=0;j<nbspecies;j++){
-//      cout << currseq.iseqs[j] << endl;
+//   void
+//scanseqs(vstring & regs)
+//{
+//   vcoord pcoords;
+//   if (args_info.masktrain_given){
+//
+//      cout << "(Masking training set)" << endl;
+//      ifstream inf;
+//      inf.open(args_info.masktrain_arg);
+//      back_insert_iterator<vcoord> pdest(pcoords);
+//      copy(iiscoord(inf),iiscoord(),pdest);
+//      inf.close();
+//
+//   }
+//   
+//   string pchrom("");
+//   for (ivstring is=regs.begin();is!=regs.end();is++){
+//      //cout << *is << endl;
+//      Sequence seq;
+//      ifstream fseq;
+//      fseq.open((*is).c_str());
+//      string fseqline;
+//      getline(fseq,fseqline);
+//      seq.name=fseqline;
+//      stringstream firstline(fseqline);
+//      string speciesname;
+//      firstline >> speciesname;
+//      string chrom;
+//      firstline >> chrom;
+//      if (chrom!=pchrom){
+//         cout << chrom << endl;
+//         pchrom=chrom;
 //      }
-   for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
-      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
-      vint bs(istr,istr+width);
-     //cout << i << " " << bs << endl;
-      if (compN(bs)>0) continue;
-      Motif currmot;
-      currmot.bsinit=vinttostring(bs);
-      currmot.seqinit=currseq.name;
-      currmot.pos=i;
-      motiftomat(bs,currmot);
-      currmot.matricerevcomp=reversecomp(currmot.matrice);
-      currmot.matprec=currmot.matrice;
-      currmot.matprecrevcomp=currmot.matricerevcomp;
-      vvd pmat=currmot.matprec;
-      unsigned int nbconv(0);
-      for (int nb=1;nb<=nbiter;nb++){
-         double max=0.01;
-         int iter(0);
-         while(max>0){
-            if (nb>2) currmot.matinit(scorethr2);
-            else currmot.matinit(scorethr);
-            if (currmot.nbmot<1) break;
-            
-            currmot.compprec();
-            max=distcv(currmot.matprec,pmat);
-            pmat=currmot.matprec;
-            iter++;
-            if (iter==20) break;
-            nbconv++;
-         }
-         if (nb==1){
-            currmot.corrprec();
-            pmat=currmot.matprec;
-            currmot.matprecrevcomp=reversecomp(currmot.matprec);
-         }
-      }
-      //cout << currmot.nbmot << " " ; 
-      //cout.flush();
-      double poissthr=1000.0; // *** to be changed : not hardcoded
-
-      currmot.matinit(scorethr2);
-      if (currmot.nbmot>2 && currmot.scorepoiss<poissthr){
-         currmot.pvaluecomp();
-         currmot.display(streamfile);
-         //		for (ivma ima=currmot.seqs.begin();ima!=currmot.seqs.end();ima++){
-         //  cout << (*ima).alignseq[0] << endl;
-         //		}
-         //cout << currmot.matprec << endl;
-      }
-      i++;
-   }
-   cout << endl;
-}
-
-   void
-seqanalysis(Sequence & currseq,vmot & genmots)
-{
-   unsigned int i=0;
-//      for (int j=0;j<nbspecies;j++){
-//      cout << currseq.iseqs[j] << endl;
+//      seq.chrom=intfromchrom(chrom.substr(3));
+//      if (seq.chrom==-1) continue;
+//      //cout << "chromosome \"" << seq.chrom << "\"\n";
+//      firstline >> seq.start;
+//      //cout << "start \"" << seq.start << "\"\n";
+//      firstline >> seq.stop;
+//      seq.finame=*is;
+//      string dum;
+//      seq.species=vint(nbspecies,0);
+//      vint dumi;
+//      seq.iseqs=vvint(nbspecies,dumi);
+//      seq.imaps=vvint(nbspecies,dumi);
+//      seq.imapsinv=vvint(nbspecies,dumi);
+//      while (!fseq.eof()){
+//         //                cout << fseqline << endl;
+//         int seqnum=speciestonum(fseqline.substr(1,6));
+//         getline(fseq,fseqline);
+//         seq.imaps[seqnum]=alignedtomap(fseqline);
+//         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
+//         string seqwogap=remgaps(fseqline);
+//         if (seqwogap.size()>30){
+//            seq.species[seqnum]=1;
+//         }
+//         seq.iseqs[seqnum]=stringtoint(seqwogap);
+//         getline(fseq,fseqline);
 //      }
-   for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
-      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
-      vint bs(istr,istr+width);
-     //cout << i << " " << bs << endl;
-      if (compN(bs)>0) continue;
-      Motif currmot;
-      currmot.bsinit=vinttostring(bs);
-      currmot.seqinit=currseq.name;
-      currmot.pos=i;
-      motiftomat(bs,currmot);
-      currmot.matricerevcomp=reversecomp(currmot.matrice);
-      currmot.matprec=currmot.matrice;
-      currmot.matprecrevcomp=currmot.matricerevcomp;
-      vvd pmat=currmot.matprec;
-      unsigned int nbconv(0);
-      for (int nb=1;nb<=nbiter;nb++){
-         double max=0.01;
-         int iter(0);
-         while(max>0){
-            if (nb>2) currmot.matinit(scorethr2);
-            else currmot.matinit(scorethr);
-            if (currmot.nbmot<1) break;
-            
-            currmot.compprec();
-            max=distcv(currmot.matprec,pmat);
-            pmat=currmot.matprec;
-            iter++;
-            if (iter==20) break;
-            nbconv++;
-         }
-         if (nb==1){
-            currmot.corrprec();
-            pmat=currmot.matprec;
-            currmot.matprecrevcomp=reversecomp(currmot.matprec);
-         }
-      }
-      //cout << currmot.nbmot << " " ; 
-      //cout.flush();
-
-      currmot.matinit(scorethr2);
-      if (currmot.nbmot>2){
-         currmot.pvaluecomp();
-         //currmot.display(streamfile);
-         //		for (ivma ima=currmot.seqs.begin();ima!=currmot.seqs.end();ima++){
-         //  cout << (*ima).alignseq[0] << endl;
-         //		}
-         //cout << currmot.matprec << endl;
-         genmots.push_back(currmot);
-      }
-      i++;
-   }
-   cout << endl;
-}
-   
-vTSS TSSall;
-
-   void
-loadannots()
-{
-   ifstream annots;
-   annots.open(args_info.phenotype_arg);
-
-   back_insert_iterator<vstring> dest(phenos);
-   copy(iisstring(annots),iisstring(),dest);
-
-   annots.close();
-
-   ifstream glist;
-   //!!!! FIRST scangens were done with genelist-wosensory
-   //   if (species==1) glist.open("/home/santolin/these/files/droso/plaza/phenos/neg-ovo-pheno.dat");
-   //   else if (species==2) glist.open("/home/santolin/these/files/mus/affymetrix/e10/genelist-wo-pos-down-uniq.dat");
-   if (args_info.phenoback_given){
-      glist.open(args_info.phenoback_arg);
-   }
-   else {
-      if (species=="droso") glist.open("/home/rouault/these/sequence/genomes/genelist.dat");
-      else if (species=="eutherian") glist.open("/home/santolin/these/files/mus/biomart/genelist-protein-coding+miRNA.dat");
-   }
-
-   back_insert_iterator<vstring> destg(gbacks);
-   copy(iisstring(glist),iisstring(),destg);
-
-   glist.close();
-
-   for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
-      for (ivstring ivs2=gbacks.begin();ivs2!=gbacks.end();ivs2++){
-         if (*ivs2==*ivs){
-            gbacks.erase(ivs2);
-            break;
-         }
-      }
-   }
-
-   //   for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
-   //      cout << *ivs << endl;
-   //   }
-}
-
-   vcoord
-loadcoords()
-{
-   ifstream inf;
-   inf.open(args_info.coord_file_arg);
-   vcoord coords;
-   back_insert_iterator<vcoord> dest(coords);
-   copy(iiscoord(inf),iiscoord(),dest);
-   return coords;
-}
-
-
-   void
-loadchroms()
-{
-   ifstream chromsf;
-   if (species=="droso"){
-      chromsf.open("/home/rouault/these/sequence/genomes/melano-only/dmel-all-chromosome-r4.3.fasta");
-   } else if (species=="eutherian"){
-      chromsf.open("/home/santolin/these/files/mus/genome/fasta/all/all.chromosome_no_MT.fasta");
-      //chromsf.open("/home/santolin/these/files/mus/genome/fasta/all/chr4.fa");
-      //chromsf.open("/home/santolin/these/files/mus/genome/fasta/repeat_masked/all.chromosome_no_MT.fa");
-   }
-   back_insert_iterator<vchrom> dest(chromints);
-   copy(iischrom(chromsf),iischrom(),dest);
-   sort(chromints.begin(),chromints.end());
-
-   for (int i=0;i<chromints.size();i++){
-      cout << "chrom " << chromints[i].name << " ";
-      cout << "of length " << chromints[i].seq.size() << " : ";
-      cout << chromints[i].seq.substr(0,50) << " ... ";
-      cout << chromints[i].seq.substr(chromints[i].seq.size()-50);
-      cout << "\n";
-   }
-
-
-   chromsf.close();
-}
-
-   vint 
-loadlengthchrom()
-{
-
-   vint lchr(nbchrom,0);
-
-   if (species=="droso"){ // *** to be corrected to be easily updated
-
-      lchr[0]=22410834;//chr2L
-      lchr[1]=20769785;//chr2R
-      lchr[2]=23774897;//chr3L
-      lchr[3]=27908053;//chr3R
-      lchr[4]=1284640;//chr4
-      lchr[5]=22227390;//chrX
-
-
-   } else if (species=="eutherian"){
-
-      lchr[0]=197195432;
-      lchr[1]=181748087;
-      lchr[2]=159599783;
-      lchr[3]=155630120;
-      lchr[4]=152537259;
-      lchr[5]=149517037;
-      lchr[6]=152524553;
-      lchr[7]=131738871;
-      lchr[8]=124076172;
-      lchr[9]=129993255;
-      lchr[10]=121843856;
-      lchr[11]=121257530;
-      lchr[12]=120284312;
-      lchr[13]=125194864;
-      lchr[14]=103494974;
-      lchr[15]=98319150;
-      lchr[16]=95272651;
-      lchr[17]=90772031;
-      lchr[18]=61342430;
-      lchr[19]=166650296;//X
-      lchr[20]=15902555;//Y
-   }
-
-   return lchr;
-
-}
-
-   void
-initgroupedinst()
-{
-   cout << "Loading length chroms..." << endl;
-   lengthchrom=loadlengthchrom();
-
-   vginst dumvginst;
-   groupedinst=vvginst(nbchrom,dumvginst);
-   for (unsigned int i=0;i<nbchrom;i++){
-      for (unsigned int j=0;j<lengthchrom[i]/scanstep+1;j++){
-         groupedinst[i].push_back(GroupInstance(j*scanstep,j*scanstep+scanwidth,i));
-      }
-   }
-   ifstream annots;
-   if (species=="droso"){
-      annots.open("/home/rouault/these/sequence/genomes/regres-wellform-all.dat");
-   } else if (species=="eutherian"){
-      annots.open("/home/santolin/these/files/mus/biomart/genes-n-strand-protein-coding+miRNA-no-MT-n-NT-TSS.dat");
-   }
-   importTSS(TSSall,annots);
-   annots.close();
-   // assign CRMs to genes in an annotextent region
-   cout << "Assign CRMs to genes in annotextend..." << endl;
-   for (ivTSS ivt=TSSall.begin();ivt!=TSSall.end();ivt++){
-      int start=0;
-      if (((*ivt).coord-annotextent-scanwidth/2)/scanstep+1>0) start=((*ivt).coord-annotextent-scanwidth/2)/scanstep;
-      int stop=((*ivt).coord+annotextent-scanwidth/2)/scanstep+1;
-      if (stop>lengthchrom[(*ivt).chrom]/scanstep+1) stop=lengthchrom[(*ivt).chrom]/scanstep+1;
-      for (unsigned int i=start;i<stop;i++){
-         groupedinst[(*ivt).chrom][i].TSSs.push_back(*ivt);
-         //       cout << (*ivt).gene << endl;
-      }
-   }
-   // assign nearest TSS to genes
-   cout << "Assign CRMs to nearest gene..." << endl;
-   for (unsigned int i=0;i<nbchrom;i++){
-      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
-         (*ivg).compbestannot();
-      }
-   }
-
-   // attribute phenotype to CRMs
-   cout << "Attribute phenotype to CRM..." << endl;
-   for (unsigned int i=0;i<nbchrom;i++){
-      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
-         (*ivg).isdiscarded();
-         if (!(*ivg).discarded){
-            for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
-               if ((*ivg).besttss.gene==*ivs){
-                  (*ivg).goodpheno=1;
-                  break;
-               } else {
-                  (*ivg).goodpheno=0;
-               }
-            }
-         } else {
-            (*ivg).goodpheno=0;
-         }
-      }
-   }
-
-}
-
-   void
-getsites(ifstream & file, Sequence & bds)
-{
-   string dum;
-   string dumtest;
-   int i=0;
-   cout << "seq " << endl;
-   getline(file,dum);
-   while(!file.eof()){
-      bds.sitenames.push_back(dum.substr(1));
-      getline(file,dum);
-      if (i>0 && dum.length()!=dumtest.length()) {
-         cout << dum << endl;
-         cout << "Error in site length" << endl;
-         exit(2);
-      }
-      dumtest=dum;
-      i++;
-      bds.seqs.push_back(dum);
-      cout << dum << endl;
-      bds.iseqs.push_back(stringtoint(dum));
-      getline(file,dum);
-   }
-}
-
-   void
-disptex(vseq & seqs)
-{
-   system("if ! test -d display;then mkdir display;fi;");      
-   //   system("if ! test -d display/tex;then mkdir display/tex;fi;");      
-
-   double scoreinit=scorethr2;
-   string filename("display/");
-   filename+="results.tex";
-   ofstream outf(filename.c_str());
-   disptexinit(outf);
-   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){ 
-      cout << "Scanning " << (*ivs).name << endl;
-      dispseqwmots(*ivs,motsdef,outf,scoreinit);
-   }
-   disptexclose(outf);
-
-   outf.close();
-}
-
-   void
-disptexwgaps(vseq & align)
-{
-   system("if ! test -d display;then mkdir display;fi;");      
-
-   cout << "Scanning sequences for instances..." << endl;
-   scanseqsforinstancesnmask(align,motsdef);
-
-   cout << "Defining conserved instances..." << endl;
-   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-      ivs->instances2instancescons();
-      //cout << ivs->name << "\n" << ivs->instancescons;
-   }
-
-   string folder("display/");
-   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){ 
-      stringstream file;
-      file << folder;
-      file << ivs->name << "_";
-      file << chromfromint(ivs->chrom) << "_";
-      file << ivs->start << "_";
-      file << ivs->stop;
-      file << ".tex";
-      ofstream outf(file.str().c_str());
-      disptexinit(outf);
-      cout << "Scanning " << (*ivs).name << endl;
-      dispseqwmotswgaps(*ivs,outf);
-      disptexclose(outf);
-      outf.close();
-   }
-
-}
-
-   Sequence
-findbestseq(vmot & vm, Sequence & seq)
-{
-
-   Sequence bestseq=seq;
-
-   //Find the best 1kb piece (if possible!) maximizing the sites score function
-   bestseq.score=-1.e6;
-   vint bestmotis(nbmots_for_score,0);
-
-   //we define the 1kb piece with best score
-   for (ivvinstseq iv=seq.instancescons.begin();iv!=seq.instancescons.end();iv++){
-
-      vinstseq vic=*iv;
-      vint bestmotistmp(nbmots_for_score,0);
-      int start=seq.imaps[0][vic[0].pos]-neighbext;
-      if (start<0) start=0;
-      int stop=start+scanwidth-1;
-      if (stop>seq.stop-seq.start){
-         stop=seq.stop-seq.start;
-         start=stop-scanwidth+1;
-         if (start<0) start=0;
-      }
-      for (ivvinstseq iv1=seq.instancescons.begin();iv1!=seq.instancescons.end();iv1++){
-         vinstseq vic1=*iv1;
-         int start1=seq.imaps[0][vic1[0].pos];
-         if (start1>=start && start1<stop-width+1){
-            bestmotistmp[vic1[0].motindex]++;
-         }
-      }
-
-      double score;
-      int lseq=stop-start+1;
-      score=calcscore(vm,bestmotistmp,lseq);
-
-      if (score>bestseq.score){
-         bestseq.score=score;
-         bestseq.start=seq.start+start;
-         bestseq.stop=seq.start+stop;
-         bestmotis=bestmotistmp;
-      }
-   }
-
-   if (seq.instancescons.size()==0) bestseq.score=calcscore(vm,bestmotis,seq.nbtb);
-
-   //   cout << bestseq.name << " " << bestseq.score  <<" " << bestseq.start << " "  <<bestseq.stop << endl;
-   //   cout << seq.name << " "  << seq.start << " "  <<seq.stop << endl;
-
-   //cut original sequence into best piece
-   int rawstart,rawstop;
-   // Coorects minor bug due to extraction (incorrect stop due to gap etc...)
-   if (bestseq.stop-seq.start+1>=seq.imapsinv[0].size()) bestseq.stop=seq.start+seq.imapsinv[0].size()-1;
-   rawstart=seq.imapsinv[0][bestseq.start-seq.start];
-   rawstop=seq.imapsinv[0][bestseq.stop-seq.start];
-   for (int i=0;i<nbspecies;i++){
-      if (seq.species[i]){
-         civint istart=seq.iseqs[i].begin()+seq.imaps[i][rawstart];
-         civint istop=seq.iseqs[i].begin()+seq.imaps[i][rawstop]+1;
-         if (istop>=seq.iseqs[i].end()) istop=seq.iseqs[i].end();
-         vint itmp(istart,istop);
-         bestseq.iseqs[i]=itmp;
-         bestseq.seqs[i]=vinttostring(itmp);
-         bestseq.seqsrealigned[i]=seq.seqsrealigned[i].substr(rawstart,rawstop-rawstart+1);
-         bestseq.imaps[i]=alignedtomap(bestseq.seqsrealigned[i]);
-         bestseq.imapsinv[i]=alignedtorevmap(bestseq.seqsrealigned[i]);
-         //         cout << bestseq.iseqs[i] << endl;
-         //         cout << bestseq.seqs[i] << endl;
-         //         cout << bestseq.seqsrealigned[i] << endl;
-         int nbtb=bestseq.iseqs[i].size()-compN(bestseq.iseqs[i]);
-         if (nbtb>width+neighbext){//>5){}
-            bestseq.species[i]=1;
-         } else {
-            bestseq.species[i]=0;
-         }
-      }
-   }
-   bestseq.nbN=compN(bestseq.iseqs[0]);
-   bestseq.nbtb=bestseq.iseqs[0].size()-bestseq.nbN;
-   //   cout << bestseq.nbN << endl;
-   //   cout << bestseq.nbtb << endl;
-
-   return bestseq;
-
-}
-
-   vseq 
-findbestseqs(vmot & vm, vseq & seqs1)
-{
-   // INIT
-   vseq seqs=seqs1;
-
-   // We need different enhancers of the same gene to have same name
-
-   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-      if ((*ivs).name.find('-')!=string::npos)
-      {
-         (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('-'),(*ivs).name.end());
-      }
-   }
-
-   // SCANNING OLD SEQS
-   //
-   //   cout << "Scanning sequences for instances..." << endl;
-   scanseqsforinstancesnmask(seqs,vm);
-
-   // KEEPING BEST SEQS
-   //
-   //   cout << "Defining conserved instances..." << endl;
-   //For each sequence find best part and cut it into vtmp
-   vseq vtmp;
-   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-      ivs->instances2instancescons();
-      vtmp.push_back(findbestseq(vm,*ivs));
-   }
-
-   // UNICITY: ONE SEQUENCE PER GENE
-   //
-   vseq vbest;
-   // only keep the best seq among all surrounding / intronic regions of a given gene
-   if (vtmp.size()>1){
-      Sequence bestseq=*(vtmp.begin());
-      for (ivseq ivs=vtmp.begin()+1;ivs!=vtmp.end();ivs++){ 
-         if (ivs->name==bestseq.name){ 
-            if (ivs->score>bestseq.score){
-               bestseq=*ivs;
-            }
-         } else{
-            vbest.push_back(bestseq);
-            bestseq=*ivs;
-            if (ivs==vtmp.end()-1) vbest.push_back(*ivs);
-         }
-      }
-   } else {
-      vbest=vtmp;
-   }
-
-   // RE-SCANNING BEST SEQUENCES
-   //
-   for (ivseq iv=vbest.begin();iv!=vbest.end();iv++){
-      iv->instances.clear();
-      iv->instancescons.clear();
-      vint dum(nbmots_for_score,0);
-      iv->motis=dum;
-   }
-   //   cout << "Scanning best 1kbs for instances..." << endl;
-   //scanseqsforinstancesnmask(vbest,vm);
-   scanseqsforinstances(vbest,vm);
-
-   //   cout << "Defining best 1kbs conserved instances..." << endl;
-   for (ivseq ivs=vbest.begin();ivs!=vbest.end();ivs++){
-      ivs->instances2instancescons();
-      //   cout << ivs->name << endl;
-      //  cout << ivs->instancescons << endl;
-   }
-
-
-   // RE-DEFINE SIZEPOS AND SIZENEG
-   vseq vscorepos;
-   sizepos=0;
-   for (ivseq ivs=vbest.begin();ivs!=vbest.end();ivs++){
-      if (ivs->sign==1){
-         sizepos++;
-      }
-   }
-   sizeneg=vbest.size()-sizepos;
-
-   return vbest;
-}
-
-   void
-dispbestseqs(vseq & seqs, ofstream & outf)
-{
-   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-      outf << chromfromint(ivs->chrom) << "\t";
-      outf << ivs->start << "\t";
-      outf << ivs->stop << "\t";
-      outf << ivs->name << "\n";
-   }
-}
-
-   double
-calcareaforscore(vseq & vscore)
-{
-
-   double area(0.);
-   double pFP(0.),pTP(0.);
-   double TP(0.),FP(0.);
-   double pscore=vscore[0].score;
-   for (ivseq ivs=vscore.begin()+1;ivs!=vscore.end();ivs++){
-      if ((*ivs).sign==1){
-         TP+=1.;
-      }
-      else if ((*ivs).sign==-1){
-         FP+=1.;
-      }
-      if (ivs->score!=pscore){
-         area+=(FP-pFP)*(TP+pTP)/2;
-         pFP=FP;
-         pTP=TP;
-         pscore=ivs->score;
-      }
-      if (ivs->score==pscore && ivs==vscore.end()-1){
-         area+=(FP-pFP)*(TP+pTP)/2;
-      }
-   }
-   area/=(sizepos*sizeneg);
-   return area;
-}
-
-
-   double
-calcarea(vvd & rates)
-{
-
-   double area(0.);
-   double FPtemp((*rates.begin())[0]);
-   double TPtemp((*rates.begin())[1]);
-
-   for (ivvd iv=rates.begin()+1;iv!=rates.end();iv++){
-      double FP((*iv)[0]);
-      double TP((*iv)[1]);
-      if (TPtemp!=0 || TP!=0){
-         area+=(FP-FPtemp)*(TPtemp+TP)/2;
-      }
-      FPtemp=FP;
-      TPtemp=TP;
-   }
-
-   return area;
-}
-
-   vd 
-calcinflex(vvd & rates)
-{
-   vd bestpoint(3,0.); //(FP,TP,thr)
-
-   double dist(0.),distmax(0.),bestTP(0.),bestFP(0.);
-
-   //rates for all thresholds, with values (FP,TP)
-   for (ivvd iv=rates.begin();iv!=rates.end();iv++){
-      double FP,TP,thr;
-      FP=(*iv)[0];
-      TP=(*iv)[1];
-      thr=(*iv)[2];
-      dist=(TP-FP)/sqrt(2);
-
-      if (dist>distmax && thr>0.2*width){
-         distmax=dist;
-         bestpoint[0]=thr;
-         bestpoint[1]=FP;
-         bestpoint[2]=TP;
-      }
-   }
-
-   return bestpoint;
-}
-
-//!! test sequences need to be >= width !!
-   void    
-bestpwm(vseq & vscore,vmot & vm)
-{
-   ofstream streamfile;
-   streamfile.open("bestuniq-auc.dat");
-   ofstream auc;
-   auc.open("mot-auc.dat");
-
-   //compute AUCs
-   for (ivmot iv=vm.begin();iv!=vm.end();iv++){
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-         vint seqint=ivs->iseqs[0];
-         ivs->score=scorefshift(seqint,iv->matprec);
-         if (scorefshift(seqint,iv->matprecrevcomp)>ivs->score){
-            ivs->score=scorefshift(seqint,iv->matprecrevcomp);
-         } 
-         //      cout << seqint << " " << ivs->score << endl;
-      }
-      sort(vscore.begin(),vscore.end());
-      iv->optauc=calcareaforscore(vscore);
-   }
-   sort(vm.begin(),vm.end());
-
-   for (ivmot iv=vm.begin();iv!=vm.end();iv++){
-      auc << iv->index+1 << "\t" << iv->optauc << endl;
-      cout << iv->index+1 << "\t" << iv->optauc << endl;
-      iv->display(streamfile);
-   }
-
-   streamfile.close();
-   auc.close();
-
-}
-
-   void    
-rocinfo(vseq & vscore,vmot & vm)
-{
-
-
-   ofstream streamfile;
-   streamfile.open("score/roc-infos.dat");
-   streamfile << "Rank" << "\t";
-   streamfile << "Nbmot" << "\t";
-   streamfile << "AUC" << "\t";
-   //   streamfile << "Score_cutoff" << "\t";
-   streamfile << "NumFalsePos" << "\t";
-   streamfile << "NumFalseNeg" << "\n";
-
-   //compute AUCs
-   for (ivmot iv=vm.begin();iv!=min(vm.begin()+nbmots_for_score,vm.end());iv++){
-
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-         calcscore(*iv,*ivs);
-      }
-      vseq vscorebest;      
-      vmot vm;
-      vm.push_back(*iv);
-      vscorebest=findbestseqs(vm,vscore);
-      //vscorebest=vscore;
-      sort(vscorebest.begin(),vscorebest.end());
-      //cout << "sizepos=" <<sizepos << " sizeneg=" << sizeneg << endl;
-
-      double dist,area(0.),distmax(0.),FP(0.),TP(0.),pFP(0.),pTP(0.),pscore(vscorebest.begin()->score),scoremax(0.);
-
-      for (ivseq ivs=vscorebest.begin();ivs!=vscorebest.end();ivs++){
-         if ((*ivs).sign==1) TP+=1./sizepos;
-         else if ((*ivs).sign==-1) FP+=1./sizeneg;
-         dist=TP-FP;
-         //         //cout << "dist " << dist << endl;
-         //         if (dist<0){
-         //            isneg=1;
-         //         }
-         //         //cout << ivs->score << endl;
-         //         //// we do not want uninstructive, late peaks
-         //         //// we also allow one wrong element in the beginning
-         //         if (FP>1. && dist>distmax){
-         //            // we avoid the situation where we select 0 motif
-         //           // if (!(scoremax>0 && ivs->score==0)){
-         //           if (!isneg){
-         //               distmax=dist;
-         //               //cout << "distmax " << dist << endl;
-         //               scoremax=ivs->score;
-         //               //cout << "scoremax=" << scoremax << endl;
-         //            }
-         //         //   }
-         //         }
-         if (ivs==vscorebest.begin() || ivs==vscorebest.end()-1){
-            area+=(FP-pFP)*(TP+pTP)/2;
-         }
-         else {
-            if (ivs->score!=pscore){
-               area+=(FP-pFP)*(TP+pTP)/2;
-               pFP=FP;
-               pTP=TP;
-            }
-         }
-         pscore=ivs->score;
-      }
-
-      for (double n=0;n<3;n++){
-         int numFalsePos(0),numFalseNeg(0);
-         //      cout << "motif " << iv->index << " scoremax=" << scoremax << " distmax=" << distmax << endl;
-         for (ivseq ivs=vscorebest.begin();ivs!=vscorebest.end();ivs++){
-            //         if (ivs->score>=scoremax && ivs->sign==-1) numFalsePos++;
-            //         if (ivs->score<scoremax && ivs->sign==1) numFalseNeg++;
-            if (ivs->motis[iv->index]>n && ivs->sign==-1) numFalsePos++;
-            if (ivs->motis[iv->index]<=n && ivs->sign==1) numFalseNeg++;
-         }
-
-         streamfile << iv->index+1 << "\t";
-         streamfile << n+1 << "\t";
-         streamfile << area << "\t";
-         //      streamfile << scoremax << "\t";
-         streamfile << numFalsePos << "\t";
-         streamfile << numFalseNeg << "\n";
-      }
-   }
-
-   streamfile.close();
-
-}
-
-   void    
-roconsites(vseq & vscore,vmot & vm)
-{
-   for (ivmot iv=vm.begin();iv!=vm.end();iv++){
-      ofstream rocf;
-      ostringstream rocfs;
-      rocfs << "score/roc-on-sites/roc-" << iv->index << ".dat";
-      rocf.open(rocfs.str().c_str());
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-         double sum=0;
-         civint civ=ivs->iseqs[0].begin();
-         ivs->score=scoref(civ,iv->matprec);
-         if (scoref(civ,iv->matprecrevcomp)>ivs->score){
-            ivs->score=scoref(civ,iv->matprecrevcomp);
-         }
-      }
-      sort(vscore.begin(),vscore.end());
-      double FP(0.),TP(0.),scoretmp;
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-         if ((*ivs).sign==1){
-            TP+=1./sizepos;
-         }
-         else if ((*ivs).sign==-1){
-            FP+=1./sizeneg;
-         }
-         if (ivs==vscore.begin()){
-            rocf << ivs->score+1 << "\t" << 0 << "\t" << 0 << endl;
-            rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-         }
-         if (ivs==vscore.end()-1){
-            rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-         }
-         else {
-            if (ivs->score!=scoretmp){
-               rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-            }
-         }
-         scoretmp=ivs->score;
-      }
-      rocf.close();
-   }
-
-}
-
-void correlations(vseq & vscore,vmot & vm)
-{
-   system("if ! test -d score/correlations;then mkdir score/correlations;fi;");      
-   vseq vscoretmp;
-   //   keeping only same size sequences
-   int sizerejpos(0),sizerejneg(0);
-   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-      if (ivs->nbtb==2000){
-         vscoretmp.push_back(*ivs);
-      }
-      else{
-         if (ivs->sign==1) sizerejpos++;
-         if (ivs->sign==-1) sizerejneg++;
-      }
-   }
-   cout << "Rejected " << sizerejpos << " positive and " << sizerejneg << " negative promoters too short" << endl;
-   //   exit(9);
-
-   // stopping at 50 pos 50 neg
-   for (ivmot iv=vm.begin();iv!=min(vm.end(),vm.begin()+nbmots_for_score);iv++){ 
-      vscore=vscoretmp;
-      cout << "Motif " << iv->index << endl;
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-         double sum=0;
-         calcscore(*iv,*ivs);
-      }
-      sort(vscore.begin(),vscore.end());
-      double FP(0.),TP(0.);
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-         if ((*ivs).sign==1) TP+=1.;
-         else if ((*ivs).sign==-1) FP+=1.;
-
-         if (TP<=50){
-            for (ivseq ivs1=vscoretmp.begin(); ivs1!=vscoretmp.end();ivs1++){
-               if (ivs1->name==ivs->name){
-                  ivs1->signpermot[iv->index]=1;
-               }
-            }
-         } else{
-            for (ivseq ivs1=vscoretmp.begin(); ivs1!=vscoretmp.end();ivs1++){
-               if (ivs1->name==ivs->name){
-                  ivs1->signpermot[iv->index]=-1;
-               }
-            }
-         }
-      }
-   }
-
-   ofstream auc;
-   auc.open("score/correlations/correlations.dat");
-   for (ivseq ivs=vscoretmp.begin();ivs!=vscoretmp.end();ivs++){
-      if (ivs->sign==1){
-         cout << ivs->name << "\t";
-         auc << ivs->name << "\t";
-         for (int i=0;i<nbmots_for_score;i++){
-            cout << ivs->signpermot[i] << "\t";
-            auc << ivs->signpermot[i] << "\t";
-         }
-         cout << endl;
-         auc << endl;
-      }
-   }
-   auc.close();
-
-   double corrmoy(0),corrvar(0);
-   double counter(0);
-   for (int i=0;i<1;i++){//nbmots_for_score-1;i++){}
-      for (int j=i+1;j<nbmots_for_score;j++){
-         double moy1(0);
-         double moy2(0);
-         double prod12(0);
-         for (ivseq ivs=vscoretmp.begin();ivs!=vscoretmp.end();ivs++){
-            if (ivs->sign==1){
-               moy1+=ivs->signpermot[i];
-               moy2+=ivs->signpermot[j];
-               prod12+=ivs->signpermot[i]*ivs->signpermot[j];
-            }
-         }
-         moy1/=sizepos;
-         moy2/=sizepos;
-         prod12/=sizepos;
-         double correlation;
-         correlation=prod12-moy1*moy2;
-         cout << "Motif "<< i << "VS" << j <<
-            " Moy" << i << " " << moy1 <<
-            " Moy" << j << " " << moy2 <<
-            " prod " << i << j << " " << prod12 <<
-            " corr " << correlation << endl;
-         corrmoy+=correlation;
-         corrvar+=correlation*correlation;
-         counter++;
-      }
-   }
-   cout << counter << endl;
-   corrmoy/=counter;
-   corrvar/=counter;
-   corrvar-=corrmoy*corrmoy;
-   corrvar=sqrt(corrvar);
-   cout << "Correlation mean: " << corrmoy << endl;
-   cout << "Correlation variance: " << corrvar << endl;
-
-}
-
-void rocpermot(vseq & vscore,vmot & vm)
-{
-   system("if ! test -d score/roc-per-mot;then mkdir score/roc-per-mot;fi;");      
-   //   vseq vscoretmp;
-   //   //   keeping only same size sequences
-   ////   int sizerejpos(0),sizerejneg(0);
-   //   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-   //  //    if (ivs->nbtb<=2000){
-   //  //       vscoretmp.push_back(*ivs);
-   //    //  }
-   ////      else{
-   ////         if (ivs->sign==1) sizerejpos++;
-   ////         if (ivs->sign==-1) sizerejneg++;
-   ////      }
-   //   }
-   // //  cout << "Rejected " << sizerejpos << " positive and " << sizerejneg << " negative promoters too short" << endl;
-   //   //   exit(9);
-   //   //vscore=vscoretmp;
-
-   // computing roc for each motif
-   ofstream auc;
-   auc.open("score/roc-per-mot/roc_auc.dat");
-   for (ivmot iv=vm.begin();iv!=vm.begin()+nbmots_for_score;iv++){ 
-      ofstream outf;
-      ofstream outf1;
-      ostringstream outfs;
-      ostringstream outfs1;
-      cout << "Motif " << iv->index+1 << endl;
-      width=iv->bsinit.size();
-      scorethr2=iv->motscorethr2;
-      scorethr=iv->motscorethr;
-      scorethrcons=iv->motscorethrcons;
-      cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-      double area(0);
-      ofstream rocf;
-      ostringstream rocfs;
-      rocfs << "score/roc-per-mot/roc_" << iv->index << ".dat";
-      outfs << "score/roc-per-mot/bestseqs-coords-" << iv->index <<".dat";
-      outfs1 << "score/roc-per-mot/bestseqs-" << iv->index << ".dat";
-      outf.open(outfs.str().c_str());
-      outf1.open(outfs1.str().c_str());
-      rocf.open(rocfs.str().c_str());
-      //      ofstream rocrf;
-      //      ostringstream rocrfs;
-      //      rocrfs << "score/roc-per-mot/rocr_" << iv->index << ".dat";
-      //      rocrf.open(rocrfs.str().c_str());
-
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-         if (args_info.wocons_given) ivs->score=iv->nbmatchmat(*ivs);
-         else ivs->score=iv->nbmatchcons(*ivs);
-      }
-      vseq vscorebest;      
-      vmot vm;
-      vm.push_back(*iv);
-      //vscorebest=findbestseqs(vm,vscore);
-      vscorebest=vscore;
-      sort(vscorebest.begin(),vscorebest.end());
-      vseq vscorepos;
-      for (ivseq ivs=vscorebest.begin();ivs!=vscorebest.end();ivs++){
-         if (ivs->sign==1){
-            vscorepos.push_back(*ivs);
-         }
-      }
-      dispbestseqs(vscorepos,outf);
-      outf1 << vscorepos << endl;
-      //cout << vscorepos << endl;
-      //cout << vscorebest << endl;
-
-      sizepos=vscorepos.size();
-      sizeneg=vscorebest.size()-sizepos;
-      //cout << sizepos << " " << sizeneg << endl;
-      double FP(0.),TP(0.),pFP(0.),pTP(0.),scoretmp;
-      rocf << vscorebest.begin()->score+1 << "\t" << FP << "\t" << TP << endl;
-      for (ivseq ivs=vscorebest.begin();ivs!=vscorebest.end();ivs++){
-         //         rocrf << ivs->score << "\t" << ivs->sign << endl;
-         //      cout << ivs->nbtb << " ";
-         if ((*ivs).sign==1) TP+=1./sizepos;
-         else if ((*ivs).sign==-1) FP+=1./sizeneg;
-
-         if (ivs==vscorebest.begin() || ivs==vscorebest.end()-1){
-            rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-            area+=(FP-pFP)*(TP+pTP)/2;
-         }
-         else {
-            if (ivs->score!=scoretmp){
-               rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-               area+=(FP-pFP)*(TP+pTP)/2;
-               pFP=FP;
-               pTP=TP;
-            }
-         }
-         scoretmp=ivs->score;
-      }
-      auc << iv->index << "\t" << area << endl;
-
-      rocf.close();
-      outf.close();
-      outf1.close();
-      //      rocrf.close();
-   }
-   auc.close();
-}
-
-void rocpermotvarthr(vseq & vscore,vmot & vm)
-{
-   system("if ! test -d score/roc-per-mot-var-thr;then mkdir score/roc-per-mot-var-thr;fi;");      
-
-   // computing roc for each motif
-   ofstream auc;
-   auc.open("score/roc-per-mot-var-thr/roc_auc.dat");
-
-   for (ivmot iv=vm.begin();iv!=vm.begin()+nbmots_for_score;iv++){ 
-
-      cout << "Motif " << iv->index << endl;
-      width=iv->bsinit.size();
-      ofstream rocf;
-      ostringstream rocfs;
-      rocfs << "score/roc-per-mot-var-thr/roc_" << iv->index << ".dat";
-      rocf.open(rocfs.str().c_str());
-
-
-
-      double FP(0.),TP(0.),pFP(0.),pTP(0.),area(0);
-      rocf << 12. << "\t" << 0. << "\t" << 0. << endl;
-
-      for (double thr=11.5;thr>0.;thr--){
-
-         FP=0;
-         TP=0;   
-         iv->motscorethr2=iv->motwidth*thr/10;
-         iv->motscorethrcons=iv->motscorethr2;
-
-         for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-            if (args_info.wocons_given){
-               if (iv->nbmatchmat(*ivs)==0) continue;
-            } else {
-               if (iv->nbmatchcons(*ivs)==0) continue;
-            }
-            if ((*ivs).sign==1) TP+=1./sizepos;
-            else if ((*ivs).sign==-1) FP+=1./sizeneg;
-         }
-         rocf << thr << "\t";
-         rocf<< FP << "\t";
-         rocf << TP << "\n";
-         area+=(FP-pFP)*(TP+pTP)/2;
-         pFP=FP;
-         pTP=TP;
-      }
-      rocf << -10 << "\t";
-      rocf<< 1. << "\t";
-      rocf << 1. << "\n";
-      area+=(1.-pFP)*(1.+pTP)/2;
-      auc << iv->index << "\t" << area << endl;
-
-      rocf.close();
-   }
-   auc.close();
-}
-
-void roccumulmotvarthr(vseq & vscore,vmot & vm)
-{
-   system("if ! test -d score/roc-cumul-mot-var-thr;then mkdir score/roc-cumul-mot-var-thr;fi;");      
-
-   // computing roc for each motif
-   ofstream auc("score/roc-cumul-mot-var-thr/roc_auc.dat");
-   ofstream rocf("score/roc-cumul-mot-var-thr/roc_cumul.dat");
-
-   double FP(0.),TP(0.),pFP(0.),pTP(0.),area(0);
-   rocf << 12. << "\t" << 0. << "\t" << 0. << endl;
-
-   for (double thr=11.5;thr>0.;thr--){
-
-      FP=0;
-      TP=0;   
-
-      for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-
-         unsigned int nummatch(0);
-         for (ivmot iv=vm.begin();iv!=vm.begin()+nbmots_for_score;iv++){ 
-            width=iv->bsinit.size();
-            iv->motscorethr2=iv->motwidth*thr/10;
-            iv->motscorethrcons=iv->motscorethr2;
-
-            if (args_info.wocons_given){
-               nummatch+=iv->nbmatchmat(*ivs);
-            } else {
-               nummatch+=iv->nbmatchcons(*ivs);
-            }
-         }
-
-         //if (nummatch==0) continue; // OR
-         if (nummatch<nbmots_for_score) continue; // AND
-
-         if ((*ivs).sign==1) TP+=1./sizepos;
-         else if ((*ivs).sign==-1) FP+=1./sizeneg;
-      }
-      rocf << thr << "\t";
-      rocf<< FP << "\t";
-      rocf << TP << "\n";
-      area+=(FP-pFP)*(TP+pTP)/2;
-      pFP=FP;
-      pTP=TP;
-   }
-   rocf << -10 << "\t";
-   rocf<< 1. << "\t";
-   rocf << 1. << "\n";
-   area+=(1.-pFP)*(1.+pTP)/2;
-   auc << "cumul" << "\t" << area << endl;
-
-   rocf.close();
-   auc.close();
-}
-
-void roccumulmot(vseq & vscore,vmot & vm)
-{
-   system("if ! test -d score/roc-cumul-mot;then mkdir score/roc-cumul-mot;fi;");      
-
-   // computing roc for cumulated motif
-   ofstream auc;
-   auc.open("score/roc-cumul-mot/roc_auc.dat");
-   for (unsigned int i=1;i<=nbmots_for_score;i++){ 
-      cout << "Cumul " << i << endl;
-
-      double area(0);
-      ofstream outf;
-      ofstream outf1;
-      ofstream rocf;
-      ostringstream outfs;
-      ostringstream outfs1;
-      ostringstream rocfs;
-      rocfs << "score/roc-cumul-mot/roc_" << i << ".dat";
-      outfs << "score/roc-cumul-mot/bestseqs-coords-" << i <<".dat";
-      outfs1 << "score/roc-cumul-mot/bestseqs-" << i << ".dat";
-      outf.open(outfs.str().c_str());
-      outf1.open(outfs1.str().c_str());
-      rocf.open(rocfs.str().c_str());
-
-      vseq vscorebest;      
-      vmot vmtmp;
-      for (int j=0;j<i;j++){
-         vmtmp.push_back(vm[j]);
-      }
-      vscorebest=findbestseqs(vmtmp,vscore);
-      sort(vscorebest.begin(),vscorebest.end());
-      vseq vscorepos;
-      for (ivseq ivs=vscorebest.begin();ivs!=vscorebest.end();ivs++){
-         if (ivs->sign==1){
-            vscorepos.push_back(*ivs);
-         }
-      }
-      dispbestseqs(vscorepos,outf);
-      outf1 << vscorepos << endl;
-      //cout << vscorepos << endl;
-      cout << vscorebest << endl;
-
-      sizepos=vscorepos.size();
-      sizeneg=vscorebest.size()-sizepos;
-      double FP(0.),TP(0.),pFP(0.),pTP(0.),scoretmp;
-      rocf << vscorebest.begin()->score+1 << "\t" << FP << "\t" << TP << endl;
-      for (ivseq ivs=vscorebest.begin();ivs!=vscorebest.end();ivs++){
-         if ((*ivs).sign==1) TP+=1./sizepos;
-         else if ((*ivs).sign==-1) FP+=1./sizeneg;
-
-         if (ivs==vscorebest.begin() || ivs==vscorebest.end()-1){
-            rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-            area+=(FP-pFP)*(TP+pTP)/2;
-         }
-         else {
-            if (ivs->score!=scoretmp){
-               rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-               area+=(FP-pFP)*(TP+pTP)/2;
-               pFP=FP;
-               pTP=TP;
-            }
-         }
-         scoretmp=ivs->score;
-      }
-      auc << i << "\t" << area << endl;
-
-      rocf.close();
-      outf.close();
-      outf1.close();
-      //      rocrf.close();
-   }
-   auc.close();
-}
-
-//Computes best threshold detection, ROC area, new lambdas
-//and scores at optimal thr
-   vseq
-motoptibestseqs(vseq & vscore, Motif & mot)
-{
-   ofstream auc;
-   ostringstream aucs;
-   system("if ! test -d score/auc;then mkdir score/auc;fi;");      
-   aucs << "score/auc/auc_" << mot.index << ".dat";
-   auc.open(aucs.str().c_str());
-   double thrmax(10),thrmin(2);
-   double bestauc(0),bestthr(thrmin),bestlt,bestlb;
-   vseq vscorebest;
-   vmot vtmp;
-   vtmp.push_back(mot);
-   for (double thr=thrmax;thr>thrmin;thr-=.5){
-      //vtmp for findbest1kb's use
-      vtmp[0].motscorethr2=mot.bsinit.size()*thr/10;
-      vtmp[0].motscorethr=mot.bsinit.size()*(thr-1.)/10;
-      vtmp[0].motscorethrcons=mot.bsinit.size()*(thr-1.)/10;
-      //      mot.calclambda();
-      if (mot.lambda==0 || mot.lambdatrain==0){
-         //        cout << "Mot #" << mot.index << " Thr= "<< thr << "\tBeware: lambda goes to zero ! " << "lambda_t = " << mot.lambdatrain << " lambda_b = " << mot.lambda << endl;
-         continue;
-      }
-      vseq vscoretmp;
-      vscoretmp=findbestseqs(vtmp,vscore);
-      sort(vscoretmp.begin(),vscoretmp.end());
-      double area;
-      area=calcareaforscore(vscoretmp);
-      auc << thr << "\t" << area << endl;
-      if (area > bestauc){
-         bestauc=area;
-         bestthr=thr;
-         bestlt=mot.lambdatrain;
-         bestlb=mot.lambda;
-         vscorebest=vscoretmp;
-      }
-   }
-   auc.close();
-
-   mot.motscorethr2=bestthr;
-   mot.motscorethr=mot.bsinit.size()*(bestthr-1.)/10;
-   mot.motscorethrcons=mot.bsinit.size()*(bestthr-1.)/10;
-   //   mot.lambda=bestlb;
-   //   mot.lambdatrain=bestlt;
-   mot.optthr=bestthr;
-   mot.optauc=bestauc;
-
-   return vscorebest;
-}
-
-
-//Motif independent ROCs at optimnal thr
-   void
-rocopti(vseq & vscore, Motif & mot)
-{
-
-   ofstream rocf;
-   ostringstream rocfs;
-   rocfs << "score/rocopti/roc_" << mot.index << ".dat";
-   rocf.open(rocfs.str().c_str());
-   sort(vscore.begin(),vscore.end());
-
-   double FP(0.),TP(0.),pFP(0.),pTP(0.),scoretmp;
-
-   rocf << vscore.begin()->score+1 << "\t" << FP << "\t" << TP << endl;
-   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-      if ((*ivs).sign==1) TP+=1./sizepos;
-      else if ((*ivs).sign==-1) FP+=1./sizeneg;
-      if (ivs==vscore.begin() || ivs==vscore.end()-1){
-         rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-      }
-      else {
-         if (ivs->score!=scoretmp){
-            rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-            pFP=FP;
-            pTP=TP;
-         }
-      }
-      scoretmp=ivs->score;
-   }
-   rocf.close();
-}
-
-//Motif independent optimization
-   void
-motopti(vseq & vscore)
-{
-   //   system("if ! test -d score/rocopti;then mkdir score/rocopti;fi;");      
-   //   system("if ! test -d score/dispscore;then mkdir score/dispscore;fi;");      
-
-   ofstream outf("score/motopti.dat");
-   outf << "Motif\tAUC\tThr\tlambda_train\tlambda_back\n";
-   for (ivmot im=motsdef.begin();im!=motsdef.begin()+nbmots_for_score;im++){
-
-      vseq vscorebest;
-      vscorebest=motoptibestseqs(vscore,*im);
-
-      // display
-      outf << im->index <<  "\t" << im->optthr << "\t" << im->optauc << "\t" << im->lambdatrain << "\t" << im->lambda << endl;
-      cout << "Motif " << im->index << "\t" << "AUC " << im->optauc << "\t" << "thr " << im->optthr << "\tlambda_train " << im->lambdatrain << "\tlambda_back " << im->lambda << endl;
-
-      rocopti(vscorebest,*im);
-
-      //Display scores at optimal point for each motif 
-      //      dispscore(vscorebest,*im);
-   }
-   outf.close();
-}
-
-//Motif independent ROCs at optimnal thr
-   void
-roccombine(vseq & vscore)
-{
-
-   ofstream rocf;
-   ostringstream rocfs;
-   rocfs << "score/roc-combine/roc_";
-   for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-      rocfs << ivm->index;
-      if (ivm!=motsdef.end()-1){
-         rocfs << "+";
-      }
-   }
-   rocfs << ".dat";
-   rocf.open(rocfs.str().c_str());
-
-
-   double FP(0.),TP(0.),scoretmp;
-
-   rocf << vscore.begin()->score << "\t" << FP << "\t" << TP << endl;
-   scoretmp=vscore.begin()->score;
-   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-      if ((*ivs).sign==1) TP+=1./sizepos;
-      else if ((*ivs).sign==-1) FP+=1./sizeneg;
-      if (ivs!=vscore.begin()){
-         if (ivs->score!=scoretmp){
-            rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-         }
-         else {
-            if (ivs==vscore.end()-1){
-               rocf << ivs->score << "\t" << FP << "\t" << TP << endl;
-            }
-         }
-      }
-      scoretmp=ivs->score;
-   }
-   rocf.close();
-
-}
-
-   void
-loadseqsforscore(vseq & vscore)
-{
-
-   if (args_info.posalign_given){ 
-      ifstream inf;
-      inf.open(args_info.posalign_arg);
-      vseq seqs;
-      seqs=loadsequencesconserv(inf);
-      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-         if (ivs->species[0] && ivs->nbtb>0){
-            ivs->sign=1;
-            vscore.push_back(*ivs);
-         }
-      }
-      sizepos=vscore.size();
-      cout << "Positive set: " << sizepos << "\n";
-      inf.close();
-   }
-
-   if (args_info.poscoords_given){
-      //Working on coordinate files
-      ifstream align;
-      if (species=="droso") align.open("/home/santolin/these/files/droso/align/all/align-masked.dat"); // *** To be changed...
-      else if (species=="eutherian") align.open("/home/santolin/these/files/mus/epo/align-masked.dat");
-
-      //POSITIVES
-      ifstream inf;
-      inf.open(args_info.poscoords_arg);
-      alignscoord=loadcoordconserv(align);
-      align.close();
-      vcoord pcoords;
-      back_insert_iterator<vcoord> pdest(pcoords);
-      copy(iiscoord(inf),iiscoord(),pdest);
-      for (ivcoord ivc=pcoords.begin();ivc!=pcoords.end();ivc++){
-         Sequence seqtoimport=coordtoseq(*ivc);
-         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
-            seqtoimport.sign=1;
-            vscore.push_back(seqtoimport);
-         }
-      }
-      inf.close();
-      sizepos=vscore.size();
-      cout << "Positive set: " << sizepos << "\n";
-   }
-
-   if (args_info.negalign_given){
-      ifstream inf;
-      inf.open(args_info.negalign_arg);
-      vseq seqs;
-      seqs=loadsequencesconserv(inf);
-      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-         if (ivs->species[0] && ivs->nbtb>0){
-            ivs->sign=-1;
-            vscore.push_back(*ivs);
-         }
-      }
-      sizeneg=vscore.size()-sizepos;
-      cout << "Negative set: " << sizeneg << "\n";
-      inf.close();
-   }
-
-   if (args_info.negcoords_given){
-      ifstream align;
-      if (species=="droso") align.open("/droso/align/all/align-masked.dat");
-      else if (species=="eutherian") align.open("/mus/epo/align-masked.dat");
-
-      //NEGATIVES
-      ifstream inf;
-      inf.open(args_info.negcoords_arg);
-      alignscoord=loadcoordconserv(align);
-      align.close();
-      vcoord ncoords;
-      back_insert_iterator<vcoord> ndest(ncoords);
-      copy(iiscoord(inf),iiscoord(),ndest);
-      for (ivcoord ivc=ncoords.begin();ivc!=ncoords.end();ivc++){
-         Sequence seqtoimport=coordtoseq(*ivc);
-         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
-            seqtoimport.sign=-1;
-            vscore.push_back(seqtoimport);
-         }
-      }
-      inf.close();
-      sizeneg=vscore.size()-sizepos;
-      cout << "Negative set: " << sizeneg << "\n";
-   }
-
-   if (!(args_info.negcoords_given||args_info.negalign_given)){
-      cout << "Using background as negative" << endl;
-      ifstream inf;
-      if (species=="droso") inf.open("/droso/backreg/regs2000-align-1000.dat"); 
-      else if (species=="eutherian") inf.open("/mus/backreg/regs2000-align-1000.dat");//regs2000.fa");
-      vseq seqs;
-      seqs=loadsequencesconserv(inf);
-      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-         if (ivs->species[0] && ivs->nbtb>0){
-            ivs->sign=-1;
-            vscore.push_back(*ivs);
-         }
-      }
-      sizeneg=vscore.size()-sizepos;
-      cout << "Negative set: " << sizeneg << "\n";
-      inf.close();
-   }
-
-   if (!(args_info.poscoords_given || args_info.posalign_given)) {
-      cout << "Please give positive file" << endl;
-      exit(1);
-   }
-
-   //   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-   //      if (!(ivs->sign==-1 && ivs->name.find("reg")!=string::npos)){
-   ////         if ((*ivs).name.find('_')!=string::npos)
-   ////         {
-   ////            if (args_info.display_given || args_info.byscore_given){
-   ////               (*ivs).name.insert((*ivs).name.find('_'),"\\");
-   ////            } else{
-   ////               (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('_'),(*ivs).name.end());
-   ////            }
-   ////         }
-   //         //      if ((*ivs).name.find('-')!=string::npos)
-   //         //      {
-   //         //         (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('-'),(*ivs).name.end());
-   //         //      }
-   //      }
-   //   }
-
-   return;
-}
-
-   void
-loadseqsforscorenotmasked(vseq & vscore)
-{
-
-   if (args_info.posalign_given){ 
-      ifstream inf;
-      inf.open(args_info.posalign_arg);
-      vseq seqs;
-      seqs=loadsequencesconserv(inf);
-      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-         if (ivs->species[0] && ivs->nbtb>0){
-            ivs->sign=1;
-            vscore.push_back(*ivs);
-         }
-      }
-      sizepos=vscore.size();
-      cout << "Positive set: " << sizepos << "\n";
-      inf.close();
-   }
-
-   if (args_info.poscoords_given){
-      //Working on coordinate files
-      ifstream align;
-      if (species=="droso") align.open("/home/santolin/these/files/droso/align/all/align.dat");
-      else if (species=="eutherian") align.open("/home/santolin/these/files/mus/epo/align.dat");
-
-      //POSITIVES
-      ifstream inf;
-      inf.open(args_info.poscoords_arg);
-      alignscoord=loadcoordconserv(align);
-      align.close();
-      vcoord pcoords;
-      back_insert_iterator<vcoord> pdest(pcoords);
-      copy(iiscoord(inf),iiscoord(),pdest);
-      for (ivcoord ivc=pcoords.begin();ivc!=pcoords.end();ivc++){
-         Sequence seqtoimport=coordtoseq(*ivc);
-         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
-            seqtoimport.sign=1;
-            vscore.push_back(seqtoimport);
-         }
-      }
-      inf.close();
-      sizepos=vscore.size();
-      cout << "Positive set: " << sizepos << "\n";
-   }
-
-   if (args_info.negalign_given){
-      ifstream inf;
-      inf.open(args_info.negalign_arg);
-      vseq seqs;
-      seqs=loadsequencesconserv(inf);
-      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-         if (ivs->species[0] && ivs->nbtb>0){
-            ivs->sign=-1;
-            vscore.push_back(*ivs);
-         }
-      }
-      sizeneg=vscore.size()-sizepos;
-      cout << "Negative set: " << sizeneg << "\n";
-      inf.close();
-   }
-
-   if (args_info.negcoords_given){
-      ifstream align;
-      if (species=="droso") align.open("/droso/align/all/align.dat");
-      else if (species=="eutherian") align.open("/mus/epo/align.dat");
-
-      //NEGATIVES
-      ifstream inf;
-      inf.open(args_info.negcoords_arg);
-      alignscoord=loadcoordconserv(align);
-      align.close();
-      vcoord ncoords;
-      back_insert_iterator<vcoord> ndest(ncoords);
-      copy(iiscoord(inf),iiscoord(),ndest);
-      for (ivcoord ivc=ncoords.begin();ivc!=ncoords.end();ivc++){
-         Sequence seqtoimport=coordtoseq(*ivc);
-         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
-            seqtoimport.sign=-1;
-            vscore.push_back(seqtoimport);
-         }
-      }
-      inf.close();
-      sizeneg=vscore.size()-sizepos;
-      cout << "Negative set: " << sizeneg << "\n";
-   }
-
-   if (!(args_info.negcoords_given||args_info.negalign_given)){
-      cout << "Using background as negative" << endl;
-      ifstream inf;
-      if (species=="droso") inf.open("/droso/backreg/regs2000-align-1000.dat"); 
-      else if (species=="eutherian") inf.open("/mus/backreg/regs2000-align-1000.dat");
-      vseq seqs;
-      seqs=loadsequencesconserv(inf);
-      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
-         if (ivs->species[0] && ivs->nbtb>0){
-            ivs->sign=-1;
-            vscore.push_back(*ivs);
-         }
-      }
-      sizeneg=vscore.size()-sizepos;
-      cout << "Negative set: " << sizeneg << "\n";
-      inf.close();
-   }
-
-   if (!(args_info.poscoords_given || args_info.posalign_given)) {
-      cout << "Please give positive file" << endl;
-      exit(1);
-   }
-
-   //   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-   //      if (!(ivs->sign==-1 && ivs->name.find("reg")!=string::npos)){
-   ////         if ((*ivs).name.find('_')!=string::npos)
-   ////         {
-   ////            if (args_info.display_given || args_info.byscore_given){
-   ////               (*ivs).name.insert((*ivs).name.find('_'),"\\");
-   ////            } else{
-   ////               (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('_'),(*ivs).name.end());
-   ////            }
-   ////         }
-   //         //      if ((*ivs).name.find('-')!=string::npos)
-   //         //      {
-   //         //         (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('-'),(*ivs).name.end());
-   //         //      }
-   //      }
-   //   }
-
-   return;
-}
-
-//Loads align-file (fasta) or coord-file (name/chrom/start/stop)
-   vseq
-loadseqs()
-{
-   vseq seqs;
-
-   if (args_info.align_file_given){
-
-      ifstream inf;
-      inf.open(args_info.align_file_arg);
-      seqs=loadsequencesconserv(inf);
-      inf.close();
-   }
-   else if (args_info.coord_file_given){
-
-      ifstream inf;
-      inf.open(args_info.coord_file_arg);
-
-      ifstream align;
-      if (species=="droso") align.open("/droso/align/all/align-masked.dat");
-      else if (species=="eutherian") align.open("/mus/epo/align-masked.dat");
-
-      alignscoord=loadcoordconserv(align);
-
-      align.close();
-
-      vcoord coords;
-      back_insert_iterator<vcoord> dest(coords);
-      copy(iiscoord(inf),iiscoord(),dest);
-      for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
-         Sequence seqtoimport=coordtoseq(*ivc);
-         //         cout << (*ivc).name << " " << (*ivc).start << endl;
-         //         cout << seqtoimport.name << " " << seqtoimport.start << endl;
-         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
-            seqs.push_back(seqtoimport);
-         }
-         //         for (int i=0;i<nbspecies;i++){
-         //         cout << seqtoimport.iseqs[i] << endl; 
-         //         }
-         //         exit(9);
-      }
-      inf.close();
-   }
-   else {
-      cout << "Error in loadseqs: please give a coord/alignment file. Exiting..." << endl;
-      exit(1);
-   }
-   return seqs;
-}
-
-   void
-args_init()
-{
-   width=args_info.width_arg;
-   scorethr2=args_info.threshold_arg;
-   species=args_info.species_arg;
-   if (species=="droso"){ // *** Shouldn't be hardcoded??
-      conca=0.3; 
-      concc=0.5-conca;
-      nbspecies=12;
-      cout << "Species: droso" << endl;
-   }
-   else if (species=="eutherian"){
-      conca=0.263; 
-      concc=0.5-conca;
-      nbspecies=10;
-      cout << "Species: mus" << endl;
-   }
-   conct=conca;
-   concg=concc;
-   evolutionary_model=args_info.evolutionary_model_arg;
-
-   scorethrcons=scorethr2-1.0;
-   scorethr=scorethr2-1.0;
-
-   neighbext=args_info.neighbext_arg;
-   nbmots_for_score=args_info.nbmots_arg;
-   scanwidth=args_info.scanwidth_arg;
-
-   if (species=="droso") nbchrom=6;
-   else if (species=="eutherian") nbchrom=21;
-
-}
-
-   void
-args_init_scangen()
-{
-   scanwidth=args_info.scanwidth_arg;
-   scanstep=args_info.scanstep_arg;
-
-   nbmots_for_score=args_info.nbmots_arg;
-}
-
+//      seq.nbN=compN(seq.iseqs[0]);
+//      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
+//      
+//      for (ivcoord ivc=pcoords.begin();ivc!=pcoords.end();ivc++){
+//         if (ivc->chrom==seq.chrom){ 
+//            if ((ivc->start>=seq.start && ivc->start<=seq.stop) ||
+//                  (ivc->stop>=seq.start && ivc->stop <=seq.stop)){
+//                  int maskstart=max(ivc->start,seq.start);
+//                  int maskstop=min(ivc->stop,seq.stop);
+//      //            cout << ivc->name << endl;
+//      //            cout << vinttostring(seq.iseqs[0]) << endl;
+//                  for (unsigned int base=maskstart-seq.start;base<=maskstop-seq.start;base++){
+//                     seq.iseqs[0][base]=4;
+//                  }
+//      //            cout << vinttostring(seq.iseqs[0]) << endl;
+//            }
+//         }
+//      }
+//
+//      //check that ref species contains at least 30bp
+//      if (seq.species[0]){
+//         scanseq(seq,motsdef);
+//      }
+//
+//      fseq.close();
+//   }
+//   unsigned int i=0;
+//
+//   cout << "Finding Instances" << endl;
+//   for (ivmot im=motsdef.begin();im!=motsdef.begin()+nbmots_for_score;im++){
+//      for (unsigned int j=0;j<nbchrom;j++){
+//         //           cout << "Instances size : " << (*im).instances.size() << "\n";
+//         sort((*im).instances[j].begin(),(*im).instances[j].end());
+//         for (ivinst iins=(*im).instances[j].begin();iins!=(*im).instances[j].end();iins++){
+//            Instance & curinst=*iins;
+//            int start=0;
+//            if ((curinst.coord-scanwidth)/scanstep+2>0) start=(curinst.coord-scanwidth)/scanstep+1;
+//            for (unsigned int k=start;k<curinst.coord/scanstep+1;k++){
+//               groupedinst[curinst.chrom][k].nbmots[i]++;
+//               groupedinst[curinst.chrom][k].totmots++;
+//               groupedinst[curinst.chrom][k].instances.push_back(curinst);
+//            }
+//         }
+//      }
+//      i++;
+//   }
+//
+//   for (unsigned int j=0;j<nbchrom;j++){
+//      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
+//         if ((*ivg).totmots==0){
+//            (*ivg).discarded=1;
+//         }
+//      }
+//   }
+//   for (unsigned int j=0;j<nbchrom;j++){
+//      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
+//         if (!(*ivg).discarded){
+//            potregs.push_back(*ivg);
+//         }
+//      }
+//   }
+//
+//   cout << "output results" << endl;
+//   if (args_info.all_mots_only_given){
+//         outputresults(nbmots_for_score);
+//   }
+//   else{
+//      for (unsigned int i=1;i<nbmots_for_score+1;i++){
+//         cout << "Motif " << i << endl;
+//         outputresults(i);
+//      }
+//   }
+//
+//}
+
+//   void
+//scanseqs(ifstream & list,vcoord & coords)
+//{
+//   
+//   vstring regs;
+//   back_insert_iterator<vstring> dest(regs);
+//   copy(iisstring(list),iisstring(),dest);
+//
+//   string pchrom("");
+//   for (ivstring is=regs.begin();is!=regs.end();is++){
+//      Sequence seq;
+//      ifstream fseq;
+//      fseq.open((*is).c_str());
+//      string fseqline;
+//      getline(fseq,fseqline);
+//      seq.name=fseqline;
+//      stringstream firstline(fseqline);
+//      string speciesname;
+//      firstline >> speciesname;
+//      string chrom;
+//      firstline >> chrom;
+//      if (chrom!=pchrom){
+//         cout << chrom << endl;
+//         pchrom=chrom;
+//      }
+//      seq.chrom=intfromchrom(chrom.substr(3));
+//      if (seq.chrom==-1) continue;
+//      firstline >> seq.start;
+//      firstline >> seq.stop;
+//      seq.finame=*is;
+//      string dum;
+//      seq.species=vint(nbspecies,0);
+//      vint dumi;
+//      seq.iseqs=vvint(nbspecies,dumi);
+//      seq.imaps=vvint(nbspecies,dumi);
+//      seq.imapsinv=vvint(nbspecies,dumi);
+//      while (!fseq.eof()){
+//         //                cout << fseqline << endl;
+//         int seqnum=speciestonum(fseqline.substr(1,6));
+//         getline(fseq,fseqline);
+//         seq.imaps[seqnum]=alignedtomap(fseqline);
+//         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
+//         string seqwogap=remgaps(fseqline);
+//         if (seqwogap.size()>30){
+//            seq.species[seqnum]=1;
+//         }
+//         seq.iseqs[seqnum]=stringtoint(seqwogap);
+//         getline(fseq,fseqline);
+//      }
+//      seq.nbN=compN(seq.iseqs[0]);
+//      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
+//      
+//      scanseq(seq,motsdef);
+//
+//      fseq.close();
+//   }
+//   unsigned int i=0;
+//
+//   cout << "Finding Instances" << endl;
+//   for (ivmot im=motsdef.begin();im!=motsdef.begin()+nbmots_for_score;im++){
+//      for (unsigned int j=0;j<nbchrom;j++){
+//         //           cout << "Instances size : " << (*im).instances.size() << "\n";
+//         sort((*im).instances[j].begin(),(*im).instances[j].end());
+//         for (ivinst iins=(*im).instances[j].begin();iins!=(*im).instances[j].end();iins++){
+//            Instance & curinst=*iins;
+//            int start=0;
+//            if ((curinst.coord-scanwidth)/scanstep+2>0) start=(curinst.coord-scanwidth)/scanstep+1;
+//            for (unsigned int k=start;k<curinst.coord/scanstep+1;k++){
+//               groupedinst[curinst.chrom][k].nbmots[i]++;
+//               groupedinst[curinst.chrom][k].totmots++;
+//               groupedinst[curinst.chrom][k].instances.push_back(curinst);
+//            }
+//         }
+//      }
+//      i++;
+//   }
+//
+//   cout << "Discarding empty Instances" << endl;
+//   for (unsigned int j=0;j<nbchrom;j++){
+//      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
+//         if ((*ivg).totmots==0){
+//            (*ivg).discarded=1;
+//         }
+//      }
+//   }
+//   for (unsigned int j=0;j<nbchrom;j++){
+//      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
+//         if (!(*ivg).discarded){
+//            potregs.push_back(*ivg);
+//         }
+//      }
+//   }
+//
+//   cout << "output results" << endl;
+//   if (args_info.all_mots_only_given){
+//         outputresults(nbmots_for_score);
+//   }
+//   else{
+//      for (unsigned int i=1;i<nbmots_for_score+1;i++){
+//         cout << "Motif " << i << endl;
+//         outputresults(i);
+//      }
+//   }
+//}
+//   
+//   void
+//scanmots()
+//{
+//   ifstream potregs;
+//   if (species=="droso") potregs.open("/home/santolin/these/files/droso/align/all/align-files.dat");
+//   else if (species=="eutherian") potregs.open("/home/santolin/these/files/mus/epo/align-files.dat");
+//   //else if (species==2) potregs.open("/home/santolin/these/files/transfac/matrices/align-test.dat");
+//   vstring regs;
+//   back_insert_iterator<vstring> dest(regs);
+//   copy(iisstring(potregs),iisstring(),dest);
+//   potregs.close();
+//
+//   string pchrom("");
+//   system("if ! test -d scanmots;then mkdir scanmots;fi;");      
+//   unsigned int totlen(0),totlentb(0);
+//   //random_shuffle(regs.begin(),regs.end());
+//   for (ivstring is=regs.begin();is!=regs.end();is++){
+//      Sequence seq;
+//      ifstream fseq;
+//      fseq.open((*is).c_str());
+//      string fseqline;
+//      getline(fseq,fseqline);
+//      seq.name=fseqline;
+////cout << seq.name << endl;
+//      stringstream firstline(fseqline);
+//      string speciesname;
+//      firstline >> speciesname;
+//      string chrom;
+//      firstline >> chrom;
+//      if (chrom!=pchrom){
+//         cout << chrom << endl;
+//         pchrom=chrom;
+//      }
+//      seq.chrom=intfromchrom(chrom.substr(3));
+//      if (seq.chrom==-1) continue;
+//      firstline >> seq.start;
+//      firstline >> seq.stop;
+//      seq.finame=*is;
+//      string dum;
+//      seq.species=vint(nbspecies,0);
+//      vint dumi;
+//      seq.iseqs=vvint(nbspecies,dumi);
+//      seq.imaps=vvint(nbspecies,dumi);
+//      seq.imapsinv=vvint(nbspecies,dumi);
+//      while (!fseq.eof()){
+////cout << fseqline << endl;
+//         int seqnum=speciestonum(fseqline.substr(1,6));
+//         getline(fseq,fseqline);
+//         seq.imaps[seqnum]=alignedtomap(fseqline);
+//         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
+//         string seqwogap=remgaps(fseqline);
+//         if (seqwogap.size()>30){
+//            seq.species[seqnum]=1;
+//         }
+//         seq.iseqs[seqnum]=stringtoint(seqwogap);
+//         getline(fseq,fseqline);
+//      }
+//      seq.nbN=compN(seq.iseqs[0]);
+//      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
+//
+//      scanseqforconsinstances(seq,motsdef);
+//
+//      fseq.close();
+//      
+//      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
+//         //sort(ivm->refinstances_short.begin(),ivm->refinstances_short.end());
+//         ostringstream outfs;
+//         outfs << "scanmots/" << ivm->name << "_" << ivm->motscorethr2 << ".dat";
+//         ofstream outf;
+//         if (totlen==0) outf.open(outfs.str().c_str());
+//         else outf.open(outfs.str().c_str(),ios::app);
+//
+//         for (ivinst ivi=ivm->refinstances_short.begin();ivi!=ivm->refinstances_short.end();ivi++){
+//            outf << ivi->site << "\t";
+//            outf << chromfromint(ivi->chrom) << "\t";
+//            outf << ivi->coord << "\t";
+//            outf << ivi->sens << "\t";
+//            outf << ivi->score << endl;
+//         }
+//         outf.close();
+//         ivm->refinstances_short.clear();
+//      }
+//
+//      totlen+=seq.nbtb+seq.nbN;
+//      totlentb+=seq.nbtb;
+//   }
+//
+//   cout << "Total length of the alignement: " << totlen << " bp, including " << totlentb << " unmasked bp" << endl;
+//
+//   return;
+//}
+//
+//bool operator<(const Sequence & seqscr1,const Sequence & seqscr2)
+//{
+//   if (seqscr1.score == seqscr2.score)
+//   {
+//      return seqscr1.sign > seqscr2.sign; //for identical scores, we want the negatives first (for ROC consistency)
+//   }
+//   else
+//   {
+//      return seqscr1.score > seqscr2.score; 
+//   };
+//}
+//
+//bool operator<(const Motif & mot1,const Motif & mot2)
+//{
+//   if (mot1.optauc == mot2.optauc)
+//   {
+//      return mot1.index < mot2.index;//the lower index first 
+//   }
+//   else
+//   {
+//      return mot1.optauc > mot2.optauc;//the best auc first
+//   };
+//}
+//
+//   void
+//calcscore(Motif & im,Sequence & seqscr)//(vmot & mots)
+//{
+//   unsigned int ncons=im.nbmatchcons(seqscr);//seqscr.motis[im->index];
+//   //   unsigned int ncons=im.nbmatchmat(seqscr.seq);//seqscr.motis[im->index];
+//   //   unsigned int ncons=seqscr.motis[im.index];
+//   double lseq=seqscr.nbtb;
+//   double score=0;
+//   //cout << ncons << " ";
+//   //score= ncons;//*log(im.lambdatrain/im.lambda) + lseq*(im.lambda-im.lambdatrain);
+//   double lnj=0;
+//   for (int i=0;i<ncons;i++){
+//      lnj+=log(i+1);
+//   }
+//   seqscr.motis[im.index]=ncons;
+//   score=ncons;
+//   //score=ncons*log(im.lambdatrain/im.lambda);
+//   //score= lnj-ncons*log(im.lambda*lseq) + lseq*im.lambda;
+//   //   score= (double)ncons/lseq;//*log(im.lambdatrain/im.lambda) + lseq*(im.lambda-im.lambdatrain);
+//   seqscr.score=score;
+//   return;
+//   //cout << seqscr.score << endl;
+//}
+//
+//   void
+//calcscore(vmot & vm,Sequence & seqscr)//(vmot & mots)
+//{
+//
+//   Sequence seqtmp=seqscr;
+//   double lseq=seqscr.nbtb;
+//   double score=0;
+//   for (ivmot im=vm.begin();im!=min(vm.begin()+nbmots_for_score,vm.end());im++){
+//      width=im->bsinit.size();
+//      unsigned int ncons;
+//      if (args_info.maskforscore_given){
+//         ncons=im->nbmatchconsnmask(seqtmp);//seqscr.motis[im->index];
+//      } else{
+//         ncons=im->nbmatchcons(seqtmp);//seqscr.motis[im->index];
+//      }
+//      //   score+=ncons;
+//      //      double lnj=0;
+//      //      for (int i=0;i<ncons;i++){
+//      //         lnj+=log(i+1);
+//      //      }
+//      //   //   score+=lnj-ncons*log(im->lambda*lseq) + lseq*im->lambda;
+//      //      if (args_info.byaffinity_given){
+//      //         score+=im->scorematchcons(seqtmp);
+//      //      } else {
+//      //         score+=ncons;
+//      //      }
+//      if (args_info.weightmots_given){
+//
+//         score+= ncons*log(im->lambdatrain/im->lambda);// + lseq*(im.lambda-im.lambdatrain);
+//      }
+//      else {
+//         score+= ncons;//*log(im->lambdatrain/im->lambda);// + lseq*(im.lambda-im.lambdatrain);
+//      }
+//      seqscr.motis[im->index]=ncons;
+//   }
+//   seqscr.score=score;
+//   return;
+//   //cout << seqscr.score << endl;
+//}
+//
+//   void
+//calcscore(vmot & vm,vseq & vs)//(vmot & mots)
+//{
+//   for (ivseq ivs=vs.begin();ivs!=vs.end();ivs++){
+//      calcscore(vm,*ivs);
+//   }
+//   return;
+//   //cout << seqscr.score << endl;
+//}
+//
+//// allncons is a vint where each int is a number of conserved motifs
+//   double
+//calcscore(vmot & vm,vint & allncons,int lseq)
+//{
+//
+//   double score=0;
+//   for (ivmot im=vm.begin();im!=min(vm.begin()+nbmots_for_score,vm.end());im++){
+//      unsigned int ncons=allncons[im->index];
+//      double lnj=0;
+//      for (int i=0;i<ncons;i++){
+//         lnj+=log(i+1);
+//      }
+//      //score+=lnj-ncons*log(im->lambda*lseq) + lseq*im->lambda;
+//      //    score+=allncons[im->index];
+//      score+= allncons[im->index];//*log(im->lambdatrain/im->lambda);// + lseq*(im.lambda-im.lambdatrain);
+//   }
+//   return score;
+//}
+//
+//
+//svg::svg()
+//{
+//   xsize=800;
+//   ysize=600;
+//   xoffset=140;
+//   yoffset=65;
+//   pos=0;
+//};
+//
+//   void
+//svginit(ofstream & svgfile, svg s)
+//{
+//   svgfile << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+//   svgfile << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\n";
+//   svgfile << "<svg version=\"1.0\" id=\"Calque_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n";
+//   svgfile << "	 width=\""<< s.xsize <<"px\" height=\""<< s.ysize <<"px\" viewBox=\"0 0 "<< s.xsize <<" "<< s.ysize <<
+//      "\" enable-background=\"new 0 0 "<< s.xsize <<" "<< s.ysize <<"\" xml:space=\"preserve\">\n";
+//
+//   svgfile << "<line fill=\"none\" stroke=\"" << "black" << "\" stroke-width=\"" << 3 << "\" x1=\"" << 0 << "\" y1=\"" << 0 << "\" x2=\"" << 4 << "\" y2=\"" << 0 << "\"/>\n";
+//}
+//
+//   void
+//svgdisplay(ofstream & svgfile,Sequence & seq, svg & s)
+//{
+//   double ytext=s.yoffset+300*s.pos;
+//   double xbegin=s.xoffset;
+//   double xend=xbegin+0.4*seq.imaps[0].size();
+//
+//   svgfile << "<text transform=\"matrix(1 0 0 1 55.5 " << ytext << ")\" font-size=\"12\">" << seq.finame << "</text>\n";
+//
+//   for (unsigned int i=0;i<nbspecies;i++){
+//      if (seq.species[i]){
+//
+//         double yline=s.yoffset+20+300*s.pos+20*i;
+//
+//         string dro;
+//         dro = seq.speciesname[i];
+//         svgfile << "<text transform=\"matrix(1 0 0 1 40 " << yline << ")\" font-size=\"12\">" << dro << "</text>\n";
+//         svgfile << "<line fill=\"none\" stroke=\"#000000\" stroke-width=\"0.5\" x1=\"" << xbegin << "\" y1=\"" << yline << "\" x2=\"" << xend << "\" y2=\"" << yline << "\"/>\n";
+//
+//         vvint coords;
+//         vint curcoord;
+//         int seqorali=0;
+//         unsigned int p=0;
+//         for (istring is=seq.seqsrealigned[i].begin();is!=seq.seqsrealigned[i].end();is++){
+//            if (*is=='-'){
+//               if (seqorali==1){
+//                  curcoord.push_back(p);
+//                  coords.push_back(curcoord);
+//                  curcoord.clear();
+//                  seqorali=0;
+//               }
+//            } else {
+//               if (seqorali==0){
+//                  curcoord.push_back(p);
+//                  seqorali=1;
+//               }
+//               if (seqorali==1 && is==seq.seqsrealigned[i].end()-1){
+//                  curcoord.push_back(p);
+//                  coords.push_back(curcoord);
+//                  curcoord.clear();
+//               }
+//            }
+//            p++;
+//         }
+//
+//         for (ivvint ivv=coords.begin();ivv!=coords.end();ivv++){
+//            svgfile << "<line fill=\"none\" stroke=\"#000000\" stroke-width=\"3\" x1=\"" << xbegin+0.4*(*ivv)[0] << 
+//               "\" y1=\"" << yline << "\" x2=\"" << xbegin+0.4*(*ivv)[1] << "\" y2=\"" << yline << "\"/>\n";
+//         }
+//      }
+//   }
+//
+//   for (ivinstseq ivi=seq.instances.begin();ivi!=seq.instances.end();ivi++){
+//      int moti=(*ivi).motindex;
+//      if (moti<8){
+//         string color;
+//         if (moti==0){
+//            color="red";
+//         } else if (moti==1){
+//            color="blue";
+//         } else if (moti==2){
+//            color="green";
+//         } else if (moti==3){
+//            color="purple";
+//         } else if (moti==4){
+//            color="gray";
+//         } else if (moti==5){
+//            color="orange";
+//         } else if (moti==6){
+//            color="brown";
+//         } else if (moti==7){
+//            color="gold";
+//         }
+//         double xmot=xbegin+0.4*(*ivi).pos;
+//         double yline=s.yoffset+20+300*s.pos+20*(*ivi).species;
+//         string width;
+//         if ((*ivi).score>scorethr2) width="3";
+//         else width="1";
+//         svgfile << "<line fill=\"none\" stroke=\"" << color << "\" stroke-width=\"" << width << "\" x1=\"" << xmot << "\" y1=\"" << yline-5 << "\" x2=\"" << xmot << "\" y2=\"" << yline+5 << "\"/>\n";
+//         svgfile << "<text transform=\"matrix(1 0 0 1 " << xmot-2 << " " << yline-8 << ")\" font-size=\"8\">" << fixed << setprecision(1) << (*ivi).score << "</text>\n";
+//      }
+//   }
+//   s.pos++;
+//}
+//
+//
+//   void
+//svgclose(ofstream & svgfile)
+//{
+//   svgfile << "</svg>\n";
+//}
+//
+//   void
+//scanseqsforsvg(vseq & align)
+//{
+//
+//   system("if ! test -d display;then mkdir display;fi;");      
+//   system("if ! test -d display/svg;then mkdir display/svg;fi;");      
+//
+//   for (ivseq is=align.begin();is!=align.end();is++){
+//
+//      int xsize(0);
+//      int ysize(0);
+//      svg s;
+//      string filename("display/svg/");
+//      filename+=(*is).name;
+//      filename+=".svg";
+//      ofstream svgfile(filename.c_str());
+//
+//      scanseq(*is,motsdef);
+//
+//      //we set the size for the svg file
+//      xsize=s.xoffset+(int)(0.4*(*is).imaps[0].size());
+//      if (xsize>s.xsize) s.xsize=xsize;
+//      s.xsize+=s.xoffset;
+//      ysize=s.yoffset+340; 
+//      s.ysize=ysize+s.yoffset;
+//
+//      svginit(svgfile,s);
+//      svgdisplay(svgfile,*is,s);
+//      svgclose(svgfile);
+//
+//      //cout << s.xsize << " " << s.ysize << endl; 
+//   }
+//}
+//
+//   void
+//outputresults(unsigned int nbmots_score)
+//{
+//   cout << "Shuffling" << endl;
+//   random_shuffle(potregs.begin(),potregs.end());
+//   for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
+//      if (args_info.weightmots_given){
+//         (*ivg).compscoreweight(motsdef,nbmots_score);
+//      }
+//      else{
+//         (*ivg).compscore(motsdef,nbmots_score);
+//      }
+//   }
+//   cout << "Sorting" << endl;
+//   sort(potregs.begin(),potregs.end());
+//   cout << "Discarding" << endl;
+//   vstring gnames;
+//   vginst potregs_def;
+//
+//   // Keep best scoring enhancer per gene
+//   // OR
+//   // Keep all enhancers per gene, removing overlapping low score ones
+//   if (args_info.discard_on_gene_names_given){
+//      cout << "discard on gene" << endl;
+//      int test=0;
+//      for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
+//         test=0;
+//         for (ivstring ivs=gnames.begin();ivs!=gnames.end();ivs++){
+//            if ((*ivg).besttss.gene==*ivs){
+//               (*ivg).discarded=1;
+//               test=1;
+//               break;
+//            }
+//         }
+//         if (test==0){
+//            gnames.push_back((*ivg).besttss.gene);
+//         }
+//      }
+//   } 
+//   else {
+//      for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
+//         int test=0;
+//         for (ivginst ivg2=potregs_def.begin();ivg2!=potregs_def.end();ivg2++){
+//            if ((*ivg).distance(*ivg2)<scanwidth){
+//               test=1;
+//               break;
+//            }
+//         }
+//         if (test==0){
+//            potregs_def.push_back(*ivg);
+//         }
+//      }
+//   }
+//   cout << "Displaying" << endl;
+//   stringstream filename;
+//   filename << "result" << nbmots_score << ".dat";
+//   ofstream res(filename.str().c_str());
+//   for (ivginst ivg=potregs_def.begin();ivg!=potregs_def.end();ivg++){
+//      if (!(*ivg).discarded){
+//         res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
+//         res << (*ivg).besttss.gene << " ";
+//         for (ivTSS ivt=(*ivg).TSSs.begin();ivt!=(*ivg).TSSs.end();ivt++){
+//            res << (*ivt).gene << ";";
+//         }
+//         res << " ";
+//         for (ivint ivi=(*ivg).nbmots.begin();ivi!=(*ivg).nbmots.end();ivi++){
+//            res << *ivi << " ";
+//         }
+//         res << "\n";
+//         //         for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
+//         //            cout << "\t" << chromfromint((*ivi).chrom) << ":" << (*ivi).coord << "\n";
+//         //         }
+//      }
+//   }
+//   res << "\n";
+//   res.close();
+//
+//   //	stringstream filenameseqs;
+//   //	filenameseqs << "seqs-" << nbmots_score << ".dat";
+//   //	ofstream seqs(filenameseqs.str().c_str());
+//   //	unsigned int count=0;
+//   //	for (ivginst ivg=potregs_def.begin();ivg!=potregs_def.end();ivg++){
+//   //		if (!(*ivg).discarded){
+//   //			unsigned int mini=scanwidth;
+//   //			unsigned int max=0;
+//   //			seqs << "chrom : " << (*ivg).chrom << "\n";
+//   //			seqs << "start : " << (*ivg).start << "\n";
+//   //			seqs << "stop : " << (*ivg).stop << "\n";
+//   //			for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
+//   //				if ((*ivi).coord<mini) mini=(*ivi).coord;
+//   //				if ((*ivi).coord>max) max=(*ivi).coord;
+//   //			}
+//   //			seqs << "mini : " << mini << "\n";
+//   //			seqs << "max : " << max << "\n";
+//   //			unsigned int start=(mini+max)/2-scanwidth/2;
+//   //			unsigned int stop=(mini+max)/2+scanwidth/2;
+//   //			for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
+//   //				seqs << "motif " << (*ivi).motindex << " at position " << (*ivi).coord-start << "\n";;
+//   //			}
+//   //			seqs << ">seq_" << count << " annotated " << (*ivg).besttss.gene;
+//   //			seqs << " ";
+//   //			seqs << "\n";
+//   //			seqs << chromints[(*ivg).chrom].seq.substr(start,stop-start) << "\n";
+//   //			count++;
+//   //			if (count>100) break;
+//   //		}
+//   //	}
+//   //	seqs << "\n";
+//   //	seqs.close();
+//
+//   if (args_info.phenotype_given){
+//      stringstream filehist;
+//      filehist << "hist" << nbmots_score << ".dat";
+//      ofstream histo(filehist.str().c_str());
+//      displayhist(potregs_def,histo);
+//      histo.close();
+//      if (args_info.print_histo_sets_given){
+//         stringstream filehist_back;
+//         filehist_back << "hist-back" << nbmots_score << ".dat";
+//         ofstream histo_back(filehist_back.str().c_str());
+//         displayhist_set(potregs_def,gbacks,histo_back);
+//         histo_back.close();
+//
+//         stringstream filehist_interest;
+//         filehist_interest << "hist-interest" << nbmots_score << ".dat";
+//         ofstream histo_interest(filehist_interest.str().c_str());
+//         displayhist_set(potregs_def,phenos,histo_interest);
+//         histo_interest.close();
+//      }
+//   }
+//
+//}
+//
+//
+//
+//
+//vseq regtests;
+//vseq regints;
+//
+//   void
+//extracttofastawfullname(string folder)
+//{
+//   ofstream outf;
+//   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
+//      Sequence seq=*iv;
+//      if (seq.species[0] && seq.nbtb>0){ 
+//         stringstream file;
+//         file << folder;
+//         file << seq.name << "_";
+//         file << chromfromint(seq.chrom) << "_";
+//         file << seq.start << "_";
+//         file << seq.stop << ".fa";
+//         outf.open(file.str().c_str());
+//         Sequence & s=seq;
+//         for (int i=0;i<nbspecies;i++){
+//            if (s.species[i]){
+//               if (i==0) outf << ">" << numtospecies(i) << " " <<
+//                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+//               else  outf << ">" << numtospecies(i) << endl;
+//               outf << s.seqsrealigned[i] << endl;
+//            }; 
+//         }
+//         outf.close();
+//      }
+//   }
+//}
+//
+//   void
+//extracttofasta(string folder)
+//{
+//   ofstream outf;
+//   string pname("");
+//   int pnum(1);
+//   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
+//      Sequence seq=*iv;
+//      if (seq.species[0] && seq.nbtb>0){ 
+//         stringstream file;
+//         file << folder;
+//         file << seq.name;
+//         if (seq.name==pname){ 
+//            file << "_";
+//            file << pnum;
+//            pnum++;
+//         }
+//         else {
+//            pnum=1;
+//            pname=seq.name;
+//         }
+//         file << ".fa";
+//         outf.open(file.str().c_str());
+//         Sequence & s=seq;
+//         for (int i=0;i<nbspecies;i++){
+//            if (s.species[i]){
+//               if (i==0) outf << ">" << numtospecies(i) << " " <<
+//                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+//               else  outf << ">" << numtospecies(i) << endl;
+//               outf << s.seqsrealigned[i] << endl;
+//            }; 
+//         }
+//         outf.close();
+//      }
+//   }
+//}
+//
+//
+//   double
+//distcv(vvd& mat1, vvd& mat2)
+//{
+//   double max(0);
+//   int col(0);
+//   for (ivvd iv=mat1.begin();iv!=mat1.end();iv++){
+//      int line(0);
+//      for (ivd il=(*iv).begin();il!=(*iv).end();il++){
+//         double diff;
+//         diff=fabs((*il)-mat2[col][line]);
+//         if (diff>max) max=diff;
+//         line++;
+//      }
+//      col++;
+//   }
+//   return max;
+//}
+//
+//   void
+//matflank(Motif & mot,int numflank)
+//{
+//   vd dum(4,0);
+//   vvd flank_left(numflank,dum);
+//   vvd flank_right(numflank,dum);
+//
+//   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
+//      vint vdum;
+//      for (int i=1;i<=numflank;i++){
+//         if ((*ivm).strand==1){
+//            ivint iv_left=(*ivm).matchespos[0]-i;
+//            if (iv_left>(*ivm).seq_start) flank_left[numflank-i][(*iv_left)]+=1;
+//            ivint iv_right=(*ivm).matchespos[0]+width+i;
+//            if (iv_right<(*ivm).seq_stop) flank_right[i-1][(*iv_right)]+=1;
+//         }
+//         else if ((*ivm).strand==-1){
+//            ivint iv_left=(*ivm).matchespos[0]+width+i;
+//            if (iv_left<(*ivm).seq_stop){
+//               int brc;
+//               if (*iv_left==0) brc=1;
+//               if (*iv_left==1) brc=0;
+//               if (*iv_left==2) brc=3;
+//               if (*iv_left==3) brc=2;
+//               flank_left[numflank-i][brc]+=1;
+//            }  
+//            ivint iv_right=(*ivm).matchespos[0]-i;
+//            if (iv_right>(*ivm).seq_start){ 
+//               int brc;
+//               if (*iv_right==0) brc=1;
+//               if (*iv_right==1) brc=0;
+//               if (*iv_right==2) brc=3;
+//               if (*iv_right==3) brc=2;
+//               flank_right[i-1][brc]+=1;
+//            }  
+//         }
+//      }
+//
+//      for (ivint iv=(*ivm).matchespos[0];iv!=(*ivm).matchespos[0]+width;iv++){
+//         vdum.push_back(*iv);
+//      }
+//      // cout << flank_left << "\t" << vinttostring(vdum) << "\t" << flank_right << endl; 
+//   }
+//
+//   alpha=conca;
+//   beta=concc;
+//   countfreq(flank_left);
+//   freqtolog(flank_left);
+//   countfreq(flank_right);
+//   freqtolog(flank_right);
+//   //   cout << flank_left <<  "\t" << flank_right << endl; 
+//
+//   vvd finmat;
+//   for (ivvd iv=flank_left.begin();iv!=flank_left.end();iv++){
+//      finmat.push_back(*iv);
+//   }
+//   for (ivvd iv=mot.matprec.begin();iv!=mot.matprec.end();iv++){
+//      finmat.push_back(*iv);
+//   }
+//   for (ivvd iv=flank_right.begin();iv!=flank_right.end();iv++){
+//      finmat.push_back(*iv);
+//   }
+//
+//   width+=2*numflank;
+//   mot.matprec=finmat;
+//   mot.matprecrevcomp=reversecomp(finmat);
+//
+//   return;
+//}
+//
+//
+//   void
+//seqanalysis(Sequence & currseq,vmot & genmots)
+//{
+//   unsigned int i=0;
+////      for (int j=0;j<nbspecies;j++){
+////      cout << currseq.iseqs[j] << endl;
+////      }
+//   for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
+//      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
+//      vint bs(istr,istr+width);
+//     //cout << i << " " << bs << endl;
+//      if (compN(bs)>0) continue;
+//      Motif currmot;
+//      currmot.bsinit=vinttostring(bs);
+//      currmot.seqinit=currseq.name;
+//      currmot.pos=i;
+//      motiftomat(bs,currmot);
+//      currmot.matricerevcomp=reversecomp(currmot.matrice);
+//      currmot.matprec=currmot.matrice;
+//      currmot.matprecrevcomp=currmot.matricerevcomp;
+//      vvd pmat=currmot.matprec;
+//      unsigned int nbconv(0);
+//      for (int nb=1;nb<=nbiter;nb++){
+//         double max=0.01;
+//         int iter(0);
+//         while(max>0){
+//            if (nb>2) currmot.matinit(scorethr2);
+//            else currmot.matinit(scorethr);
+//            if (currmot.nbmot<1) break;
+//            
+//            currmot.compprec();
+//            max=distcv(currmot.matprec,pmat);
+//            pmat=currmot.matprec;
+//            iter++;
+//            if (iter==20) break;
+//            nbconv++;
+//         }
+//         if (nb==1){
+//            currmot.corrprec();
+//            pmat=currmot.matprec;
+//            currmot.matprecrevcomp=reversecomp(currmot.matprec);
+//         }
+//      }
+//      //cout << currmot.nbmot << " " ; 
+//      //cout.flush();
+//
+//      currmot.matinit(scorethr2);
+//      if (currmot.nbmot>2){
+//         currmot.pvaluecomp();
+//         //currmot.display(streamfile);
+//         //		for (ivma ima=currmot.seqs.begin();ima!=currmot.seqs.end();ima++){
+//         //  cout << (*ima).alignseq[0] << endl;
+//         //		}
+//         //cout << currmot.matprec << endl;
+//         genmots.push_back(currmot);
+//      }
+//      i++;
+//   }
+//   cout << endl;
+//}
+//   
+//vTSS TSSall;
+//
+//   void
+//loadannots()
+//{
+//   ifstream annots;
+//   annots.open(args_info.phenotype_arg);
+//
+//   back_insert_iterator<vstring> dest(phenos);
+//   copy(iisstring(annots),iisstring(),dest);
+//
+//   annots.close();
+//
+//   ifstream glist;
+//   //!!!! FIRST scangens were done with genelist-wosensory
+//   //   if (species==1) glist.open("/home/santolin/these/files/droso/plaza/phenos/neg-ovo-pheno.dat");
+//   //   else if (species==2) glist.open("/home/santolin/these/files/mus/affymetrix/e10/genelist-wo-pos-down-uniq.dat");
+//   if (args_info.phenoback_given){
+//      glist.open(args_info.phenoback_arg);
+//   }
+//   else {
+//      if (species=="droso") glist.open("/home/rouault/these/sequence/genomes/genelist.dat");
+//      else if (species=="eutherian") glist.open("/home/santolin/these/files/mus/biomart/genelist-protein-coding+miRNA.dat");
+//   }
+//
+//   back_insert_iterator<vstring> destg(gbacks);
+//   copy(iisstring(glist),iisstring(),destg);
+//
+//   glist.close();
+//
+//   for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
+//      for (ivstring ivs2=gbacks.begin();ivs2!=gbacks.end();ivs2++){
+//         if (*ivs2==*ivs){
+//            gbacks.erase(ivs2);
+//            break;
+//         }
+//      }
+//   }
+//
+//   //   for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
+//   //      cout << *ivs << endl;
+//   //   }
+//}
+//
+//   vcoord
+//loadcoords()
+//{
+//   ifstream inf;
+//   inf.open(args_info.coord_file_arg);
+//   vcoord coords;
+//   back_insert_iterator<vcoord> dest(coords);
+//   copy(iiscoord(inf),iiscoord(),dest);
+//   return coords;
+//}
+//
+//
+//   void
+//loadchroms()
+//{
+//   ifstream chromsf;
+//   if (species=="droso"){
+//      chromsf.open("/home/rouault/these/sequence/genomes/melano-only/dmel-all-chromosome-r4.3.fasta");
+//   } else if (species=="eutherian"){
+//      chromsf.open("/home/santolin/these/files/mus/genome/fasta/all/all.chromosome_no_MT.fasta");
+//      //chromsf.open("/home/santolin/these/files/mus/genome/fasta/all/chr4.fa");
+//      //chromsf.open("/home/santolin/these/files/mus/genome/fasta/repeat_masked/all.chromosome_no_MT.fa");
+//   }
+//   back_insert_iterator<vchrom> dest(chromints);
+//   copy(iischrom(chromsf),iischrom(),dest);
+//   sort(chromints.begin(),chromints.end());
+//
+//   for (int i=0;i<chromints.size();i++){
+//      cout << "chrom " << chromints[i].name << " ";
+//      cout << "of length " << chromints[i].seq.size() << " : ";
+//      cout << chromints[i].seq.substr(0,50) << " ... ";
+//      cout << chromints[i].seq.substr(chromints[i].seq.size()-50);
+//      cout << "\n";
+//   }
+//
+//
+//   chromsf.close();
+//}
+//
+//   vint 
+//loadlengthchrom()
+//{
+//
+//   vint lchr(nbchrom,0);
+//
+//   if (species=="droso"){ // *** to be corrected to be easily updated
+//
+//      lchr[0]=22410834;//chr2L
+//      lchr[1]=20769785;//chr2R
+//      lchr[2]=23774897;//chr3L
+//      lchr[3]=27908053;//chr3R
+//      lchr[4]=1284640;//chr4
+//      lchr[5]=22227390;//chrX
+//
+//
+//   } else if (species=="eutherian"){
+//
+//      lchr[0]=197195432;
+//      lchr[1]=181748087;
+//      lchr[2]=159599783;
+//      lchr[3]=155630120;
+//      lchr[4]=152537259;
+//      lchr[5]=149517037;
+//      lchr[6]=152524553;
+//      lchr[7]=131738871;
+//      lchr[8]=124076172;
+//      lchr[9]=129993255;
+//      lchr[10]=121843856;
+//      lchr[11]=121257530;
+//      lchr[12]=120284312;
+//      lchr[13]=125194864;
+//      lchr[14]=103494974;
+//      lchr[15]=98319150;
+//      lchr[16]=95272651;
+//      lchr[17]=90772031;
+//      lchr[18]=61342430;
+//      lchr[19]=166650296;//X
+//      lchr[20]=15902555;//Y
+//   }
+//
+//   return lchr;
+//
+//}
+//
+//   void
+//initgroupedinst()
+//{
+//   cout << "Loading length chroms..." << endl;
+//   lengthchrom=loadlengthchrom();
+//
+//   vginst dumvginst;
+//   groupedinst=vvginst(nbchrom,dumvginst);
+//   for (unsigned int i=0;i<nbchrom;i++){
+//      for (unsigned int j=0;j<lengthchrom[i]/scanstep+1;j++){
+//         groupedinst[i].push_back(GroupInstance(j*scanstep,j*scanstep+scanwidth,i));
+//      }
+//   }
+//   ifstream annots;
+//   if (species=="droso"){
+//      annots.open("/home/rouault/these/sequence/genomes/regres-wellform-all.dat");
+//   } else if (species=="eutherian"){
+//      annots.open("/home/santolin/these/files/mus/biomart/genes-n-strand-protein-coding+miRNA-no-MT-n-NT-TSS.dat");
+//   }
+//   importTSS(TSSall,annots);
+//   annots.close();
+//   // assign CRMs to genes in an annotextent region
+//   cout << "Assign CRMs to genes in annotextend..." << endl;
+//   for (ivTSS ivt=TSSall.begin();ivt!=TSSall.end();ivt++){
+//      int start=0;
+//      if (((*ivt).coord-annotextent-scanwidth/2)/scanstep+1>0) start=((*ivt).coord-annotextent-scanwidth/2)/scanstep;
+//      int stop=((*ivt).coord+annotextent-scanwidth/2)/scanstep+1;
+//      if (stop>lengthchrom[(*ivt).chrom]/scanstep+1) stop=lengthchrom[(*ivt).chrom]/scanstep+1;
+//      for (unsigned int i=start;i<stop;i++){
+//         groupedinst[(*ivt).chrom][i].TSSs.push_back(*ivt);
+//         //       cout << (*ivt).gene << endl;
+//      }
+//   }
+//   // assign nearest TSS to genes
+//   cout << "Assign CRMs to nearest gene..." << endl;
+//   for (unsigned int i=0;i<nbchrom;i++){
+//      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
+//         (*ivg).compbestannot();
+//      }
+//   }
+//
+//   // attribute phenotype to CRMs
+//   cout << "Attribute phenotype to CRM..." << endl;
+//   for (unsigned int i=0;i<nbchrom;i++){
+//      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
+//         (*ivg).isdiscarded();
+//         if (!(*ivg).discarded){
+//            for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
+//               if ((*ivg).besttss.gene==*ivs){
+//                  (*ivg).goodpheno=1;
+//                  break;
+//               } else {
+//                  (*ivg).goodpheno=0;
+//               }
+//            }
+//         } else {
+//            (*ivg).goodpheno=0;
+//         }
+//      }
+//   }
+//
+//}
+//
+//   void
+//getsites(ifstream & file, Sequence & bds)
+//{
+//   string dum;
+//   string dumtest;
+//   int i=0;
+//   cout << "seq " << endl;
+//   getline(file,dum);
+//   while(!file.eof()){
+//      bds.sitenames.push_back(dum.substr(1));
+//      getline(file,dum);
+//      if (i>0 && dum.length()!=dumtest.length()) {
+//         cout << dum << endl;
+//         cout << "Error in site length" << endl;
+//         exit(2);
+//      }
+//      dumtest=dum;
+//      i++;
+//      bds.seqs.push_back(dum);
+//      cout << dum << endl;
+//      bds.iseqs.push_back(stringtoint(dum));
+//      getline(file,dum);
+//   }
+//}
+//
+//   void
+//disptex(vseq & seqs)
+//{
+//   system("if ! test -d display;then mkdir display;fi;");      
+//   //   system("if ! test -d display/tex;then mkdir display/tex;fi;");      
+//
+//   double scoreinit=scorethr2;
+//   string filename("display/");
+//   filename+="results.tex";
+//   ofstream outf(filename.c_str());
+//   disptexinit(outf);
+//   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){ 
+//      cout << "Scanning " << (*ivs).name << endl;
+//      dispseqwmots(*ivs,motsdef,outf,scoreinit);
+//   }
+//   disptexclose(outf);
+//
+//   outf.close();
+//}
+//
+//   void
+//disptexwgaps(vseq & align)
+//{
+//   system("if ! test -d display;then mkdir display;fi;");      
+//
+//   cout << "Scanning sequences for instances..." << endl;
+//   scanseqsforinstancesnmask(align,motsdef);
+//
+//   cout << "Defining conserved instances..." << endl;
+//   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
+//      ivs->instances2instancescons();
+//      //cout << ivs->name << "\n" << ivs->instancescons;
+//   }
+//
+//   string folder("display/");
+//   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){ 
+//      stringstream file;
+//      file << folder;
+//      file << ivs->name << "_";
+//      file << chromfromint(ivs->chrom) << "_";
+//      file << ivs->start << "_";
+//      file << ivs->stop;
+//      file << ".tex";
+//      ofstream outf(file.str().c_str());
+//      disptexinit(outf);
+//      cout << "Scanning " << (*ivs).name << endl;
+//      dispseqwmotswgaps(*ivs,outf);
+//      disptexclose(outf);
+//      outf.close();
+//   }
+//
+//}
+//
+//   Sequence
+//findbestseq(vmot & vm, Sequence & seq)
+//{
+//
+//   Sequence bestseq=seq;
+//
+//   //Find the best 1kb piece (if possible!) maximizing the sites score function
+//   bestseq.score=-1.e6;
+//   vint bestmotis(nbmots_for_score,0);
+//
+//   //we define the 1kb piece with best score
+//   for (ivvinstseq iv=seq.instancescons.begin();iv!=seq.instancescons.end();iv++){
+//
+//      vinstseq vic=*iv;
+//      vint bestmotistmp(nbmots_for_score,0);
+//      int start=seq.imaps[0][vic[0].pos]-neighbext;
+//      if (start<0) start=0;
+//      int stop=start+scanwidth-1;
+//      if (stop>seq.stop-seq.start){
+//         stop=seq.stop-seq.start;
+//         start=stop-scanwidth+1;
+//         if (start<0) start=0;
+//      }
+//      for (ivvinstseq iv1=seq.instancescons.begin();iv1!=seq.instancescons.end();iv1++){
+//         vinstseq vic1=*iv1;
+//         int start1=seq.imaps[0][vic1[0].pos];
+//         if (start1>=start && start1<stop-width+1){
+//            bestmotistmp[vic1[0].motindex]++;
+//         }
+//      }
+//
+//      double score;
+//      int lseq=stop-start+1;
+//      score=calcscore(vm,bestmotistmp,lseq);
+//
+//      if (score>bestseq.score){
+//         bestseq.score=score;
+//         bestseq.start=seq.start+start;
+//         bestseq.stop=seq.start+stop;
+//         bestmotis=bestmotistmp;
+//      }
+//   }
+//
+//   if (seq.instancescons.size()==0) bestseq.score=calcscore(vm,bestmotis,seq.nbtb);
+//
+//   //   cout << bestseq.name << " " << bestseq.score  <<" " << bestseq.start << " "  <<bestseq.stop << endl;
+//   //   cout << seq.name << " "  << seq.start << " "  <<seq.stop << endl;
+//
+//   //cut original sequence into best piece
+//   int rawstart,rawstop;
+//   // Coorects minor bug due to extraction (incorrect stop due to gap etc...)
+//   if (bestseq.stop-seq.start+1>=seq.imapsinv[0].size()) bestseq.stop=seq.start+seq.imapsinv[0].size()-1;
+//   rawstart=seq.imapsinv[0][bestseq.start-seq.start];
+//   rawstop=seq.imapsinv[0][bestseq.stop-seq.start];
+//   for (int i=0;i<nbspecies;i++){
+//      if (seq.species[i]){
+//         civint istart=seq.iseqs[i].begin()+seq.imaps[i][rawstart];
+//         civint istop=seq.iseqs[i].begin()+seq.imaps[i][rawstop]+1;
+//         if (istop>=seq.iseqs[i].end()) istop=seq.iseqs[i].end();
+//         vint itmp(istart,istop);
+//         bestseq.iseqs[i]=itmp;
+//         bestseq.seqs[i]=vinttostring(itmp);
+//         bestseq.seqsrealigned[i]=seq.seqsrealigned[i].substr(rawstart,rawstop-rawstart+1);
+//         bestseq.imaps[i]=alignedtomap(bestseq.seqsrealigned[i]);
+//         bestseq.imapsinv[i]=alignedtorevmap(bestseq.seqsrealigned[i]);
+//         //         cout << bestseq.iseqs[i] << endl;
+//         //         cout << bestseq.seqs[i] << endl;
+//         //         cout << bestseq.seqsrealigned[i] << endl;
+//         int nbtb=bestseq.iseqs[i].size()-compN(bestseq.iseqs[i]);
+//         if (nbtb>width+neighbext){//>5){}
+//            bestseq.species[i]=1;
+//         } else {
+//            bestseq.species[i]=0;
+//         }
+//      }
+//   }
+//   bestseq.nbN=compN(bestseq.iseqs[0]);
+//   bestseq.nbtb=bestseq.iseqs[0].size()-bestseq.nbN;
+//   //   cout << bestseq.nbN << endl;
+//   //   cout << bestseq.nbtb << endl;
+//
+//   return bestseq;
+//
+//}
+//
+//   vseq 
+//findbestseqs(vmot & vm, vseq & seqs1)
+//{
+//   // INIT
+//   vseq seqs=seqs1;
+//
+//   // We need different enhancers of the same gene to have same name
+//
+//   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//      if ((*ivs).name.find('-')!=string::npos)
+//      {
+//         (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('-'),(*ivs).name.end());
+//      }
+//   }
+//
+//   // SCANNING OLD SEQS
+//   //
+//   //   cout << "Scanning sequences for instances..." << endl;
+//   scanseqsforinstancesnmask(seqs,vm);
+//
+//   // KEEPING BEST SEQS
+//   //
+//   //   cout << "Defining conserved instances..." << endl;
+//   //For each sequence find best part and cut it into vtmp
+//   vseq vtmp;
+//   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//      ivs->instances2instancescons();
+//      vtmp.push_back(findbestseq(vm,*ivs));
+//   }
+//
+//   // UNICITY: ONE SEQUENCE PER GENE
+//   //
+//   vseq vbest;
+//   // only keep the best seq among all surrounding / intronic regions of a given gene
+//   if (vtmp.size()>1){
+//      Sequence bestseq=*(vtmp.begin());
+//      for (ivseq ivs=vtmp.begin()+1;ivs!=vtmp.end();ivs++){ 
+//         if (ivs->name==bestseq.name){ 
+//            if (ivs->score>bestseq.score){
+//               bestseq=*ivs;
+//            }
+//         } else{
+//            vbest.push_back(bestseq);
+//            bestseq=*ivs;
+//            if (ivs==vtmp.end()-1) vbest.push_back(*ivs);
+//         }
+//      }
+//   } else {
+//      vbest=vtmp;
+//   }
+//
+//   // RE-SCANNING BEST SEQUENCES
+//   //
+//   for (ivseq iv=vbest.begin();iv!=vbest.end();iv++){
+//      iv->instances.clear();
+//      iv->instancescons.clear();
+//      vint dum(nbmots_for_score,0);
+//      iv->motis=dum;
+//   }
+//   //   cout << "Scanning best 1kbs for instances..." << endl;
+//   //scanseqsforinstancesnmask(vbest,vm);
+//   scanseqsforinstances(vbest,vm);
+//
+//   //   cout << "Defining best 1kbs conserved instances..." << endl;
+//   for (ivseq ivs=vbest.begin();ivs!=vbest.end();ivs++){
+//      ivs->instances2instancescons();
+//      //   cout << ivs->name << endl;
+//      //  cout << ivs->instancescons << endl;
+//   }
+//
+//
+//   // RE-DEFINE SIZEPOS AND SIZENEG
+//   vseq vscorepos;
+//   sizepos=0;
+//   for (ivseq ivs=vbest.begin();ivs!=vbest.end();ivs++){
+//      if (ivs->sign==1){
+//         sizepos++;
+//      }
+//   }
+//   sizeneg=vbest.size()-sizepos;
+//
+//   return vbest;
+//}
+//
+//   void
+//dispbestseqs(vseq & seqs, ofstream & outf)
+//{
+//   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//      outf << chromfromint(ivs->chrom) << "\t";
+//      outf << ivs->start << "\t";
+//      outf << ivs->stop << "\t";
+//      outf << ivs->name << "\n";
+//   }
+//}
+//
+//
+//   void
+//loadseqsforscore(vseq & vscore)
+//{
+//
+//   if (args_info.posalign_given){ 
+//      ifstream inf;
+//      inf.open(args_info.posalign_arg);
+//      vseq seqs;
+//      seqs=loadsequencesconserv(inf);
+//      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//         if (ivs->species[0] && ivs->nbtb>0){
+//            ivs->sign=1;
+//            vscore.push_back(*ivs);
+//         }
+//      }
+//      sizepos=vscore.size();
+//      cout << "Positive set: " << sizepos << "\n";
+//      inf.close();
+//   }
+//
+//   if (args_info.poscoords_given){
+//      //Working on coordinate files
+//      ifstream align;
+//      if (species=="droso") align.open("/home/santolin/these/files/droso/align/all/align-masked.dat"); // *** To be changed...
+//      else if (species=="eutherian") align.open("/home/santolin/these/files/mus/epo/align-masked.dat");
+//
+//      //POSITIVES
+//      ifstream inf;
+//      inf.open(args_info.poscoords_arg);
+//      alignscoord=loadcoordconserv(align);
+//      align.close();
+//      vcoord pcoords;
+//      back_insert_iterator<vcoord> pdest(pcoords);
+//      copy(iiscoord(inf),iiscoord(),pdest);
+//      for (ivcoord ivc=pcoords.begin();ivc!=pcoords.end();ivc++){
+//         Sequence seqtoimport=coordtoseq(*ivc);
+//         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
+//            seqtoimport.sign=1;
+//            vscore.push_back(seqtoimport);
+//         }
+//      }
+//      inf.close();
+//      sizepos=vscore.size();
+//      cout << "Positive set: " << sizepos << "\n";
+//   }
+//
+//   if (args_info.negalign_given){
+//      ifstream inf;
+//      inf.open(args_info.negalign_arg);
+//      vseq seqs;
+//      seqs=loadsequencesconserv(inf);
+//      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//         if (ivs->species[0] && ivs->nbtb>0){
+//            ivs->sign=-1;
+//            vscore.push_back(*ivs);
+//         }
+//      }
+//      sizeneg=vscore.size()-sizepos;
+//      cout << "Negative set: " << sizeneg << "\n";
+//      inf.close();
+//   }
+//
+//   if (args_info.negcoords_given){
+//      ifstream align;
+//      if (species=="droso") align.open("/droso/align/all/align-masked.dat");
+//      else if (species=="eutherian") align.open("/mus/epo/align-masked.dat");
+//
+//      //NEGATIVES
+//      ifstream inf;
+//      inf.open(args_info.negcoords_arg);
+//      alignscoord=loadcoordconserv(align);
+//      align.close();
+//      vcoord ncoords;
+//      back_insert_iterator<vcoord> ndest(ncoords);
+//      copy(iiscoord(inf),iiscoord(),ndest);
+//      for (ivcoord ivc=ncoords.begin();ivc!=ncoords.end();ivc++){
+//         Sequence seqtoimport=coordtoseq(*ivc);
+//         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
+//            seqtoimport.sign=-1;
+//            vscore.push_back(seqtoimport);
+//         }
+//      }
+//      inf.close();
+//      sizeneg=vscore.size()-sizepos;
+//      cout << "Negative set: " << sizeneg << "\n";
+//   }
+//
+//   if (!(args_info.negcoords_given||args_info.negalign_given)){
+//      cout << "Using background as negative" << endl;
+//      ifstream inf;
+//      if (species=="droso") inf.open("/droso/backreg/regs2000-align-1000.dat"); 
+//      else if (species=="eutherian") inf.open("/mus/backreg/regs2000-align-1000.dat");//regs2000.fa");
+//      vseq seqs;
+//      seqs=loadsequencesconserv(inf);
+//      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//         if (ivs->species[0] && ivs->nbtb>0){
+//            ivs->sign=-1;
+//            vscore.push_back(*ivs);
+//         }
+//      }
+//      sizeneg=vscore.size()-sizepos;
+//      cout << "Negative set: " << sizeneg << "\n";
+//      inf.close();
+//   }
+//
+//   if (!(args_info.poscoords_given || args_info.posalign_given)) {
+//      cout << "Please give positive file" << endl;
+//      exit(1);
+//   }
+//
+//   //   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
+//   //      if (!(ivs->sign==-1 && ivs->name.find("reg")!=string::npos)){
+//   ////         if ((*ivs).name.find('_')!=string::npos)
+//   ////         {
+//   ////            if (args_info.display_given || args_info.byscore_given){
+//   ////               (*ivs).name.insert((*ivs).name.find('_'),"\\");
+//   ////            } else{
+//   ////               (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('_'),(*ivs).name.end());
+//   ////            }
+//   ////         }
+//   //         //      if ((*ivs).name.find('-')!=string::npos)
+//   //         //      {
+//   //         //         (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('-'),(*ivs).name.end());
+//   //         //      }
+//   //      }
+//   //   }
+//
+//   return;
+//}
+//
+//   void
+//loadseqsforscorenotmasked(vseq & vscore)
+//{
+//
+//   if (args_info.posalign_given){ 
+//      ifstream inf;
+//      inf.open(args_info.posalign_arg);
+//      vseq seqs;
+//      seqs=loadsequencesconserv(inf);
+//      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//         if (ivs->species[0] && ivs->nbtb>0){
+//            ivs->sign=1;
+//            vscore.push_back(*ivs);
+//         }
+//      }
+//      sizepos=vscore.size();
+//      cout << "Positive set: " << sizepos << "\n";
+//      inf.close();
+//   }
+//
+//   if (args_info.poscoords_given){
+//      //Working on coordinate files
+//      ifstream align;
+//      if (species=="droso") align.open("/home/santolin/these/files/droso/align/all/align.dat");
+//      else if (species=="eutherian") align.open("/home/santolin/these/files/mus/epo/align.dat");
+//
+//      //POSITIVES
+//      ifstream inf;
+//      inf.open(args_info.poscoords_arg);
+//      alignscoord=loadcoordconserv(align);
+//      align.close();
+//      vcoord pcoords;
+//      back_insert_iterator<vcoord> pdest(pcoords);
+//      copy(iiscoord(inf),iiscoord(),pdest);
+//      for (ivcoord ivc=pcoords.begin();ivc!=pcoords.end();ivc++){
+//         Sequence seqtoimport=coordtoseq(*ivc);
+//         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
+//            seqtoimport.sign=1;
+//            vscore.push_back(seqtoimport);
+//         }
+//      }
+//      inf.close();
+//      sizepos=vscore.size();
+//      cout << "Positive set: " << sizepos << "\n";
+//   }
+//
+//   if (args_info.negalign_given){
+//      ifstream inf;
+//      inf.open(args_info.negalign_arg);
+//      vseq seqs;
+//      seqs=loadsequencesconserv(inf);
+//      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//         if (ivs->species[0] && ivs->nbtb>0){
+//            ivs->sign=-1;
+//            vscore.push_back(*ivs);
+//         }
+//      }
+//      sizeneg=vscore.size()-sizepos;
+//      cout << "Negative set: " << sizeneg << "\n";
+//      inf.close();
+//   }
+//
+//   if (args_info.negcoords_given){
+//      ifstream align;
+//      if (species=="droso") align.open("/droso/align/all/align.dat");
+//      else if (species=="eutherian") align.open("/mus/epo/align.dat");
+//
+//      //NEGATIVES
+//      ifstream inf;
+//      inf.open(args_info.negcoords_arg);
+//      alignscoord=loadcoordconserv(align);
+//      align.close();
+//      vcoord ncoords;
+//      back_insert_iterator<vcoord> ndest(ncoords);
+//      copy(iiscoord(inf),iiscoord(),ndest);
+//      for (ivcoord ivc=ncoords.begin();ivc!=ncoords.end();ivc++){
+//         Sequence seqtoimport=coordtoseq(*ivc);
+//         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
+//            seqtoimport.sign=-1;
+//            vscore.push_back(seqtoimport);
+//         }
+//      }
+//      inf.close();
+//      sizeneg=vscore.size()-sizepos;
+//      cout << "Negative set: " << sizeneg << "\n";
+//   }
+//
+//   if (!(args_info.negcoords_given||args_info.negalign_given)){
+//      cout << "Using background as negative" << endl;
+//      ifstream inf;
+//      if (species=="droso") inf.open("/droso/backreg/regs2000-align-1000.dat"); 
+//      else if (species=="eutherian") inf.open("/mus/backreg/regs2000-align-1000.dat");
+//      vseq seqs;
+//      seqs=loadsequencesconserv(inf);
+//      for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+//         if (ivs->species[0] && ivs->nbtb>0){
+//            ivs->sign=-1;
+//            vscore.push_back(*ivs);
+//         }
+//      }
+//      sizeneg=vscore.size()-sizepos;
+//      cout << "Negative set: " << sizeneg << "\n";
+//      inf.close();
+//   }
+//
+//   if (!(args_info.poscoords_given || args_info.posalign_given)) {
+//      cout << "Please give positive file" << endl;
+//      exit(1);
+//   }
+//
+//   //   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
+//   //      if (!(ivs->sign==-1 && ivs->name.find("reg")!=string::npos)){
+//   ////         if ((*ivs).name.find('_')!=string::npos)
+//   ////         {
+//   ////            if (args_info.display_given || args_info.byscore_given){
+//   ////               (*ivs).name.insert((*ivs).name.find('_'),"\\");
+//   ////            } else{
+//   ////               (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('_'),(*ivs).name.end());
+//   ////            }
+//   ////         }
+//   //         //      if ((*ivs).name.find('-')!=string::npos)
+//   //         //      {
+//   //         //         (*ivs).name.erase((*ivs).name.begin()+(*ivs).name.find('-'),(*ivs).name.end());
+//   //         //      }
+//   //      }
+//   //   }
+//
+//   return;
+//}
+//
+////Loads align-file (fasta) or coord-file (name/chrom/start/stop)
+//   vseq
+//loadseqs()
+//{
+//   vseq seqs;
+//
+//   if (args_info.align_file_given){
+//
+//      ifstream inf;
+//      inf.open(args_info.align_file_arg);
+//      seqs=loadsequencesconserv(inf);
+//      inf.close();
+//   }
+//   else if (args_info.coord_file_given){
+//
+//      ifstream inf;
+//      inf.open(args_info.coord_file_arg);
+//
+//      ifstream align;
+//      if (species=="droso") align.open("/droso/align/all/align-masked.dat");
+//      else if (species=="eutherian") align.open("/mus/epo/align-masked.dat");
+//
+//      alignscoord=loadcoordconserv(align);
+//
+//      align.close();
+//
+//      vcoord coords;
+//      back_insert_iterator<vcoord> dest(coords);
+//      copy(iiscoord(inf),iiscoord(),dest);
+//      for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
+//         Sequence seqtoimport=coordtoseq(*ivc);
+//         //         cout << (*ivc).name << " " << (*ivc).start << endl;
+//         //         cout << seqtoimport.name << " " << seqtoimport.start << endl;
+//         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
+//            seqs.push_back(seqtoimport);
+//         }
+//         //         for (int i=0;i<nbspecies;i++){
+//         //         cout << seqtoimport.iseqs[i] << endl; 
+//         //         }
+//         //         exit(9);
+//      }
+//      inf.close();
+//   }
+//   else {
+//      cout << "Error in loadseqs: please give a coord/alignment file. Exiting..." << endl;
+//      exit(1);
+//   }
+//   return seqs;
+//}
+//
+//   void
+//args_init()
+//{
+//   width=args_info.width_arg;
+//   scorethr2=args_info.threshold_arg;
+//   species=args_info.species_arg;
+//   if (species=="droso"){ // *** Shouldn't be hardcoded??
+//      conca=0.3; 
+//      concc=0.5-conca;
+//      nbspecies=12;
+//      cout << "Species: droso" << endl;
+//   }
+//   else if (species=="eutherian"){
+//      conca=0.263; 
+//      concc=0.5-conca;
+//      nbspecies=10;
+//      cout << "Species: mus" << endl;
+//   }
+//   conct=conca;
+//   concg=concc;
+//   evolutionary_model=args_info.evolutionary_model_arg;
+//
+//   scorethrcons=scorethr2-1.0;
+//   scorethr=scorethr2-1.0;
+//
+//   neighbext=args_info.neighbext_arg;
+//   nbmots_for_score=args_info.nbmots_arg;
+//   scanwidth=args_info.scanwidth_arg;
+//
+//   if (species=="droso") nbchrom=6;
+//   else if (species=="eutherian") nbchrom=21;
+//
+//}
+//
+//   void
+//args_init_scangen()
+//{
+//   scanwidth=args_info.scanwidth_arg;
+//   scanstep=args_info.scanstep_arg;
+//
+//   nbmots_for_score=args_info.nbmots_arg;
+//}
+//
 
    void
 print_reportbugs()
@@ -3623,101 +2868,15 @@ print_copyright ()
 
 }
 
-/** 
- * ===  FUNCTION  ======================================================================
- *         Name:  motscoreorder
- *  Description:  Compare motif overrepresentation
- * =====================================================================================
- */
-   bool
-motscoreorder ( Motif mot1, Motif mot2 )
+const char package_name[] = PACKAGE_NAME;
+const char package_version[] = PACKAGE_VERSION;
+
+int
+cmd_version(int argc, char **argv)
 {
-   return mot1.pvalue<mot2.pvalue;
-}		/* -----  end of function motscoreorder  ----- */
-
-
-
-/** 
- * ===  FUNCTION  ======================================================================
- *         Name:  genmot
- *  Description:  Motof generation
- * =====================================================================================
- */
-   void
-genmot ( )
-{
-   args_init();
-
-   rnginit();
-
-   //   printconfig(); *** to be written so that one can rerun exacltly the same instance
-
-   scorethr=scorethr2-2.*(double)width/10;
-   scorethrcons=scorethr2-1.*(double)width/10;
-   compalpha();
-   //   printpriorsandthrs(); *** to be written
-
-   ofstream motmeldb("motmeldb.txt");
-
-   cout << "Loading background set..." << endl;
-   ifstream backreg;
-
-   if (species=="droso") backreg.open("DATA_PATH/droso/background2000.fa");
-   else if (species=="eutherian") backreg.open("DATA_PATH/eutherian/background2000.fa");
-   regtests=loadsequences(backreg);
-   backreg.close();
-   cout << "Background set size : " << regtests.size() << endl;
-
-   cout << "Loading training set..." << endl;
-   regints=loadseqs();
-   cout << "Training set size : " << regints.size() << endl;
-   inittreedist();
-
-   //If the sorting is done within the c file we don't need to write motmeldb.txt
-   // -> Still provide a good way to show progress...
-   vmot genmots;
-   for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
-      cout << (*iseq).name << endl;
-      seqanalysis(*iseq,genmots);
-      cout << endl;
-   }
-   motmeldb.close();
-   sort(genmots.begin(),genmots.end(),motscoreorder);
-
-   // Sort 
-
-
-   gsl_rng_free(gslran);
-   cmdline_parser_free(&args_info);
-   cout << "exit normally" << endl;
-   return ;
-}		/* -----  end of function genmot  ----- */
-
-
-/** 
- * ===  FUNCTION  ======================================================================
- *         Name:  scangen
- *  Description:  Enhancer prediction from a list of motifs
- * =====================================================================================
- */
-   static void
-scangen (  )
-{
-   return ;
-}		/* -----  end of static function scangen  ----- */
-
-
-/** 
- * ===  FUNCTION  ======================================================================
- *         Name:  extract
- *  Description:  Extract alignments from a list of coordinates
- * =====================================================================================
- */
-   void
-extract (  )
-{
-   return ;
-}		/* -----  end of function extract  ----- */
+	printf("%s version %s\n", package_name, package_version);
+	return 0;
+}
 
 /** 
  * ===  FUNCTION  ======================================================================
@@ -3730,57 +2889,25 @@ extract (  )
    int
 main(int argc, char** argv)
 {
-   /* No args?  Show usage. */
-   if (argc <= 1)
-   {
-      return EXIT_FAILURE;
+   const char *cmd;
+
+   if (argc<2){
+			cerr <<  "Usage : " << usage_string << endl;
+         return EXIT_FAILURE;
    }
 
-   string function(argv[1]);
-   cout << function << endl;
+   /* Process options with getopt */
+   argv++;
+   argc--;
 
-   if (function=="genmot"){
-
-      if (cmdline_parser (argc-1, argv+1, &args_info) != 0){
-         fprintf (stderr, "Run imogene genmot --help to see the list of options.\n");
-         exit(1) ;
-      }
-
-   } else if (function=="scangen"){
-
-      if (cmdline_parser (argc-1, argv+1, &args_info) != 0){
-         fprintf (stderr, "Run imogene scangen --help to see the list of options.\n");
-         exit(1) ;
-      }
-
-   } else if (function=="extract"){
-
-      if (cmdline_parser (argc-1, argv+1, &args_info) != 0){
-         fprintf (stderr, "Run imogene extract --help to see the list of options.\n");
-         exit(1) ;
-      }
-
-   } else {
-
-      if (cmdline_parser (argc, argv, &args_info) != 0){
-         fprintf (stderr, "Run imogene --help to see the list of options.\n");
-         exit(1) ;
-      }
-
+   if (!strcmp(argv[0], "--help") || !strcmp(argv[0], "--version")){
+      argv[0]+=2;
    }
 
-   if (args_info.help_given){
-      cmdline_parser_print_help ();
-      print_reportbugs ();
-      exit (0);
-   }
+   cmd = argv[0];
 
-   if (args_info.version_given){
-      cmdline_parser_print_version ();
-      print_copyright ();
-      exit (0);
-   }
+   handle_command(argc, argv);
 
-   return 0;
+   return EXIT_SUCCESS;
 }
 

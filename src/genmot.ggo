@@ -1,0 +1,31 @@
+purpose  "Genome analysis for the inference of gene cis-regulatory modules."
+args "--unamed-opts=<motifs>"
+
+     # Options
+option  "width" w "Width of the motifs"
+             int typestr="int"   default="10" optional
+
+option   "threshold" t "Threshold used for motif scanning"
+            double typestr="double" default="9" optional
+
+option   "neighbext" x  "Extent of the motif search within an alignment"
+            int typestr="int" default="20" optional
+
+option   "nbmots" n  "Number of motifs to consider at maximum"
+            int typestr="int" default="20" optional
+
+option   "coord-file" c "File of enhancer coordinates"
+            string   typestr="str"  default="coords.dat" optional
+
+option  "align-file"   a  "File of enhancer alignments"
+            string   typestr="str"  optional 
+
+option   "evolutionary-model" e  "Evolutionary model used for motif generation (1=felsen, 2=halpern)"
+            int  typestr="int" default="1" optional
+
+option   "species" s "Species studied (1=droso, 2= mus)"
+            int   typestr="int" required
+
+option  "scanwidth" -  "Width of selected enhancers"
+            int  typestr="int" default="1000" optional
+

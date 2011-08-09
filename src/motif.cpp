@@ -24,11 +24,11 @@
 #include "motif.hpp"
 #include "sequence.hpp"
 #include "scangen.hpp"
+#include "genmot.hpp"
 #include "tree.hpp"
 //#include "montecarlo.hpp" *** see how to include it
 
 using namespace std;
-
 
 Motif::Motif()
 {

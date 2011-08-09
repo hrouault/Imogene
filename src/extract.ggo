@@ -1,0 +1,3 @@
+purpose  "Alignment extraction."
+
+option "input" i "Coordinate file" string typestr="str" required

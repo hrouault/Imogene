@@ -1,0 +1,5 @@
+purpose  "Extraction of alignments from a coordinates file."
+
+args "--unamed-opts=<motifs>"
+
+option realign with muscle ### to be implemented

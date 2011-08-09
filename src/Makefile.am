@@ -6,7 +6,7 @@ libdistinfo_a_SOURCES = distinfo.cpp distinfo.hpp
 bin_PROGRAMS = imogene ##distinfo
 ##bin_PROGRAMS = scangen distinfo 
 ## 
-imogene_SOURCES = imogene.hpp imogene.cpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp imogene-genmot_cmdline.c imogene-genmot_cmdline.h
+imogene_SOURCES = imogene.hpp imogene.cpp extract.cpp extract.hpp genmot.cpp genmot.hpp help.cpp help.hpp scangen.cpp scangen.hpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp extract_cmdline.c extract_cmdline.h genmot_cmdline.c genmot_cmdline.h
 imogene_CPPFLAGS = -DDATA_PATH=${pkgdatadir}
 imogene_LDADD = libdistinfo.a
 

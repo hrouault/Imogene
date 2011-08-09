@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  scangen.hpp
+ *       Filename:  help.cpp
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  06.08.2011 13:06:51
+ *        Created:  06.08.2011 14:18:23
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,5 +16,12 @@
  * =====================================================================================
  */
 
-int cmd_scangen(int argc, char **argv);
+#include <iostream>
 
+using namespace std;
+
+int
+cmd_help(int argc, char **argv)
+{
+   cout << "help function\n";
+}
