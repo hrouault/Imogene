@@ -82,4 +82,7 @@ const unsigned int annotextent=10000;
 
 extern unsigned int nbmots_for_score;
 
+// sequences that are too short are considered as irrelevant in the sequence extraction process
+extern unsigned int extraction_cutoff; 
+
 #endif // Const_H

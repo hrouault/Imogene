@@ -32,9 +32,10 @@ const char *extract_args_info_usage = "Usage: " EXTRACT_CMDLINE_PARSER_PACKAGE "
 const char *extract_args_info_description = "";
 
 const char *extract_args_info_help[] = {
-  "  -h, --help       Print help and exit",
-  "  -V, --version    Print version and exit",
-  "  -i, --input=str  Coordinate file",
+  "  -h, --help         Print help and exit",
+  "  -V, --version      Print version and exit",
+  "  -i, --input=str    Coordinate file",
+  "  -s, --species=str  Species selected  (possible values=\"droso\", \n                       \"eutherian\")",
     0
 };
 
@@ -54,6 +55,8 @@ extract_cmdline_parser_internal (int argc, char **argv, struct extract_args_info
 static int
 extract_cmdline_parser_required2 (struct extract_args_info *args_info, const char *prog_name, const char *additional_error);
 
+const char *extract_cmdline_parser_species_values[] = {"droso", "eutherian", 0}; /*< Possible values for species. */
+
 static char *
 gengetopt_strdup (const char *s);
 
@@ -63,6 +66,7 @@ void clear_given (struct extract_args_info *args_info)
   args_info->help_given = 0 ;
   args_info->version_given = 0 ;
   args_info->input_given = 0 ;
+  args_info->species_given = 0 ;
 }
 
 static
@@ -71,6 +75,8 @@ void clear_args (struct extract_args_info *args_info)
   FIX_UNUSED (args_info);
   args_info->input_arg = NULL;
   args_info->input_orig = NULL;
+  args_info->species_arg = NULL;
+  args_info->species_orig = NULL;
   
 }
 
@@ -82,6 +88,7 @@ void init_args_info(struct extract_args_info *args_info)
   args_info->help_help = extract_args_info_help[0] ;
   args_info->version_help = extract_args_info_help[1] ;
   args_info->input_help = extract_args_info_help[2] ;
+  args_info->species_help = extract_args_info_help[3] ;
   
 }
 
@@ -164,19 +171,62 @@ extract_cmdline_parser_release (struct extract_args_info *args_info)
 
   free_string_field (&(args_info->input_arg));
   free_string_field (&(args_info->input_orig));
+  free_string_field (&(args_info->species_arg));
+  free_string_field (&(args_info->species_orig));
   
   
 
   clear_given (args_info);
 }
 
+/**
+ * @param val the value to check
+ * @param values the possible values
+ * @return the index of the matched value:
+ * -1 if no value matched,
+ * -2 if more than one value has matched
+ */
+static int
+check_possible_values(const char *val, const char *values[])
+{
+  int i, found, last;
+  size_t len;
+
+  if (!val)   /* otherwise strlen() crashes below */
+    return -1; /* -1 means no argument for the option */
+
+  found = last = 0;
+
+  for (i = 0, len = strlen(val); values[i]; ++i)
+    {
+      if (strncmp(val, values[i], len) == 0)
+        {
+          ++found;
+          last = i;
+          if (strlen(values[i]) == len)
+            return i; /* exact macth no need to check more */
+        }
+    }
+
+  if (found == 1) /* one match: OK */
+    return last;
+
+  return (found ? -2 : -1); /* return many values or none matched */
+}
+
 
 static void
 write_into_file(FILE *outfile, const char *opt, const char *arg, const char *values[])
 {
-  FIX_UNUSED (values);
+  int found = -1;
   if (arg) {
-    fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+    if (values) {
+      found = check_possible_values(arg, values);      
+    }
+    if (found >= 0)
+      fprintf(outfile, "%s=\"%s\" # %s\n", opt, arg, values[found]);
+    else
+      fprintf(outfile, "%s=\"%s\"\n", opt, arg);
   } else {
     fprintf(outfile, "%s\n", opt);
   }
@@ -200,6 +250,8 @@ extract_cmdline_parser_dump(FILE *outfile, struct extract_args_info *args_info)
     write_into_file(outfile, "version", 0, 0 );
   if (args_info->input_given)
     write_into_file(outfile, "input", args_info->input_orig, 0);
+  if (args_info->species_given)
+    write_into_file(outfile, "species", args_info->species_orig, extract_cmdline_parser_species_values);
   
 
   i = EXIT_SUCCESS;
@@ -322,6 +374,12 @@ extract_cmdline_parser_required2 (struct extract_args_info *args_info, const cha
       error = 1;
     }
   
+  if (! args_info->species_given)
+    {
+      fprintf (stderr, "%s: '--species' ('-s') option required%s\n", prog_name, (additional_error ? additional_error : ""));
+      error = 1;
+    }
+  
   
   /* checks for dependences among options */
 
@@ -382,7 +440,18 @@ int update_arg(void *field, char **orig_field,
       return 1; /* failure */
     }
 
-  FIX_UNUSED (default_value);
+  if (possible_values && (found = check_possible_values((value ? value : default_value), possible_values)) < 0)
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s' (`-%c')%s\n", 
+          package_name, (found == -2) ? "ambiguous" : "invalid", value, long_opt, short_opt,
+          (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s'%s\n", 
+          package_name, (found == -2) ? "ambiguous" : "invalid", value, long_opt,
+          (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
     
   if (field_given && *field_given && ! override)
     return 0;
@@ -467,10 +536,11 @@ extract_cmdline_parser_internal (
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
         { "input",	1, NULL, 'i' },
+        { "species",	1, NULL, 's' },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVi:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVi:s:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -494,6 +564,18 @@ extract_cmdline_parser_internal (
               &(local_args_info.input_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "input", 'i',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 's':	/* Species selected.  */
+        
+        
+          if (update_arg( (void *)&(args_info->species_arg), 
+               &(args_info->species_orig), &(args_info->species_given),
+              &(local_args_info.species_given), optarg, extract_cmdline_parser_species_values, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "species", 's',
               additional_error))
             goto failure;
         

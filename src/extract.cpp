@@ -17,66 +17,77 @@
  */
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
 #include "extract_cmdline.h"
+#include "const.hpp"
+#include "sequence.hpp"
 
 extract_args_info extract_args;
 
    void
 extractfromcoord(string coordfile)
 {
-   ifstream interestmelano;
-   interestmelano.open(args_info.coord_file_arg);
-   ifstream alignmelano;
-   alignmelano.open("/home/rouault/these/sequence/genomes/seqs.dat"); // list all the alignment files
-   melalignscoord=loadcoordconserv(alignmelano);
-   cout << "Align set size : " << melalignscoord.size() << endl;
-   alignmelano.close();
+   cout << "extraction start" << endl;
+   ifstream coordinates(extract_args.input_arg);
 
    vcoord coords;
    back_insert_iterator<vcoord> dest(coords);
-   copy(iiscoord(interestmelano),iiscoord(),dest);
-   for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
-      Sequence seqtoimport=coordtoseq(*ivc);
-      if (seqtoimport.drosos[0] && seqtoimport.nbtb>0){
-         melints.push_back(seqtoimport);
+   copy(iiscoord(coordinates),iiscoord(),dest);
+
+   if (species=="drosos"){
+      cout << "extract droso alignments" << endl;
+      for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
+         cout << ivc->chrom << endl;
+         cout << ivc->start << endl;
+         cout << ivc->stop << endl;
+         Sequence seqtoimport=coordtoseq(*ivc);
+         cout << seqtoimport.name << endl;
+         cout << seqtoimport.seqs[0] << endl;
       }
+
+   } else if (species=="eutherian"){
+
    }
 
-   interestmelano.close();
+//   cout << coords << endl;
+
+   // *** The following is incorrect
+//   vcoord aligns=loadcoordconserv(alignmelano);
+//   cout << "Align set size : " << melalignscoord.size() << endl;
+//   alignmelano.close();
+
+
+//   interestmelano.close();
    cout << "inputcoords finished" << endl;
 
-
-
-
-
-
-
-   ofstream outf;
-   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
-      Sequence seq=*iv;
-      if (seq.species[0] && seq.nbtb>0){ 
-         stringstream file;
-         file << folder;
-         file << seq.name << "_";
-         file << chromfromint(seq.chrom) << "_";
-         file << seq.start << "_";
-         file << seq.stop << ".fa";
-         outf.open(file.str().c_str());
-         Sequence & s=seq;
-         for (int i=0;i<nbspecies;i++){
-            if (s.species[i]){
-               if (i==0) outf << ">" << numtospecies(i) << " " <<
-                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-               else  outf << ">" << numtospecies(i) << endl;
-               outf << s.seqsrealigned[i] << endl;
-            }; 
-         }
-         outf.close();
-      }
-   }
+//
+//
+//   ofstream outf;
+//   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
+//      Sequence seq=*iv;
+//      if (seq.species[0] && seq.nbtb>0){ 
+//         stringstream file;
+//         file << folder;
+//         file << seq.name << "_";
+//         file << chromfromint(seq.chrom) << "_";
+//         file << seq.start << "_";
+//         file << seq.stop << ".fa";
+//         outf.open(file.str().c_str());
+//         Sequence & s=seq;
+//         for (int i=0;i<nbspecies;i++){
+//            if (s.species[i]){
+//               if (i==0) outf << ">" << numtospecies(i) << " " <<
+//                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+//               else  outf << ">" << numtospecies(i) << endl;
+//               outf << s.seqsrealigned[i] << endl;
+//            }; 
+//         }
+//         outf.close();
+//      }
+//   }
 }
 
 /** 
@@ -91,8 +102,13 @@ cmd_extract(int argc, char **argv)
 
    if ( extract_cmdline_parser(argc, argv, & extract_args)!=0)
       exit(1);
+   if (strcmp(extract_args.species_arg,"drosos")){
+      species="drosos";
+   } else if (strcmp(extract_args.species_arg,"drosos")){
+      species="eutherian";
+   }
 
-   ifstream fcoord(extract_args.input_arg);
+   extractfromcoord(extract_args.input_arg);
 
    extract_cmdline_parser_free(&extract_args);
 

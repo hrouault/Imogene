@@ -214,7 +214,7 @@ chromfromint(int chr)
 int
 intfromchrom(string chrname)
 {
-   if (species=="droso"){	
+   if (species=="drosos"){	
       if (chrname=="2L"){
          return 0;
       } else if (chrname=="2R"){
@@ -806,6 +806,25 @@ loadcoordfromTSS(ifstream & list)
    return vcds;
 }
 
+vcoord
+loadcoordconserv(string folder)
+{
+   DIR *dp;
+   struct dirent *ep;
+
+   dp = opendir ("DATA_DIR");
+   if (dp != NULL)
+   {
+      while (ep = readdir (dp))
+         puts (ep->d_name);
+      (void) closedir (dp);
+   }
+   else
+      cerr << "Couldn't open the directory" << endl;
+
+   return 0;
+}
+
 
    vcoord
 loadcoordconserv(ifstream & list)
@@ -977,8 +996,6 @@ basetoint(char base)
 Sequence
 coordtoseq(Coordinate & coord)
 {
-   // sequences that are too short are considered as irrelevant
-   unsigned int extraction_cutoff=10; 
 //   cout << "coord to seq\n";
    Sequence seq;
    string dummystr;

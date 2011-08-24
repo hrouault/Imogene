@@ -1,3 +1,5 @@
 purpose  "Alignment extraction."
 
 option "input" i "Coordinate file" string typestr="str" required
+
+option "species" s "Species selected" string typestr="str" required values="droso","eutherian"

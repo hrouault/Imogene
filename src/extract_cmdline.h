@@ -46,10 +46,14 @@ struct extract_args_info
   char * input_arg;	/**< @brief Coordinate file.  */
   char * input_orig;	/**< @brief Coordinate file original value given at command line.  */
   const char *input_help; /**< @brief Coordinate file help description.  */
+  char * species_arg;	/**< @brief Species selected.  */
+  char * species_orig;	/**< @brief Species selected original value given at command line.  */
+  const char *species_help; /**< @brief Species selected help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int input_given ;	/**< @brief Whether input was given.  */
+  unsigned int species_given ;	/**< @brief Whether species was given.  */
 
 } ;
 
@@ -171,6 +175,8 @@ void extract_cmdline_parser_free (struct extract_args_info *args_info);
  */
 int extract_cmdline_parser_required (struct extract_args_info *args_info,
   const char *prog_name);
+
+extern const char *extract_cmdline_parser_species_values[];  /**< @brief Possible values for species. */
 
 
 #ifdef __cplusplus
