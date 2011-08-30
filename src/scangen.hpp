@@ -16,5 +16,9 @@
  * =====================================================================================
  */
 
+#ifndef Scangen_H
+#define Scangen_H
+
 int cmd_scangen(int argc, char **argv);
 
+#endif // Scangen_H

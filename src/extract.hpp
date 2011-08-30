@@ -16,6 +16,10 @@
  * =====================================================================================
  */
 
+#ifndef Extract_H
+#define Extract_H
+
 int cmd_extract(int argc, char **argv);
 
 
+#endif // Extract_Hpp

@@ -27,3 +27,5 @@
 
 
 #include "distinfo_cmdline.h"
+
+int cmd_distinfo(int argc, char **argv);

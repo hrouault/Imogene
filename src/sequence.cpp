@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <dirent.h>
 
 #include "vectortypes.hpp"
 #include "sequence.hpp"
@@ -806,8 +807,8 @@ loadcoordfromTSS(ifstream & list)
    return vcds;
 }
 
-vcoord
-loadcoordconserv(string folder)
+int
+loadcoordconserv(string folder, vcoord output)
 {
    DIR *dp;
    struct dirent *ep;

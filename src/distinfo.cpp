@@ -652,3 +652,24 @@ main ( int argc, char **argv )
    return EXIT_SUCCESS;
 }				/* ----------  end of function main  ---------- */
 
+/** 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  cmd_distinfo
+ *  Description:  Alignment extraction
+ * =====================================================================================
+ */
+int
+cmd_distinfo(int argc, char **argv)
+{
+
+   if ( distinfo_cmdline_parser(argc, argv, & distinfo_args)!=0)
+      exit(1);
+   if (strcmp(distinfo_args.species_arg,"drosos")){
+      species="drosos";
+   } else if (strcmp(distinfo_args.species_arg,"drosos")){
+      species="eutherian";
+   }
+
+   return 1;
+}		/* -----  end of function extract  ----- */
+

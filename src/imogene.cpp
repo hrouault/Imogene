@@ -143,9 +143,10 @@ static int run_builtin(struct cmd_struct *p, int argc, char **argv)
 }
 
 static struct cmd_struct commands[] = {
-   { "extract", cmd_extract, "extract..." },
+   { "distinfo", cmd_distinfo, "Computes the distance between two motifs." },
+   { "extract", cmd_extract, "Extracts alignments from coordinates." },
    { "genmot", cmd_genmot, "generate motifs" },
-   { "help", cmd_help, "help message" },
+   { "help", cmd_help, "Help message" },
    { "scangen", cmd_scangen, "infere CRMs" }
 };
 
