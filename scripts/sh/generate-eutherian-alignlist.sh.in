@@ -1,8 +1,10 @@
 #!/bin/sh
 
-find $PWD -name "*.fa" > foo
+cd '@pkgdatadir@/eutherian'
 
-sed "s/.*chr//;s/\// /;s/-/ /;s/\.fa//" <foo > bar
-paste bar foo| tr " " "\t" > files.dat
-rm foo
-rm bar
+   for i in alignments/chr*/*.fa
+   do 
+      echo `awk 'NR==1' $i|cut -d ' ' -f 2-` $PWD/$i 
+   done > align.dat
+
+cd -

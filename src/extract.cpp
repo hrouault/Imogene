@@ -104,13 +104,12 @@ cmd_extract(int argc, char **argv)
       exit(1);
    if (strcmp(extract_args.species_arg,"drosos")){
       species="drosos";
-   } else if (strcmp(extract_args.species_arg,"drosos")){
+   } else if (strcmp(extract_args.species_arg,"eutherian")){
       species="eutherian";
    }
 
    extractfromcoord(extract_args.input_arg);
 
-   extract_cmdline_parser_free(&extract_args);
-
    return 1;
+
 }		/* -----  end of function extract  ----- */
