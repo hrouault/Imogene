@@ -63,6 +63,8 @@ using namespace std;
 #include "help.hpp"
 #include "scangen.hpp"
 
+#include "distinfo.hpp"
+
 gengetopt_args_info args_info;
 vmot motsdef;
 vginst potregs;

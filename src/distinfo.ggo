@@ -28,4 +28,5 @@ option  "width" w "Width of the motifs"
 option   "threshold" t "Threshold used for motif scanning"
             double typestr="double" required
 
-option   "wnames" - "Input motifs with names" optional
+option "species" s "Species used for motifs generation."
+            string typestr="str" required
