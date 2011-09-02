@@ -25,7 +25,11 @@
  * =====================================================================================
  */
 
+#ifndef Distinfo_H
+#define Distinfo_H
 
 #include "distinfo_cmdline.h"
 
 int cmd_distinfo(int argc, char **argv);
+
+#endif

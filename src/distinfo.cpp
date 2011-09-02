@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#include<sstream>
+#include <sstream>
 #include <fstream>
 
 #include <gsl/gsl_math.h>
@@ -33,36 +33,6 @@
 #include "motif.hpp"
 
 vd fback;
-vseq regtests;
-vseq regints;
-
-
-void 
-dispresults(ostream & outf,vmot & mots)
-{
-   for ( ivmot ivm=mots.begin();ivm!=mots.end();ivm++ ) {
-      
-      if ( (*ivm).check ) {
-         
-         //outf << ivm->index+1 << "\t";
-         outf << ivm->name << " ";
-         outf << ivm->bsinit << " ";
-         outf << ivm->pvalue << " ";
-
-         for (ivint iv=ivm->indexes.begin();iv!=ivm->indexes.end();iv++){
-            Motif mot=mots[*iv];
-            outf << mot.name << " (";
-            outf << "#" << mot.index+1 << " ";
-         //   outf << mot.pvalue << "\t";
-            outf << mot.bsinit << ") ";
-         }
-         
-         outf << "\n";
-      }
-   }
-
-   return;
-}
 
    double
 scalprod ( vd & col1, vd & col2 )
@@ -449,12 +419,12 @@ distmat(const vvd & mat1,const vvd & mat2)
       vvd m2(mat2);
       m2.insert(m2.end(),deca,dum);
 //      cout << m1<< " " << m2 << endl;
- //     if ( sum(abs(m1-m2))>1e-3 ) {
+      if ( sum(abs(m1-m2))>1e-3 ) {
          double disttemp=distmatinfo(m1,m2);
          if (disttemp<dist){
             dist=disttemp;
          }
- //     }
+      }
    }
    return dist;
 }
@@ -508,16 +478,8 @@ compmotsthr(vmot &mots)
          maxinfo+=maxcol;
       }
       //cout << ivm->name << " " << maxinfo << " " << maxelem << " " << meaninfo << endl;
-      ivm->motscorethr=maxinfo-2.;
-      ivm->motscorethr=maxinfo/2+meaninfo/2;
       ivm->motscorethr=min(0.95*maxinfo,meaninfo);
 
-      if (ivm->motscorethr<scorethr){
-         cout << ivm->name << " has weak thr : " << ivm->motscorethr << endl;
-         continue;
-      }
-      //cout << ivm->motscorethr << endl;
-      
       ivm->motwidth=ivm->bsinit.size();
       
       unsigned int btomax,bleft,bright;
@@ -535,14 +497,14 @@ compmotsthr(vmot &mots)
    mots=fimots;
 }
 
-gengetopt_args_info dist_args;
-double distcutoff=8.;//14.
+distinfo_args_info distinfo_args;
 
-   int
-main ( int argc, char **argv )
+   void
+distinfo ( const char* motfile  )
 {
-   //conca=0.268; 
-   conca=0.268;
+   
+   if (species=="drosos")  conca=0.3;
+   if (species=="eutherian")  conca=0.268;
    concc=0.5-conca;
 //   cout << "conca: " << conca << endl;
    conct=conca;
@@ -552,110 +514,67 @@ main ( int argc, char **argv )
    fback.push_back(concc);
    fback.push_back(concg);
 
-   if ( cmdline_parser(argc,argv, & dist_args)!=0) 
-      exit(1);
-
-   if (dist_args.width_given){
-      width=dist_args.width_arg;
+   if (distinfo_args.width_given){
+      width=distinfo_args.width_arg;
    }
 
-   scorethr=dist_args.threshold_arg;
+   scorethr=distinfo_args.threshold_arg;
 
-   vmot mots;
+   vmot motsini,mots;
    cout << "Loading motifs..." << endl;
-   loadmots(dist_args.inputs[0],mots);
- //  cout << "(WITH NAMES)" << endl;
- //  loadmotswnames(dist_args.inputs[0],mots);
+   loadmots(motfile,motsini);
  
-   vmot dbmots;
-   
-   cout << "Loding Transfac motifs..." << endl;
-   const char* transfacdb="/home/santolin/these/files/transfac/matrices/all/transfac+known-w-names.dat";
-   loadmotswnames(transfacdb,dbmots);
-   
-   cout << "Loding Jaspar motifs..." << endl;
-   const char* jaspardb="/home/santolin/these/files/jaspar/jaspar_pwm_wname+personal.dat";
-   loadmotswnames(jaspardb,dbmots);
-
-   cout << "Loaded " << dbmots.size() << " motifs" << endl;
+   mots=motsini;
 
    cout << "Computing motifs thresholds..." << endl;
-   compmotsthr(dbmots);
    compmotsthr(mots);
    cout << "Maximum size : " << width << endl;
 
-   system("if [[ ! -d mot2db ]];then mkdir mot2db;fi");
-
-   for ( ivmot ivm=mots.begin();ivm!=mots.end();ivm++ ) {
-      ostringstream os;
-      os << "mot2db/" << ivm->name << ".dat";
-      ofstream outf;
-      outf.open(os.str().c_str());
-      // comparing ivm to Jaspar motifs
-      for ( ivmot ivm2=dbmots.begin();ivm2!=dbmots.end();ivm2++ ) {
-         double distance=0;
-         distance=distmot(*ivm,*ivm2);
-         outf << distance << "\t" << ivm2->name << "\t" << ivm2->bsinit << endl;
-      }
-      outf.close();
-   }
-
-   //   cout << "mot1, mot2 " << distmot(mots[0],mots[1]) << endl;
+   vmot motsdiff;
+//   cout << "mot1, mot2 " << distmot(mots[0],mots[1]) << endl;
 //   cout << "mot1, mot3 " << distmot(mots[0],mots[2]) << endl;
 //   cout << "mot2, mot3 " << distmot(mots[1],mots[2]) << endl;
 //   cout << "mot1, mot4 " << distmot(mots[0],mots[3]) << endl;
-//   for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
-//
-//      double bestdist(distcutoff);
-//      int index(0);
-//      int numbest(-1);
-//      
-//      // comparing ivm to the first motifs
-//      for ( ivmot ivm2=mots.begin();ivm2!=ivm;ivm2++ ) {
-//         double distance=0;
-//         if ( (*ivm2).check ) {
-//            if ( sum(abs((*ivm).matprec-(*ivm2).matprec))>1e-3 && sum(abs((*ivm).matprec-(*ivm2).matprecrevcomp))>1e-3 ) {
-//               distance=distmot(*ivm,*ivm2);
-//               cout << ivm->name << " " << ivm2->name << " final distance : " << distance << endl;
-//            }
-//            // there might be a better motif to cluster to lower in the ranking
-//            // this is longer  than just finding the first and breaking
-//            if ( distance < bestdist ) {
-//               (*ivm).check=false;
-//               bestdist=distance;
-//               numbest=index;
-//            }
-//         }
-//         index++;
-//      }
-//
-//      if (numbest!=-1){
-//         mots[numbest].indexes.push_back(ivm->index);
-//      }
-//   }
-
-   cout << "Writing results..." << endl;
-   ofstream outf("cluster.dat");
-   dispresults(outf,mots);
-   outf.close();
-
-   ofstream out1("bestuniq-pval.dat");
-   
-   for ( ivmot ivm=mots.begin();ivm!=mots.end();ivm++ ) {
-      
+   motsdiff.push_back(mots[0]);
+   for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
+      cout << "\r" << ivm->index+1 << "/" << mots.size();
+      cout.flush();
+      for ( ivmot ivm2=mots.begin();ivm2!=ivm;ivm2++ ) {
+         double distance=0;
+         if ( (*ivm2).check ) {
+            if ( sum(abs((*ivm).matprec-(*ivm2).matprec))>1e-3 && sum(abs((*ivm).matprec-(*ivm2).matprecrevcomp))>1e-3 ) {
+               distance=distmot(*ivm,*ivm2);
+               //               cout << "final distance : " << distance << endl;
+            }
+            if ( distance < 3.0 ) {
+               (*ivm).check=false;
+               break;
+            }
+         }
+      }
       if ( (*ivm).check ) {
-         ivm->display(out1);
+         motsdiff.push_back(*ivm);
       }
    }
-   out1.close();
 
-   return EXIT_SUCCESS;
+   ofstream outf("bestuniq-pval.dat");
+   for ( ivmot ivm=motsdiff.begin();ivm!=motsdiff.end();ivm++ ) {
+      if ( (*ivm).check ) {
+         motsini[ivm->index].display(outf);
+      }
+   }
+   outf.close();
+
+   cout << "\n";
+
+   cout << "exit normally" << endl;
+
 }				/* ----------  end of function main  ---------- */
 
 /** 
  * ===  FUNCTION  ======================================================================
  *         Name:  cmd_distinfo
- *  Description:  Alignment extraction
+ *  Description:  Species argument
  * =====================================================================================
  */
 int
@@ -666,9 +585,11 @@ cmd_distinfo(int argc, char **argv)
       exit(1);
    if (strcmp(distinfo_args.species_arg,"drosos")){
       species="drosos";
-   } else if (strcmp(distinfo_args.species_arg,"drosos")){
+   } else if (strcmp(distinfo_args.species_arg,"eutherian")){
       species="eutherian";
    }
+
+   distinfo(distinfo_args.motifs_arg);
 
    return 1;
 }		/* -----  end of function extract  ----- */
