@@ -54,23 +54,30 @@ for file in glob.glob('*.emf'):
 
 os.chdir('..')
 
-print "[",datetime.datetime.now(),"]  Getting ENSEMBL GTF annotation file..."
+print "[",datetime.datetime.now(),"]  Getting UCSC refGene annotation file..."
 print 
 
 mkdir("annot")
 os.chdir("annot")
 
-os.system('wget -c "ftp://ftp.ensembl.org/pub/release-63/gtf/mus_musculus/Mus_musculus.NCBIM37.63.gtf.gz"')
+os.system('wget -c "http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz"')
 
 print "[",datetime.datetime.now(),"]  Extracting coordinate files..."
 print
 
-os.system('gunzip *.gtf.gz')
+os.system('gunzip refGene.txt.gz')
 
 print "[",datetime.datetime.now(),"]  Relevant coordinate extraction."
 print 
 
-os.system('awk \'/\tCDS\t/ {print $1,$4,$5}\' *.gtf | uniq > CDS-coord.dat')
+os.system('awk \'{print substr($3,4),$7,$8}\' refGene.txt | sort -k 1,1 -k 2,2g > CDS-coord.dat')
+os.system('awk \'{\
+   if ($4 == "+"){\
+      print substr($3,4),$5\
+   } else {\
+      print substr($3,4),$6\
+   }\
+}\' refGene.txt | sort -k 1,1 -k 2,2g > TSS-coord.dat')
 
 def processcoord(coords):
    for i in coords:
@@ -146,3 +153,5 @@ for folder in glob.glob('chr*/'):
                fmavid2.write(i)
       shutil.move("foo.fa",file)
    os.chdir("..")
+
+os.chdir('..')
