@@ -108,6 +108,9 @@ cmd_extract(int argc, char **argv)
       species="eutherian";
    }
 
+   // TODO: use DATA_PATH/droso/align.dat to extract alignment!
+   //
+
    extractfromcoord(extract_args.input_arg);
 
    return 1;
