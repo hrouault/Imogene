@@ -1845,42 +1845,6 @@ scanseq(Sequence &seq,vmot & mots)
 //   }
 //}
 //
-//   void
-//extracttofasta(string folder)
-//{
-//   ofstream outf;
-//   string pname("");
-//   int pnum(1);
-//   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
-//      Sequence seq=*iv;
-//      if (seq.species[0] && seq.nbtb>0){ 
-//         stringstream file;
-//         file << folder;
-//         file << seq.name;
-//         if (seq.name==pname){ 
-//            file << "_";
-//            file << pnum;
-//            pnum++;
-//         }
-//         else {
-//            pnum=1;
-//            pname=seq.name;
-//         }
-//         file << ".fa";
-//         outf.open(file.str().c_str());
-//         Sequence & s=seq;
-//         for (int i=0;i<nbspecies;i++){
-//            if (s.species[i]){
-//               if (i==0) outf << ">" << numtospecies(i) << " " <<
-//                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-//               else  outf << ">" << numtospecies(i) << endl;
-//               outf << s.seqsrealigned[i] << endl;
-//            }; 
-//         }
-//         outf.close();
-//      }
-//   }
-//}
 //
 //
 //   double
