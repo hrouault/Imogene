@@ -28,10 +28,10 @@ using namespace std;
 extract_args_info extract_args;
 
    void
-extractfromcoord(string coordfile)
+extractfromcoord(const char * coordfile)
 {
    cout << "extraction start" << endl;
-   ifstream coordinates(extract_args.input_arg);
+   ifstream coordinates(coordfile);
 
    vcoord coords;
    back_insert_iterator<vcoord> dest(coords);

@@ -52,12 +52,16 @@ struct distinfo_args_info
   char * species_arg;	/**< @brief Species used for motifs generation..  */
   char * species_orig;	/**< @brief Species used for motifs generation. original value given at command line.  */
   const char *species_help; /**< @brief Species used for motifs generation. help description.  */
+  char * motifs_arg;	/**< @brief file containing a list of motif definitons (default='bestmotspval.dat').  */
+  char * motifs_orig;	/**< @brief file containing a list of motif definitons original value given at command line.  */
+  const char *motifs_help; /**< @brief file containing a list of motif definitons help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int width_given ;	/**< @brief Whether width was given.  */
   unsigned int threshold_given ;	/**< @brief Whether threshold was given.  */
   unsigned int species_given ;	/**< @brief Whether species was given.  */
+  unsigned int motifs_given ;	/**< @brief Whether motifs was given.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */

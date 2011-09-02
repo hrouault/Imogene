@@ -499,8 +499,8 @@ compmotsthr(vmot &mots)
 
 distinfo_args_info distinfo_args;
 
-   int
-distinfo ( int argc, char **argv )
+   void
+distinfo ( const char* motfile  )
 {
    
    if (species=="drosos")  conca=0.3;
@@ -514,9 +514,6 @@ distinfo ( int argc, char **argv )
    fback.push_back(concc);
    fback.push_back(concg);
 
-   if ( distinfo_cmdline_parser(argc,argv, & distinfo_args)!=0) 
-      exit(1);
-
    if (distinfo_args.width_given){
       width=distinfo_args.width_arg;
    }
@@ -525,7 +522,7 @@ distinfo ( int argc, char **argv )
 
    vmot motsini,mots;
    cout << "Loading motifs..." << endl;
-   loadmots(distinfo_args.inputs[0],mots);
+   loadmots(motfile,motsini);
  
    mots=motsini;
 
@@ -540,6 +537,8 @@ distinfo ( int argc, char **argv )
 //   cout << "mot1, mot4 " << distmot(mots[0],mots[3]) << endl;
    motsdiff.push_back(mots[0]);
    for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
+      cout << "\r" << ivm->index+1 << "/" << mots.size();
+      cout.flush();
       for ( ivmot ivm2=mots.begin();ivm2!=ivm;ivm2++ ) {
          double distance=0;
          if ( (*ivm2).check ) {
@@ -566,9 +565,10 @@ distinfo ( int argc, char **argv )
    }
    outf.close();
 
+   cout << "\n";
 
+   cout << "exit normally" << endl;
 
-   return EXIT_SUCCESS;
 }				/* ----------  end of function main  ---------- */
 
 /** 
@@ -585,9 +585,11 @@ cmd_distinfo(int argc, char **argv)
       exit(1);
    if (strcmp(distinfo_args.species_arg,"drosos")){
       species="drosos";
-   } else if (strcmp(distinfo_args.species_arg,"drosos")){
+   } else if (strcmp(distinfo_args.species_arg,"eutherian")){
       species="eutherian";
    }
+
+   distinfo(distinfo_args.motifs_arg);
 
    return 1;
 }		/* -----  end of function extract  ----- */

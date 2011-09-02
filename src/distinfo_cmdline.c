@@ -37,6 +37,7 @@ const char *distinfo_args_info_help[] = {
   "  -w, --width=int         Width of the motifs  (default=`10')",
   "  -t, --threshold=double  Threshold used for motif scanning",
   "  -s, --species=str       Species used for motifs generation.",
+  "  -m, --motifs=str        file containing a list of motif definitons  \n                            (default=`bestmotspval.dat')",
     0
 };
 
@@ -69,6 +70,7 @@ void clear_given (struct distinfo_args_info *args_info)
   args_info->width_given = 0 ;
   args_info->threshold_given = 0 ;
   args_info->species_given = 0 ;
+  args_info->motifs_given = 0 ;
 }
 
 static
@@ -80,6 +82,8 @@ void clear_args (struct distinfo_args_info *args_info)
   args_info->threshold_orig = NULL;
   args_info->species_arg = NULL;
   args_info->species_orig = NULL;
+  args_info->motifs_arg = gengetopt_strdup ("bestmotspval.dat");
+  args_info->motifs_orig = NULL;
   
 }
 
@@ -93,6 +97,7 @@ void init_args_info(struct distinfo_args_info *args_info)
   args_info->width_help = distinfo_args_info_help[2] ;
   args_info->threshold_help = distinfo_args_info_help[3] ;
   args_info->species_help = distinfo_args_info_help[4] ;
+  args_info->motifs_help = distinfo_args_info_help[5] ;
   
 }
 
@@ -180,6 +185,8 @@ distinfo_cmdline_parser_release (struct distinfo_args_info *args_info)
   free_string_field (&(args_info->threshold_orig));
   free_string_field (&(args_info->species_arg));
   free_string_field (&(args_info->species_orig));
+  free_string_field (&(args_info->motifs_arg));
+  free_string_field (&(args_info->motifs_orig));
   
   
   for (i = 0; i < args_info->inputs_num; ++i)
@@ -225,6 +232,8 @@ distinfo_cmdline_parser_dump(FILE *outfile, struct distinfo_args_info *args_info
     write_into_file(outfile, "threshold", args_info->threshold_orig, 0);
   if (args_info->species_given)
     write_into_file(outfile, "species", args_info->species_orig, 0);
+  if (args_info->motifs_given)
+    write_into_file(outfile, "motifs", args_info->motifs_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -341,12 +350,6 @@ distinfo_cmdline_parser_required2 (struct distinfo_args_info *args_info, const c
   FIX_UNUSED (additional_error);
 
   /* checks for required options */
-  if (! args_info->threshold_given)
-    {
-      fprintf (stderr, "%s: '--threshold' ('-t') option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error = 1;
-    }
-  
   if (! args_info->species_given)
     {
       fprintf (stderr, "%s: '--species' ('-s') option required%s\n", prog_name, (additional_error ? additional_error : ""));
@@ -518,10 +521,11 @@ distinfo_cmdline_parser_internal (
         { "width",	1, NULL, 'w' },
         { "threshold",	1, NULL, 't' },
         { "species",	1, NULL, 's' },
+        { "motifs",	1, NULL, 'm' },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVw:t:s:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVw:t:s:m:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -569,6 +573,18 @@ distinfo_cmdline_parser_internal (
               &(local_args_info.species_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "species", 's',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'm':	/* file containing a list of motif definitons.  */
+        
+        
+          if (update_arg( (void *)&(args_info->motifs_arg), 
+               &(args_info->motifs_orig), &(args_info->motifs_given),
+              &(local_args_info.motifs_given), optarg, 0, "bestmotspval.dat", ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "motifs", 'm',
               additional_error))
             goto failure;
         

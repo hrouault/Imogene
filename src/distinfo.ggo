@@ -26,7 +26,10 @@ option  "width" w "Width of the motifs"
              int typestr="int"   default="10" optional
 
 option   "threshold" t "Threshold used for motif scanning"
-            double typestr="double" required
+            double typestr="double" optional
 
 option "species" s "Species used for motifs generation."
             string typestr="str" required
+
+option  "motifs" m  "file containing a list of motif definitons"
+            string typestr="str" default="bestmotspval.dat" optional
