@@ -27,12 +27,12 @@ print
 
 mkdir('alignments')
 os.chdir("alignments")
-os.system('wget -c -nd ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/*')
+os.system('wget -c -nd ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/Compara*')
 
 print "[",datetime.datetime.now(),"]  Extracting alignment files..."
 print
 
-os.system('gunzip -v *.gz')
+os.system('gunzip -fv *.gz')
 
 print "[",datetime.datetime.now(),"]  Converting EMF files to fasta..."
 print
@@ -65,7 +65,7 @@ os.system('wget -c "http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGe
 print "[",datetime.datetime.now(),"]  Extracting coordinate files..."
 print
 
-os.system('gunzip refGene.txt.gz')
+os.system('gunzip -vf refGene.txt.gz')
 
 print "[",datetime.datetime.now(),"]  Relevant coordinate extraction."
 print 
@@ -155,3 +155,6 @@ for folder in glob.glob('chr*/'):
    os.chdir("..")
 
 os.chdir('..')
+
+print "[",datetime.datetime.now(),"]  Exit normally."
+print 
