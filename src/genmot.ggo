@@ -29,3 +29,4 @@ option   "species" s "Species studied (1=droso, 2= mus)"
 option  "scanwidth" -  "Width of selected enhancers"
             int  typestr="int" default="1000" optional
 
+

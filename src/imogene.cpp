@@ -26,7 +26,7 @@
 
 #include <algorithm> // used by sort
 
-#include "imogene-genmot_cmdline.h"
+#include "genmot_cmdline.h"
 
 
 // *** See if the following are required...
@@ -65,7 +65,7 @@ using namespace std;
 
 #include "distinfo.hpp"
 
-gengetopt_args_info args_info;
+genmot_args_info args_info;
 vmot motsdef;
 vginst potregs;
 vvginst groupedinst;
@@ -286,102 +286,102 @@ findnearestgene(vcoord & vgenes, vcoord & vpeaks)
    return;
 }
 
-   void
-printbackreg(vcoord & vcds,string folder)
-{
-   //ofstream outf;
-   ofstream outf("randpeaks.dat");
-   unsigned int numback(0);
-   unsigned int i(0);
-   unsigned int backsize;
-   if (args_info.size_given) backsize=args_info.size_arg;
-   else backsize=2000;
-   while (numback<10000){
-      if (i>=vcds.size()) i=0;
-      int range;
-      range=vcds[i].stop-backsize-vcds[i].start;
-      //cout << vcds[i];
-      if (range<0){
-         i++;
-         //     cout << "range < 0" << endl;
-         continue;
-      }
-      unsigned int newstart;
-      unsigned int newpos;
-      newpos= gsl_rng_uniform_int (gslran,range+1);
-      newstart=vcds[i].start+newpos;
-      Coordinate cdtmp;
-      cdtmp.start=newstart;
-      cdtmp.stop=newstart+backsize-1;
-      cdtmp.chrom=vcds[i].chrom;
-      cdtmp.name=vcds[i].name;
-      // FOR PEAKS
-      // 
-      outf << "peaks_" << numback+1 << "\t";
-      outf << chromfromint(cdtmp.chrom) << "\t";
-      outf << cdtmp.start << "\n";
-      numback++;
-
-      //FOR SEQS
-      //
-      //         Sequence & s=seq;
-      //         for (int k=0;k<nbspecies;k++){
-      //            if (s.species[k]){
-      //               if (k==0) outf << ">" << numtospecies(k) << " " <<
-      //                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-      //               else  outf << ">" << numtospecies(k) << endl;
-      //               outf << s.seqsrealigned[k] << endl;
-      //            }; 
-      //         }
-      //         outf.close();
-      //         numback++;
-      //      }
-      //      Sequence seq=coordtoseq(cdtmp);
-      //      int nbfr=0;
-      //      bool bc=0;
-      //      if (species==1){
-      //         if (seq.species[5]) nbfr++; 
-      //         if (seq.species[6] || seq.species[7]) nbfr++;
-      //         if (seq.species[8]) nbfr++;
-      //         if (seq.species[9] || seq.species[10] || seq.species[11]) nbfr++;
-      //         if (nbfr>1) bc=1;
-      //      }
-      //      else if (species==2){
-      //         if (seq.species[2] || seq.species[3] || seq.species[4] || seq.species[5]) nbfr++;
-      //         if (seq.species[6] || seq.species[7]) nbfr++;
-      //         if (seq.species[8]) nbfr++;
-      //         if (seq.species[9]) nbfr++;
-      //         if (nbfr>1) bc=1;
-      //      }
-      //      if (seq.species[0] && bc && seq.nbtb>backsize/2){
-      //         cout << "->" << numback << ". " <<cdtmp;
-      //         stringstream os;
-      //         os << numback;
-      //         os >> seq.name;
-      //         string filename=folder;
-      //         filename+=seq.name;
-      //         filename.append(".fa");
-      //         outf.open(filename.c_str());
-      //         Sequence & s=seq;
-      //         for (int k=0;k<nbspecies;k++){
-      //            if (s.species[k]){
-      //               if (k==0) outf << ">" << numtospecies(k) << " " <<
-      //                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-      //               else  outf << ">" << numtospecies(k) << endl;
-      //               outf << s.seqsrealigned[k] << endl;
-      //            }; 
-      //         }
-      //         outf.close();
-      //         numback++;
-      //      }
-      //      else {
-      //         //cout << "sequence not conserved or too much masked" << endl;
-      //      }
-      cout.flush();
-      i++;
-}
-outf.close();
-}
+//   void
+//printbackreg(vcoord & vcds,string folder)
+//{
+//   //ofstream outf;
+//   ofstream outf("randpeaks.dat");
+//   unsigned int numback(0);
+//   unsigned int i(0);
+//   unsigned int backsize;
+//   if (args_info.size_given) backsize=args_info.size_arg;
+//   else backsize=2000;
+//   while (numback<10000){
+//      if (i>=vcds.size()) i=0;
+//      int range;
+//      range=vcds[i].stop-backsize-vcds[i].start;
+//      //cout << vcds[i];
+//      if (range<0){
+//         i++;
+//         //     cout << "range < 0" << endl;
+//         continue;
+//      }
+//      unsigned int newstart;
+//      unsigned int newpos;
+//      newpos= gsl_rng_uniform_int (gslran,range+1);
+//      newstart=vcds[i].start+newpos;
+//      Coordinate cdtmp;
+//      cdtmp.start=newstart;
+//      cdtmp.stop=newstart+backsize-1;
+//      cdtmp.chrom=vcds[i].chrom;
+//      cdtmp.name=vcds[i].name;
+//      // FOR PEAKS
+//      // 
+//      outf << "peaks_" << numback+1 << "\t";
+//      outf << chromfromint(cdtmp.chrom) << "\t";
+//      outf << cdtmp.start << "\n";
+//      numback++;
+//
+//      //FOR SEQS
+//      //
+//      //         Sequence & s=seq;
+//      //         for (int k=0;k<nbspecies;k++){
+//      //            if (s.species[k]){
+//      //               if (k==0) outf << ">" << numtospecies(k) << " " <<
+//      //                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+//      //               else  outf << ">" << numtospecies(k) << endl;
+//      //               outf << s.seqsrealigned[k] << endl;
+//      //            }; 
+//      //         }
+//      //         outf.close();
+//      //         numback++;
+//      //      }
+//      //      Sequence seq=coordtoseq(cdtmp);
+//      //      int nbfr=0;
+//      //      bool bc=0;
+//      //      if (species==1){
+//      //         if (seq.species[5]) nbfr++; 
+//      //         if (seq.species[6] || seq.species[7]) nbfr++;
+//      //         if (seq.species[8]) nbfr++;
+//      //         if (seq.species[9] || seq.species[10] || seq.species[11]) nbfr++;
+//      //         if (nbfr>1) bc=1;
+//      //      }
+//      //      else if (species==2){
+//      //         if (seq.species[2] || seq.species[3] || seq.species[4] || seq.species[5]) nbfr++;
+//      //         if (seq.species[6] || seq.species[7]) nbfr++;
+//      //         if (seq.species[8]) nbfr++;
+//      //         if (seq.species[9]) nbfr++;
+//      //         if (nbfr>1) bc=1;
+//      //      }
+//      //      if (seq.species[0] && bc && seq.nbtb>backsize/2){
+//      //         cout << "->" << numback << ". " <<cdtmp;
+//      //         stringstream os;
+//      //         os << numback;
+//      //         os >> seq.name;
+//      //         string filename=folder;
+//      //         filename+=seq.name;
+//      //         filename.append(".fa");
+//      //         outf.open(filename.c_str());
+//      //         Sequence & s=seq;
+//      //         for (int k=0;k<nbspecies;k++){
+//      //            if (s.species[k]){
+//      //               if (k==0) outf << ">" << numtospecies(k) << " " <<
+//      //                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+//      //               else  outf << ">" << numtospecies(k) << endl;
+//      //               outf << s.seqsrealigned[k] << endl;
+//      //            }; 
+//      //         }
+//      //         outf.close();
+//      //         numback++;
+//      //      }
+//      //      else {
+//      //         //cout << "sequence not conserved or too much masked" << endl;
+//      //      }
+//      cout.flush();
+//      i++;
+//}
+//outf.close();
+//}
 
 //void
 //printbackregwcoords(vcoord & vcds,string folder){
@@ -1056,20 +1056,25 @@ scanseq(Sequence &seq,vmot & mots)
    unsigned int moti=0;
    for (ivmot im=mots.begin();im!=mots.begin()+nbmots_for_score;im++){//im!=mots.end();im++){}
       int nm=0;
-      if (args_info.disp_svg_given){
-         nm=(*im).nbmatchnmaskforsvg(seq,moti);
-      } else {
+
+      // *** CREATE A CPP FOR DISPLAY
+      // *** OPTION FOR MASKING FOUND SITES?
+
+//      if (args_info.disp_svg_given){
+//         nm=(*im).nbmatchnmaskforsvg(seq,moti);
+//      } else {
          //nm=(*im).nbmatchnmask(seq,moti);
          nm=(*im).nbmatchwomask(seq,moti);
-      }
+//      }
       nbmot=nm;
 
-      if (args_info.weightmots_given){
+      // *** ENSURE MOTIFS ARE WELL WEIGHTED (eg CONSEERVED INSTANCES ON BACKGROUND)
+ //     if (args_info.weightmots_given){
          nmcorr+=nm*log((*im).lambdatrain/(*im).lambda);
-      }
-      else{
-         nmcorr+=nm;
-      }
+  //    }
+ //     else{
+ //        nmcorr+=nm;
+ //     }
       nbcorr.push_back(nmcorr);
       //if (nbmot!=0){cout << moti << "->" << nbmot << "\n";};
       moti++;
@@ -2856,6 +2861,7 @@ cmd_version(int argc, char **argv)
    int
 main(int argc, char** argv)
 {
+
    const char *cmd;
 
    if (argc<2){

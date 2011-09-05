@@ -215,7 +215,7 @@ chromfromint(int chr)
 int
 intfromchrom(string chrname)
 {
-   if (species=="drosos"){	
+   if (species=="droso"){	
       if (chrname=="2L"){
          return 0;
       } else if (chrname=="2R"){
@@ -358,7 +358,7 @@ operator >>(istream &is,Sequence & seq)
    firstline >> dros;
    string chrom;
    firstline >> chrom;
-   seq.chrom=intfromchrom(chrom.substr(3));
+   seq.chrom=intfromchrom(chrom);
 //	cout << chrom << " ";
    firstline >> seq.start;
   // cout << seq.start << " ";
@@ -1008,6 +1008,7 @@ coordtoseq(Coordinate & coord)
    seq.species.insert(seq.species.begin(),nbspecies,0);
    seq.seqs.insert(seq.seqs.begin(),nbspecies,dummystr);
    seq.iseqs.insert(seq.iseqs.begin(),nbspecies,dummyvint);
+
    
    int test=0;
    for (ivcoord ivs=alignscoord.begin();ivs!=alignscoord.end();ivs++){
@@ -1019,11 +1020,12 @@ coordtoseq(Coordinate & coord)
            unsigned int isnextali=0;
            if (coord.stop>ali.stop){
               // check overlap between pieces of alignement, and that next alignment is sufficient
-              if ( (ivs+1)->start < (ivs)->stop+2 && coord.stop < (ivs+1)->stop+1){
+              if ( (ivs+1)->chrom == ivs->chrom && (ivs+1)->start < (ivs)->stop+2 && coord.stop < (ivs+1)->stop+1){
                  if (ivs != alignscoord.end()-1) isnextali=1;
               }
               else continue;
            }
+   
 
            if (species=="droso" && isnextali==1) continue; // pb with coordinates *** To be corrected ??
 

@@ -17,6 +17,7 @@
  */
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 using namespace std;
@@ -24,6 +25,7 @@ using namespace std;
 #include "extract_cmdline.h"
 #include "const.hpp"
 #include "sequence.hpp"
+#include "tree.hpp"
 
 extract_args_info extract_args;
 
@@ -31,15 +33,30 @@ extract_args_info extract_args;
 extractfromcoord(const char * coordfile)
 {
    cout << "extraction start" << endl;
+
+   // INPUT COORDINATES
    ifstream coordinates(coordfile);
 
    vcoord coords;
    back_insert_iterator<vcoord> dest(coords);
    copy(iiscoord(coordinates),iiscoord(),dest);
+   
+   // ALIGNMENTS COORDINATES
+   ifstream align;
 
-   if (species=="drosos"){
+   if (species=="droso"){
       cout << "extract droso alignments" << endl;
-      for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
+      align.open(DATA_PATH"/droso/align.dat");
+   } else if (species=="eutherian"){
+      cout << "extract eutherian alignments" << endl;
+      align.open(DATA_PATH"/eutherian/align.dat");
+   }
+
+   alignscoord=loadcoordconserv(align);
+
+   align.close();
+   
+   for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
          cout << ivc->chrom << endl;
          cout << ivc->start << endl;
          cout << ivc->stop << endl;
@@ -48,19 +65,6 @@ extractfromcoord(const char * coordfile)
          cout << seqtoimport.seqs[0] << endl;
       }
 
-   } else if (species=="eutherian"){
-
-   }
-
-//   cout << coords << endl;
-
-   // *** The following is incorrect
-//   vcoord aligns=loadcoordconserv(alignmelano);
-//   cout << "Align set size : " << melalignscoord.size() << endl;
-//   alignmelano.close();
-
-
-//   interestmelano.close();
    cout << "inputcoords finished" << endl;
 
 //
@@ -90,13 +94,15 @@ extractfromcoord(const char * coordfile)
 //   }
 }
 
+vseq seqs;
+
    void
 extracttofasta(string folder)
 {
    ofstream outf;
    string pname("");
    int pnum(1);
-   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
+   for (ivseq iv=seqs.begin();iv!=seqs.end();iv++){
       Sequence seq=*iv;
       if (seq.species[0] && seq.nbtb>0){ 
          stringstream file;
@@ -139,14 +145,13 @@ cmd_extract(int argc, char **argv)
 
    if ( extract_cmdline_parser(argc, argv, & extract_args)!=0)
       exit(1);
-   if (strcmp(extract_args.species_arg,"drosos")){
-      species="drosos";
-   } else if (strcmp(extract_args.species_arg,"eutherian")){
+   if (!strcmp(extract_args.species_arg,"droso")){
+      species="droso";
+      nbspecies=12;
+   } else if (!strcmp(extract_args.species_arg,"eutherian")){
       species="eutherian";
+      nbspecies=12;
    }
-
-   // TODO: use DATA_PATH/droso/align.dat to extract alignment!
-   //
 
    extractfromcoord(extract_args.input_arg);
 

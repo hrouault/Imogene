@@ -503,7 +503,7 @@ distinfo_args_info distinfo_args;
 distinfo ( const char* motfile  )
 {
    
-   if (species=="drosos")  conca=0.3;
+   if (species=="droso")  conca=0.3;
    if (species=="eutherian")  conca=0.268;
    concc=0.5-conca;
 //   cout << "conca: " << conca << endl;
@@ -583,8 +583,8 @@ cmd_distinfo(int argc, char **argv)
 
    if ( distinfo_cmdline_parser(argc, argv, & distinfo_args)!=0)
       exit(1);
-   if (strcmp(distinfo_args.species_arg,"drosos")){
-      species="drosos";
+   if (strcmp(distinfo_args.species_arg,"droso")){
+      species="droso";
    } else if (strcmp(distinfo_args.species_arg,"eutherian")){
       species="eutherian";
    }
