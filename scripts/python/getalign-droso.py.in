@@ -123,8 +123,8 @@ for i in maps:
    coordmel=i[1:4]
    if coordmel[1]!="NA" and coordmel[2]!='NA':
       coordmel[0]=coordmel[0][3:]
-      coordmel[1]=int(coordmel[1])
-      coordmel[2]=int(coordmel[2])
+      coordmel[1]=int(coordmel[1]+1)
+      coordmel[2]=int(coordmel[2]+1)
       r5coord=mapping.r4_map(coordmel)
       if  r5coord != ["", 0, 0]:
          os.chdir(i[0])
