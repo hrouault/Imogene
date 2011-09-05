@@ -5,6 +5,6 @@ cd '@pkgdatadir@/droso'
    for i in alignments/*/mavid.mfa
    do 
       echo `awk 'NR==1' $i|cut -d ' ' -f 2-` $PWD/$i 
-   done > align.dat
+   done | sort -k 1,1 -k 2,2g > align.dat
 
 cd -
