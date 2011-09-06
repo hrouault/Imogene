@@ -24,3 +24,5 @@ tags
 scripts/python/cython/align
 scripts/python/cython/test
 *_cmdline.*
+.DS_Store
+test

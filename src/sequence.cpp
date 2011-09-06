@@ -1090,7 +1090,6 @@ coordtoseq(Coordinate & coord)
               fileseq.close();
               // previous position
               int prevpos=ali.stop-nextali.start; //usually prevpos is -1
-              cout << ali.stop << " " << nextali.start <<  " " << prevpos << endl;
               pos=0;
               truestart=0;
               truestop=0;

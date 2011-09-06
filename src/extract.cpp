@@ -32,7 +32,6 @@ extract_args_info extract_args;
    void
 extractfromcoord(const char * coordfile)
 {
-   cout << "extraction start" << endl;
 
    // INPUT COORDINATES
    ifstream coordinates(coordfile);
@@ -45,10 +44,10 @@ extractfromcoord(const char * coordfile)
    ifstream align;
 
    if (species=="droso"){
-      cout << "extract droso alignments" << endl;
+      cout << "Reading droso alignments..." << endl;
       align.open(DATA_PATH"/droso/align.dat");
    } else if (species=="eutherian"){
-      cout << "extract eutherian alignments" << endl;
+      cout << "Reading eutherian alignments..." << endl;
       align.open(DATA_PATH"/eutherian/align.dat");
    }
 
@@ -56,21 +55,24 @@ extractfromcoord(const char * coordfile)
 
    align.close();
 
+   // SEQUENCE EXTRACTION
    vseq seqs;
-   
+   cout << "Extraction start" << endl;
    for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
-         cout << chromfromint(ivc->chrom) << endl;
-         cout << ivc->start << endl;
-         cout << ivc->stop << endl;
-         Sequence seqtoimport=coordtoseq(*ivc);
-         cout << seqtoimport.name << endl;
-         cout << seqtoimport.seqs[0] << endl;
-         if (seqtoimport.species[0] && seqtoimport.nbtb>0)  
-            seqs.push_back(seqtoimport);
-      }
+//      cout << chromfromint(ivc->chrom) << endl;
+//      cout << ivc->start << endl;
+//      cout << ivc->stop << endl;
+      Sequence seqtoimport=coordtoseq(*ivc);
+      cout << seqtoimport.name << endl;
+//      cout << seqtoimport.seqs[0] << endl;
+      if (seqtoimport.species[0] && seqtoimport.nbtb>0)  
+         seqs.push_back(seqtoimport);
+   }
+   
+   cout << "Extraction stop" << endl;
 
-   cout << "inputcoords finished" << endl;
-
+   cout << "Writing sequences in align/..." << endl;
+   
    system("if ! test -d align;then mkdir align;fi;");      
 
    ofstream outf;
@@ -96,44 +98,46 @@ extractfromcoord(const char * coordfile)
    }
 }
 
-vseq seqs;
+// this one is using specified folder and uses short names for fasta files
 
-   void
-extracttofasta(string folder)
-{
-   ofstream outf;
-   string pname("");
-   int pnum(1);
-   for (ivseq iv=seqs.begin();iv!=seqs.end();iv++){
-      Sequence seq=*iv;
-      if (seq.species[0] && seq.nbtb>0){ 
-         stringstream file;
-         file << folder;
-         file << seq.name;
-         if (seq.name==pname){ 
-            file << "_";
-            file << pnum;
-            pnum++;
-         }
-         else {
-            pnum=1;
-            pname=seq.name;
-         }
-         file << ".fa";
-         outf.open(file.str().c_str());
-         Sequence & s=seq;
-         for (int i=0;i<nbspecies;i++){
-            if (s.species[i]){
-               if (i==0) outf << ">" << numtospecies(i) << " " <<
-                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-               else  outf << ">" << numtospecies(i) << endl;
-               outf << s.seqsrealigned[i] << endl;
-            }; 
-         }
-         outf.close();
-      }
-   }
-}
+//vseq seqs;
+//
+//   void
+//extracttofasta(string folder)
+//{
+//   ofstream outf;
+//   string pname("");
+//   int pnum(1);
+//   for (ivseq iv=seqs.begin();iv!=seqs.end();iv++){
+//      Sequence seq=*iv;
+//      if (seq.species[0] && seq.nbtb>0){ 
+//         stringstream file;
+//         file << folder;
+//         file << seq.name;
+//         if (seq.name==pname){ 
+//            file << "_";
+//            file << pnum;
+//            pnum++;
+//         }
+//         else {
+//            pnum=1;
+//            pname=seq.name;
+//         }
+//         file << ".fa";
+//         outf.open(file.str().c_str());
+//         Sequence & s=seq;
+//         for (int i=0;i<nbspecies;i++){
+//            if (s.species[i]){
+//               if (i==0) outf << ">" << numtospecies(i) << " " <<
+//                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+//               else  outf << ">" << numtospecies(i) << endl;
+//               outf << s.seqsrealigned[i] << endl;
+//            }; 
+//         }
+//         outf.close();
+//      }
+//   }
+//}
 
 /** 
  * ===  FUNCTION  ======================================================================
@@ -157,6 +161,7 @@ cmd_extract(int argc, char **argv)
 
    extractfromcoord(extract_args.input_arg);
 
+   cout << "exit normally" << endl;
    return 1;
 
 }		/* -----  end of function extract  ----- */

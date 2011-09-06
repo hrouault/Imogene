@@ -24,11 +24,11 @@ rnginit()
    gsl_rng_env_setup();
    T = gsl_rng_default;
    gslran = gsl_rng_alloc (T);
-   // Shouldn't always use the same random numbers?
+   // Shouldn't always use the same random numbers? ^^^ Agreed
    long seed=time(NULL) * getpid();
    gsl_rng_set(gslran,seed);
    // *** Output seed to a file if using a variable seed!!
    // see gsl_rng_fwrite()
 }
 
-// *** I erased rngtest(), is it ok?
+// *** I erased rngtest(), is it ok? ^^^ No pb.

@@ -106,7 +106,7 @@ seqanalysis(Sequence & currseq,vmot & genmots)
    for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
       //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
       vint bs(istr,istr+width);
-     //cout << i << " " << bs << endl;
+     cout << i << " " << bs << endl;
       if (compN(bs)>0) continue;
       Motif currmot;
       currmot.bsinit=vinttostring(bs);
@@ -177,8 +177,8 @@ loadseqs()
       inf.open(genmot_args.coord_file_arg);
 
       ifstream align;
-      if (species=="droso") align.open("/droso/align/all/align-masked.dat");
-      else if (species=="eutherian") align.open("/mus/epo/align-masked.dat");
+      if (species=="droso") align.open(DATA_PATH"/droso/align.dat");
+      else if (species=="eutherian") align.open(DATA_PATH"/eutherian/align.dat");
 
       alignscoord=loadcoordconserv(align);
 
@@ -211,35 +211,29 @@ loadseqs()
 void
 args_init()
 {
-
-   width=genmot_args.width_arg;
-   scorethr2=genmot_args.threshold_arg;
-   species=genmot_args.species_arg;
-   if (species=="droso"){ // *** Shouldn't be hardcoded??
-      conca=0.3; 
-      concc=0.5-conca;
+   if (!strcmp(genmot_args.species_arg,"droso")){
+      species="droso";
       nbspecies=12;
-      cout << "Species: droso" << endl;
-   }
-   else if (species=="eutherian"){
+      conca=0.3; 
+   } else if (!strcmp(genmot_args.species_arg,"eutherian")){
+      species="eutherian";
+      nbspecies=12;
       conca=0.263; 
-      concc=0.5-conca;
-      nbspecies=10;
-      cout << "Species: mus" << endl;
    }
+   concc=0.5-conca;
    conct=conca;
    concg=concc;
+
+   width=genmot_args.width_arg;
+   
+   // *** It would be nice to set the threshold by bp, in bits.
+   scorethr2=width*genmot_args.threshold_arg/10;
+   scorethr=width*(scorethr2-1.0)/10;
+   scorethrcons=width*(scorethr2-1.0)/10;
+
    evolutionary_model=genmot_args.evolutionary_model_arg;
 
-   scorethrcons=scorethr2-1.0;
-   scorethr=scorethr2-1.0;
-
    neighbext=genmot_args.neighbext_arg;
-   nbmots_for_score=genmot_args.nbmots_arg;
-   scanwidth=genmot_args.scanwidth_arg;
-
-   if (species=="droso") nbchrom=6;
-   else if (species=="eutherian") nbchrom=21;
 
 }
 
@@ -257,24 +251,23 @@ cmd_genmot(int argc, char **argv)
    if ( genmot_cmdline_parser(argc,argv, & genmot_args)!=0)
       exit(1);
 
-//   args_init();
+   args_init();
 
    rnginit();
 
    //   printconfig(); *** to be written so that one can rerun exacltly the same instance
 
-   scorethr=scorethr2-2.*(double)width/10;
-   scorethrcons=scorethr2-1.*(double)width/10;
    compalpha();
    //   printpriorsandthrs(); *** to be written
+   cout << alpha << endl;
 
    ofstream motmeldb("motmeldb.txt");
 
    cout << "Loading background set..." << endl;
    ifstream backreg;
 
-   if (species=="droso") backreg.open("DATA_PATH/droso/background2000.fa");
-   else if (species=="eutherian") backreg.open("DATA_PATH/eutherian/background2000.fa");
+   if (species=="droso") backreg.open(DATA_PATH"/droso/background2000.fa");
+   else if (species=="eutherian") backreg.open(DATA_PATH"/eutherian/background2000.fa");
    regtests=loadsequences(backreg);
    backreg.close();
    cout << "Background set size : " << regtests.size() << endl;
@@ -287,14 +280,19 @@ cmd_genmot(int argc, char **argv)
 
    //If the sorting is done within the c file we don't need to write motmeldb.txt
    // -> Still provide a good way to show progress...
+   cout << "Generating motifs..." << endl;
    vmot genmots;
    for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
       cout << (*iseq).name << endl;
       seqanalysis(*iseq,genmots);
       cout << endl;
    }
-   motmeldb.close();
    sort(genmots.begin(),genmots.end(),motscoreorder);
+   for (ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++){
+      ivm->display(motmeldb);
+   }
+   motmeldb.close();
+   
 
    // Sort 
 
