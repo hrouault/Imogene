@@ -55,43 +55,45 @@ extractfromcoord(const char * coordfile)
    alignscoord=loadcoordconserv(align);
 
    align.close();
+
+   vseq seqs;
    
    for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
-         cout << ivc->chrom << endl;
+         cout << chromfromint(ivc->chrom) << endl;
          cout << ivc->start << endl;
          cout << ivc->stop << endl;
          Sequence seqtoimport=coordtoseq(*ivc);
          cout << seqtoimport.name << endl;
          cout << seqtoimport.seqs[0] << endl;
+         if (seqtoimport.species[0] && seqtoimport.nbtb>0)  
+            seqs.push_back(seqtoimport);
       }
 
    cout << "inputcoords finished" << endl;
 
-//
-//
-//   ofstream outf;
-//   for (ivseq iv=regints.begin();iv!=regints.end();iv++){
-//      Sequence seq=*iv;
-//      if (seq.species[0] && seq.nbtb>0){ 
-//         stringstream file;
-//         file << folder;
-//         file << seq.name << "_";
-//         file << chromfromint(seq.chrom) << "_";
-//         file << seq.start << "_";
-//         file << seq.stop << ".fa";
-//         outf.open(file.str().c_str());
-//         Sequence & s=seq;
-//         for (int i=0;i<nbspecies;i++){
-//            if (s.species[i]){
-//               if (i==0) outf << ">" << numtospecies(i) << " " <<
-//                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-//               else  outf << ">" << numtospecies(i) << endl;
-//               outf << s.seqsrealigned[i] << endl;
-//            }; 
-//         }
-//         outf.close();
-//      }
-//   }
+   system("if ! test -d align;then mkdir align;fi;");      
+
+   ofstream outf;
+   for (ivseq iv=seqs.begin();iv!=seqs.end();iv++){
+      Sequence seq=*iv;
+      stringstream file;
+      file << "align/";
+      file << seq.name << "_";
+      file << chromfromint(seq.chrom) << "_";
+      file << seq.start << "_";
+      file << seq.stop << ".fa";
+      outf.open(file.str().c_str());
+      Sequence & s=seq;
+      for (int i=0;i<nbspecies;i++){
+         if (s.species[i]){
+            if (i==0) outf << ">" << numtospecies(i) << " " <<
+               "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+            else  outf << ">" << numtospecies(i) << endl;
+            outf << s.seqsrealigned[i] << endl;
+         }; 
+      }
+      outf.close();
+   }
 }
 
 vseq seqs;

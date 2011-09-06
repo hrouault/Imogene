@@ -1027,7 +1027,7 @@ coordtoseq(Coordinate & coord)
            }
    
 
-           if (species=="droso" && isnextali==1) continue; // pb with coordinates *** To be corrected ??
+           //if (species=="droso" && isnextali==1) continue; // pb with coordinates *** To be corrected ??
 
            Sequence trueali;
            ifstream fileseq(ali.name.c_str());
@@ -1089,14 +1089,15 @@ coordtoseq(Coordinate & coord)
               fileseq >> trueali;
               fileseq.close();
               // previous position
-              unsigned int prevpos=ali.stop-nextali.start+1;
+              int prevpos=ali.stop-nextali.start; //usually prevpos is -1
+              cout << ali.stop << " " << nextali.start <<  " " << prevpos << endl;
               pos=0;
               truestart=0;
               truestop=0;
               counter=0;
               for (istring is=trueali.seqsrealigned[0].begin();is!=trueali.seqsrealigned[0].end();is++){
                  if (*is!='-'){
-                    if (pos-prevpos==0){
+                    if (pos-(prevpos+1)==0){
                        truestart=counter;
                     }
                     if (coord.stop-trueali.start==pos){
