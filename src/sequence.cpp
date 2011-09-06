@@ -1180,10 +1180,11 @@ iscons(vint & spe)
       if (nbfr>1) return true;
    }
    else if (species=="eutherian"){
-      if (boolspe[2] || boolspe[3] || boolspe[4] || boolspe[5]) nbfr++;
-      if (boolspe[6] || boolspe[7]) nbfr++;
-      if (boolspe[8]) nbfr++;
-      if (boolspe[9]) nbfr++;
+      if (boolspe[2] || boolspe[3] || boolspe[4] || boolspe[5] || boolspe[6] || boolspe[7]) nbfr++; // primates
+      if (boolspe[8]) nbfr++; // horse
+      if (boolspe[9]) nbfr++; // dog
+      if (boolspe[10]) nbfr++; // wild boar
+      if (boolspe[11]) nbfr++; // cow
       if (nbfr>1) return true;
    }
    return false;	

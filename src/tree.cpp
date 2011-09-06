@@ -4184,18 +4184,21 @@ inittreedist()
       noemax=22;
    } 
    else if (species=="eutherian"){
-      // Arbre de ensembl epo 10 eutharian  *** To be translated
-      treedist.push_back(noeud(0,1,10,0.0770,0.0817)); // 10 mus and rat
-      treedist.push_back(noeud(2,3,11,0.0067,0.0076)); // 11 hom and pan
-      treedist.push_back(noeud(4,11,12,0.0220,0.0098)); // 12 pon and 11
-      treedist.push_back(noeud(5,12,13,0.0593,0.0121)); // 13 mac and 12
-      treedist.push_back(noeud(10,13,14,0.2526,0.1072)); // 14 10 and 13
-      treedist.push_back(noeud(6,7,15,0.0796,0.0796)); // 15 bos and sus
+      // Arbre de ensembl epo 12 eutharian
+      treedist.push_back(noeud(0,1,12,0.0845,0.0916)); // 12: mus and rat
+      treedist.push_back(noeud(2,3,13,0.0067,0.0067)); // 13: pan and hom
+      treedist.push_back(noeud(13,4,14,0.0022,0.0088)); // 14: 13 and gor
+      treedist.push_back(noeud(14,5,15,0.0097,0.0183)); // 15: 14 and pon
+      treedist.push_back(noeud(15,6,16,0.0143,0.0375)); // 16: 15 and mac
+      treedist.push_back(noeud(16,7,17,0.0220,0.0661)); // 17: 16 and cal
       treedist.push_back(noeud(8,15,16,0.1477,0.0796)); // 16 can and 15
-      treedist.push_back(noeud(9,16,17,0.1100,0.0049)); // 17 equ and 16
-      treedist.push_back(noeud(14,17,18,0.0230,0.0345)); // 18 14 and 17
+      treedist.push_back(noeud(12,17,18,0.2720,0.0891)); // 18: 12 and 17
+      treedist.push_back(noeud(8,9,19,0.1094,0.1523)); // 19: equ and can
+      treedist.push_back(noeud(10,11,20,0.0790,0.1689)); // 20: sus and bos
+      treedist.push_back(noeud(19,20,21,0.0107,0.0202)); // 21: 19 and 20
+      treedist.push_back(noeud(18,21,22,0.0206,0.0329)); // 22: 18 and 21
 
-      noemax=18;
+      noemax=22;
    }
 
    vtransi.clear();
@@ -4279,14 +4282,16 @@ speciestonum(string name)//drosonum
    else if (species=="eutherian"){
       if (name == "MusMus") return 0;
       else if (name == "RatNor") return 1;
-      else if (name == "HomSap") return 2;
-      else if (name == "PanTro") return 3;
-      else if (name == "PonPyg") return 4;
-      else if (name == "MacMul") return 5;
-      else if (name == "BosTau") return 6;
-      else if (name == "SusScr") return 7;
-      else if (name == "CanFam") return 8;
-      else if (name == "EquCab") return 9;
+      else if (name == "PanTro") return 2;
+      else if (name == "HomSap") return 3;
+      else if (name == "GorGor") return 4;
+      else if (name == "PonAbe") return 5;
+      else if (name == "MacMul") return 6;
+      else if (name == "CalJac") return 7;
+      else if (name == "EquCab") return 8;
+      else if (name == "CanFam") return 9;
+      else if (name == "SusScr") return 10;
+      else if (name == "BosTau") return 11;
       else return -1;
    }
 }
@@ -4311,14 +4316,16 @@ string numtospecies(int num)//numdroso
    else if (species=="eutherian"){
       if (num == 0) return "MusMus";
       else if (num == 1) return "RatNor";
-      else if (num == 2) return "HomSap";
-      else if (num == 3) return "PanTro";
-      else if (num == 4) return "PonPyg";
-      else if (num == 5) return "MacMul";
-      else if (num == 6) return "BosTau";
-      else if (num == 7) return "SusScr";
-      else if (num == 8) return "CanFam";
-      else if (num == 9) return "EquCab";
+      else if (num == 2) return "PanTro";
+      else if (num == 3) return "HomSap";
+      else if (num == 4) return "GorGor";
+      else if (num == 5) return "PonAbe";
+      else if (num == 6) return "MacMul";
+      else if (num == 7) return "CalJac";
+      else if (num == 8) return "EquCab";
+      else if (num == 9) return "CanFam";
+      else if (num == 10) return "SusScr";
+      else if (num == 11) return "BosTau";
       else return "No name";
    }
 
@@ -4750,38 +4757,45 @@ loglikely(const gsl_vector *w, void *params)
          //            }  		
          //            }
          // approx, integr_step=0.01
-         for (unsigned int i=1;i<26;i++){
+         for (unsigned int i=1;i<28;i++){
             gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
             pmattemp=pij;
             pij=pijp;
             pijp=pmattemp;
             //      gsl_matrix_memcpy(pij,pijp);
             if (i==1){
-               gsl_matrix_memcpy(vtransi[15],pij);
                gsl_matrix_memcpy(vtransi[2],pij);
                gsl_matrix_memcpy(vtransi[3],pij);
-               gsl_matrix_memcpy(vtransi[5],pij);
-               gsl_matrix_memcpy(vtransi[7],pij);
-            } else if (i==2){
                gsl_matrix_memcpy(vtransi[4],pij);
+               gsl_matrix_memcpy(vtransi[13],pij);
+               gsl_matrix_memcpy(vtransi[14],pij);
+               gsl_matrix_memcpy(vtransi[15],pij);
+               gsl_matrix_memcpy(vtransi[19],pij);
+            } else if (i==2){
+               gsl_matrix_memcpy(vtransi[5],pij);
                gsl_matrix_memcpy(vtransi[16],pij);
+               gsl_matrix_memcpy(vtransi[18],pij);
+               gsl_matrix_memcpy(vtransi[20],pij);
             } else if (i==3){
-               gsl_matrix_memcpy(vtransi[17],pij);
-            } else if (i==6){
+               gsl_matrix_memcpy(vtransi[21],pij);
+            } else if (i==4){
                gsl_matrix_memcpy(vtransi[6],pij);
+            } else if (i==7){
+               gsl_matrix_memcpy(vtransi[7],pij);
             } else if (i==8){
                gsl_matrix_memcpy(vtransi[0],pij);
                gsl_matrix_memcpy(vtransi[10],pij);
-               gsl_matrix_memcpy(vtransi[11],pij);
-               gsl_matrix_memcpy(vtransi[13],pij);
+            } else if (i==9){
+               gsl_matrix_memcpy(vtransi[17],pij);
                gsl_matrix_memcpy(vtransi[1],pij);
             } else if (i==11){
-               gsl_matrix_memcpy(vtransi[9],pij);
-               gsl_matrix_memcpy(vtransi[14],pij);
-            } else if (i==15){
-               gsl_matrix_memcpy(vtransi[12],pij);
-            } else if (i==25){
                gsl_matrix_memcpy(vtransi[8],pij);
+            } else if (i==15){
+               gsl_matrix_memcpy(vtransi[9],pij);
+            } else if (i==17){
+               gsl_matrix_memcpy(vtransi[11],pij);
+            } else if (i==27){
+               gsl_matrix_memcpy(vtransi[12],pij);
             }
          }
       }

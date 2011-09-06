@@ -1187,11 +1187,11 @@ Motalign::iscons()
    }
    else if (species=="eutherian"){
       int nbfr=0;
-      //     if (matches[0] || matches[1]) nbfr++;
-      if (matches[2] || matches[3] || matches[4] || matches[5]) nbfr++;
-      if (matches[6] || matches[7]) nbfr++;
-      if (matches[8]) nbfr++;
-      if (matches[9]) nbfr++;
+      if (matches[2] || matches[3] || matches[4] || matches[5] || matches[6] || matches[7]) nbfr++; // primates
+      if (matches[8]) nbfr++; // horse
+      if (matches[9]) nbfr++; // dog
+      if (matches[10]) nbfr++; // wild boar
+      if (matches[11]) nbfr++; // cow
       if (nbfr>1) return true;
    }
    return false;	
