@@ -1,8 +1,2 @@
 
 
-extract : reintroduce extracttofasta in extract.cpp
-distinfo : reintroduce former function (to compute distances not clustering)
-
-find coding coordinates for mammals
-
-
