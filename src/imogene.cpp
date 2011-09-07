@@ -2871,7 +2871,7 @@ extract_argv0_cmd(char *argv0)
 	return argv0;
 }
 
-int prefixcmp(char *str, char *prefix)
+int prefixcmp(char *str, const char *prefix)
 {
 	for (; ; str++, prefix++)
 		if (!*prefix)
@@ -2896,7 +2896,7 @@ main(int argc, char **argv)
 
 	cmd = extract_argv0_cmd(argv[0]);
 	if (!cmd)
-		cmd = "imogene-help";
+		strncpy(cmd,"imogene-help",15);
 
    if (!prefixcmp(cmd, "imogene-")) {
 		cmd += 8;
@@ -2912,11 +2912,14 @@ main(int argc, char **argv)
    if (argc > 0){
       if (!strcmp(argv[0], "--help") || !strcmp(argv[0], "--version")){
          argv[0]+=2;
-      } else {
-			cerr <<  "Usage : " << usage_string << endl;
-         return EXIT_FAILURE;
       }
+   } else {
+      cout <<  "Usage : " << usage_string << endl;
+      list_common_cmds_help();
+      cout << "\n" << more_info_string << endl;
+      return EXIT_FAILURE;
    }
+   cmd = argv[0];
 
    if (!prefixcmp(cmd, "imogene-")) {
 		cmd += 8;
@@ -2929,6 +2932,9 @@ main(int argc, char **argv)
 
    handle_command(argc, argv);
 
-   return EXIT_SUCCESS;
+   fprintf(stderr, "Failed to run command '%s': %s\n",
+		cmd, strerror(errno));
+
+   return EXIT_FAILURE;
 }
 

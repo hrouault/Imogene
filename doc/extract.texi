@@ -1,0 +1,24 @@
+
+@node extract
+@chapter Extract an alignment from a coordinate file
+
+@cindex extract, alignment
+
+This is the output of @code{imogene extract --help}:
+
+@smallexample
+@include extract.help
+@end smallexample
+
+You mainly need to provide a coordinate file in the form of:
+
+@smallexample
+enhancer1 2L 2345  3456
+enhancer2 2R 4567  5678
+@end smallexample
+
+You can find example files in the folder @file{example} of the tarball. You can then try:
+@smallexample
+imogene extract --input example/enhancer-coords.dat
+@end smallexample
+
