@@ -52,9 +52,10 @@ This manual is for Imogene
 
 @menu
 * Installation:: 
-* genmot:: 
 * extract::
-* Copying This Manual::
+* distinfo::
+* genmot:: 
+* copying::
 * Index::
 @end menu
 
@@ -89,28 +90,18 @@ In order to compare the statistics of the sequences taken into account for motif
 @item generate a new set of coordinates
 @end enumerate
 
-@node genmot
-@chapter Generating motifs de novo
-
-@cindex motif, generation
-
-This mode is selected by invoking @command{imogene genmot}
-on the command line. 
-
-Here are the options :
-
 @include extract.texi
 
-@c @include distinfo.texi
+@include distinfo.texi
 
-@c @include genmot.texi
+@include genmot.texi
 
 @c @include scangen.texi
 
 @c @include help.texi
 
 
-@node Copying This Manual
+@node copying
 @appendix Copying This Manual
 
 @c @menu

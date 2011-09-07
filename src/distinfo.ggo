@@ -17,7 +17,7 @@
 # along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
 #
      
-purpose  "Distance between PWM."
+purpose  "Distance between PWMs."
 
 args "--unamed-opts=<motifs>"
 

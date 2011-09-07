@@ -1,0 +1,30 @@
+
+@node distinfo
+@chapter Distance between PWMs
+
+@cindex distance, PWM
+
+@section Description of the distance
+
+copy paste from the paper
+
+@section Invoking the command line tool
+
+This is the output of @code{imogene distinfo --help}:
+
+@smallexample
+@include distinfo.help
+@end smallexample
+
+You mainly need to provide two PWM files in the form of:
+
+@smallexample
+enhancer1 2L 2345  3456
+enhancer2 2R 4567  5678
+@end smallexample
+
+You can find example files in the folder @file{example} of the tarball. You can then try:
+@smallexample
+imogene distinfo --input example/PWM1.dat example/PWM2.dat
+@end smallexample
+

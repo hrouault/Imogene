@@ -1,0 +1,14 @@
+
+@node genmot
+@chapter Generating motifs de novo
+
+@cindex motif, generation
+
+
+@section Invoking the command line tool
+
+This is the output of @code{imogene genmot --help}:
+
+@smallexample
+@include genmot.help
+@end smallexample
