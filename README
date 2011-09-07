@@ -1,5 +1,5 @@
 
-You can refer to the INSTALL file for installation instruction. In addition, some flags have to be added to support either drosophila genomes or eutherian genomes or both.
+You can refer to the INSTALL file for installation instruction. 
 
 I advice you not to use the default prefix for installation, which would pollute your /usr/local with imogene specific scripts. I would rather use something like (in the imogene folder) :
 mkdir build

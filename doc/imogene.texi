@@ -62,7 +62,7 @@ This manual is for Imogene
 
 @cindex installation
 
-The first step is to invoke the usual commands to install a package (once you have extracted to tarball)@footnote{Note that if you use the development version from github, you have first to generate the configure script using @command{./autogen.sh}}~:
+The first step is to invoke the usual commands to install a package (once you have extracted to tarball)@footnote{Note that if you use the development version from github, you have first to generate the configure script using @command{./autogen.sh} and to generate the cmdline files with the help of the @command{./scripts/sh/generate-cmdline-files.sh} script once in the @command{src} folder (install first GNU gengetopt)}~:
 @example 
 mkdir build
 cd build

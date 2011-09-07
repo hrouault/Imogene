@@ -85,12 +85,12 @@ const char more_info_string[] =
 	"See 'imogene help <command>' for more information on a specific command.";
 
 
-static int handle_options(const char ***argv, int *argc, int *envchanged)
+static int handle_options(char ***argv, int *argc, int *envchanged)
 {
-	const char **orig_argv = *argv;
+	char **orig_argv = *argv;
 
 	while (*argc > 0) {
-		const char *cmd = (*argv)[0];
+		char *cmd = (*argv)[0];
 		if (cmd[0] != '-')
 			break;
 
@@ -156,7 +156,7 @@ static struct cmd_struct commands[] = {
 static void
 handle_command(int argc, char **argv)
 {
-	const char *cmd = argv[0];
+	char *cmd = argv[0];
    for (int i = 0; i < ARRAY_SIZE(commands); i++) {
       struct cmd_struct *p = commands+i;
       if (strcmp(p->cmd, cmd))
@@ -2850,6 +2850,37 @@ cmd_version(int argc, char **argv)
 	return 0;
 }
 
+#define is_dir_sep(c) ((c) == '/' || (c) == '\\')
+
+char *
+extract_argv0_cmd(char *argv0)
+{
+	char *slash;
+
+	if (!argv0 || !*argv0)
+		return NULL;
+	slash = argv0 + strlen(argv0);
+
+	while (argv0 <= slash && !is_dir_sep(*slash))
+		slash--;
+
+	if (slash >= argv0) {
+		return slash + 1;
+	}
+
+	return argv0;
+}
+
+int prefixcmp(char *str, char *prefix)
+{
+	for (; ; str++, prefix++)
+		if (!*prefix)
+			return 0;
+		else if (*str != *prefix)
+			return (unsigned char)*prefix - (unsigned char)*str;
+}
+
+
 /** 
  * ===  FUNCTION  ======================================================================
  *         Name:  main
@@ -2857,25 +2888,42 @@ cmd_version(int argc, char **argv)
  *  motifs
  * =====================================================================================
  */
-
    int
-main(int argc, char** argv)
+main(int argc, char **argv)
 {
 
-   const char *cmd;
+   char *cmd;
 
-   if (argc<2){
-			cerr <<  "Usage : " << usage_string << endl;
-         return EXIT_FAILURE;
-   }
+	cmd = extract_argv0_cmd(argv[0]);
+	if (!cmd)
+		cmd = "imogene-help";
 
-   /* Process options with getopt */
+   if (!prefixcmp(cmd, "imogene-")) {
+		cmd += 8;
+		argv[0] = cmd;
+		handle_command(argc, argv);
+      return EXIT_FAILURE;
+	}
+   
+
    argv++;
    argc--;
-
-   if (!strcmp(argv[0], "--help") || !strcmp(argv[0], "--version")){
-      argv[0]+=2;
+   handle_options(&argv, &argc, NULL);
+   if (argc > 0){
+      if (!strcmp(argv[0], "--help") || !strcmp(argv[0], "--version")){
+         argv[0]+=2;
+      } else {
+			cerr <<  "Usage : " << usage_string << endl;
+         return EXIT_FAILURE;
+      }
    }
+
+   if (!prefixcmp(cmd, "imogene-")) {
+		cmd += 8;
+		argv[0] = cmd;
+		handle_command(argc, argv);
+      return EXIT_FAILURE;
+	}
 
    cmd = argv[0];
 
