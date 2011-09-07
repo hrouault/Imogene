@@ -266,6 +266,7 @@ cmd_genmot(int argc, char **argv)
    cout << "Loading background set..." << endl;
    ifstream backreg;
 
+   // files put manually: should be created in the early building process.
    if (species=="droso") backreg.open(DATA_PATH"/droso/background2000.fa");
    else if (species=="eutherian") backreg.open(DATA_PATH"/eutherian/background2000.fa");
    regtests=loadsequences(backreg);
@@ -287,6 +288,7 @@ cmd_genmot(int argc, char **argv)
       seqanalysis(*iseq,genmots);
       cout << endl;
    }
+   // Sort 
    sort(genmots.begin(),genmots.end(),motscoreorder);
    for (ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++){
       ivm->display(motmeldb);
@@ -294,7 +296,6 @@ cmd_genmot(int argc, char **argv)
    motmeldb.close();
    
 
-   // Sort 
 
 
    gsl_rng_free(gslran);
