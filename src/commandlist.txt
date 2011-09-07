@@ -1,0 +1,4 @@
+extract
+distinfo
+genmot
+scangen
