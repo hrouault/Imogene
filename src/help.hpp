@@ -19,3 +19,5 @@
 void list_common_cmds_help(void);
 
 int cmd_help(int argc, char **argv);
+
+int cmd_version(int argc, char **argv);

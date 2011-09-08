@@ -1,5 +1,5 @@
 
-SUBDIRS = doc src scripts data
+SUBDIRS = src scripts doc
 
 EXTRA_DIST = autogen.sh
 

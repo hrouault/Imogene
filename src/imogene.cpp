@@ -149,7 +149,8 @@ static struct cmd_struct commands[] = {
    { "extract", cmd_extract, "Extracts alignments from coordinates." },
    { "genmot", cmd_genmot, "generate motifs" },
    { "help", cmd_help, "Help message" },
-   { "scangen", cmd_scangen, "infere CRMs" }
+   { "scangen", cmd_scangen, "infere CRMs" },
+   { "version", cmd_version, "Print Imogene version" }
 };
 
 
@@ -2838,16 +2839,6 @@ print_copyright ()
    cout << endl;
    cout << " Written by Hervé Rouault and Marc Santolini." << endl;
 
-}
-
-const char package_name[] = PACKAGE_NAME;
-const char package_version[] = PACKAGE_VERSION;
-
-int
-cmd_version(int argc, char **argv)
-{
-	printf("%s version %s\n", package_name, package_version);
-	return 0;
 }
 
 #define is_dir_sep(c) ((c) == '/' || (c) == '\\')
