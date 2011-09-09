@@ -1,0 +1,22 @@
+
+@node test
+@chapter Running test files
+
+@cindex test, example
+
+@section Extraction
+
+For drosophila, there is a file @file{examples/extract/coords-droso.dat} that can be used as an input for @command{imogene extract}:
+@smallexample
+imogene extract -s droso --input examples/extract/coords-droso.dat
+@end smallexample
+It creates a folder @file{align} containing the extracted fasta formatted alignments.
+
+@section Running genmot on the extracted 
+
+You now have to run genmot on the extracted alignments
+
+@smallexample
+imogene genmot -s droso -a align
+@end smallexample
+

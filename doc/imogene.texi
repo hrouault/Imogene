@@ -55,6 +55,7 @@ This manual is for Imogene
 * extract::
 * distinfo::
 * genmot:: 
+* test::
 * copying::
 * Index::
 @end menu
@@ -95,6 +96,8 @@ In order to compare the statistics of the sequences taken into account for motif
 @include distinfo.texi
 
 @include genmot.texi
+
+@include test.texi
 
 @c @include scangen.texi
 

@@ -46,6 +46,11 @@ motscoreorder ( Motif mot1, Motif mot2 )
    return mot1.pvalue<mot2.pvalue;
 }		/* -----  end of function motscoreorder  ----- */
 
+   bool
+motchi2order ( Motif mot1, Motif mot2 )
+{
+   return mot1.scorepoiss<mot2.scorepoiss;
+}		/* -----  end of function motscoreorder  ----- */
 
    double
 distcv(vvd& mat1, vvd& mat2)
@@ -288,8 +293,16 @@ cmd_genmot(int argc, char **argv)
       seqanalysis(*iseq,genmots);
       cout << endl;
    }
+   // Sort on chi2
+   sort(genmots.begin(),genmots.end(),motchi2order);
+   // find 3rd quartile
+   int shiftchi2=genmots.size()*3/4;
+   genmots.erase(genmots.begin()+shiftchi2,genmots.end());
    // Sort 
    sort(genmots.begin(),genmots.end(),motscoreorder);
+
+   // Clusterize...
+   //
    for (ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++){
       ivm->display(motmeldb);
    }
