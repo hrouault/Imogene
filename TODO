@@ -1,2 +1,17 @@
 
 
+Genmot : 
+weblogo display of motifs?
+Display the consensus sequence for each motif, pvalue, frequency matrix, nb of conserved sites, non-conserved sites, nb found sites per base in the background
+Use a log2 base threshold
+
+Create scangen and modify the way enhancers are defined : consider a per motif instance list.
+
+Create imogene display:
+dislay svg
+display motif logo
+display matrix in a human readable fashion
+
+Marc:
+- check mcmc sampling process
+
