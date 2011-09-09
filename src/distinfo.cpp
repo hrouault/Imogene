@@ -497,6 +497,29 @@ compmotsthr(vmot &mots)
    mots=fimots;
 }
 
+void
+compmotsdist(vmot &mots)
+{
+   for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
+      cout << "\r" << ivm->index+1 << "/" << mots.size();
+      cout.flush();
+      for ( ivmot ivm2=mots.begin();ivm2!=ivm;ivm2++ ) {
+         double distance=0;
+         if ( (*ivm2).check ) {
+            if ( sum(abs((*ivm).matprec-(*ivm2).matprec))>1e-3 && sum(abs((*ivm).matprec-(*ivm2).matprecrevcomp))>1e-3 ) {
+               distance=distmot(*ivm,*ivm2);
+               //               cout << "final distance : " << distance << endl;
+            }
+            if ( distance < 3.0 ) {
+               (*ivm).check=false;
+               break;
+            }
+         }
+      }
+   }
+   return;
+}
+
 distinfo_args_info distinfo_args;
 
    void
@@ -530,35 +553,10 @@ distinfo ( const char* motfile  )
    compmotsthr(mots);
    cout << "Maximum size : " << width << endl;
 
-   vmot motsdiff;
-//   cout << "mot1, mot2 " << distmot(mots[0],mots[1]) << endl;
-//   cout << "mot1, mot3 " << distmot(mots[0],mots[2]) << endl;
-//   cout << "mot2, mot3 " << distmot(mots[1],mots[2]) << endl;
-//   cout << "mot1, mot4 " << distmot(mots[0],mots[3]) << endl;
-   motsdiff.push_back(mots[0]);
-   for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
-      cout << "\r" << ivm->index+1 << "/" << mots.size();
-      cout.flush();
-      for ( ivmot ivm2=mots.begin();ivm2!=ivm;ivm2++ ) {
-         double distance=0;
-         if ( (*ivm2).check ) {
-            if ( sum(abs((*ivm).matprec-(*ivm2).matprec))>1e-3 && sum(abs((*ivm).matprec-(*ivm2).matprecrevcomp))>1e-3 ) {
-               distance=distmot(*ivm,*ivm2);
-               //               cout << "final distance : " << distance << endl;
-            }
-            if ( distance < 3.0 ) {
-               (*ivm).check=false;
-               break;
-            }
-         }
-      }
-      if ( (*ivm).check ) {
-         motsdiff.push_back(*ivm);
-      }
-   }
+   compmotsdist(mots);
 
    ofstream outf("bestuniq-pval.dat");
-   for ( ivmot ivm=motsdiff.begin();ivm!=motsdiff.end();ivm++ ) {
+   for ( ivmot ivm=mots.begin();ivm!=mots.end();ivm++ ) {
       if ( (*ivm).check ) {
          motsini[ivm->index].display(outf);
       }
