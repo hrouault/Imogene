@@ -279,7 +279,7 @@ cmd_genmot(int argc, char **argv)
 
    inittreedist();
 
-   //If the sorting is done within the c file we don't need to write motmeldb.txt
+   // If the sorting is done within the c file we don't need to write motmeldb.txt
    // -> Still provide a good way to show progress...
    cout << "Generating motifs..." << endl;
    vmot genmots;

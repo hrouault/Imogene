@@ -32,4 +32,4 @@ option "species" s "Species used for motifs generation."
             string typestr="str" required
 
 option  "motifs" m  "file containing a list of motif definitons"
-            string typestr="str" default="bestmotspval.dat" optional
+            string typestr="str" required
