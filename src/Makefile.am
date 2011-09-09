@@ -5,10 +5,16 @@
 
 bin_PROGRAMS = imogene ##distinfo
 ##bin_PROGRAMS = scangen distinfo 
-## 
-imogene_SOURCES = imogene.hpp imogene.cpp extract.cpp extract.hpp genmot.cpp genmot.hpp help.cpp help.hpp scangen.cpp scangen.hpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp extract_cmdline.c extract_cmdline.h genmot_cmdline.c genmot_cmdline.h distinfo.cpp distinfo.hpp distinfo_cmdline.c distinfo_cmdline.h
+
+
+imogene_SOURCES = imogene.hpp imogene.cpp extract.cpp extract.hpp genmot.cpp genmot.hpp help.cpp help.hpp scangen.cpp scangen.hpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp distinfo.cpp distinfo.hpp
 imogene_CPPFLAGS = -DDATA_PATH='"${pkgdatadir}"'
 #imogene_LDADD = libdistinfo.a
+
+cmdlines: genmot.ggo distinfo.ggo imogene.ggo extract.ggo $(top_srcdir)/scripts/sh/generate-cmdline-files.sh
+	sh $(top_srcdir)/scripts/sh/generate-cmdline-files.sh
+	
+
 
 ## distinfo_SOURCES =  distinfo.cpp distinfo.hpp motif.cpp motif.hpp sequence.cpp sequence.hpp tree.cpp tree.hpp const.cpp const.hpp vectortypes.cpp vectortypes.hpp
 
