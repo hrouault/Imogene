@@ -24,7 +24,7 @@
 
 #include <iostream>
 #include <string>
-#include <string.h>
+#include <cstring>
 
 #include <algorithm> // used by sort
 
