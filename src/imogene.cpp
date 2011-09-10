@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <string>
+#include <string.h>
 
 #include <algorithm> // used by sort
 
@@ -34,7 +35,6 @@
 #include<cmath>
 #include<iomanip>
 #include<vector>
-#include<string>
 #include<fstream>
 #include<limits>
 #include<sstream>
