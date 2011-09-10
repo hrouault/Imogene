@@ -51,7 +51,7 @@ This manual is for Imogene
 @end ifnottex
 
 @menu
-* Installation:: 
+* install:: 
 * extract::
 * distinfo::
 * genmot:: 
@@ -60,36 +60,8 @@ This manual is for Imogene
 * Index::
 @end menu
 
-@node Installation
-@chapter Installation
 
-@cindex installation
-
-The first step is to invoke the usual commands to install a package (once you have extracted to tarball)@footnote{Note that if you use the development version from github, you have first to generate the configure script using @command{./autogen.sh} and to generate the cmdline files with the help of the @command{./scripts/sh/generate-cmdline-files.sh} script once in the @command{src} folder (install first GNU gengetopt)}~:
-@example 
-mkdir build
-cd build
-../configure --prefix="install/full/path"
-make
-make install
-@end example
-
-@section Alignment files download
-
-@subsection Eutherian
-
-@subsection Drosophilae
-
-To download Drosophilae genomes, you have to execute the proper python script~:
-@command{python $PREFIX/lib/python-yourversion/site-packages/getalign-droso.py}
-
-@section Background sequences generation
-
-In order to compare the statistics of the sequences taken into account for motif generation, some background sequences need to be selected. Two options are offered to you~:
-@enumerate
-@item use the set of coordinates provided in the data folder
-@item generate a new set of coordinates
-@end enumerate
+@include install.texi
 
 @include extract.texi
 

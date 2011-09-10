@@ -42,7 +42,6 @@ AC_CONFIG_FILES([Makefile
                  scripts/Makefile
                  scripts/python/Makefile
                  scripts/sh/Makefile
-                 data/Makefile
                  doc/Makefile
                  src/Makefile])
 

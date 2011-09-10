@@ -12,7 +12,7 @@ imogene extract -s droso --input examples/extract/coords-droso.dat
 @end smallexample
 It creates a folder @file{align} containing the extracted fasta formatted alignments.
 
-@section Running genmot on the extracted 
+@section Running genmot on the extracted sequences
 
 You now have to run genmot on the extracted alignments
 
