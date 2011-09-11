@@ -1,7 +1,7 @@
 
-python_PYTHON = getalign-droso.py getalign-eutherian.py mapping.py emf2fasta.pyx
+python_PYTHON = getalign-droso.py getalign-eutherian.py mapping.py emf2fasta.pyx extractbackground.py
 CLEANFILES = $(python_PYTHON)
-EXTRA_DIST = getalign-droso.py.in getalign-eutherian.py.in mapping.py.in emf2fasta.pyx.in
+EXTRA_DIST = getalign-droso.py.in getalign-eutherian.py.in mapping.py.in emf2fasta.pyx.in extractbackground.py.in
 
 do_subst = sed -e 's,[@]pythondir[@],$(pythondir),g' -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'
 
@@ -21,3 +21,7 @@ do_substmap = sed -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'
 mapping.py: mapping.py.in
 	$(do_substmap) < $(srcdir)/mapping.py.in > mapping.py
 	chmod +x mapping.py
+
+extractbackground.py: extractbackground.py.in
+	$(do_subst) < $(srcdir)/extractbackground.py.in > extractbackground.py
+	chmod +x extractbackground.py

@@ -9,14 +9,17 @@ limittry=nbtoextract*5
 
 aligncoords=[]
 weights=[]
-for folder in glob.glob('[0-9]*/'):
+
+os.chdir('@pkgdatadir@/droso')
+
+for folder in glob.glob('alignments/[0-9]*/'):
    os.chdir(folder)
    with open("mavid.mfa") as fmavid:
       firstline=fmavid.readline().rstrip().split(" ")
       coord=[firstline[1],int(firstline[2]),int(firstline[3])]
       aligncoords.append(coord)
       weights.append(float(coord[2]-coord[1]))
-   os.chdir("..")
+   os.chdir("../..")
 print "Alignment coordinates imported" 
 
 sumweights=0.0
@@ -26,7 +29,7 @@ for i in range(len(weights)):
       weights[i]/=sumweights
 
 ## Open file containing coding sequence coordinates
-fcds=open("CDS-coord.dat")
+fcds=open("annot/CDS-coord.dat")
 cds=[i.rstrip().split(" ") for i in fcds.readlines()]
 for i in cds:
    i[1]=int(i[1])
