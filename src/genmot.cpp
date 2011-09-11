@@ -20,6 +20,8 @@
 #include <fstream>
 #include <cmath>
 #include <cstring>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 

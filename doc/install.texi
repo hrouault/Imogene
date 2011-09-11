@@ -1,10 +1,10 @@
 
-@node Installation
+@node install
 @chapter Installation
 
 @cindex installation
 
-The first step is to invoke the usual commands to install a package (once you have extracted to tarball)@footnote{Note that if you use the development version from github, you have first to generate the configure script using @command{./autogen.sh}:
+The first step is to invoke the usual commands to install a package (once you have extracted to tarball)@footnote{Note that if you use the development version from github, you have first to generate the configure script using @command{./autogen.sh}}:
 @example 
 mkdir build
 cd build

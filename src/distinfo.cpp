@@ -22,6 +22,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <cstring>
 
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_min.h>
