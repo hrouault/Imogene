@@ -31,5 +31,7 @@
 #include "distinfo_cmdline.h"
 
 int cmd_distinfo(int argc, char **argv);
+void compmotsdist(vmot &mots);
+void compmotsthr(vmot &mots);
 
 #endif

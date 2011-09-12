@@ -50,7 +50,7 @@ unsigned int scanstep=50;
 unsigned int nbmots_for_score=20;
 
 double alpha=0.176; // beta exponent for A,T
-double beta=0.2/0.3*alpha; // beta exponent for C,G
+double beta; // beta exponent for C,G
 
 unsigned int nbchrom;
 
