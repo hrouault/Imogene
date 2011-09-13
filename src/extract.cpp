@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 #include <cstring>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -76,13 +77,25 @@ extractfromcoord(const char * coordfile)
 
    cout << "Writing sequences in align/..." << endl;
    
-   system("if ! test -d align;then mkdir align;fi;");      
+   stringstream basename;
+   if (extract_args.background_given){
+      if (species=="droso"){
+         mkdir(DATA_PATH"/droso/background",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         basename << DATA_PATH"/droso/background/";
+      } else if (species=="eutherian"){
+         mkdir(DATA_PATH"/eutherian/background",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         basename << DATA_PATH"/eutherian/background/";
+      }
+   } else {
+      mkdir("align",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
+      basename << "align/";
+   }
 
    ofstream outf;
    for (ivseq iv=seqs.begin();iv!=seqs.end();iv++){
       Sequence seq=*iv;
       stringstream file;
-      file << "align/";
+      file << basename;
       file << seq.name << "_";
       file << chromfromint(seq.chrom) << "_";
       file << seq.start << "_";
