@@ -20,7 +20,6 @@ for folder in glob.glob('alignments/[0-9]*/'):
       aligncoords.append(coord)
       weights.append(float(coord[2]-coord[1]))
    os.chdir("../..")
-print "Alignment coordinates imported" 
 
 sumweights=0.0
 for w in weights:
@@ -35,7 +34,6 @@ for i in cds:
    i[1]=int(i[1])
    i[2]=int(i[2])
 fcds.close()
-print "CDS coordinates imported" 
 
 
 
@@ -85,4 +83,6 @@ while nbextracted<nbtoextract:
       exit()
 
 coords.sort()
-print coords
+
+for i,c in enumerate(coords):
+   print "back"+str(i),c[0],c[1],c[2]
