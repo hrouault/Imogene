@@ -56,7 +56,7 @@ list_common_cmds_help(void)
 	for (i = 0; i < ARRAY_SIZE(common_cmds); i++) {
 		printf("   %s   ", common_cmds[i].name);
 		mput_char(' ', longest - strlen(common_cmds[i].name));
-		puts(common_cmds[i].help);
+		cout << common_cmds[i].help << endl;
 	}
 }
 
