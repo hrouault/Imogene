@@ -4,6 +4,7 @@ cd '@pkgdatadir@/eutherian'
 
    for i in alignments/chr*/*.fa
    do 
+      [[ ${i%/*} == "alignments/chrothers" ]] && continue
       echo `awk 'NR==1' $i|cut -d ' ' -f 2-` $PWD/$i 
    done | sort -k 1,1 -k 2,2g > align.dat
 

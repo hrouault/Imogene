@@ -1,0 +1,45 @@
+#    
+# Copyright (C) 2003-2011 Hervé Rouault
+#
+# This file is part of Imogene.
+#
+# Imogene is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Imogene is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
+#
+     
+purpose  "Display motifs instances on sequences, with conservation shown in italics."
+
+args "--unamed-opts=<motifs>"
+
+     # Options
+option   "threshold" t "Threshold used for motif scanning"
+            double typestr="double" optional
+
+option "species" s "Species used for motifs generation."
+            string typestr="str" required
+
+option  "motifs" m  "file containing a list of motif definitons"
+            string typestr="str" required
+
+option  "align-file"   a  "File of enhancer alignments"
+            string   typestr="str"  default="align.dat" required
+
+option  "tex-ref" - "Output is tex formatted. Display only reference species sequence." 
+            optional
+
+option "tex-align" - "Output is tex formatted. Display the entire alignment."
+            optional
+
+option  "svg" -  "Output is svg formatted." 
+            optional
+

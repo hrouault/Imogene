@@ -496,14 +496,29 @@ compmotsthr(vmot &mots)
       fimots.push_back(*ivm);
    }
    mots=fimots;
+
+   return;
 }
 
+// sets check flags on/off to filter identical motifs in a p-value sorted motifs list
 void
 compmotsdist(vmot &mots)
 {
+   if (mots.size() == 0) return;
+   
+   fback.push_back(conca);
+   fback.push_back(conct);
+   fback.push_back(concc);
+   fback.push_back(concg);
+   
+   unsigned int counter=2;
+   
    for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
-      cout << "\r" << ivm->index+1 << "/" << mots.size();
+      
+      cout << "\r" << counter << "/" << mots.size();
       cout.flush();
+      counter++;
+      
       for ( ivmot ivm2=mots.begin();ivm2!=ivm;ivm2++ ) {
          double distance=0;
          if ( (*ivm2).check ) {
@@ -518,6 +533,8 @@ compmotsdist(vmot &mots)
          }
       }
    }
+   
+   cout << "\n";
    return;
 }
 
@@ -533,10 +550,6 @@ distinfo ( const char* motfile  )
 //   cout << "conca: " << conca << endl;
    conct=conca;
    concg=concc;
-   fback.push_back(conca);
-   fback.push_back(conct);
-   fback.push_back(concc);
-   fback.push_back(concg);
 
    if (distinfo_args.width_given){
       width=distinfo_args.width_arg;
@@ -544,12 +557,10 @@ distinfo ( const char* motfile  )
 
    scorethr=distinfo_args.threshold_arg;
 
-   vmot motsini,mots;
+   vmot mots;
    cout << "Loading motifs..." << endl;
-   loadmots(motfile,motsini);
+   loadmots(motfile,mots);
  
-   mots=motsini;
-
    cout << "Computing motifs thresholds..." << endl;
    compmotsthr(mots);
    cout << "Maximum size : " << width << endl;
@@ -558,8 +569,8 @@ distinfo ( const char* motfile  )
 
    ofstream outf("bestuniq-pval.dat");
    for ( ivmot ivm=mots.begin();ivm!=mots.end();ivm++ ) {
-      if ( (*ivm).check ) {
-         motsini[ivm->index].display(outf);
+      if ( ivm->check ) {
+         ivm->display(outf);
       }
    }
    outf.close();
