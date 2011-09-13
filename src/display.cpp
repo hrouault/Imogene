@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstring>
 #include <sys/stat.h>
 
 using namespace std;
