@@ -20,6 +20,8 @@
 #include <fstream>
 #include <cmath>
 #include <cstring>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -28,6 +30,7 @@ using namespace std;
 #include "random.hpp"
 #include "motif.hpp"
 #include "tree.hpp"
+#include "distinfo.hpp"
 
 genmot_args_info genmot_args;
 
@@ -156,6 +159,10 @@ seqanalysis(Sequence & currseq,vmot & genmots)
          //  cout << (*ima).alignseq[0] << endl;
          //		}
          //cout << currmot.matprec << endl;
+         currmot.matprecrevcomp=reversecomp(currmot.matprec);
+         currmot.matfreq=mattofreq(currmot.matprec);
+         currmot.motscorethr=scorethr2;
+         currmot.motwidth=width;
          genmots.push_back(currmot);
       }
       i++;
@@ -267,7 +274,6 @@ cmd_genmot(int argc, char **argv)
    //   printpriorsandthrs(); *** to be written
    cout << alpha << endl;
 
-   ofstream motmeldb("motmeldb.txt");
 
    cout << "Loading background set..." << endl;
    ifstream backreg;
@@ -285,8 +291,6 @@ cmd_genmot(int argc, char **argv)
 
    inittreedist();
 
-   // If the sorting is done within the c file we don't need to write motmeldb.txt
-   // -> Still provide a good way to show progress...
    cout << "Generating motifs..." << endl;
    vmot genmots;
    for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
@@ -294,6 +298,7 @@ cmd_genmot(int argc, char **argv)
       seqanalysis(*iseq,genmots);
       cout << endl;
    }
+   cout << "Sorting motifs..." << endl;
    // Sort on chi2
    sort(genmots.begin(),genmots.end(),motchi2order);
    // find 3rd quartile
@@ -302,15 +307,17 @@ cmd_genmot(int argc, char **argv)
    // Sort 
    sort(genmots.begin(),genmots.end(),motscoreorder);
 
-   // Clusterize...
+   // Cluster...
+   cout << "Clustering motifs..." << endl;
+   compmotsdist(genmots);
    //
-   for (ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++){
-      ivm->display(motmeldb);
+   ofstream motmeldb("motifs.txt");
+   for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
+      if ( ivm->check ) {
+         ivm->display(motmeldb);
+      }
    }
    motmeldb.close();
-   
-
-
 
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);

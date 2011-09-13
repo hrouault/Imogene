@@ -9,14 +9,16 @@ limittry=nbtoextract*5
 
 aligncoords=[]
 weights=[]
-for folder in glob.glob('[0-9]*/'):
-   os.chdir(folder)
-   with open("mavid.mfa") as fmavid:
-      firstline=fmavid.readline().rstrip().split(" ")
-      coord=[firstline[1],int(firstline[2]),int(firstline[3])]
-      aligncoords.append(coord)
-      weights.append(float(coord[2]-coord[1]))
-   os.chdir("..")
+
+os.chdir('@pkgdatadir@/eutherian')
+
+import sys
+
+for line in open("align.dat").readlines():
+   line=line.rstrip().split(" ")
+   coord=[line[0],int(line[1]),int(line[2])]
+   aligncoords.append(coord)
+   weights.append(float(coord[2]-coord[1]))
 print "Alignment coordinates imported" 
 
 sumweights=0.0
@@ -26,7 +28,7 @@ for i in range(len(weights)):
       weights[i]/=sumweights
 
 ## Open file containing coding sequence coordinates
-fcds=open("CDS-coord.dat")
+fcds=open("annot/CDS-coord.dat")
 cds=[i.rstrip().split(" ") for i in fcds.readlines()]
 for i in cds:
    i[1]=int(i[1])
@@ -78,8 +80,13 @@ while nbextracted<nbtoextract:
          nbextracted+=1
    nbtry+=1
    if nbtry>limittry:
-      print "Do not manage to extract a sufficient number of background sequence!"
+      print "Did not manage to extract a sufficient number of background sequence!"
       exit()
 
 coords.sort()
-print coords
+fcoords=open('backcoords.dat', 'w' )
+counter=1
+for coord in coords:
+   line='bg-'+str(counter)+' '+coord[0]+' '+str(coord[1])+' '+str(coord[2])+'\n'
+   fcoords.write(line)
+   counter+=1

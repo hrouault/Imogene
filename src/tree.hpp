@@ -64,8 +64,8 @@ void fitdistkmeanspersite(Motif & mot,const char * filename);
 void fitscorepersite(Motif & mot);
 void inittreedist();
 
-int speciestonum(string name);//drosonum
-string numtospecies(int num);//numdroso
+int speciestonum(string name);//species2num
+string numtospecies(int num);//num2species
 
 int func (double t, const double y[], double f[], void *params);
 int jac (double t, const double y[], double *dfdy, double dfdt[], void *params);

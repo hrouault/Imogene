@@ -17,6 +17,7 @@
  */
 
 #include <iostream>
+#include <cstring>
 
 #include "config.h"
 #include "imogene.hpp"
@@ -39,7 +40,7 @@ static struct cmdname_help common_cmds[] = {
 static inline void mput_char(char c, unsigned int num)
 {
 	while(num--)
-		putchar(c);
+		cout << c;
 }
 
 void
@@ -54,7 +55,7 @@ list_common_cmds_help(void)
 
    cout << "\n" << "The most commonly used imogene commands are:" << endl;
 	for (i = 0; i < ARRAY_SIZE(common_cmds); i++) {
-		printf("   %s   ", common_cmds[i].name);
+		cout << "   " << common_cmds[i].name << "   ";
 		mput_char(' ', longest - strlen(common_cmds[i].name));
 		cout << common_cmds[i].help << endl;
 	}

@@ -1,4 +1,5 @@
 extract
+display
 distinfo
 genmot
 scangen

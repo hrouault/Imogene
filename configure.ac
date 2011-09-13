@@ -43,6 +43,7 @@ AC_CONFIG_FILES([Makefile
                  scripts/python/Makefile
                  scripts/sh/Makefile
                  doc/Makefile
+                 data/Makefile
                  src/Makefile])
 
 AC_MSG_NOTICE([ Next step instruction
