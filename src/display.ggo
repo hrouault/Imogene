@@ -31,6 +31,9 @@ option "species" s "Species used for motifs generation."
 option  "motifs" m  "file containing a list of motif definitons"
             string typestr="str" required
 
+option  "nbmots" n  "Number of motifs to display (max=4)"
+            int typestr="int" default="4" optional
+
 option  "align-file"   a  "File of enhancer alignments"
             string   typestr="str"  default="align.dat" required
 

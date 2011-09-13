@@ -29,3 +29,7 @@ In order to compare the statistics of the sequences taken into account for motif
 @item use the set of coordinates provided in the data folder
 @item generate a new set of coordinates
 @end enumerate
+
+@subsection Generate a new set of coordinates
+
+You have to execute the script @command{python $PREFIX/lib/python-yourversion/site-packages/getalign-droso.py}

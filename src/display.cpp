@@ -7,12 +7,72 @@
 using namespace std;
 
 #include "display_cmdline.h"
+#include "display.hpp"
 #include "const.hpp"
 #include "motif.hpp"
 #include "sequence.hpp"
 #include "tree.hpp"
 
+display_args_info display_args;
 vmot motsdef;
+   
+   void
+scanseq(Sequence &seq,vmot & mots)
+{
+   //cout << seq.name << " " << seq.finame << "\n";
+   int nbmot=0;
+   vd nbcorr;
+   double nmcorr=0;
+   unsigned int moti=0;
+   for (ivmot im=mots.begin();im!=mots.begin()+nbmots_for_score;im++){//im!=mots.end();im++){}
+      int nm=0;
+      if (display_args.svg_given){
+         nm=(*im).nbmatchnmaskforsvg(seq,moti);
+      } else {
+         //nm=(*im).nbmatchnmask(seq,moti);
+         nm=(*im).nbmatchwomask(seq,moti);
+      }
+      nbmot=nm;
+
+//      if (args_info.weightmots_given){
+//         nmcorr+=nm*log((*im).lambdatrain/(*im).lambda);
+//      }
+//      else{
+//         nmcorr+=nm;
+//      }
+//      nbcorr.push_back(nmcorr);
+      //if (nbmot!=0){cout << moti << "->" << nbmot << "\n";};
+      moti++;
+      //cout << seq.name << " " << nbmot << " " << endl;
+      //            for (ivinst ivs=(*im).instances[0].begin();ivs!=(*im).instances[0].end();ivs++){
+      //               cout << ivs->coord << " ";
+      //            }
+      //            cout << endl;
+   }
+   //      for (ivd iv=nbcorr.begin();iv!=nbcorr.end();iv++){
+   //        cout << *iv << " ";
+   //    }
+}
+   void
+scanseqforinstancesnmask(Sequence &seq,vmot & mots)
+{
+   // We mask a tmp sequence
+   Sequence seqtomask=seq;
+   for (ivmot im=mots.begin();im!=min(mots.end(),mots.begin()+nbmots_for_score);im++){
+      im->findinstancesnmask(seqtomask);
+   }
+   seq.instances=seqtomask.instances;
+   return;
+}
+
+   void
+scanseqsforinstancesnmask(vseq & align,vmot & mots)
+{     
+   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
+      scanseqforinstancesnmask(*ivs,mots);
+   }
+   return;
+}
 
 // general tex header
 // TODO: more portable (french etc.)
@@ -528,8 +588,246 @@ disptexclose(ofstream & outf)
    outf << "\\end{document}";
 }
 
+//Loads align-file (fasta) or coord-file (name/chrom/start/stop)
+   vseq
+loadseqs(const char* alignfile)
+{
+   vseq seqs;
 
-display_args_info display_args;
+   ifstream inf;
+   inf.open(alignfile);
+   seqs=loadsequencesconserv(inf);
+   inf.close();
+
+   return seqs;
+}
+   void
+disptex(vseq & seqs)
+{
+   system("if ! test -d display;then mkdir display;fi;");      
+   //   system("if ! test -d display/tex;then mkdir display/tex;fi;");      
+
+   double scoreinit=scorethr2;
+   string filename("display/");
+   filename+="results.tex";
+   ofstream outf(filename.c_str());
+   disptexinit(outf);
+   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){ 
+      cout << "Scanning " << (*ivs).name << endl;
+      dispseqwmots(*ivs,motsdef,outf,scoreinit);
+   }
+   disptexclose(outf);
+
+   outf.close();
+}
+
+   void
+disptexwgaps(vseq & align)
+{
+   system("if ! test -d display;then mkdir display;fi;");      
+
+   cout << "Scanning sequences for instances..." << endl;
+   scanseqsforinstancesnmask(align,motsdef);
+
+   cout << "Defining conserved instances..." << endl;
+   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
+      ivs->instances2instancescons();
+      //cout << ivs->name << "\n" << ivs->instancescons;
+   }
+
+   string folder("display/");
+   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){ 
+      stringstream file;
+      file << folder;
+      file << ivs->name << "_";
+      file << chromfromint(ivs->chrom) << "_";
+      file << ivs->start << "_";
+      file << ivs->stop;
+      file << ".tex";
+      ofstream outf(file.str().c_str());
+      disptexinit(outf);
+      cout << "Scanning " << (*ivs).name << endl;
+      dispseqwmotswgaps(*ivs,outf);
+      disptexclose(outf);
+      outf.close();
+   }
+
+}
+
+
+svg::svg()
+{
+   xsize=800;
+   ysize=600;
+   xoffset=140;
+   yoffset=65;
+   pos=0;
+};
+
+   void
+svginit(ofstream & svgfile, svg s)
+{
+   svgfile << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+   svgfile << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\n";
+   svgfile << "<svg version=\"1.0\" id=\"Calque_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n";
+   svgfile << "	 width=\""<< s.xsize <<"px\" height=\""<< s.ysize <<"px\" viewBox=\"0 0 "<< s.xsize <<" "<< s.ysize <<
+      "\" enable-background=\"new 0 0 "<< s.xsize <<" "<< s.ysize <<"\" xml:space=\"preserve\">\n";
+
+   svgfile << "<line fill=\"none\" stroke=\"" << "black" << "\" stroke-width=\"" << 3 << "\" x1=\"" << 0 << "\" y1=\"" << 0 << "\" x2=\"" << 4 << "\" y2=\"" << 0 << "\"/>\n";
+}
+
+   void
+svgdisplay(ofstream & svgfile,Sequence & seq, svg & s)
+{
+   double ytext=s.yoffset+300*s.pos;
+   double xbegin=s.xoffset;
+   double xend=xbegin+0.4*seq.imaps[0].size();
+
+   svgfile << "<text transform=\"matrix(1 0 0 1 55.5 " << ytext << ")\" font-size=\"12\">" << seq.finame << "</text>\n";
+
+   for (unsigned int i=0;i<nbspecies;i++){
+      if (seq.species[i]){
+
+         double yline=s.yoffset+20+300*s.pos+20*i;
+
+         string dro;
+         dro = seq.speciesname[i];
+         svgfile << "<text transform=\"matrix(1 0 0 1 40 " << yline << ")\" font-size=\"12\">" << dro << "</text>\n";
+         svgfile << "<line fill=\"none\" stroke=\"#000000\" stroke-width=\"0.5\" x1=\"" << xbegin << "\" y1=\"" << yline << "\" x2=\"" << xend << "\" y2=\"" << yline << "\"/>\n";
+
+         vvint coords;
+         vint curcoord;
+         int seqorali=0;
+         unsigned int p=0;
+         for (istring is=seq.seqsrealigned[i].begin();is!=seq.seqsrealigned[i].end();is++){
+            if (*is=='-'){
+               if (seqorali==1){
+                  curcoord.push_back(p);
+                  coords.push_back(curcoord);
+                  curcoord.clear();
+                  seqorali=0;
+               }
+            } else {
+               if (seqorali==0){
+                  curcoord.push_back(p);
+                  seqorali=1;
+               }
+               if (seqorali==1 && is==seq.seqsrealigned[i].end()-1){
+                  curcoord.push_back(p);
+                  coords.push_back(curcoord);
+                  curcoord.clear();
+               }
+            }
+            p++;
+         }
+
+         for (ivvint ivv=coords.begin();ivv!=coords.end();ivv++){
+            svgfile << "<line fill=\"none\" stroke=\"#000000\" stroke-width=\"3\" x1=\"" << xbegin+0.4*(*ivv)[0] << 
+               "\" y1=\"" << yline << "\" x2=\"" << xbegin+0.4*(*ivv)[1] << "\" y2=\"" << yline << "\"/>\n";
+         }
+      }
+   }
+
+   for (ivinstseq ivi=seq.instances.begin();ivi!=seq.instances.end();ivi++){
+      int moti=(*ivi).motindex;
+      if (moti<8){
+         string color;
+         if (moti==0){
+            color="red";
+         } else if (moti==1){
+            color="blue";
+         } else if (moti==2){
+            color="green";
+         } else if (moti==3){
+            color="purple";
+         } else if (moti==4){
+            color="gray";
+         } else if (moti==5){
+            color="orange";
+         } else if (moti==6){
+            color="brown";
+         } else if (moti==7){
+            color="gold";
+         }
+         double xmot=xbegin+0.4*(*ivi).pos;
+         double yline=s.yoffset+20+300*s.pos+20*(*ivi).species;
+         string width;
+         if ((*ivi).score>scorethr2) width="3";
+         else width="1";
+         svgfile << "<line fill=\"none\" stroke=\"" << color << "\" stroke-width=\"" << width << "\" x1=\"" << xmot << "\" y1=\"" << yline-5 << "\" x2=\"" << xmot << "\" y2=\"" << yline+5 << "\"/>\n";
+         svgfile << "<text transform=\"matrix(1 0 0 1 " << xmot-2 << " " << yline-8 << ")\" font-size=\"8\">" << fixed << setprecision(1) << (*ivi).score << "</text>\n";
+      }
+   }
+   s.pos++;
+}
+
+
+   void
+svgclose(ofstream & svgfile)
+{
+   svgfile << "</svg>\n";
+}
+   void
+scanseqsforsvg(vseq & align)
+{
+
+   system("if ! test -d display;then mkdir display;fi;");      
+   system("if ! test -d display/svg;then mkdir display/svg;fi;");      
+
+   for (ivseq is=align.begin();is!=align.end();is++){
+
+      int xsize(0);
+      int ysize(0);
+      svg s;
+      string filename("display/svg/");
+      filename+=(*is).name;
+      filename+=".svg";
+      ofstream svgfile(filename.c_str());
+
+      scanseq(*is,motsdef);
+
+      //we set the size for the svg file
+      xsize=s.xoffset+(int)(0.4*(*is).imaps[0].size());
+      if (xsize>s.xsize) s.xsize=xsize;
+      s.xsize+=s.xoffset;
+      ysize=s.yoffset+340; 
+      s.ysize=ysize+s.yoffset;
+
+      svginit(svgfile,s);
+      svgdisplay(svgfile,*is,s);
+      svgclose(svgfile);
+
+      //cout << s.xsize << " " << s.ysize << endl; 
+   }
+}
+
+
+
+   void
+display_args_init()
+{
+   if (!strcmp(display_args.species_arg,"droso")){
+      species="droso";
+      nbspecies=12;
+      conca=0.3; 
+   } else if (!strcmp(display_args.species_arg,"eutherian")){
+      species="eutherian";
+      nbspecies=12;
+      conca=0.263; 
+   }
+   concc=0.5-conca;
+   conct=conca;
+   concg=concc;
+
+   // *** It would be nice to set the threshold by bp, in bits.
+   scorethr2=display_args.threshold_arg;
+   scorethr=scorethr2-1.0;
+   scorethrcons=scorethr2-1.0;
+
+   nbmots_for_score=display_args.nbmots_arg;
+
+}
+
 
 
 /** 
@@ -544,5 +842,39 @@ cmd_display(int argc, char **argv)
    if ( display_cmdline_parser(argc, argv, & display_args)!=0)
       exit(1);
    
+   display_args_init();
+  
+   cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
+      
+   cout << "Loading alignments " << endl;
+   
+   vseq align;
+   align=loadseqs(display_args.align_file_arg);
+   
+   cout << "Nb sequences to scan: " << align.size() << endl;
+   
+   cout << "Loading Motifs" << endl;
+   
+   vmot motsdef;
+   loadmots(display_args.motifs_arg,motsdef); 
+   if (nbmots_for_score<motsdef.size()) motsdef.erase(motsdef.begin()+nbmots_for_score,motsdef.end());
+   cout << "Loaded " << motsdef.size() << " motifs." << endl;
+   for (ivmot iv=motsdef.begin();iv!=motsdef.end();iv++){
+      iv->motscorethrcons=iv->motscorethr2;
+   }
+
+   if (display_args.tex_ref_given){
+
+      ofstream outf;
+      cout << "Creating fasta/tex files... " << endl;
+      disptex(align);
+   }
+   if (display_args.tex_align_given){
+         disptexwgaps(align);
+   }
+   if (display_args.svg_given){
+      scanseqsforsvg(align);
+   }
+
    return 1;
 }		/* -----  end of function extract  ----- */
