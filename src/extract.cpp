@@ -60,14 +60,16 @@ extractfromcoord(const char * coordfile)
    vseq seqs;
    cout << "Extraction start" << endl;
    for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
+      
+      Sequence seqtoimport=coordtoseq(*ivc);
+      if (seqtoimport.species[0] && seqtoimport.nbtb>0)  {
+         seqs.push_back(seqtoimport);
+         cout << seqtoimport.name << endl;
+      }
 //      cout << chromfromint(ivc->chrom) << endl;
 //      cout << ivc->start << endl;
 //      cout << ivc->stop << endl;
-      Sequence seqtoimport=coordtoseq(*ivc);
-      cout << seqtoimport.name << endl;
 //      cout << seqtoimport.seqs[0] << endl;
-      if (seqtoimport.species[0] && seqtoimport.nbtb>0)  
-         seqs.push_back(seqtoimport);
    }
    
    cout << "Extraction stop" << endl;
@@ -99,46 +101,17 @@ extractfromcoord(const char * coordfile)
    }
 }
 
-// this one is using specified folder and uses short names for fasta files
-
-//vseq seqs;
-//
-//   void
-//extracttofasta(string folder)
-//{
-//   ofstream outf;
-//   string pname("");
-//   int pnum(1);
-//   for (ivseq iv=seqs.begin();iv!=seqs.end();iv++){
-//      Sequence seq=*iv;
-//      if (seq.species[0] && seq.nbtb>0){ 
-//         stringstream file;
-//         file << folder;
-//         file << seq.name;
-//         if (seq.name==pname){ 
-//            file << "_";
-//            file << pnum;
-//            pnum++;
-//         }
-//         else {
-//            pnum=1;
-//            pname=seq.name;
-//         }
-//         file << ".fa";
-//         outf.open(file.str().c_str());
-//         Sequence & s=seq;
-//         for (int i=0;i<nbspecies;i++){
-//            if (s.species[i]){
-//               if (i==0) outf << ">" << numtospecies(i) << " " <<
-//                  "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-//               else  outf << ">" << numtospecies(i) << endl;
-//               outf << s.seqsrealigned[i] << endl;
-//            }; 
-//         }
-//         outf.close();
-//      }
-//   }
-//}
+   void
+extract_args_init()
+{
+   if (!strcmp(extract_args.species_arg,"droso")){
+      species="droso";
+      nbspecies=12;
+   } else if (!strcmp(extract_args.species_arg,"eutherian")){
+      species="eutherian";
+      nbspecies=12;
+   }
+}
 
 /** 
  * ===  FUNCTION  ======================================================================
@@ -152,13 +125,8 @@ cmd_extract(int argc, char **argv)
 
    if ( extract_cmdline_parser(argc, argv, & extract_args)!=0)
       exit(1);
-   if (!strcmp(extract_args.species_arg,"droso")){
-      species="droso";
-      nbspecies=12;
-   } else if (!strcmp(extract_args.species_arg,"eutherian")){
-      species="eutherian";
-      nbspecies=12;
-   }
+
+   extract_args_init();
 
    extractfromcoord(extract_args.input_arg);
 

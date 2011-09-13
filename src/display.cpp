@@ -588,19 +588,6 @@ disptexclose(ofstream & outf)
    outf << "\\end{document}";
 }
 
-//Loads align-file (fasta) or coord-file (name/chrom/start/stop)
-   vseq
-loadseqs(const char* alignfile)
-{
-   vseq seqs;
-
-   ifstream inf;
-   inf.open(alignfile);
-   seqs=loadsequencesconserv(inf);
-   inf.close();
-
-   return seqs;
-}
    void
 disptex(vseq & seqs)
 {
@@ -849,7 +836,7 @@ cmd_display(int argc, char **argv)
    cout << "Loading alignments " << endl;
    
    vseq align;
-   align=loadseqs(display_args.align_file_arg);
+   align=loadseqs(display_args.align_arg);
    
    cout << "Nb sequences to scan: " << align.size() << endl;
    
@@ -865,15 +852,18 @@ cmd_display(int argc, char **argv)
 
    if (display_args.tex_ref_given){
 
-      ofstream outf;
       cout << "Creating fasta/tex files... " << endl;
       disptex(align);
    }
-   if (display_args.tex_align_given){
-         disptexwgaps(align);
+   else if (display_args.tex_align_given){
+      cout << "Creating fasta/tex files... " << endl;
+      disptexwgaps(align);
    }
-   if (display_args.svg_given){
+   else if (display_args.svg_given){
       scanseqsforsvg(align);
+   }
+   else{
+      cout << "No mode was given. Exiting." << endl;
    }
 
    return 1;

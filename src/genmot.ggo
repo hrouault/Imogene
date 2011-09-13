@@ -11,11 +11,8 @@ option   "threshold" t "Threshold used for motif scanning"
 option   "neighbext" x  "Extent of the motif search within an alignment"
             int typestr="int" default="20" optional
 
-option   "coord-file" c "File of enhancer coordinates"
-            string   typestr="str"  default="coords.dat" optional
-
-option  "align-file"   a  "File of enhancer alignments"
-            string   typestr="str"  optional 
+option  "align"   a  "Folder containing the fasta formatted (.fa) files of enhancer alignments."
+            string   typestr="str"  required
 
 option   "evolutionary-model" e  "Evolutionary model used for motif generation (1=felsen, 2=halpern)"
             int  typestr="int" default="1" optional

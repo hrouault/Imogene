@@ -31,6 +31,7 @@ using namespace std;
 #include "motif.hpp"
 #include "tree.hpp"
 #include "distinfo.hpp"
+#include "sequence.hpp"
 
 genmot_args_info genmot_args;
 
@@ -170,60 +171,9 @@ seqanalysis(Sequence & currseq,vmot & genmots)
    cout << endl;
 }
 
-//Loads align-file (fasta) or coord-file (name/chrom/start/stop)
-   vseq
-loadseqs()
-{
-   vseq seqs;
-
-   if (genmot_args.align_file_given){
-
-      ifstream inf;
-      inf.open(genmot_args.align_file_arg);
-      seqs=loadsequencesconserv(inf);
-      inf.close();
-   }
-   else if (genmot_args.coord_file_given){
-
-      ifstream inf;
-      inf.open(genmot_args.coord_file_arg);
-
-      ifstream align;
-      if (species=="droso") align.open(DATA_PATH"/droso/align.dat");
-      else if (species=="eutherian") align.open(DATA_PATH"/eutherian/align.dat");
-
-      alignscoord=loadcoordconserv(align);
-
-      align.close();
-
-      vcoord coords;
-      back_insert_iterator<vcoord> dest(coords);
-      copy(iiscoord(inf),iiscoord(),dest);
-      for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
-         Sequence seqtoimport=coordtoseq(*ivc);
-         //         cout << (*ivc).name << " " << (*ivc).start << endl;
-         //         cout << seqtoimport.name << " " << seqtoimport.start << endl;
-         if (seqtoimport.species[0] && seqtoimport.nbtb>0){
-            seqs.push_back(seqtoimport);
-         }
-         //         for (int i=0;i<nbspecies;i++){
-         //         cout << seqtoimport.iseqs[i] << endl; 
-         //         }
-         //         exit(9);
-      }
-      inf.close();
-   }
-   else {
-      cout << "Error in loadseqs: please give a coord/alignment file. Exiting..." << endl;
-      exit(1);
-   }
-   return seqs;
-}
-
-
 
 void
-args_init()
+genmot_args_init()
 {
    if (!strcmp(genmot_args.species_arg,"droso")){
       species="droso";
@@ -265,7 +215,7 @@ cmd_genmot(int argc, char **argv)
    if ( genmot_cmdline_parser(argc,argv, & genmot_args)!=0)
       exit(1);
 
-   args_init();
+   genmot_args_init();
 
    rnginit();
 
@@ -277,6 +227,7 @@ cmd_genmot(int argc, char **argv)
 
 
    cout << "Loading background set..." << endl;
+
    ifstream backreg;
 
    // files put manually: should be created in the early building process.
@@ -284,21 +235,26 @@ cmd_genmot(int argc, char **argv)
    else if (species=="eutherian") backreg.open(DATA_PATH"/eutherian/background2000.fa");
    regtests=loadsequences(backreg);
    backreg.close();
+
    cout << "Background set size : " << regtests.size() << endl;
 
    cout << "Loading training set..." << endl;
-   regints=loadseqs();
+
+   regints=loadseqs(genmot_args.align_arg);
+
    cout << "Training set size : " << regints.size() << endl;
 
    inittreedist();
 
    cout << "Generating motifs..." << endl;
+
    vmot genmots;
    for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
       cout << (*iseq).name << endl;
       seqanalysis(*iseq,genmots);
       cout << endl;
    }
+
    cout << "Sorting motifs..." << endl;
    // Sort on chi2
    sort(genmots.begin(),genmots.end(),motchi2order);

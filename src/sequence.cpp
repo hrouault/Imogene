@@ -826,6 +826,35 @@ loadcoordconserv(string folder, vcoord output)
    return 0;
 }
 
+//Loads seqs from a folder containing .fa aligned sequences
+   vseq
+loadseqs(const char * folder)
+{
+   vseq seqs;
+   
+   DIR *dp;
+   struct dirent *ep;
+
+   dp = opendir ( folder );
+   if (dp != NULL)
+   {
+      while (ep = readdir (dp)){
+         string file = string(folder);
+         file += "/";
+         file += ep->d_name;
+         if ( file.find(".fa") != string::npos ) {
+            Sequence seq=loadseqconserv(file);
+            seqs.push_back(seq);
+         }
+      }
+      (void) closedir (dp);
+   }
+   else
+      cerr << "Couldn't open the directory" << endl;
+
+   return seqs;
+}
+
 
    vcoord
 loadcoordconserv(ifstream & list)

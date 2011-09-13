@@ -59,12 +59,13 @@ using namespace std;
 
 #include "imogene.hpp"
 
+#include "distinfo.hpp"
+#include "display.hpp"
 #include "extract.hpp"
 #include "genmot.hpp"
 #include "help.hpp"
 #include "scangen.hpp"
 
-#include "distinfo.hpp"
 
 genmot_args_info args_info;
 vginst potregs;
@@ -132,6 +133,7 @@ static int run_builtin(struct cmd_struct *p, int argc, char **argv)
 
 static struct cmd_struct commands[] = {
    { "distinfo", cmd_distinfo, "Computes the distance between two motifs." },
+   { "display", cmd_display, "Displays motifs on sequences." },
    { "extract", cmd_extract, "Extracts alignments from coordinates." },
    { "genmot", cmd_genmot, "generate motifs" },
    { "help", cmd_help, "Help message" },

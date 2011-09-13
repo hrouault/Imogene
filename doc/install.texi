@@ -15,16 +15,13 @@ make install
 
 @section Alignment files download
 
-@subsection Eutherian
+To download the genomes, you have to execute the proper python script:
+@command{python $PREFIX/lib/python-yourversion/site-packages/getalign-@{droso,eutherian@}.py}
 
-@subsection Drosophilae
-
-To download Drosophilae genomes, you have to execute the proper python script~:
-@command{python $PREFIX/lib/python-yourversion/site-packages/getalign-droso.py}
 
 @section Background sequences generation
 
-In order to compare the statistics of the sequences taken into account for motif generation, some background sequences need to be selected. Two options are offered to you~:
+In order to compare the statistics of the sequences taken into account for motif generation, some background sequences need to be selected. Two options are offered to you:
 @enumerate
 @item use the set of coordinates provided in the data folder
 @item generate a new set of coordinates
@@ -32,4 +29,4 @@ In order to compare the statistics of the sequences taken into account for motif
 
 @subsection Generate a new set of coordinates
 
-You have to execute the script @command{python $PREFIX/lib/python-yourversion/site-packages/getalign-droso.py}
+You have to execute the command @command{python $PREFIX/lib/python-yourversion/site-packages/extractbackground-@{droso,eutherian@}.py > your-background-coords.dat}. 

@@ -151,6 +151,8 @@ vint alignedtorevmap(string seq);
 vint reversecomp(vint & istr);
 
 vvd reversecomp(vvd & matrice);
+   
+vseq loadseqs(const char * folder);
 
 vseq loadsequences(ifstream & list);
 

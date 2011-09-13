@@ -31,7 +31,7 @@ public:
 	svg();
 };
 
-int cmd_extract(int argc, char **argv);
+int cmd_display(int argc, char **argv);
 
 
 #endif // Display_Hpp
