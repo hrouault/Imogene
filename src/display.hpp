@@ -19,6 +19,18 @@
 #ifndef Display_H
 #define Display_H
 
+class svg
+{
+public:
+	int xsize;
+	int ysize;
+	int xoffset;
+	int yoffset;
+	int pos;
+	
+	svg();
+};
+
 int cmd_extract(int argc, char **argv);
 
 

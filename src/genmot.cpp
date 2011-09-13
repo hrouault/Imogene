@@ -170,7 +170,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
    cout << endl;
 }
 
-
 //Loads align-file (fasta) or coord-file (name/chrom/start/stop)
    vseq
 loadseqs()
@@ -220,6 +219,8 @@ loadseqs()
    }
    return seqs;
 }
+
+
 
 void
 args_init()
