@@ -156,5 +156,25 @@ for folder in glob.glob('chr*/'):
 
 os.chdir('..')
 
+print "[",datetime.datetime.now(),"]  Generate the list of alignments."
+
+lines=[]
+for fmavid in glob.glob('alignments/chr*/*.fa'):
+   if fmavid.split("/")[1]!="chrothers":
+      with open(fmavid) as mavid:
+         line=mavid.readline().rstrip().split(" ")
+      line.append(os.getcwd()+"/"+fmavid)
+      line[2]=int(line[2])
+      lines.append(line[1:])
+
+lines.sort()
+for i in lines:
+   i[1]=str(i[1])
+with open("align.dat","w") as fout:
+   for li in lines:
+      fout.write("".join(i+" " for i in lines))
+      fout.write("\n")
+
+
 print "[",datetime.datetime.now(),"]  Exit normally."
 print 

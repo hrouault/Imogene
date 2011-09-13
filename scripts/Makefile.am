@@ -1,2 +1,2 @@
 
-SUBDIRS = sh python
+SUBDIRS = python
