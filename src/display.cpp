@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -591,8 +592,6 @@ disptexclose(ofstream & outf)
    void
 disptex(vseq & seqs)
 {
-   system("if ! test -d display;then mkdir display;fi;");      
-   //   system("if ! test -d display/tex;then mkdir display/tex;fi;");      
 
    double scoreinit=scorethr2;
    string filename("display/");
@@ -611,7 +610,6 @@ disptex(vseq & seqs)
    void
 disptexwgaps(vseq & align)
 {
-   system("if ! test -d display;then mkdir display;fi;");      
 
    cout << "Scanning sequences for instances..." << endl;
    scanseqsforinstancesnmask(align,motsdef);
@@ -638,7 +636,6 @@ disptexwgaps(vseq & align)
       disptexclose(outf);
       outf.close();
    }
-
 }
 
 
@@ -748,7 +745,6 @@ svgdisplay(ofstream & svgfile,Sequence & seq, svg & s)
    s.pos++;
 }
 
-
    void
 svgclose(ofstream & svgfile)
 {
@@ -758,8 +754,6 @@ svgclose(ofstream & svgfile)
 scanseqsforsvg(vseq & align)
 {
 
-   system("if ! test -d display;then mkdir display;fi;");      
-   system("if ! test -d display/svg;then mkdir display/svg;fi;");      
 
    for (ivseq is=align.begin();is!=align.end();is++){
 
@@ -849,6 +843,9 @@ cmd_display(int argc, char **argv)
    for (ivmot iv=motsdef.begin();iv!=motsdef.end();iv++){
       iv->motscorethrcons=iv->motscorethr2;
    }
+
+
+   mkdir("display",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
 
    if (display_args.tex_ref_given){
 
