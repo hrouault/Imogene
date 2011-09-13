@@ -844,6 +844,10 @@ loadseqs(const char * folder)
          file += ep->d_name;
          if ( file.find(".fa") != string::npos ) {
             Sequence seq=loadseqconserv(file);
+            // get rid of root path
+            seq.name = string( ep->d_name );
+            // get rid of .fa
+            seq.name = seq.name.substr( 0 , seq.name.size() - 3 );
             seqs.push_back(seq);
          }
       }
