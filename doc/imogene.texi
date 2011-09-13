@@ -55,6 +55,7 @@ This manual is for Imogene
 * extract::
 * distinfo::
 * genmot:: 
+* display:: 
 * test::
 * copying::
 * Index::
@@ -68,6 +69,8 @@ This manual is for Imogene
 @include distinfo.texi
 
 @include genmot.texi
+
+@include display.texi
 
 @include test.texi
 
