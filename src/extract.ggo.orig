@@ -1,0 +1,12 @@
+purpose  "Alignment extraction."
+
+option "input" i "Coordinate file" string typestr="str" required
+
+option "species" s "Species selected" string typestr="str" required values="droso","eutherian"
+
+<<<<<<< HEAD
+option "background" b "When this flag is on, the alignments are moved to the folder dedicated to background sequences" 
+
+=======
+option "background" b "When this flag is on, the alignments are moved to the folder dedicated to background sequences"  optional
+>>>>>>> bb2069a2e3702406df9621eab663a9777b496424

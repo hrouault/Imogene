@@ -225,16 +225,12 @@ cmd_genmot(int argc, char **argv)
    //   printpriorsandthrs(); *** to be written
    cout << alpha << endl;
 
-
    cout << "Loading background set..." << endl;
 
    ifstream backreg;
 
-   // files put manually: should be created in the early building process.
-   if (species=="droso") backreg.open(DATA_PATH"/droso/background2000.fa");
-   else if (species=="eutherian") backreg.open(DATA_PATH"/eutherian/background2000.fa");
-   regtests=loadsequences(backreg);
-   backreg.close();
+   if (species=="droso") regtests=loadseqs(DATA_PATH"/droso/background");
+   else if (species=="eutherian") regtests=loadseqs(DATA_PATH"/eutherian/background");
 
    cout << "Background set size : " << regtests.size() << endl;
 
