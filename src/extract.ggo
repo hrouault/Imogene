@@ -4,5 +4,4 @@ option "input" i "Coordinate file" string typestr="str" required
 
 option "species" s "Species selected" string typestr="str" required values="droso","eutherian"
 
-option "background" b "When this flag is on, the alignments are moved to the folder dedicated to background sequences" 
-
+option "background" b "When this flag is on, the alignments are moved to the folder dedicated to background sequences"  optional

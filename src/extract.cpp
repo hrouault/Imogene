@@ -91,11 +91,12 @@ extractfromcoord(const char * coordfile)
       basename << "align/";
    }
 
+
    ofstream outf;
    for (ivseq iv=seqs.begin();iv!=seqs.end();iv++){
       Sequence seq=*iv;
       stringstream file;
-      file << basename;
+      file << basename.str();
       file << seq.name << "_";
       file << chromfromint(seq.chrom) << "_";
       file << seq.start << "_";

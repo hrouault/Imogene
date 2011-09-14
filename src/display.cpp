@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstring>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -14,7 +16,24 @@ using namespace std;
 #include "tree.hpp"
 
 display_args_info display_args;
-vmot motsdef;
+   
+   void
+texify (string & str)
+{
+   int found=str.find("_");
+   unsigned int deca=0;
+   while (found!=string::npos){
+      str.insert(found,"\\");
+      found=str.find("_",found+3);
+   }
+   found=str.find("#");
+   deca=0;
+   while (found!=string::npos){
+      str.insert(found,"\\");
+      found=str.find("#",found+3);
+   }
+   return;
+}
    
    void
 scanseq(Sequence &seq,vmot & mots)
@@ -318,9 +337,7 @@ dispseqwmots (Sequence & seq, vmot & mots, ofstream & outf,double scorethrinit)
          unsigned int pos=0;
          string name;
          name=numtospecies(i);
-         int found=seq.name.find("_");
          string texname=seq.name;
-         if(found!=string::npos) texname.insert(found,"\\");
          if (i==0){
             outf << "$>$" << name <<  "\t" << texname << "\tchr" << chromfromint(seq.chrom) << 
                "\t" << seq.start << "\t" << seq.stop << " \\\\\n";
@@ -334,10 +351,11 @@ dispseqwmots (Sequence & seq, vmot & mots, ofstream & outf,double scorethrinit)
          double widthinit=10;
 
          int minwidth=mots[0].bsinit.size();
-         if (mots.size()>1 && mots[1].bsinit.size()<minwidth) minwidth=mots[1].bsinit.size();
-         if (mots.size()>2 && mots[2].bsinit.size()<minwidth) minwidth=mots[2].bsinit.size();
-         if (mots.size()>3 && mots[3].bsinit.size()<minwidth) minwidth=mots[3].bsinit.size();
-
+         if (mots.size()>1){
+            for (ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++){
+               if (ivm->bsinit.size()<minwidth) minwidth=ivm->bsinit.size();
+            }
+         }
 
          civint istrf;
          for (civint istr=seq.iseqs[i].begin();istr!=seq.iseqs[i].end()-minwidth+1;istr++){
@@ -478,7 +496,7 @@ colfromint(int i)
 
 // display TFBS on aligned sequences
    void
-dispseqwmotswgaps (Sequence & seq, ofstream & outf)
+dispseqwmotswgaps (Sequence & seq, vmot & mots, ofstream & outf)
 {
    //HEADER
    string name=numtospecies(0);
@@ -503,7 +521,7 @@ dispseqwmotswgaps (Sequence & seq, ofstream & outf)
    //NOT CONS
    for (ivinstseq ivs=seq.instances.begin();ivs!=seq.instances.end();ivs++){
       int spe=ivs->species;
-      int motwidth=motsdef[ivs->motindex].motwidth;
+      int motwidth=mots[ivs->motindex].motwidth;
       int ipos=seq.imaps[spe][ivs->pos];
       int stop=seq.imapsinv[spe][ipos+motwidth-1];
 
@@ -519,7 +537,7 @@ dispseqwmotswgaps (Sequence & seq, ofstream & outf)
    for (ivvinstseq ivvs=seq.instancescons.begin();ivvs!=seq.instancescons.end();ivvs++){
       for (ivinstseq ivs=(*ivvs).begin();ivs!=(*ivvs).end();ivs++){
          int spe=ivs->species;
-         int motwidth=motsdef[ivs->motindex].motwidth;
+         int motwidth=mots[ivs->motindex].motwidth;
          int ipos=seq.imaps[spe][ivs->pos];
          int stop=seq.imapsinv[spe][ipos+motwidth-1];
 
@@ -589,10 +607,8 @@ disptexclose(ofstream & outf)
 }
 
    void
-disptex(vseq & seqs)
+disptex(vseq & seqs,vmot & mots)
 {
-   system("if ! test -d display;then mkdir display;fi;");      
-   //   system("if ! test -d display/tex;then mkdir display/tex;fi;");      
 
    double scoreinit=scorethr2;
    string filename("display/");
@@ -600,8 +616,8 @@ disptex(vseq & seqs)
    ofstream outf(filename.c_str());
    disptexinit(outf);
    for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){ 
-      cout << "Scanning " << (*ivs).name << endl;
-      dispseqwmots(*ivs,motsdef,outf,scoreinit);
+      cout << "Scanning " << ivs->name << endl;
+      dispseqwmots(*ivs,mots,outf,scoreinit);
    }
    disptexclose(outf);
 
@@ -609,12 +625,11 @@ disptex(vseq & seqs)
 }
 
    void
-disptexwgaps(vseq & align)
+disptexwgaps(vseq & align,vmot & mots)
 {
-   system("if ! test -d display;then mkdir display;fi;");      
 
    cout << "Scanning sequences for instances..." << endl;
-   scanseqsforinstancesnmask(align,motsdef);
+   scanseqsforinstancesnmask(align,mots);
 
    cout << "Defining conserved instances..." << endl;
    for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
@@ -626,19 +641,15 @@ disptexwgaps(vseq & align)
    for (ivseq ivs=align.begin();ivs!=align.end();ivs++){ 
       stringstream file;
       file << folder;
-      file << ivs->name << "_";
-      file << chromfromint(ivs->chrom) << "_";
-      file << ivs->start << "_";
-      file << ivs->stop;
+      file << ivs->name;
       file << ".tex";
       ofstream outf(file.str().c_str());
       disptexinit(outf);
       cout << "Scanning " << (*ivs).name << endl;
-      dispseqwmotswgaps(*ivs,outf);
+      dispseqwmotswgaps(*ivs,mots,outf);
       disptexclose(outf);
       outf.close();
    }
-
 }
 
 
@@ -678,7 +689,7 @@ svgdisplay(ofstream & svgfile,Sequence & seq, svg & s)
          double yline=s.yoffset+20+300*s.pos+20*i;
 
          string dro;
-         dro = seq.speciesname[i];
+         dro = numtospecies(i);
          svgfile << "<text transform=\"matrix(1 0 0 1 40 " << yline << ")\" font-size=\"12\">" << dro << "</text>\n";
          svgfile << "<line fill=\"none\" stroke=\"#000000\" stroke-width=\"0.5\" x1=\"" << xbegin << "\" y1=\"" << yline << "\" x2=\"" << xend << "\" y2=\"" << yline << "\"/>\n";
 
@@ -748,30 +759,26 @@ svgdisplay(ofstream & svgfile,Sequence & seq, svg & s)
    s.pos++;
 }
 
-
    void
 svgclose(ofstream & svgfile)
 {
    svgfile << "</svg>\n";
 }
    void
-scanseqsforsvg(vseq & align)
+scanseqsforsvg(vseq & align,vmot & mots)
 {
-
-   system("if ! test -d display;then mkdir display;fi;");      
-   system("if ! test -d display/svg;then mkdir display/svg;fi;");      
 
    for (ivseq is=align.begin();is!=align.end();is++){
 
       int xsize(0);
       int ysize(0);
       svg s;
-      string filename("display/svg/");
+      string filename("display/");
       filename+=(*is).name;
       filename+=".svg";
       ofstream svgfile(filename.c_str());
 
-      scanseq(*is,motsdef);
+      scanseq(*is,mots);
 
       //we set the size for the svg file
       xsize=s.xoffset+(int)(0.4*(*is).imaps[0].size());
@@ -842,25 +849,29 @@ cmd_display(int argc, char **argv)
    
    cout << "Loading Motifs" << endl;
    
-   vmot motsdef;
-   loadmots(display_args.motifs_arg,motsdef); 
-   if (nbmots_for_score<motsdef.size()) motsdef.erase(motsdef.begin()+nbmots_for_score,motsdef.end());
-   cout << "Loaded " << motsdef.size() << " motifs." << endl;
-   for (ivmot iv=motsdef.begin();iv!=motsdef.end();iv++){
+   vmot mots;
+   loadmots(display_args.motifs_arg,mots); 
+   if (nbmots_for_score<mots.size()) mots.erase(mots.begin()+nbmots_for_score,mots.end());
+   cout << "Loaded " << mots.size() << " motifs." << endl;
+   for (ivmot iv=mots.begin();iv!=mots.end();iv++){
       iv->motscorethrcons=iv->motscorethr2;
+      texify(iv->name);
    }
+
+   mkdir("display",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
 
    if (display_args.tex_ref_given){
 
       cout << "Creating fasta/tex files... " << endl;
-      disptex(align);
+      disptex(align,mots);
+   
    }
    else if (display_args.tex_align_given){
       cout << "Creating fasta/tex files... " << endl;
-      disptexwgaps(align);
+      disptexwgaps(align,mots);
    }
    else if (display_args.svg_given){
-      scanseqsforsvg(align);
+      scanseqsforsvg(align,mots);
    }
    else{
       cout << "No mode was given. Exiting." << endl;
