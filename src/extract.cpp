@@ -106,7 +106,7 @@ extractfromcoord(const char * coordfile)
       for (int i=0;i<nbspecies;i++){
          if (s.species[i]){
             if (i==0) outf << ">" << numtospecies(i) << " " <<
-               "chr" << chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+               chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
             else  outf << ">" << numtospecies(i) << endl;
             outf << s.seqsrealigned[i] << endl;
          }; 

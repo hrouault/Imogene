@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2011.1.11)  14 SEP 2011 11:24
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2011.1.11)  14 SEP 2011 13:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**test.tex
-(./test.tex
+**test1.tex
+(./test1.tex
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
 rman-x-2009-06-19, ngerman-x-2009-06-19, ancientgreek, ibycus, arabic, armenian
@@ -346,8 +346,8 @@ Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
 LaTeX Warning: Unused global option(s):
     [reqno].
 
-(./test.aux)
-\openout1 = `test.aux'.
+(./test1.aux)
+\openout1 = `test1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 9.
 LaTeX Font Info:    ... okay on input line 9.
@@ -463,6 +463,7 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+\charwidth=\skip45
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <10.95> on input line 11.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -472,6 +473,78 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
 Underfull \hbox (badness 10000) in paragraph at lines 10--64
 
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
  []
 
 
@@ -494,22 +567,22 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [1
 
-{/usr/local/texlive/2010/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] (./
-test.aux) ) 
+{/usr/local/texlive/2010/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+(./test1.aux) ) 
 Here is how much of TeX's memory you used:
- 2740 strings out of 493747
- 37907 string characters out of 3143546
- 142143 words of memory out of 3000000
- 6001 multiletter control sequences out of 15000+200000
+ 2741 strings out of 493747
+ 37925 string characters out of 3143546
+ 145242 words of memory out of 3000000
+ 6002 multiletter control sequences out of 15000+200000
  6715 words of font info for 25 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 37i,5n,24p,1206b,133s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mitt10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mmi10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt
-10.pfb>
-Output written on test.pdf (2 pages, 38630 bytes).
+ 37i,5n,24p,1212b,133s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmitt10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmmi10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmtt10.pfb>
+Output written on test1.pdf (2 pages, 37290 bytes).
 PDF statistics:
  27 PDF objects out of 1000 (max. 8388607)
  18 compressed objects within 1 object stream
