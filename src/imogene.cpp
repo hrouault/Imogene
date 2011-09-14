@@ -1,5 +1,6 @@
 /*    
- * Copyright (C) 2003-2011 Hervé Rouault
+ * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+ * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
  * This file is part of Imogene.
  *
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
  */
 
 

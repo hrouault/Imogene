@@ -1,5 +1,25 @@
 \input texinfo   @c -*-texinfo-*-
+
+@c    
+@c Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+@c Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
+@c 
+@c This file is part of Imogene.
+@c 
+@c Imogene is free software: you can redistribute it and/or modify
+@c it under the terms of the GNU General Public License as published by
+@c the Free Software Foundation, either version 3 of the License, or
+@c (at your option) any later version.
+@c 
+@c Imogene is distributed in the hope that it will be useful,
+@c but WITHOUT ANY WARRANTY; without even the implied warranty of
+@c MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+@c GNU General Public License for more details.
+@c 
+@c You should have received a copy of the GNU General Public License
+@c along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 @c %**start of header
+
 @setfilename imogene.info
 @c @documentencoding ISO-8859-15
 @include version.texi
