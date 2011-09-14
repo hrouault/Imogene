@@ -10,6 +10,10 @@ dislay svg
 display motif logo
 display matrix in a human readable fashion
 
+Compute densities with aligned background
+
+make imogene execute a python script when generating motif logos
+
 Marc:
 - check mcmc sampling process
 -Add a simple script to launch background extraction
