@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2011.1.11)  13 SEP 2011 19:36
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2011.1.11)  14 SEP 2011 11:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -346,7 +346,7 @@ Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
 LaTeX Warning: Unused global option(s):
     [reqno].
 
-No file test.aux.
+(./test.aux)
 \openout1 = `test.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 9.
@@ -364,6 +364,7 @@ LaTeX Font Info:    ... okay on input line 9.
 LaTeX Info: Redefining \degres on input line 9.
 LaTeX Info: Redefining \dots on input line 9.
 LaTeX Info: Redefining \up on input line 9.
+
 
 Package frenchb.ldf Warning: OT1 encoding should not be used for French. 
 (frenchb.ldf)                Add \usepackage[T1]{fontenc} to the preamble
@@ -496,8 +497,8 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 {/usr/local/texlive/2010/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] (./
 test.aux) ) 
 Here is how much of TeX's memory you used:
- 2738 strings out of 493747
- 37889 string characters out of 3143546
+ 2740 strings out of 493747
+ 37907 string characters out of 3143546
  142143 words of memory out of 3000000
  6001 multiletter control sequences out of 15000+200000
  6715 words of font info for 25 fonts, out of 3000000 for 9000

@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2011.1.11)  13 SEP 2011 16:50
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2011.1.11)  14 SEP 2011 13:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**test_unknown_100072115_100072135.tex
-(./test_unknown_100072115_100072135.tex
+**test1.tex
+(./test1.tex
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
 rman-x-2009-06-19, ngerman-x-2009-06-19, ancientgreek, ibycus, arabic, armenian
@@ -346,8 +346,8 @@ Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
 LaTeX Warning: Unused global option(s):
     [reqno].
 
-No file test_unknown_100072115_100072135.aux.
-\openout1 = `test_unknown_100072115_100072135.aux'.
+(./test1.aux)
+\openout1 = `test1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 9.
 LaTeX Font Info:    ... okay on input line 9.
@@ -364,6 +364,7 @@ LaTeX Font Info:    ... okay on input line 9.
 LaTeX Info: Redefining \degres on input line 9.
 LaTeX Info: Redefining \dots on input line 9.
 LaTeX Info: Redefining \up on input line 9.
+
 
 Package frenchb.ldf Warning: OT1 encoding should not be used for French. 
 (frenchb.ldf)                Add \usepackage[T1]{fontenc} to the preamble
@@ -462,6 +463,7 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+\charwidth=\skip45
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <10.95> on input line 11.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -471,6 +473,78 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
 Underfull \hbox (badness 10000) in paragraph at lines 10--64
 
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
+ []
+
+
+Overfull \hbox (7.14922pt too wide) in paragraph at lines 10--64
+| | []\OT1/cmtt/m/it/10.95 13.5[]| | []13.5[]| | []13.5[]| | | []13.5[]| | []13
+.5[]|  
  []
 
 
@@ -494,23 +568,24 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
  [1
 
 {/usr/local/texlive/2010/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-(./test_unknown_100072115_100072135.aux) ) 
+(./test1.aux) ) 
 Here is how much of TeX's memory you used:
- 2736 strings out of 493747
- 38059 string characters out of 3143546
- 108079 words of memory out of 3000000
- 6000 multiletter control sequences out of 15000+200000
- 6547 words of font info for 24 fonts, out of 3000000 for 9000
+ 2741 strings out of 493747
+ 37925 string characters out of 3143546
+ 145242 words of memory out of 3000000
+ 6002 multiletter control sequences out of 15000+200000
+ 6715 words of font info for 25 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 37i,5n,24p,258b,133s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/local/texlive/2010/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2010/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2010/texmf-dist/font
-s/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on test_unknown_100072115_100072135.pdf (2 pages, 34574 bytes).
+ 37i,5n,24p,1212b,133s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmitt10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmmi10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmtt10.pfb>
+Output written on test1.pdf (2 pages, 37290 bytes).
 PDF statistics:
- 23 PDF objects out of 1000 (max. 8388607)
- 15 compressed objects within 1 object stream
+ 27 PDF objects out of 1000 (max. 8388607)
+ 18 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
