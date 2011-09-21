@@ -50,6 +50,29 @@ using namespace std;
 extract_args_info extract_args;
 
    void
+seq2fasta(Sequence &seq,string folder)
+{
+   ofstream outf;
+   stringstream file;
+   file << folder;
+   file << seq.name << "_";
+   file << chromfromint(seq.chrom) << "_";
+   file << seq.start << "_";
+   file << seq.stop << ".fa";
+   outf.open(file.str().c_str());
+   Sequence & s=seq;
+   for (int i=0;i<nbspecies;i++){
+      if (s.species[i]){
+         if (i==0) outf << ">" << numtospecies(i) << " " <<
+            chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+         else  outf << ">" << numtospecies(i) << endl;
+         outf << s.seqsrealigned[i] << endl;
+      }; 
+   }
+   outf.close();
+}
+
+   void
 extractfromcoord(const char * coordfile)
 {
 
@@ -59,7 +82,7 @@ extractfromcoord(const char * coordfile)
    vcoord coords;
    back_insert_iterator<vcoord> dest(coords);
    copy(iiscoord(coordinates),iiscoord(),dest);
-   
+
    // ALIGNMENTS COORDINATES
    ifstream align;
 
@@ -75,26 +98,6 @@ extractfromcoord(const char * coordfile)
 
    align.close();
 
-   // SEQUENCE EXTRACTION
-   vseq seqs;
-   cout << "Extraction start" << endl;
-   for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
-      
-      Sequence seqtoimport=coordtoseq(*ivc);
-      if (seqtoimport.species[0] && seqtoimport.nbtb>0)  {
-         seqs.push_back(seqtoimport);
-         cout << seqtoimport.name << endl;
-      }
-//      cout << chromfromint(ivc->chrom) << endl;
-//      cout << ivc->start << endl;
-//      cout << ivc->stop << endl;
-//      cout << seqtoimport.seqs[0] << endl;
-   }
-   
-   cout << "Extraction stop" << endl;
-
-   cout << "Writing sequences in align/..." << endl;
-   
    stringstream basename;
    if (extract_args.background_given){
       if (species=="droso"){
@@ -109,28 +112,24 @@ extractfromcoord(const char * coordfile)
       basename << "align/";
    }
 
+   // SEQUENCE EXTRACTION
+   cout << "Extraction start" << endl;
+   cout << "Writing sequences in align/..." << endl;
+   for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
 
-   ofstream outf;
-   for (ivseq iv=seqs.begin();iv!=seqs.end();iv++){
-      Sequence seq=*iv;
-      stringstream file;
-      file << basename.str();
-      file << seq.name << "_";
-      file << chromfromint(seq.chrom) << "_";
-      file << seq.start << "_";
-      file << seq.stop << ".fa";
-      outf.open(file.str().c_str());
-      Sequence & s=seq;
-      for (int i=0;i<nbspecies;i++){
-         if (s.species[i]){
-            if (i==0) outf << ">" << numtospecies(i) << " " <<
-               chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-            else  outf << ">" << numtospecies(i) << endl;
-            outf << s.seqsrealigned[i] << endl;
-         }; 
+      Sequence seqtoimport=coordtoseq(*ivc);
+      if (seqtoimport.species[0] && seqtoimport.nbtb>0)  {
+         cout << seqtoimport.name << endl;
+         seq2fasta(seqtoimport,basename.str());
       }
-      outf.close();
+      //      cout << chromfromint(ivc->chrom) << endl;
+      //      cout << ivc->start << endl;
+      //      cout << ivc->stop << endl;
+      //      cout << seqtoimport.seqs[0] << endl;
    }
+
+   cout << "Extraction stop" << endl;
+
 }
 
    void
@@ -151,7 +150,7 @@ extract_args_init()
  *  Description:  Alignment extraction
  * =====================================================================================
  */
-int
+   int
 cmd_extract(int argc, char **argv)
 {
 

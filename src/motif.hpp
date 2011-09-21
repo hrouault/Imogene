@@ -136,6 +136,8 @@ class Motif
       double motscorethrcons;
       unsigned int motwidth;
 
+      unsigned int tottest; // number of true bases in the background
+
       double optthr; //thr for optimal discernemnt
       double optauc; // best ROC area
       double optTP; // TP at optimal thr
@@ -156,6 +158,7 @@ class Motif
       void calclambda();
       void calclambdaback();
       void lambdacomp();
+      void updatebacksites(Sequence & seq);
       void lambdacompcons();
       void display(ostream & streamfile);
       void displaywname(ostream & streamfile);
@@ -253,6 +256,8 @@ void displayhist(vginst & vgi,ostream & ostr);
 void displayhist_set(vginst & vgi, vstring geneset,ostream & ostr);
 
 int compalpha();
+   
+void scoreseq(Sequence &seq,vmot & mots);
 
 void freqtolog(vvd & mat);
 void countfreq(vvd & mat);

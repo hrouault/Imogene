@@ -173,6 +173,8 @@ vvd reversecomp(vvd & matrice);
    
 vseq loadseqs(const char * folder);
 
+vstring loadfilenames(const char * folder);
+
 vseq loadsequences(ifstream & list);
 
 vseq loadsequencesints(ifstream & list);

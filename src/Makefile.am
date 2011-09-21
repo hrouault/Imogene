@@ -21,7 +21,7 @@
 
 bin_PROGRAMS = imogene
 
-BUILT_SOURCES = extract_cmdline.c distinfo_cmdline.c genmot_cmdline.c imogene_cmdline.c display_cmdline.c
+BUILT_SOURCES = extract_cmdline.c distinfo_cmdline.c genmot_cmdline.c imogene_cmdline.c display_cmdline.c scangen_cmdline.c
 
 imogene_SOURCES = imogene.hpp imogene.cpp extract.cpp extract.hpp genmot.cpp genmot.hpp help.cpp help.hpp scangen.cpp scangen.hpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp distinfo.cpp distinfo.hpp display.cpp display.hpp imogene_cmdline.c distinfo_cmdline.c extract_cmdline.c display_cmdline.c genmot_cmdline.c
 imogene_CPPFLAGS = -DDATA_PATH='"${pkgdatadir}"' -DPYTHON_PATH='"${pythondir}"'
@@ -45,4 +45,8 @@ imogene_cmdline.c: imogene.ggo
 genmot_cmdline.c: genmot.ggo
 	gengetopt --input=$(top_srcdir)/src/genmot.ggo --func-name=genmot_cmdline_parser \
    	--arg-struct-name=genmot_args_info --file-name=genmot_cmdline
+
+scangen_cmdline.c: scangen.ggo
+	gengetopt --input=$(top_srcdir)/src/scangen.ggo --func-name=scangen_cmdline_parser \
+   	--arg-struct-name=scangen_args_info --file-name=scangen_cmdline
 
