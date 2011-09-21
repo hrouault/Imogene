@@ -54,7 +54,7 @@ using namespace std;
 
 genmot_args_info genmot_args;
 
-vseq regtests;
+vstring regtests;
 vseq regints;
 
 
@@ -133,9 +133,10 @@ seqanalysis(Sequence & currseq,vmot & genmots)
 //      cout << currseq.iseqs[j] << endl;
 //      }
    for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
-      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
+      cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
+      cout.flush();
+     //cout << i << " " << bs << endl;
       vint bs(istr,istr+width);
-     cout << i << " " << bs << endl;
       if (compN(bs)>0) continue;
       Motif currmot;
       currmot.bsinit=vinttostring(bs);
@@ -169,11 +170,10 @@ seqanalysis(Sequence & currseq,vmot & genmots)
          }
       }
       //cout << currmot.nbmot << " " ; 
-      //cout.flush();
 
       currmot.matinit(scorethr2);
       if (currmot.nbmot>2){
-         currmot.pvaluecomp();
+         //currmot.pvaluecomp(); // THIS IS DONE IN THE END
          //currmot.display(streamfile);
          //		for (ivma ima=currmot.seqs.begin();ima!=currmot.seqs.end();ima++){
          //  cout << (*ima).alignseq[0] << endl;
@@ -244,12 +244,10 @@ cmd_genmot(int argc, char **argv)
    //   printpriorsandthrs(); *** to be written
    cout << alpha << endl;
 
-   cout << "Loading background set..." << endl;
+   cout << "Loading background file names..." << endl;
 
-   ifstream backreg;
-
-   if (species=="droso") regtests=loadseqs(DATA_PATH"/droso/background");
-   else if (species=="eutherian") regtests=loadseqs(DATA_PATH"/eutherian/background");
+   if (species=="droso") regtests=loadfilenames(DATA_PATH"/droso/background");
+   else if (species=="eutherian") regtests=loadfilenames(DATA_PATH"/eutherian/background");
 
    cout << "Background set size : " << regtests.size() << endl;
 
@@ -267,8 +265,30 @@ cmd_genmot(int argc, char **argv)
    for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
       cout << (*iseq).name << endl;
       seqanalysis(*iseq,genmots);
-      cout << endl;
    }
+         
+   cout << "Loading background sequences and scoring motifs..." << endl;
+   unsigned int counter=1;
+   for (ivstring ivs=regtests.begin();ivs!=regtests.end();ivs++){
+   
+      cout << "\r" << counter << "/" << regtests.size();
+      cout.flush();
+      counter++;
+      
+      Sequence seq;
+      string filename=*ivs;
+      seq=loadseqconserv(filename);
+      
+      for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
+         ivm->updatebacksites(seq);
+      }
+   }
+   cout << "\n";
+   
+   for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
+      ivm->pvaluecomp(); // THIS IS DONE IN THE END
+   }
+   
 
    cout << "Sorting motifs..." << endl;
    // Sort on chi2

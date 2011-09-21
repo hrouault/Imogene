@@ -74,6 +74,8 @@ Motif::Motif()
    motscorethr=scorethr2-2*(double)motwidth/10;
    motscorethrcons=scorethr2-(double)motwidth/10;
 
+   tottest=0;
+
    optauc=0.5;
 }
 
@@ -275,6 +277,7 @@ GroupInstance::GroupInstance(int sta,int sto,int chr)
    totmots=0;
 }
 
+/*
    void
 Motif::calclambdaback()
 {
@@ -311,51 +314,54 @@ Motif::calclambda()
    if (lambda==0.) lambda=1.e-10;
    else if (lambdatrain==0.) lambdatrain=1.e-10;
 }
-
+*/
+   
    void
-Motif::lambdacomp()
+Motif::updatebacksites(Sequence & seq)
 {
    unsigned int nbbacktemp=0;
-   unsigned int nbback=0;
-   unsigned int tottest=0;
-   vseq::const_iterator iseq;
-   for (iseq=regtests.begin();iseq!=regtests.end();iseq++){
-      tottest+=(*iseq).nbtb;
-      nbbacktemp=nbmatchmat(*iseq);
-      if (nbbacktemp<distwidth) distmot[nbbacktemp]++;
-      nbback+=nbbacktemp;
-      // cout << (*iseq).nbtb << " " << tottest << " " << nbbacktemp << " " << nbback << endl;
+
+   tottest+=seq.nbtb;
+   if (motwidth>seq.nbtb){
+      nbbacktemp=0;
    }
-   nbmatchback=nbback;
-   lambda=nbback/(double)tottest;
+   else nbbacktemp=nbmatchcons(seq);
+   if (nbbacktemp<distwidth) distmot[nbbacktemp]++;
+   
+   nbmatchback+=nbbacktemp;
 }
 
-   void
-Motif::lambdacompcons()
-{
-   unsigned int nbbacktemp=0;
-   unsigned int nbback=0;
-   unsigned int tottest=0;
-   vseq::iterator iseq;
-   for (iseq=regtests.begin();iseq!=regtests.end();iseq++){
-      tottest+=(*iseq).nbtb;
-      if (motwidth>tottest){
-         nbbacktemp=0;
-      }
-      else nbbacktemp=nbmatchcons(*iseq);
-      if (nbbacktemp<distwidth) distmot[nbbacktemp]++;
-      nbback+=nbbacktemp;
-      // cout << (*iseq).nbtb << " " << tottest << " " << nbbacktemp << " " << nbback << endl;
-   }
-   nbmatchback=nbback;
-   lambda=nbback/(double)tottest;
-}
+//   void
+//Motif::lambdacomp()
+//{
+//   unsigned int nbbacktemp=0;
+//   unsigned int nbback=0;
+//   unsigned int tottest=0;
+//   for (ivstring ivs=regtests.begin();ivs!=regtests.end();ivs++){
+//      Sequence seq;
+//      string filename=*ivs;
+//      seq=loadseqconserv(filename);
+//
+//      tottest+=seq.nbtb;
+//      if (motwidth>tottest){
+//         nbbacktemp=0;
+//      }
+//      else nbbacktemp=nbmatchcons(seq);
+//      if (nbbacktemp<distwidth) distmot[nbbacktemp]++;
+//      nbback+=nbbacktemp;
+//      // cout << seq.nbtb << " " << tottest << " " << nbbacktemp << " " << nbback << endl;
+//   }
+//   nbmatchback=nbback;
+//   lambda=nbback/(double)tottest;
+//}
 
    void
 Motif::pvaluecomp()
 {
-   lambdacomp();
+   // Density of conserved binding sites in the background
+   lambda=nbmatchback/(double)tottest;
 
+   // Chi2 calculation
    calcscorepoiss();
    vseq::iterator iseq;
    pvalue=0.0;
@@ -364,13 +370,14 @@ Motif::pvaluecomp()
    int nbtot=0;
    int nbbtrain=0;
 
-   //   for (iseq=regints.begin();iseq!=regints.begin()+nbvalidated;iseq++){
    for (iseq=regints.begin();iseq!=regints.end();iseq++){
-      pvalue+=log(gsl_ran_poisson_pdf((*iseq).nmot,lambda*(*iseq).nbtb));
-      //	   cout << (*iseq).nmot << " " << lambda << " " << (*iseq).nbtb << " " << pvalue << endl;
+      // Here we use nbmot (cons) and not nmot (not cons)
+      pvalue+=log(gsl_ran_poisson_pdf((*iseq).nbmot,lambda*(*iseq).nbtb));
       nbbtrain+=(*iseq).nbtb;
-      nbtot+=(*iseq).nmot;
+      nbtot+=(*iseq).nbmot;
    }
+
+   // Density of conserved binding sites in the training set
    lambdatrain=(double)nbtot/(double)nbbtrain;
    ntrain=nbtot;
 }

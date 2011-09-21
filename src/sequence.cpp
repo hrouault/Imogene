@@ -878,6 +878,34 @@ loadseqs(const char * folder)
    return seqs;
 }
 
+//Loads fasta filenames from a folder
+   vstring
+loadfilenames(const char * folder)
+{
+   vstring filenames;
+   
+   DIR *dp;
+   struct dirent *ep;
+
+   dp = opendir ( folder );
+   if (dp != NULL)
+   {
+      while (ep = readdir (dp)){
+         string file = string(folder);
+         file += "/";
+         file += ep->d_name;
+         if ( file.find(".fa") != string::npos ) {
+            filenames.push_back( file );
+         }
+      }
+      (void) closedir (dp);
+   }
+   else
+      cerr << "Couldn't open the directory" << endl;
+
+   return filenames;
+}
+
 
    vcoord
 loadcoordconserv(ifstream & list)

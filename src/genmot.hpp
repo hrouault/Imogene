@@ -34,8 +34,8 @@
  * =====================================================================================
  */
 
-extern vseq regtests;
-extern vseq regints;
+extern vstring regtests; // filenames of background sequences
+extern vseq regints; // interest sequences
 
 int cmd_genmot(int argc, char **argv);
 
