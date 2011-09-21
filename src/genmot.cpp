@@ -293,6 +293,7 @@ cmd_genmot(int argc, char **argv)
          ss << "python " << PYTHON_PATH"/weblogo-display.py ";
          ss << "Motif";
          ss << index << " ";
+         ss << concc << " ";
          for (ivvd ivv=ivm->matfreq.begin();ivv!=ivm->matfreq.end();ivv++){
             for (ivd iv=ivv->begin();iv!=ivv->end()-1;iv++){
                ss << *iv << ",";
