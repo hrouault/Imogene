@@ -171,6 +171,25 @@ Motif::matinitforscanmots(Sequence & seq)
       if (istr>seq.iseqs[0].end()-motwidth) break;
    }
 }
+   
+   void
+scoreseq(Sequence &seq,vmot & mots)
+{
+   int nbmot=0;
+   vd nbcorr;
+   double nmcorr=0;
+   unsigned int moti=0;
+   for (ivmot im=mots.begin();im!=mots.end();im++){
+      int nm=0;
+      nm=(*im).nbmatchwomask(seq,moti);
+      nbmot=nm;
+
+      nmcorr+=nm*log((*im).lambdatrain/(*im).lambda);
+      nbcorr.push_back(nmcorr);
+      //if (nbmot!=0){cout << moti << "->" << nbmot << "\n";};
+      moti++;
+   }
+}
 
 
 TFBS::TFBS()
@@ -1870,21 +1889,11 @@ GroupInstance::compscore(vmot & lmots,unsigned int nbmots_score)
    unsigned int imot=0;
    for (ivmot ivm=lmots.begin();ivm!=lmots.begin()+nbmots_score;ivm++){
       //      ivmot ivm=lmots.begin()+nbmots_score-1;
-      score+=nbmots[imot];//*log((*ivm).lambdatrain/(*ivm).lambda);
-      imot++;
-   }
-}
-
-   void
-GroupInstance::compscoreweight(vmot & lmots,unsigned int nbmots_score)
-{
-   score=0;
-   unsigned int imot=0;
-   for (ivmot ivm=lmots.begin();ivm!=lmots.begin()+nbmots_score;ivm++){
       score+=nbmots[imot]*log((*ivm).lambdatrain/(*ivm).lambda);
       imot++;
    }
 }
+
 
    int
 GroupInstance::distance(const GroupInstance & gi)

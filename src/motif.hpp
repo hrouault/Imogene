@@ -256,6 +256,8 @@ void displayhist(vginst & vgi,ostream & ostr);
 void displayhist_set(vginst & vgi, vstring geneset,ostream & ostr);
 
 int compalpha();
+   
+void scoreseq(Sequence &seq,vmot & mots);
 
 void freqtolog(vvd & mat);
 void countfreq(vvd & mat);

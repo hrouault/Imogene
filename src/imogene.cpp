@@ -69,14 +69,6 @@ using namespace std;
 
 
 genmot_args_info args_info;
-vginst potregs;
-vvginst groupedinst;
-vstring phenos;
-vstring gbacks;
-vchrom chromints;
-
-unsigned int sizepos,sizeneg;
-unsigned int cutoff_for_combination=3;
 
 
 const char usage_string[] =
@@ -278,27 +270,6 @@ findnearestgene(vcoord & vgenes, vcoord & vpeaks)
 
 
 
-//   void
-//scanseqforinstancesnmask(Sequence &seq,vmot & mots)
-//{
-//   // We mask a tmp sequence
-//   Sequence seqtomask=seq;
-//   for (ivmot im=mots.begin();im!=min(mots.end(),mots.begin()+nbmots_for_score);im++){
-//      im->findinstancesnmask(seqtomask);
-//   }
-//   seq.instances=seqtomask.instances;
-//   return;
-//}
-//
-//   void
-//scanseqsforinstancesnmask(vseq & align,vmot & mots)
-//{     
-//   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-//      scanseqforinstancesnmask(*ivs,mots);
-//   }
-//   return;
-//}
-
    void
 scanseqforinstances(Sequence &seq,vmot & mots)
 {
@@ -340,49 +311,6 @@ scanseqsforinstances(vseq & align,Motif & mot)
    }
    return;
 }
-
-//   void
-//scanseq(Sequence &seq,vmot & mots)
-//{
-//   //cout << seq.name << " " << seq.finame << "\n";
-//   int nbmot=0;
-//   vd nbcorr;
-//   double nmcorr=0;
-//   unsigned int moti=0;
-//   for (ivmot im=mots.begin();im!=mots.begin()+nbmots_for_score;im++){//im!=mots.end();im++){}
-//      int nm=0;
-//
-//      // *** CREATE A CPP FOR DISPLAY
-//      // *** OPTION FOR MASKING FOUND SITES?
-//
-////      if (args_info.disp_svg_given){
-////         nm=(*im).nbmatchnmaskforsvg(seq,moti);
-////      } else {
-//         //nm=(*im).nbmatchnmask(seq,moti);
-//         nm=(*im).nbmatchwomask(seq,moti);
-////      }
-//      nbmot=nm;
-//
-//      // *** ENSURE MOTIFS ARE WELL WEIGHTED (eg CONSEERVED INSTANCES ON BACKGROUND)
-// //     if (args_info.weightmots_given){
-//         nmcorr+=nm*log((*im).lambdatrain/(*im).lambda);
-//  //    }
-// //     else{
-// //        nmcorr+=nm;
-// //     }
-//      nbcorr.push_back(nmcorr);
-//      //if (nbmot!=0){cout << moti << "->" << nbmot << "\n";};
-//      moti++;
-//      //cout << seq.name << " " << nbmot << " " << endl;
-////            for (ivinst ivs=(*im).instances[0].begin();ivs!=(*im).instances[0].end();ivs++){
-////               cout << ivs->coord << " ";
-////            }
-////            cout << endl;
-//   }
-//   //      for (ivd iv=nbcorr.begin();iv!=nbcorr.end();iv++){
-//   //        cout << *iv << " ";
-//   //    }
-//}
 
    void
 print_reportbugs()
