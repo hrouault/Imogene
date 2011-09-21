@@ -64,13 +64,13 @@ inttostring(int iseq)
       seq="A";
    }
    else if (iseq==1){
-      seq="T";
-   }
-   else if (iseq==2){
       seq="C";
    }
-   else if (iseq==3){
+   else if (iseq==2){
       seq="G";
+   }
+   else if (iseq==3){
+      seq="T";
    }
    else if (iseq==4){
       seq="N";
@@ -107,13 +107,13 @@ stringtoint(string & seq)
       if (*istr=='A'||*istr=='a'){
          iseq.push_back(0);
       }
-      else if (*istr=='T'||*istr=='t'){
+      else if (*istr=='C'||*istr=='c'){
          iseq.push_back(1);
       }
-      else if (*istr=='C'||*istr=='c'){
+      else if (*istr=='G'||*istr=='g'){
          iseq.push_back(2);
       }
-      else if (*istr=='G'||*istr=='g'){
+      else if (*istr=='T'||*istr=='t'){
          iseq.push_back(3);
       }
       else if (*istr=='-'){
@@ -1052,22 +1052,22 @@ basetoint(char base)
       case 'a':
          valueb=0;
          break;
-      case 'T':
-         valueb=1;
-         break;
-      case 't':
-         valueb=1;
-         break;
       case 'C':
-         valueb=2;
+         valueb=1;
          break;
       case 'c':
-         valueb=2;
+         valueb=1;
          break;
       case 'G':
-         valueb=3;
+         valueb=2;
          break;
       case 'g':
+         valueb=2;
+         break;
+      case 'T':
+         valueb=3;
+         break;
+      case 't':
          valueb=3;
          break;
    }

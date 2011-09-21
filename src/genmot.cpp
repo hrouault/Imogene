@@ -242,7 +242,7 @@ cmd_genmot(int argc, char **argv)
 
    compalpha();
    //   printpriorsandthrs(); *** to be written
-   cout << alpha << endl;
+   cout << "alpha=" << alpha << endl;
 
    cout << "Loading background file names..." << endl;
 

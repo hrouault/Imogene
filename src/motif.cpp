@@ -95,9 +95,9 @@ Motif::comprefmot()
    for (int i=0;i<width;i++){
       string letter="A";
       double max(matprec[i][0]);
-      if (matprec[i][1]>max) letter="T";
-      else if (matprec[i][2]>max) letter="C";
-      else if (matprec[i][3]>max) letter="G";
+      if (matprec[i][1]>max) letter="C";
+      else if (matprec[i][2]>max) letter="G";
+      else if (matprec[i][3]>max) letter="T";
       bsinit.append(letter);
    }
 

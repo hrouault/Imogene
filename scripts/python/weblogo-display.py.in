@@ -43,12 +43,12 @@ for freqline in sys.argv[3:]:
 matfreq=array(matfreq)
 
 # Initialize LogoData object and compute RELATIVE entropy
-data=LogoData.from_counts(alphabet='ATCG',counts=matfreq)
+data=LogoData.from_counts(alphabet='ACGT',counts=matfreq)
 for i in range(len(data.entropy)):
    data.entropy[i]=0
    for j in range(4):
       data.entropy[i] += matfreq[i,j]*log(matfreq[i,j]/backfreq[j])
-print data
+#print data
 
 # Logo display options
 options = LogoOptions()
