@@ -40,3 +40,12 @@ imogene display -s eutherian -m motifs.txt -a align --tex-align
 imogene display -s eutherian -m motifs.txt -a align --svg
 @end smallexample
 
+@section Generating motif logo
+
+This mode uses the @command{python} modules corebio and weblogo. You can install them with:
+@smallexample
+> pip install corebio
+> pip install weblogo
+@end smallexample
+
+

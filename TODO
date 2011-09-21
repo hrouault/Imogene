@@ -17,3 +17,7 @@ make imogene execute a python script when generating motif logos
 Marc:
 - check mcmc sampling process
 -Add a simple script to launch background extraction
+
+Extract
+For background : download one after the other, freeing memory in between. Be careful not to use too much memory while using background in imogene genmot...
+
