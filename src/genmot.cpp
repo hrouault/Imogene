@@ -36,6 +36,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cmath>
 #include <cstring>
 #include <vector>
@@ -282,13 +283,29 @@ cmd_genmot(int argc, char **argv)
    cout << "Clustering motifs..." << endl;
    compmotsdist(genmots);
    //
+   cout << "Creating logos and output file..." << endl;
    ofstream motmeldb("motifs.txt");
+   unsigned int index=1;
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
       if ( ivm->check ) {
          ivm->display(motmeldb);
+         stringstream ss;
+         ss << "python " << PYTHON_PATH"/weblogo-display.py ";
+         ss << "Motif";
+         ss << index << " ";
+         for (ivvd ivv=ivm->matfreq.begin();ivv!=ivm->matfreq.end();ivv++){
+            for (ivd iv=ivv->begin();iv!=ivv->end()-1;iv++){
+               ss << *iv << ",";
+            }
+            ss << *(ivv->end()-1) << " ";
+         }
+         system(ss.str().c_str());
+         index++;
       }
    }
    motmeldb.close();
+   
+   
 
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);
