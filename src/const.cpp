@@ -48,6 +48,8 @@ unsigned int neighbext=20;
 unsigned int scanwidth=1000;
 unsigned int scanstep=50;
 
+unsigned int annotextent=10000;
+
 unsigned int nbmots_for_score=20;
 
 double alpha=0.176; // beta exponent for A,T
@@ -56,4 +58,4 @@ double beta; // beta exponent for C,G
 unsigned int nbchrom;
 
 // sequences that are too short are considered as irrelevant in the sequence extraction process
-unsigned int extraction_cutoff=10; 
+unsigned int extraction_cutoff=20; 

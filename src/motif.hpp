@@ -58,6 +58,7 @@ class Instance
       int sens;
       double score;
       string site;
+      int isassigned; // non zero if has been asigned to a CRM
 
       Instance(int chr,int pos, int sen,int moti);
       Instance(int chr,int pos, int sen,int moti,double sco,string s);
@@ -67,7 +68,10 @@ bool operator<(const Instance & inst1,const Instance & inst2);
 
 typedef vector<Instance> vinst;
 typedef vinst::iterator ivinst;
+typedef vinst::const_iterator civinst;
 typedef vector<vinst> vvinst;
+
+ostream & operator <<(ostream &os,const Instance & inst);
 
 class TFBS
 {
@@ -125,7 +129,7 @@ class Motif
       vvinst instances;
       
       Sequence refinstances; 
-      vinst refinstances_short;
+      vinst refinstances_short; // basic infos about motifs instances for scangen
   
       string name;
       string id; //for jaspar matrices
@@ -205,6 +209,7 @@ class GroupInstance
       double score;
       int totmots;
 
+      GroupInstance();
       GroupInstance(int sta,int sto,int chr);
       void compbestannot();
       void compscore(vmot & lmots,unsigned int nbmots_score);
@@ -219,6 +224,7 @@ typedef vginst::const_iterator civginst;
 typedef vector<vginst> vvginst;
 
 bool operator<(const GroupInstance & ginst1,const GroupInstance & ginst2);
+ostream & operator <<(ostream &os,const GroupInstance & ginst);
 
 
 class Combination

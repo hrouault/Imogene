@@ -22,9 +22,10 @@
 bin_PROGRAMS = imogene
 
 BUILT_SOURCES = extract_cmdline.c distinfo_cmdline.c genmot_cmdline.c imogene_cmdline.c display_cmdline.c scangen_cmdline.c
-
-imogene_SOURCES = imogene.hpp imogene.cpp extract.cpp extract.hpp genmot.cpp genmot.hpp help.cpp help.hpp scangen.cpp scangen.hpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp distinfo.cpp distinfo.hpp display.cpp display.hpp imogene_cmdline.c distinfo_cmdline.c extract_cmdline.c display_cmdline.c genmot_cmdline.c
+   
+imogene_SOURCES = imogene.hpp imogene.cpp extract.cpp extract.hpp genmot.cpp genmot.hpp help.cpp help.hpp scangen.cpp scangen.hpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp distinfo.cpp distinfo.hpp display.cpp display.hpp imogene_cmdline.c distinfo_cmdline.c extract_cmdline.c display_cmdline.c genmot_cmdline.c scangen_cmdline.c
 imogene_CPPFLAGS = -DDATA_PATH='"${pkgdatadir}"' -DPYTHON_PATH='"${pythondir}"'
+	   
 
 extract_cmdline.c: extract.ggo
 	gengetopt --input=$(top_srcdir)/src/extract.ggo --func-name=extract_cmdline_parser \

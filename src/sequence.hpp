@@ -33,19 +33,22 @@ class TSS
       int chrom;
       int coord;
       int sens;
-      string gene;
+      string gene; // usual name
+      string genevar; // CG (flybase) or NM_ (UCSC) name
 
-      TSS(int position,char dir,string chr,string gname);
+      TSS(int position,char dir,string chr,string gname,string gnamevar);
       TSS();
 };
 
 typedef vector<TSS> vTSS;
 typedef vTSS::iterator ivTSS;
+typedef vTSS::const_iterator civTSS;
 typedef istream_iterator<TSS> iisTSS;
 
 void importTSS(vTSS & vt,ifstream & file);
 
 istream & operator >>(istream &is,vTSS &vt);
+ostream& operator <<(ostream &os,vTSS &vt);
 
 class Instanceseq
 {
@@ -160,6 +163,10 @@ string vinttostring(vint & iseq);
 string inttostring(int iseq);
 
 vint stringtoint(string & seq);
+
+vint stringtointmaskrepeats(string & seq);
+
+void maskrepeats(vseq &seqs);
 
 string remgaps(string & seq);
 

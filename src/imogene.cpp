@@ -280,17 +280,17 @@ scanseqforinstances(Sequence &seq,vmot & mots)
    return;
 }
    
-   void
-scanseqforconsinstances(Sequence &seq,vmot & mots)
-{
-   seq.instances.clear();
-   for (ivmot im=mots.begin();im!=mots.end();im++){
-      if (seq.iseqs[0].size()>im->motwidth){
-         im->matinitforscanmots(seq);
-      }
-   }
-   return;
-}
+//   void
+//scanseqforconsinstances(Sequence &seq,vmot & mots)
+//{
+//   seq.instances.clear();
+//   for (ivmot im=mots.begin();im!=mots.end();im++){
+//      if (seq.iseqs[0].size()>im->motwidth){
+//         im->matinitforscanmots(seq);
+//      }
+//   }
+//   return;
+//}
 
    void
 scanseqsforinstances(vseq & align,vmot & mots)

@@ -51,6 +51,7 @@ using namespace std;
 #include "sequence.hpp"
 
 vmot motsdef;
+vinst allinstances;
 vginst potregs;
 vvginst groupedinst;
 vstring phenos;
@@ -72,9 +73,6 @@ loadannots()
    annots.close();
 
    ifstream glist;
-   //!!!! FIRST scangens were done with genelist-wosensory
-   //   if (species==1) glist.open("/home/santolin/these/files/droso/plaza/phenos/neg-ovo-pheno.dat");
-   //   else if (species==2) glist.open("/home/santolin/these/files/mus/affymetrix/e10/genelist-wo-pos-down-uniq.dat");
    if (species=="droso") glist.open("/home/rouault/these/sequence/genomes/genelist.dat");
    else if (species=="eutherian") glist.open("/home/santolin/these/files/mus/biomart/genelist-protein-coding+miRNA.dat");
 
@@ -141,6 +139,67 @@ loadlengthchrom()
    return lchr;
 
 }
+   void
+scanseqforconsinstances(Sequence &seq,vmot & mots)
+{
+   seq.instances.clear();
+   for (ivmot im=mots.begin();im!=mots.end();im++){
+      if (seq.iseqs[0].size()>im->motwidth){
+         im->matinitforscanmots(seq);
+      }
+   }
+   return;
+}
+   
+   void
+scanmots()
+{
+   ifstream align;
+   if (species=="droso"){
+      cout << "Reading droso alignments..." << endl;
+      align.open(DATA_PATH"/droso/align.dat");
+   } else if (species=="eutherian"){
+      cout << "Reading eutherian alignments..." << endl;
+      align.open(DATA_PATH"/eutherian/align.dat");
+   }
+   
+   alignscoord=loadcoordconserv(align);
+   
+   align.close();
+
+   string pchrom(""); // for display purpose
+   unsigned int totlen(0),totlentb(0);
+   //for (ivcoord ivc=alignscoord.begin();ivc!=alignscoord.end();ivc++){
+   for (ivcoord ivc=alignscoord.begin();ivc!=alignscoord.begin()+10;ivc++){
+      Sequence seq;
+      seq=coordtoseq(*ivc);
+      string chrom=chromfromint(seq.chrom);
+      if (chrom!=pchrom){
+         cout << "chromosome " << chrom << endl;
+         pchrom=chrom;
+      }
+
+      scanseqforconsinstances(seq,motsdef);
+
+      totlen+=seq.nbtb+seq.nbN;
+      totlentb+=seq.nbtb;
+   }
+   
+   for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
+      allinstances.insert(allinstances.end(),ivm->refinstances_short.begin(),ivm->refinstances_short.end());
+   }
+
+   sort(allinstances.begin(),allinstances.end());
+
+   for (ivinst ivi=allinstances.begin();ivi!=allinstances.end();ivi++){
+      cout << *ivi;
+   }
+
+   cout << "Total length of the alignement: " << (double)totlen/1000000 << " Mb, including " 
+      << (double)totlentb/1000000 << " unmasked Mb" << endl;
+
+   return;
+}
 
    
    void
@@ -149,13 +208,19 @@ initgroupedinst()
    cout << "Loading length chroms..." << endl;
    lengthchrom=loadlengthchrom();
 
+   // *** This step is the time-consuming one.
+   //  We change it to a per motif search (see scanmots)
    vginst dumvginst;
    groupedinst=vvginst(nbchrom,dumvginst);
    for (unsigned int i=0;i<nbchrom;i++){
       for (unsigned int j=0;j<lengthchrom[i]/scanstep+1;j++){
+         cout << "\r" << i << " " << j;
+         cout.flush();
          groupedinst[i].push_back(GroupInstance(j*scanstep,j*scanstep+scanwidth,i));
       }
+      cout << "\n";
    }
+   exit(9);
    ifstream annots;
    if (species=="droso"){
       annots.open("/home/rouault/these/sequence/genomes/regres-wellform-all.dat");
@@ -176,6 +241,110 @@ initgroupedinst()
          //       cout << (*ivt).gene << endl;
       }
    }
+   // assign nearest TSS to genes
+   cout << "Assign CRMs to nearest gene..." << endl;
+   for (unsigned int i=0;i<nbchrom;i++){
+      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
+         (*ivg).compbestannot();
+      }
+   }
+
+   // attribute phenotype to CRMs
+   cout << "Attribute phenotype to CRM..." << endl;
+   for (unsigned int i=0;i<nbchrom;i++){
+      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
+         (*ivg).isdiscarded();
+         if (!(*ivg).discarded){
+            for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
+               if ((*ivg).besttss.gene==*ivs){
+                  (*ivg).goodpheno=1;
+                  break;
+               } else {
+                  (*ivg).goodpheno=0;
+               }
+            }
+         } else {
+            (*ivg).goodpheno=0;
+         }
+      }
+   }
+
+}
+   
+   void
+compgroupedinst()
+{
+   vginst dumvginst;
+   groupedinst=vvginst(nbchrom,dumvginst);
+   
+   for (ivinst ivi=allinstances.begin();ivi!=allinstances.end();ivi++){
+      ivi->isassigned=0;
+   }
+   
+   // TSS importation
+   ifstream annots;
+   if (species=="droso"){
+      cout << "Reading droso TSS annot..." << endl;
+      annots.open(DATA_PATH"/droso/annot/TSS-coord.dat");
+   } else if (species=="eutherian"){
+      cout << "Reading eutherian TSS annot..." << endl;
+      annots.open(DATA_PATH"/eutherian/annot/TSS-coord.dat");
+   }
+   importTSS(TSSall,annots);
+   annots.close();
+   
+   // in the following, allinstances supposed to be sorted (done in scanmots)
+   
+   cout << "Defining CRMs and assigning to TSS in annotextent region..." << endl;
+   int counter=1;
+   for (ivinst ivi=allinstances.begin();ivi!=allinstances.end();ivi++){
+      //cout << "\r" << counter << " " << allinstances.size();
+      cout.flush();
+      counter++;
+      if (ivi->isassigned == 0){
+         GroupInstance ginst;
+         ginst.chrom=ivi->chrom;
+         ginst.start=ivi->coord;
+         ginst.stop=ivi->coord+width-1;
+         ginst.instances.push_back(*ivi);
+         ivi->isassigned=1;
+         if (ivi!=allinstances.end()-1){
+            for (ivinst ivi2=ivi+1;ivi2!=allinstances.end();ivi2++){
+               if ( (ivi2->chrom == ivi->chrom) && (ivi2->coord - ivi->coord < scanwidth - width +1 ) ){
+                  ginst.instances.push_back(*ivi2);
+                  ginst.stop=ivi2->coord+width-1;
+                  ivi2->isassigned=1;
+               }
+               else break;
+            }
+         }
+         int instlen=ginst.stop-ginst.start+1;
+         ginst.start-=ceil((double)(scanwidth-instlen)/2);
+         ginst.stop+=floor((double)(scanwidth-instlen)/2);
+
+         for (ivinst iv=ginst.instances.begin();iv!=ginst.instances.end();iv++){
+            ginst.nbmots[iv->motindex]++;
+         }
+
+         ginst.compscore(motsdef,nbmots_for_score);
+   
+         for (ivTSS ivt=TSSall.begin();ivt!=TSSall.end();ivt++){
+            if (ivt->chrom == ginst.chrom && abs(ivt->coord-(ginst.start+ginst.stop)/2)<=annotextent){
+               ginst.TSSs.push_back(*ivt);
+            }
+         }
+   
+
+         cout << ginst << "\n";
+         for (ivTSS ivt=ginst.TSSs.begin();ivt!=ginst.TSSs.end();ivt++){
+            cout << ivt->gene << " ";
+         }
+         cout << "\n";
+
+         groupedinst[ivi->chrom].push_back(ginst);
+      }
+   }
+   exit(9);
    // assign nearest TSS to genes
    cout << "Assign CRMs to nearest gene..." << endl;
    for (unsigned int i=0;i<nbchrom;i++){
@@ -461,10 +630,12 @@ scangen_args_init()
       species="droso";
       nbspecies=12;
       conca=0.3; 
+      nbchrom=6;
    } else if (!strcmp(scangen_args.species_arg,"eutherian")){
       species="eutherian";
       nbspecies=12;
-      conca=0.263; 
+      conca=0.263;
+     nbchrom=21; 
    }
    concc=0.5-conca;
    conct=conca;
@@ -472,13 +643,10 @@ scangen_args_init()
    
    scanwidth=scangen_args.scanwidth_arg;
    scanstep=scangen_args.scanstep_arg;
+   annotextent=scangen_args.annotextent_arg;
 
    nbmots_for_score=scangen_args.nbmots_arg;
    
-   // *** It would be nice to set the threshold by bp, in bits.
-   scorethr2=width*scangen_args.threshold_arg/10;
-   scorethr=width*(scorethr2-1.0)/10;
-   scorethrcons=width*(scorethr2-1.0)/10;
    
    neighbext=scangen_args.neighbext_arg;
 
@@ -492,7 +660,6 @@ cmd_scangen(int argc, char **argv)
       exit(1);
 
    scangen_args_init();
-   cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
       
    cout << "Loading Motifs" << endl;
    loadmots(scangen_args.motifs_arg,motsdef); 
@@ -500,16 +667,30 @@ cmd_scangen(int argc, char **argv)
    if ( nbmots_for_score < motsdef.size() ) 
       motsdef.erase( motsdef.begin() + nbmots_for_score , motsdef.end() );
    cout << "Nb mots for score: " << nbmots_for_score  << endl;
+   
+   // *** It would be nice to set the threshold by bp, in bits.
+   width=motsdef[0].bsinit.size();
+   scorethr2=width*scangen_args.threshold_arg/10;
+   scorethr=width*(scorethr2-1.0)/10;
+   scorethrcons=width*(scorethr2-1.0)/10;
+   cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
+      
+   for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
+      ivm->motscorethr2=scorethr2;
+      ivm->motscorethr=scorethr;
+      ivm->motscorethrcons=scorethrcons;
+   }
 
 
-   //cout << "Loading chroms" << "\n";
-   //loadchroms();
+   //cout << "Loading phenotypes" << endl;
+   //loadannots();
+   
+   cout << "Scanning genome for conserved motif instances" << endl;
+   scanmots();
 
-   cout << "Loading phenotypes" << endl;
-   loadannots();
-
-   cout << "Loading instances" << endl;
-   initgroupedinst();
+   cout << "Defining instances" << endl;
+   //initgroupedinst();
+   compgroupedinst();
 
    ifstream potregs;
    if (species=="droso") potregs.open("/home/santolin/these/files/droso/align/all/align-files.dat");

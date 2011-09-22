@@ -125,6 +125,49 @@ stringtoint(string & seq)
    }
    return iseq;
 }
+   
+// *** lowercase = REPEATS, N = CDS
+   vint
+stringtointmaskrepeats(string & seq)
+{
+   string::const_iterator istr;
+
+   vint iseq;
+   for (istr=seq.begin();istr!=seq.end();istr++){
+      if (*istr=='A'){
+         iseq.push_back(0);
+      }
+      else if (*istr=='C'){
+         iseq.push_back(1);
+      }
+      else if (*istr=='G'){
+         iseq.push_back(2);
+      }
+      else if (*istr=='T'){
+         iseq.push_back(3);
+      }
+      else if (*istr=='-'){
+         iseq.push_back(5);
+      }
+      else {
+         iseq.push_back(4);
+      }
+   }
+   return iseq;
+}
+
+void 
+maskrepeats(vseq &seqs)
+{
+   for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){
+      for (unsigned int i=0;i<nbspecies;i++){
+         if (ivs->species[i]){
+            ivs->iseqs[i]=stringtointmaskrepeats(ivs->seqs[i]);
+         }
+      }
+   }
+   return;
+}
 
    string
 remgaps(string & seq)
@@ -140,7 +183,7 @@ remgaps(string & seq)
    return oseq;
 }
 
-TSS::TSS(int position,char dir,string chr,string gname)
+TSS::TSS(int position,char dir,string chr,string gname,string gnamevar)
 {
    if (chr=="2L"){
       chrom=0;
@@ -160,6 +203,19 @@ TSS::TSS(int position,char dir,string chr,string gname)
       sens=1;
    } else sens=-1;
    gene=gname;
+   genevar=gnamevar;
+}
+
+ostream& 
+operator <<(ostream &os,const vTSS &vt)
+{
+   for (civTSS ivt=vt.begin();ivt!=vt.end();ivt++){
+      os << ivt->chrom << " ";
+      os << ivt->coord << " ";
+      os << ivt->sens << " ";
+      os << ivt->gene << ";";
+   }
+   return os;
 }
 
 string
@@ -311,11 +367,13 @@ operator >>(istream &is,TSS & tss)
    char dum;
    char dir;
    string gname;
+   string gnamevar;
    string chrom;
    is >> pos;
    is >> dir;
-   is >> gname;
    is >> chrom;
+   is >> gname;
+   is >> gnamevar;
 
    if (dir=='+'){
       tss.sens=1;
@@ -328,6 +386,7 @@ operator >>(istream &is,TSS & tss)
    
    tss.coord=pos;
    tss.gene=gname;
+   tss.genevar=gnamevar;
    return is;
 }
 

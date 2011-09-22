@@ -79,7 +79,7 @@ extern unsigned int scanwidth;
 extern unsigned int scanstep;
 
 extern unsigned int nbchrom;
-const unsigned int annotextent=10000;
+extern unsigned int annotextent;
 
 extern unsigned int nbmots_for_score;
 

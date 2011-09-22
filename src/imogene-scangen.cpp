@@ -280,17 +280,17 @@ scanseqforinstances(Sequence &seq,vmot & mots)
    return;
 }
    
-   void
-scanseqforconsinstances(Sequence &seq,vmot & mots)
-{
-   seq.instances.clear();
-   for (ivmot im=mots.begin();im!=mots.end();im++){
-      if (seq.iseqs[0].size()>im->motwidth){
-         im->matinitforscanmots(seq);
-      }
-   }
-   return;
-}
+//   void
+//scanseqforconsinstances(Sequence &seq,vmot & mots)
+//{
+//   seq.instances.clear();
+//   for (ivmot im=mots.begin();im!=mots.end();im++){
+//      if (seq.iseqs[0].size()>im->motwidth){
+//         im->matinitforscanmots(seq);
+//      }
+//   }
+//   return;
+//}
 
    void
 scanseqsforinstances(vseq & align,vmot & mots)
@@ -589,97 +589,96 @@ scanseqs(ifstream & list,vcoord & coords)
    }
 }
    
-   void
-scanmots()
-{
-   ifstream potregs;
-   if (species==1) potregs.open("/home/santolin/these/files/droso/align/all/align-files.dat");
-   else if (species==2) potregs.open("/home/santolin/these/files/mus/epo/align-files.dat");
-   //else if (species==2) potregs.open("/home/santolin/these/files/transfac/matrices/align-test.dat");
-   vstring regs;
-   back_insert_iterator<vstring> dest(regs);
-   copy(iisstring(potregs),iisstring(),dest);
-   potregs.close();
-
-   string pchrom("");
-   system("if ! test -d scanmots;then mkdir scanmots;fi;");      
-   unsigned int totlen(0),totlentb(0);
-   //random_shuffle(regs.begin(),regs.end());
-   for (ivstring is=regs.begin();is!=regs.end();is++){
-      Sequence seq;
-      ifstream fseq;
-      fseq.open((*is).c_str());
-      string fseqline;
-      getline(fseq,fseqline);
-      seq.name=fseqline;
-//cout << seq.name << endl;
-      stringstream firstline(fseqline);
-      string speciesname;
-      firstline >> speciesname;
-      string chrom;
-      firstline >> chrom;
-      if (chrom!=pchrom){
-         cout << chrom << endl;
-         pchrom=chrom;
-      }
-      seq.chrom=intfromchrom(chrom.substr(3));
-      if (seq.chrom==-1) continue;
-      firstline >> seq.start;
-      firstline >> seq.stop;
-      seq.finame=*is;
-      string dum;
-      seq.species=vint(nbspecies,0);
-      vint dumi;
-      seq.iseqs=vvint(nbspecies,dumi);
-      seq.imaps=vvint(nbspecies,dumi);
-      seq.imapsinv=vvint(nbspecies,dumi);
-      while (!fseq.eof()){
-//cout << fseqline << endl;
-         int seqnum=speciestonum(fseqline.substr(1,6));
-         getline(fseq,fseqline);
-         seq.imaps[seqnum]=alignedtomap(fseqline);
-         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
-         string seqwogap=remgaps(fseqline);
-         if (seqwogap.size()>30){
-            seq.species[seqnum]=1;
-         }
-         seq.iseqs[seqnum]=stringtoint(seqwogap);
-         getline(fseq,fseqline);
-      }
-      seq.nbN=compN(seq.iseqs[0]);
-      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
-
-      scanseqforconsinstances(seq,motsdef);
-
-      fseq.close();
-      
-      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-         //sort(ivm->refinstances_short.begin(),ivm->refinstances_short.end());
-         ostringstream outfs;
-         outfs << "scanmots/" << ivm->name << "_" << ivm->motscorethr2 << ".dat";
-         ofstream outf;
-         if (totlen==0) outf.open(outfs.str().c_str());
-         else outf.open(outfs.str().c_str(),ios::app);
-
-         for (ivinst ivi=ivm->refinstances_short.begin();ivi!=ivm->refinstances_short.end();ivi++){
-            outf << ivi->site << "\t";
-            outf << chromfromint(ivi->chrom) << "\t";
-            outf << ivi->coord << "\t";
-            outf << ivi->sens << "\t";
-            outf << ivi->score << endl;
-         }
-         outf.close();
-         ivm->refinstances_short.clear();
-      }
-
-      totlen+=seq.nbtb+seq.nbN;
-      totlentb+=seq.nbtb;
-   }
-
-   cout << "Total length of the alignement: " << totlen << " bp, including " << totlentb << " unmasked bp" << endl;
-
-   return;
-}
+//   void
+//scanmots()
+//{
+//   ifstream potregs;
+//   if (species==1) potregs.open("/home/santolin/these/files/droso/align/all/align-files.dat");
+//   else if (species==2) potregs.open("/home/santolin/these/files/mus/epo/align-files.dat");
+//   //else if (species==2) potregs.open("/home/santolin/these/files/transfac/matrices/align-test.dat");
+//   vstring regs;
+//   back_insert_iterator<vstring> dest(regs);
+//   copy(iisstring(potregs),iisstring(),dest);
+//   potregs.close();
+//
+//   string pchrom("");
+//   unsigned int totlen(0),totlentb(0);
+//   //random_shuffle(regs.begin(),regs.end());
+//   for (ivstring is=regs.begin();is!=regs.end();is++){
+//      Sequence seq;
+//      ifstream fseq;
+//      fseq.open((*is).c_str());
+//      string fseqline;
+//      getline(fseq,fseqline);
+//      seq.name=fseqline;
+////cout << seq.name << endl;
+//      stringstream firstline(fseqline);
+//      string speciesname;
+//      firstline >> speciesname;
+//      string chrom;
+//      firstline >> chrom;
+//      if (chrom!=pchrom){
+//         cout << chrom << endl;
+//         pchrom=chrom;
+//      }
+//      seq.chrom=intfromchrom(chrom.substr(3));
+//      if (seq.chrom==-1) continue;
+//      firstline >> seq.start;
+//      firstline >> seq.stop;
+//      seq.finame=*is;
+//      string dum;
+//      seq.species=vint(nbspecies,0);
+//      vint dumi;
+//      seq.iseqs=vvint(nbspecies,dumi);
+//      seq.imaps=vvint(nbspecies,dumi);
+//      seq.imapsinv=vvint(nbspecies,dumi);
+//      while (!fseq.eof()){
+////cout << fseqline << endl;
+//         int seqnum=speciestonum(fseqline.substr(1,6));
+//         getline(fseq,fseqline);
+//         seq.imaps[seqnum]=alignedtomap(fseqline);
+//         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
+//         string seqwogap=remgaps(fseqline);
+//         if (seqwogap.size()>30){
+//            seq.species[seqnum]=1;
+//         }
+//         seq.iseqs[seqnum]=stringtoint(seqwogap);
+//         getline(fseq,fseqline);
+//      }
+//      seq.nbN=compN(seq.iseqs[0]);
+//      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
+//
+//      scanseqforconsinstances(seq,motsdef);
+//
+//      fseq.close();
+//      
+//      for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
+//         //sort(ivm->refinstances_short.begin(),ivm->refinstances_short.end());
+//         ostringstream outfs;
+//         outfs << "scanmots/" << ivm->name << "_" << ivm->motscorethr2 << ".dat";
+//         ofstream outf;
+//         if (totlen==0) outf.open(outfs.str().c_str());
+//         else outf.open(outfs.str().c_str(),ios::app);
+//
+//         for (ivinst ivi=ivm->refinstances_short.begin();ivi!=ivm->refinstances_short.end();ivi++){
+//            outf << ivi->site << "\t";
+//            outf << chromfromint(ivi->chrom) << "\t";
+//            outf << ivi->coord << "\t";
+//            outf << ivi->sens << "\t";
+//            outf << ivi->score << endl;
+//         }
+//         outf.close();
+//         ivm->refinstances_short.clear();
+//      }
+//
+//      totlen+=seq.nbtb+seq.nbN;
+//      totlentb+=seq.nbtb;
+//   }
+//
+//   cout << "Total length of the alignement: " << totlen << " bp, including " << totlentb << " unmasked bp" << endl;
+//
+//   return;
+//}
 
 bool operator<(const Sequence & seqscr1,const Sequence & seqscr2)
 {

@@ -256,6 +256,10 @@ cmd_genmot(int argc, char **argv)
    regints=loadseqs(genmot_args.align_arg);
 
    cout << "Training set size : " << regints.size() << endl;
+   
+   cout << "Masking repeats in training set..." << endl;
+
+   maskrepeats(regints);
 
    inittreedist();
 

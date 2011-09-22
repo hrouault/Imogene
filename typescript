@@ -1,0 +1,436 @@
+Script started on Thu Sep 22 11:28:59 2011
+]2;Marc@toscane: ~imogene]1;~imogene[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36m~imogene [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kscripts/ 
+]2;scripts]1;scripts]2;Marc@toscane: ~imogene/scripts]1;..ogene/scripts[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mscripts [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kl
+]2;ls -G -l]1;ltotal 40
+-rw-r--r--   1 Marc  staff    829 16 sep 12:15 Makefile.am
+-rw-r--r--   1 Marc  staff  14831 16 sep 12:17 Makefile.in
+drwxr-xr-x  11 Marc  staff    374 21 sep 18:53 [1m[36mpython[m[m
+drwxr-xr-x   3 Marc  staff    102 13 sep 17:25 [1m[36msh[m[m
+]2;Marc@toscane: ~imogene/scripts]1;..ogene/scripts[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mscripts [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kccd python/ 
+]2;cd python]1;cd]2;Marc@toscane: ~imogene/scripts/python]1;..cripts/python[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mpython [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kl
+]2;ls -G -l]1;ltotal 120
+-rw-r--r--  1 Marc  staff   2337 21 sep 11:16 Makefile.am
+-rw-r--r--  1 Marc  staff  12415 21 sep 11:18 Makefile.in
+-rw-r--r--  1 Marc  staff   6656 16 sep 12:15 emf2fasta.pyx.in
+-rw-r--r--  1 Marc  staff   2951 16 sep 12:15 extractbackground-droso.py.in
+-rw-r--r--  1 Marc  staff   2840 16 sep 12:15 extractbackground-eutherian.py.in
+-rwxr-xr-x  1 Marc  staff   6922 16 sep 12:15 [31mgetalign-droso.py.in[m[m
+-rwxr-xr-x  1 Marc  staff   5550 16 sep 12:15 [31mgetalign-eutherian.py.in[m[m
+-rwxr-xr-x  1 Marc  staff   2619 16 sep 12:15 [31mmapping.py.in[m[m
+-rwxr-xr-x  1 Marc  staff   1903 21 sep 18:53 [31mweblogo-display.py.in[m[m
+]2;Marc@toscane: ~imogene/scripts/python]1;..cripts/python[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mpython [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kvvi getalign-droso.py.in 
+]2;vi getalign-droso.py.in]1;vi7[?47h[?1h=[1;58r[m[H[2J[58;1H"getalign-droso.py.in" "getalign-droso.py.in" 221L, 6922C[>c[1;1H[33m  1 [m[34m#!/usr/bin/env python[m
+[33m  2 [m[34m#    [m
+[33m  3 [m[34m# Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>[m
+[33m  4 [m[34m# Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>[m
+[33m  5 [m[34m# [m
+[33m  6 [m[34m# This file is part of Imogene.[m
+[33m  7 [m[34m# [m
+[33m  8 [m[34m# Imogene is free software: you can redistribute it and/or modify[m
+[33m  9 [m[34m# it under the terms of the GNU General Public License as published by[m
+[33m 10 [m[34m# the Free Software Foundation, either version 3 of the License, or[m
+[33m 11 [m[34m# (at your option) any later version.[m
+[33m 12 [m[34m# [m
+[33m 13 [m[34m# Imogene is distributed in the hope that it will be useful,[m
+[33m 14 [m[34m# but WITHOUT ANY WARRANTY; without even the implied warranty of[m
+[33m 15 [m[34m# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the[m
+[33m 16 [m[34m# GNU General Public License for more details.[m
+[33m 17 [m[34m# [m
+[33m 18 [m[34m# You should have received a copy of the GNU General Public License[m
+[33m 19 [m[34m# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.[m
+[33m 20 
+ 21 [m[35mimport[m sys
+[33m 22 [m[35mimport[m os
+[33m 23 [m[35mimport[m shutil
+[33m 24 [m[35mimport[m string
+[33m 25 [m[35mimport[m glob
+[33m 26 [m[35mimport[m datetime
+[33m 27 [m[35mimport[m bisect
+[33m 28 [m[35mimport[m errno
+[33m 29 
+ 30 def[m [36mmkdir[m(path):
+[33m 31 [m   [33mtry[m:
+[33m 32 [m      os.mkdir(path)
+[33m 33 [m   [33mexcept[m os.error, e:
+[33m 34 [m      [33mif[m e.errno != errno.EEXIST:
+[33m 35 [m[8C [33mraise
+ 36 
+ 37 [msys.path.append("[31m@pythondir@[m")
+[33m 38 [m[35mimport[m mapping
+[33m 39 
+ 40 [mos.chdir('[31m@pkgdatadir@[m')
+[33m 41 [mmkdir('[31mdroso[m')
+[33m 42 [mos.chdir('[31mdroso[m')
+[33m 43 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Downloading Mavid Mercator alignment files...[m"
+[33m 44 print
+ 45 
+ 46 [mos.system('[31mwget -c "http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/fly_CAF1.1.tar.gz"[m')
+[33m 47 
+ 48 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Extracting alignment files...[m"
+[33m 49 print
+ 50 
+ 51 [mos.system('[31mtar xzf fly_CAF1.1.tar.gz[m')
+[33m 52 [mos.system('[31mmv Dro*.agp map genomes treefile alignments[m')
+[33m 53 [m[34m#os.remove("fly_CAF1.1.tar.gz")[m
+[33m 54 
+ 55 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Downloading Flybase annotation files...[m"
+[33m 56 print
+ 57 [m[58;218H1,1           Top[1;5H[58;208HG         [1;5H[58;208H          [57;5H[m[H[2J[1;1H[33m165 
+166 
+167 
+168 for[m folder [33min[m glob.glob('[31m[0-9]*/[m'):
+[33m169 [m   [33mprint[m "[31mProcessing folder [m",folder
+[33m170 [m   os.chdir(folder)
+[33m171 [m   [33mwith[m open('[31mmavid.mfa[m') [35mas[m fmavid:
+[33m172 [m      [33mwith[m open('[31mmavid2.mfa[m', '[31mw[m' ) [35mas[m fmavid2:
+[33m173 
+174 [m[8C [34m## Read coordinates[m
+[33m175 [m[8C coordline=fmavid.readline()
+[33m176 [m[8C fmavid2.write(coordline)
+[33m177 [m[8C coordline=coordline.rstrip().split("[31m [m")
+[33m178 [m[8C coordstart=[coordline[1],int(coordline[2]),int(coordline[2])]
+[33m179 [m[8C coordstop=[coordline[1],int(coordline[3]),int(coordline[3])]
+[33m180 
+181 [m[8C [34m## Mask sequences[m
+[33m182 [m[8C seqline=list(fmavid.readline())
+[33m183 [m[8C posstart=posrecordleft(cds,coordstart)
+[33m184 [m[8C posstop=posrecordleft(cds,coordstop)
+[33m185 [m[8C [33mfor[m i [33min[m range(posstart,posstop):
+[33m186 [m[11C record=cds[i]
+[33m187 [m[11C [33mif[m record[0]==coordstart[0]:
+[33m188 [m[14C maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,0)
+[33m189 [m[8C posstart=posrecordleft(repeat,coordstart)
+[33m190 [m[8C posstop=posrecordleft(repeat,coordstop)
+[33m191 [m[8C [33mfor[m i [33min[m range(posstart,posstop):
+[33m192 [m[11C record=repeat[i]
+[33m193 [m[11C [33mif[m record[0]==coordstart[0]:
+[33m194 [m[14C maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,1)
+[33m195 [m[8C fmavid2.write(''.join(seqline))
+[33m196 [m[8C [33mfor[m i [33min[m fmavid.readlines():
+[33m197 [m[11C fmavid2.write(i)
+[33m198 [m   shutil.move("[31mmavid2.mfa[m","[31mmavid.mfa[m")
+[33m199 [m   os.chdir("[31m..[m")
+[33m200 
+201 [mos.chdir('[31m..[m')
+[33m202 
+203 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Generate the list of alignments.[m"
+[33m204 
+205 [mlines=[]
+[33m206 for[m fmavid [33min[m glob.glob('[31malignments/[0-9]*/mavid.mfa[m'):
+[33m207 [m   [33mwith[m open(fmavid) [35mas[m mavid:
+[33m208 [m      line=mavid.readline().rstrip().split("[31m [m")
+[33m209 [m   line.append(os.getcwd()+"[31m/[m"+fmavid)
+[33m210 [m   line[2]=int(line[2])
+[33m211 [m   lines.append(line[1:])
+[33m212 
+213 [mlines.sort()
+[33m214 for[m i [33min[m lines:
+[33m215 [m   i[1]=str(i[1])
+[33m216 with[m open("[31malign.dat[m","[31mw[m") [35mas[m fout:
+[33m217 [m   [33mfor[m li [33min[m lines:
+[33m218 [m      fout.write("".join(i+"[31m [m" [33mfor[m i [33min[m lines))
+[33m219 [m      fout.write("[35m\n[m")
+[33m220 
+221 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Exit normally.[m"[58;218H221,1         Bot[57;5H[58;208H~@k       [57;5H[58;208H          [56;5H[58;218H220,0-1       Bot[56;5H[58;208H~@k       [56;5H[58;208H          [55;5H[58;218H219,1         Bot[55;5H[58;208H~@k       [55;5H[58;208H          [54;5H[58;218H218,1         Bot[54;5H[58;208H~@k       [54;5H[58;208H          [53;5H[58;218H217,1         Bot[53;5H[58;208H~@k       [53;5H[58;208H          [52;5H[58;218H216,1         Bot[52;5H[58;208H~@k       [52;5H[58;208H          [51;5H[58;218H215,1         Bot[51;5H[58;208H~@k       [51;5H[58;208H          [50;5H[58;218H214,1         Bot[50;5H[58;208H~@k       [50;5H[58;208H          [49;5H[58;218H213,1         Bot[49;5H[58;208H~@k       [49;5H[58;208H          [48;5H[58;218H212,0-1       Bot[48;5H[58;208H~@k       [48;5H[58;208H          [47;5H[58;218H211,1         Bot[47;5H[58;208H~@k       [47;5H[58;208H          [46;5H[58;218H210,1         Bot[46;5H[58;208H~@k       [46;5H[58;208H          [45;5H[58;218H209,1         Bot[45;5H[58;208H~@k       [45;5H[58;208H          [44;5H[58;218H208,1         Bot[44;5H[58;208H~@k       [44;5H[58;208H          [43;5H[58;218H207,1         Bot[43;5H[58;208H~@k       [43;5H[58;208H          [42;5H[58;218H206,1         Bot[42;5H[58;208H~@k       [42;5H[58;208H          [41;5H[58;218H205,1         Bot[41;5H[58;208H~@k       [41;5H[58;208H          [40;5H[58;218H204,0-1       Bot[40;5H[58;208H~@k       [40;5H[58;208H          [39;5H[58;218H203,1         Bot[39;5H[58;208H~@k       [39;5H[58;208H          [38;5H[58;218H202,0-1       Bot[38;5H[58;208H~@k       [38;5H[58;208H          [37;5H[58;218H201,1         Bot[37;5H[58;208H~@k       [37;5H[58;208H          [36;5H[58;218H200,0-1       Bot[36;5H[58;208H~@k       [36;5H[58;208H          [35;5H[58;218H199,1         Bot[35;5H[58;208H~@k       [35;5H[58;208H          [34;5H[58;218H198,1         Bot[34;5H[58;208H~@k       [34;5H[58;208H          [33;5H[58;218H197,1         Bot[33;5H[58;208H~@k       [33;5H[58;208H          [32;5H[58;218H196,1         Bot[32;5H[58;208H~@k       [32;5H[58;208H          [31;5H[58;218H195,1         Bot[31;5H[58;208H~@k       [31;5H[58;208H          [30;5H[58;218H194,1         Bot[30;5H[58;208H~@k       [30;5H[58;208H          [29;5H[58;218H193,1         Bot[29;5H[58;208H~@k       [29;5H[58;208H          [28;5H[58;218H192,1         Bot[28;5H[58;208H~@k       [28;5H[58;208H          [27;5H[58;218H191,1         Bot[27;5H[58;208H~@k       [27;5H[58;208H          [26;5H[58;218H190,1         Bot[26;5H[58;208H~@k       [26;5H[58;208H          [25;5H[58;218H189,1         Bot[25;5H[58;208H~@k       [25;5H[58;208H          [24;5H[58;218H188,1         Bot[24;5H[58;208H~@k       [24;5H[58;208H          [23;5H[58;218H187,1         Bot[23;5H[58;208H~@k       [23;5H[58;208H          [22;5H[58;218H186,1         Bot[22;5H[58;208H~@k       [22;5H[58;208H          [21;5H[58;218H185,1         Bot[21;5H[58;208H~@k       [21;5H[58;208H          [20;5H[58;218H184,1         Bot[20;5H[58;208H~@k       [20;5H[58;208H          [19;5H[58;218H183,1         Bot[19;5H[58;208H~@k       [19;5H[58;208H          [18;5H[58;218H182,1         Bot[18;5H[58;208H~@k       [18;5H[58;208H          [17;5H[58;218H181,1         Bot[17;5H[58;208H~@k       [17;5H[58;208H          [16;5H[58;218H180,1         Bot[16;5H[58;208H~@k       [16;5H[58;208H          [15;5H[58;218H179,1         Bot[15;5H[58;208H~@k       [15;5H[58;208H          [14;5H[58;218H178,1         Bot[14;5H[58;208H~@k       [14;5H[58;208H          [13;5H[58;218H177,1         Bot[13;5H[58;208H~@k       [13;5H[58;208H          [12;5H[58;218H176,1         Bot[12;5H[58;208H~@k       [12;5H[58;208H          [11;5H[58;218H175,1         Bot[11;5H[58;208H~@k       [11;5H[58;208H          [10;5H[58;218H174,1         Bot[10;5H[58;208H~@k       [10;5H[58;208H          [9;5H[58;218H173,0-1       Bot[9;5H[58;208H~@k       [9;5H[58;208H          [8;5H[58;218H172,1         Bot[8;5H[58;208H~@k       [8;5H[58;208H          [7;5H[58;218H171,1         Bot[7;5H[58;208H~@k       [7;5H[58;208H          [6;5H[58;218H170,1         Bot[6;5H[58;208H~@k       [6;5H[58;208H          [5;5H[58;218H169,1         Bot[5;5H[58;208H~@k       [5;5H[58;208H          [4;5H[58;218H168,1         Bot[4;5H[58;208H~@k       [4;5H[58;208H          [3;5H[58;218H167,0-1       Bot[3;5H[58;208H~@k       [3;5H[58;208H          [2;5H[58;218H166,0-1       Bot[2;5H[58;208H~@k       [2;5H[58;208H          [1;5H[58;218H165,0-1       Bot[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m164 [m      shutil.rmtree(i[0])[58;218H[K[58;218H164,1         99%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m163 [m   [33melse[m:[58;218H[K[58;218H163,1         98%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m162 [m[8C shutil.rmtree(i[0])[58;218H[K[58;218H162,1         98%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m161 [m      [33melse[m:[58;218H[K[58;218H161,1         97%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m160 [m[8C os.chdir("[31m..[m")[58;218H[K[58;218H160,1         96%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m159 [m[8C shutil.move("[31mmavid2.mfa[m","[31mmavid.mfa[m")[58;218H[K[58;218H159,1         96%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m158 [m[20C fmavid2.write(line.rstrip())[58;218H[K[58;218H158,1         95%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m157 [m[17C [33melse[m:[58;218H[K[58;218H157,1         95%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m156 [m[20C fmavid2.write("[35m\n[m"+line)[58;218H[K[58;218H156,1         94%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m155 [m[17C [33mif[m line[0]=='[31m>[m':[58;218H[K[58;218H155,1         93%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m154 [m[14C [33mfor[m line [33min[m fmavid.readlines():[58;218H[K[58;218H154,1         93%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m153 [m[14C fmavid2.write("[31m [m"+r5coord[0]+"[31m [m"+str(r5coord[1])+"[31m [m"+str(r5coord[2])+"[35m\n[m")[58;218H[K[58;218H153,1         92%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m152 [m[14C fmavid2.write(firstline.rstrip())[58;218H[K[58;218H152,1         92%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m151 [m[14C firstline=fmavid.readline()[58;218H[K[58;218H151,1         91%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m150 [m[11C [33mwith[m open ("[31mmavid2.mfa[m","[31mw[m") [35mas[m fmavid2:[58;218H[K[58;218H150,1         90%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m149 [m[8C [33mwith[m open("[31mmavid.mfa[m") [35mas[m fmavid:[58;218H[K[58;218H149,1         90%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m148 [m[8C os.chdir(i[0])[58;218H[K[58;218H148,1         89%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m147 [m      [33mif[m  r5coord != ["", 0, 0]:[58;218H[K[58;218H147,1         89%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m146 [m      r5coord=mapping.r4_map(coordmel)[58;218H[K[58;218H146,1         88%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m145 [m      coordmel[2]=int(coordmel[2])[58;218H[K[58;218H145,1         87%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m144 [m      coordmel[1]=int(coordmel[1])+1[58;218H[K[58;218H144,1         87%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m143 [m      coordmel[0]=coordmel[0][3:][58;218H[K[58;218H143,1         86%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m142 [m   [33mif[m coordmel[1]!="[31mNA[m" [33mand[m coordmel[2]!='[31mNA[m':[58;218H[K[58;218H142,1         85%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m141 [m   coordmel=i[1:4][58;218H[K[58;218H141,1         85%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m140 for[m i [33min[m maps:[58;218H[K[58;218H140,1         84%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m139 [m[58;218H[K[58;218H139,0-1       84%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m138 [mfmap.close[58;218H[K[58;218H138,1         83%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m137 [mmaps=[i.rstrip().split("[35m\t[m") [33mfor[m i [33min[m fmap.readlines()][58;218H[K[58;218H137,1         82%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m136 [mfmap=open("[31mmap[m")[58;218H[K[58;218H136,1         82%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m135 [mos.chdir("[31malignments[m")[58;218H[K[58;218H135,1         81%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m134 [m[34m## Iterate over alignment files[m[58;218H[K[58;218H134,1         81%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m133 [m[58;218H[K[58;218H133,0-1       80%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m132 [m   [33mreturn[m pos[58;218H[K[58;218H132,1         79%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m131 [m      pos=pos-1[58;218H[K[58;218H131,1         79%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m130 [m   [33mif[m pos>0:[58;218H[K[58;218H130,1         78%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m129 [m   pos=bisect.bisect_left(coordlist,coord)[58;218H[K[58;218H129,1         78%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m128 def[m [36mposrecordleft[m(coordlist,coord):[58;218H[K[58;218H128,1         77%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m127 [m[34m## Record selection functions[m[58;218H[K[58;218H127,1         76%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m126 [m[58;218H[K[58;218H126,0-1       76%[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m125 [m[8C curpos+=1[58;218H[K[58;218H125,1         75%[1;5H[58;208H~@k       [1;5H[58;208H          [2;5H[58;218H126,0-1       75%[2;5H[58;208H~@k       [2;5H[58;208H          [3;5H[58;218H127,1         75%[3;5H[58;208H~@k       [3;5H[58;208H          [4;5H[58;218H128,1         75%[4;5H[58;208H~@k       [4;5H[58;208H          [5;5H[58;218H129,1         75%[5;5H[58;208H~@k       [5;5H[58;208H          [6;5H[58;218H130,1         75%[6;5H[58;208H~@k       [6;5H[58;208H          [7;5H[58;218H131,1         75%[7;5H[58;208H~@k       [7;5H[58;208H          [8;5H[58;218H132,1         75%[8;5H[58;208H~@k       [8;5H[58;208H          [9;5H[58;218H133,0-1       75%[9;5H[58;208H~@k       [9;5H[58;208H          [10;5H[58;218H134,1         75%[10;5H[58;208H~@k       [10;5H[58;208H          [11;5H[58;218H135,1         75%[11;5H[58;208H~@k       [11;5H[58;208H          [12;5H[58;218H136,1         75%[12;5H[58;208H~@k       [12;5H[58;208H          [13;5H[58;218H137,1         75%[13;5H[58;208H~@k       [13;5H[58;208H          [14;5H[58;218H138,1         75%[14;5H[58;208H~@k       [14;5H[58;208H          [15;5H[58;218H139,0-1       75%[15;5H[58;208H~@k       [15;5H[58;208H          [16;5H[58;218H140,1         75%[16;5H[58;208H~@k       [16;5H[58;208H          [17;5H[58;218H141,1         75%[17;5H[58;208H~@k       [17;5H[58;208H          [18;5H[58;218H142,1         75%[18;5H[58;208H~@k       [18;5H[58;208H          [19;5H[58;218H143,1         75%[19;5H[58;208H~@k       [19;5H[58;208H          [20;5H[58;218H144,1         75%[20;5H[58;208H~@k       [20;5H[58;208H          [21;5H[58;218H145,1         75%[21;5H[58;208H~@k       [21;5H[58;208H          [22;5H[58;218H146,1         75%[22;5H[58;208H~@k       [22;5H[58;208H          [23;5H[58;218H147,1         75%[23;5H[58;208H/         [23;5H[58;208H[K[58;1H/e[25;21H[7me[m[58;218H149,17        75%/e[58;218H[K[58;3H/[58;2H[K[25;21He[58;218H147,1         75%/[58;218H[K[58;2Hr[23;15H[7mr[m[58;218H147,11        75%/r[58;218H[K[58;3He[23;15Hr[27;37H[7mre[m[58;218H151,33        75%/re[58;218H[K[58;4Hp[1;57r[1;1H[8M[1;58r[19;37Hre[50;1H[33m182 [m[8C seqline=list(fmavid.readline())
+[33m183 [m[8C posstart=posrecordleft(cds,coordstart)
+[33m184 [m[8C posstop=posrecordleft(cds,coordstop)
+[33m185 [m[8C [33mfor[m i [33min[m range(posstart,posstop):
+[33m186 [m[11C record=cds[i]
+[33m187 [m[11C [33mif[m record[0]==coordstart[0]:
+[33m188 [m[14C maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,0)
+[33m189 [m[8C posstart=posrecordleft([7mrep[meat,coordstart)[58;1H[K[58;218H189,33        80%/rep[58;218H[K[58;5He[57;40H[7me[m[58;218H189,33        80%/repe[58;218H[K[58;6H/repe[207C          [57;37Hrepe[58;218H189,33        80%[57;37H[58;208H~@k       [57;37H[58;208H          [57;37H[1;57r[57;1H
+[1;58r[57;1H[33m190 [m[8C posstop=posrecordleft(repeat,coordstop)[58;1H[K[58;218H190,33        81%[57;37H[58;208H~@k       [57;37H[58;208H          [57;37H[1;57r[57;1H
+[1;58r[57;1H[33m191 [m[8C [33mfor[m i [33min[m range(posstart,posstop):[58;218H[K[58;218H191,33        81%[57;37H[58;208H~@k       [57;37H[58;208H          [57;32H[1;57r[57;1H
+[1;58r[57;1H[33m192 [m[11C record=repeat[46m[[mi[46m][m[58;218H[K[58;218H192,28        82%[57;32H[58;208H~@k       [57;32H[58;208H          [57;37H[1;57r[57;1H
+[1;58r[56;30H[i]
+[33m193 [m[11C [33mif[m record[0]==coordstart[0]:[58;218H[K[58;218H193,33        82%[57;37H[58;208H~@k       [57;37H[58;208H          [57;37H[1;57r[57;1H
+[1;58r[57;1H[33m194 [m[14C maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,1)[58;218H[K[58;218H194,33        83%[57;37H[58;208H~@k       [57;37H[58;208H          [57;37H[1;57r[57;1H
+[1;58r[57;1H[33m195 [m[8C fmavid2.write(''.join(seqline))[58;218H[K[58;218H195,33        84%[57;37H[58;208H~@k       [57;37H[58;208H          [57;37H[1;57r[57;1H
+[1;58r[57;1H[33m196 [m[8C [33mfor[m i [33min[m fmavid.readlines():[58;218H[K[58;218H196,33        84%[57;37H[58;208H~@k       [57;37H[58;208H          [57;32H[1;57r[57;1H
+[1;58r[57;1H[33m197 [m[11C fmavid2.write[46m([mi[46m)[m[58;218H[K[58;218H197,28        85%[57;32H[58;208H~@k       [57;32H[58;208H          [56;37H[57;30H(i)[58;218H196,33        85%[56;37H[58;208H~@k       [56;37H[58;208H          [55;37H[58;218H195,33        85%[55;37H[58;208H~@k       [55;37H[58;208H          [54;37H[58;218H194,33        85%[54;37H[58;208H~@k       [54;37H[58;208H          [53;37H[58;218H193,33        85%[53;37H[58;208H~@k       [53;37H[58;208H          [53;36H[58;218H193,32        85%[53;36H[58;208H~@k       [53;36H[58;208H          [53;35H[58;218H193,31        85%[53;35H[58;208H~@k       [53;35H[58;208H          [53;34H[58;218H193,30        85%[53;34H[58;208H~@k       [53;34H[58;208H          [53;33H[58;218H193,29        85%[53;33H[58;208H~@k       [53;33H[58;208H          [53;32H[58;218H193,28        85%[53;32H[58;208H~@k       [53;32H[58;208H          [53;31H[58;218H193,27        85%[53;31H[58;208H~@k       [53;31H[58;208H          [53;30H[58;218H193,26        85%[53;30H[58;208H~@k       [53;30H[58;208H          [53;29H[58;218H193,25        85%[53;29H[58;208H~@k       [53;29H[58;208H          [53;28H[46m[[m0[46m][m[58;218H193,24        85%[53;28H[58;208H~@k       [53;28H[58;208H          [53;27H[0][58;218H193,23        85%[53;27H[58;208H~@k       [53;27H[58;208H          [53;26H[46m[[m0[46m][m[58;218H193,22        85%[53;26H[58;208H~@k       [53;26H[58;208H          [53;25Hd[0][58;218H193,21        85%[53;25H[58;208H~@k       [53;25H[58;208H          [53;24H[58;218H193,20        85%[53;24H[58;208H~@k       [53;24H[58;208H          [54;24H[58;218H194,20        85%[54;24H[58;208H^]        [54;24H[58;1H[1m[37m[41mE433: No tags file[m[58;208H[K[58;1H
+[1m[37m[41mE426: tag not found: maskseq[m
+[32mPress ENTER or type command to continue[m[168C          [54;24H[1;1H[2L[1;1H[33m141 [m   coordmel=i[1:4]
+[33m142 [m   [33mif[m coordmel[1]!="[31mNA[m" [33mand[m coordmel[2]!='[31mNA[m':[58;1H[K[58;218H194,20        85%[54;24H[58;208H?         [54;24H[58;208H[K[58;1H?m[54;20H[7mm[m[58;218H194,16        85%?m[58;218H[K[58;3Ha[54;21H[7ma[m[58;218H194,16        85%?ma[58;218H[K[58;4Hs[54;22H[7ms[m[58;218H194,16        85%?mas[58;218H[K[58;5Hk[54;23H[7mk[m[58;218H194,16        85%?mask[58;218H[K[58;6Hs[54;24H[7ms[m[58;218H194,16        85%?masks[58;218H[K[58;7He[54;25H[7me[m[58;218H194,16        85%?maskse[58;218H[K[58;8Hq[54;26H[7mq[m[58;218H194,16        85%?maskseq[58;218H[K[58;9H?maskseq[207C          [54;20Hmaskseq[58;218H194,16        85%[54;20H[58;208Hn         [54;20H[58;1H?maskseq[58;208H[K[58;1H[207C          [48;20H[58;218H188,16        85%[48;20H[58;208Hn         [48;20H[58;1H?maskseq[58;208H[K[58;1H[207C          [29;9H[m[H[2J[1;1H[33m 83 [m[31m      print $1,$5[m[35m\[m
+[33m 84 [m[31m   }[m[35m\[m
+[33m 85 [m[31m}[m[35m\'[m[31m dmel*.gff | uniq > TSS-coord.dat[m')
+[33m 86 
+ 87 
+ 88 def[m [36mprocesscoord[m(coords):
+[33m 89 [m   [33mfor[m i [33min[m coords:
+[33m 90 [m      i[1]=int(i[1])
+[33m 91 [m      i[2]=int(i[2])
+[33m 92 [m   coords.sort()
+[33m 93 
+ 94 [m[34m## Open file containing coding sequence coordinates[m
+[33m 95 [mfcds=open("[31mCDS-coord.dat[m")
+[33m 96 [mcds=[i.rstrip().split("[31m [m") [33mfor[m i [33min[m fcds.readlines()]
+[33m 97 [mprocesscoord(cds)
+[33m 98 [mfcds.close()
+[33m 99 
+100 [m[34m## Open file containing repeated sequence coordinates[m
+[33m101 [mfrepeat=open("[31mrepeat-coord.dat[m")
+[33m102 [mrepeat=[i.rstrip().split("[31m [m") [33mfor[m i [33min[m frepeat.readlines()]
+[33m103 [mprocesscoord(repeat)
+[33m104 [mfrepeat.close()
+[33m105 
+106 [mos.chdir("[31m..[m")
+[33m107 
+108 print[m("[31mRelevant coordinates successfully imported.[m")
+[33m109 
+110 [m[34m## Mask functions[m
+[33m111 def[m [36mmaskseq[m(start,stop,seq,mode):
+[33m112 [m   """[31mMask an aligned sequence (do not take into account gaps)[m
+[33m113 [m[31m   start and stop should be integers with 0 corresponding to the start of the given sequence[m
+[33m114 [m[31m   mode 0 mask with N[m
+[33m115 [m[31m   mode 1 mask by converting the letter to lowercase[m
+[33m116 [m[31m   [m"""
+[33m117 [m   curpos=0
+[33m118 [m   [33mfor[m i,s [33min[m enumerate(seq):
+[33m119 [m      [33mif[m s!='[31m-[m' [33mand[m s!='[35m\n[m':
+[33m120 [m[8C [33mif[m curpos>=start [33mand[m curpos<=stop:
+[33m121 [m[11C [33mif[m mode==0:
+[33m122 [m[14C seq[i]='[31mN[m'
+[33m123 [m[11C [33melif[m mode==1:
+[33m124 [m[14C seq[i]=string.lower(s)
+[33m125 [m[8C curpos+=1
+[33m126 
+127 [m[34m## Record selection functions[m
+[33m128 def[m [36mposrecordleft[m(coordlist,coord):
+[33m129 [m   pos=bisect.bisect_left(coordlist,coord)
+[33m130 [m   [33mif[m pos>0:
+[33m131 [m      pos=pos-1
+[33m132 [m   [33mreturn[m pos
+[33m133 
+134 [m[34m## Iterate over alignment files[m
+[33m135 [mos.chdir("[31malignments[m")
+[33m136 [mfmap=open("[31mmap[m")
+[33m137 [mmaps=[i.rstrip().split("[35m\t[m") [33mfor[m i [33min[m fmap.readlines()]
+[33m138 [mfmap.close
+[33m139 [m[58;218H111,5         50%[29;9H[58;208H~@k       [29;9H[58;208H          [28;9H[58;218H110,5         50%[28;9H[58;208H~@k       [28;9H[58;208H          [29;9H[58;218H111,5         50%[29;9H[58;208H~@k       [29;9H[58;208H          [30;9H[58;218H112,5         50%[30;9H[58;208H~@k       [30;9H[58;208H          [31;9H[58;218H113,5         50%[31;9H[58;208H~@k       [31;9H[58;208H          [32;9H[58;218H114,5         50%[32;9H[58;208H~@k       [32;9H[58;208H          [33;9H[58;218H115,5         50%[33;9H[58;208H~@k       [33;9H[58;208H          [34;9H[58;218H116,5         50%[34;9H[58;208H/         [34;9H[58;208H[K[58;1H/m[36;22H[7mm[m[58;218H118,18        50%/m[58;218H[K[58;3Ha[36;22Hm[54;6H[7mma[m[58;218H136,2         50%/ma[58;218H[K[58;4Hs[m[H[2J[1;1H[33m153 [m[14C fmavid2.write("[31m [m"+r5coord[0]+"[31m [m"+str(r5coord[1])+"[31m [m"+str(r5coord[2])+"[35m\n[m")
+[33m154 [m[14C [33mfor[m line [33min[m fmavid.readlines():
+[33m155 [m[17C [33mif[m line[0]=='[31m>[m':
+[33m156 [m[20C fmavid2.write("[35m\n[m"+line)
+[33m157 [m[17C [33melse[m:
+[33m158 [m[20C fmavid2.write(line.rstrip())
+[33m159 [m[8C shutil.move("[31mmavid2.mfa[m","[31mmavid.mfa[m")
+[33m160 [m[8C os.chdir("[31m..[m")
+[33m161 [m      [33melse[m:
+[33m162 [m[8C shutil.rmtree(i[0])
+[33m163 [m   [33melse[m:
+[33m164 [m      shutil.rmtree(i[0])
+[33m165 
+166 
+167 
+168 for[m folder [33min[m glob.glob('[31m[0-9]*/[m'):
+[33m169 [m   [33mprint[m "[31mProcessing folder [m",folder
+[33m170 [m   os.chdir(folder)
+[33m171 [m   [33mwith[m open('[31mmavid.mfa[m') [35mas[m fmavid:
+[33m172 [m      [33mwith[m open('[31mmavid2.mfa[m', '[31mw[m' ) [35mas[m fmavid2:
+[33m173 
+174 [m[8C [34m## Read coordinates[m
+[33m175 [m[8C coordline=fmavid.readline()
+[33m176 [m[8C fmavid2.write(coordline)
+[33m177 [m[8C coordline=coordline.rstrip().split("[31m [m")
+[33m178 [m[8C coordstart=[coordline[1],int(coordline[2]),int(coordline[2])]
+[33m179 [m[8C coordstop=[coordline[1],int(coordline[3]),int(coordline[3])]
+[33m180 
+181 [m[8C [34m## [m[7m[34mMas[m[34mk sequences[m
+[33m182 [m[8C seqline=list(fmavid.readline())
+[33m183 [m[8C posstart=posrecordleft(cds,coordstart)
+[33m184 [m[8C posstop=posrecordleft(cds,coordstop)
+[33m185 [m[8C [33mfor[m i [33min[m range(posstart,posstop):
+[33m186 [m[11C record=cds[i]
+[33m187 [m[11C [33mif[m record[0]==coordstart[0]:
+[33m188 [m[14C maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,0)
+[33m189 [m[8C posstart=posrecordleft(repeat,coordstart)
+[33m190 [m[8C posstop=posrecordleft(repeat,coordstop)
+[33m191 [m[8C [33mfor[m i [33min[m range(posstart,posstop):
+[33m192 [m[11C record=repeat[i]
+[33m193 [m[11C [33mif[m record[0]==coordstart[0]:
+[33m194 [m[14C maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,1)
+[33m195 [m[8C fmavid2.write(''.join(seqline))
+[33m196 [m[8C [33mfor[m i [33min[m fmavid.readlines():
+[33m197 [m[11C fmavid2.write(i)
+[33m198 [m   shutil.move("[31mmavid2.mfa[m","[31mmavid.mfa[m")
+[33m199 [m   os.chdir("[31m..[m")
+[33m200 
+201 [mos.chdir('[31m..[m')
+[33m202 
+203 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Generate the list of alignments.[m"
+[33m204 
+205 [mlines=[]
+[33m206 for[m fmavid [33min[m glob.glob('[31malignments/[0-9]*/mavid.mfa[m'):
+[33m207 [m   [33mwith[m open(fmavid) [35mas[m mavid:
+[33m208 [m      line=mavid.readline().rstrip().split("[31m [m")
+[33m209 [m   line.append(os.getcwd()+"[31m/[m"+fmavid)[58;218H181,13        92%/mas[58;218H[K[58;5Hk[29;20H[7m[34mk[m[58;218H181,13        92%/mask[58;218H[K[58;6Hs[1;57r[1;1H[7M[1;58r[22;17H[34mMask[m[29;20H[7mmasks[m[51;1H[33m210 [m   line[2]=int(line[2])
+[33m211 [m   lines.append(line[1:])
+[33m212 
+213 [mlines.sort()
+[33m214 for[m i [33min[m lines:
+[33m215 [m   i[1]=str(i[1])
+[33m216 with[m open("[31malign.dat[m","[31mw[m") [35mas[m fout:[58;1H[K[58;218H188,16        96%/masks[58;218H[K[58;7He[29;25H[7me[m[58;218H188,16        96%/maskse[58;218H[K[58;8Hq[29;26H[7mq[m[58;218H188,16        96%/maskseq[58;218H[K[58;9H/maskseq[207C          [29;20Hmaskseq[58;218H188,16        96%[29;20H[58;208H~@k       [29;20H[58;208H          [28;20H[58;218H187,16        96%[28;20H[58;208H~@k       [28;20H[58;208H          [29;20H[58;218H188,16        96%[29;20H[58;208H~@k       [29;20H[58;208H          [30;20H[58;218H189,16        96%[30;20H[58;208H~@k       [30;20H[58;208H          [29;20H[58;218H188,16        96%[29;20H[58;208H~@k       [29;20H[58;208H          [28;20H[58;218H187,16        96%[28;20H[58;208H~@k       [28;20H[58;208H          [29;20H[58;218H188,16        96%[29;20H[58;208H~@k       [29;20H[58;208H          [28;20H[58;218H187,16        96%[28;20H[58;208H~@k       [28;20H[58;208H          [27;20H[58;218H186,16        96%[27;20H[58;208H~@k       [27;20H[58;208H          [26;20H[58;218H185,16        96%[26;20H[58;208H~@k       [26;20H[58;208H          [25;20H[58;218H184,16        96%[25;20H[58;208H~@k       [25;20H[58;208H          [24;20H[58;218H183,16        96%[24;20H[58;208H~@k       [24;20H[58;208H          [23;20H[58;218H182,16        96%[23;20H[58;208H~@k       [23;20H[58;208H          [22;20H[58;218H181,16        96%[22;20H[58;208H~@k       [22;20H[58;208H          [21;13H[58;218H180,9         96%[21;13H[58;208H~@k       [21;13H[58;208H          [20;20H[58;218H179,16        96%[20;20H[58;208H~@k       [20;20H[58;208H          [19;20H[58;218H178,16        96%[19;20H[58;208H~@k       [19;20H[58;208H          [18;20H[58;218H177,16        96%[18;20H[58;208H~@k       [18;20H[58;208H          [17;20H[58;218H176,16        96%[17;20H[58;208H~@k       [17;20H[58;208H          [16;20H[58;218H175,16        96%[16;20H[58;208H~@k       [16;20H[58;208H          [15;20H[58;218H174,16        96%[15;20H[58;208H~@k       [15;20H[58;208H          [14;5H[58;218H173,0-1       96%[14;5H[58;208H~@k       [14;5H[58;208H          [13;20H[46m([18C)[m[58;218H172,16        96%[13;20H[58;208H~@k       [13;20H[58;208H          [12;20H[13;20H([18C)[58;218H171,16        96%[12;20H[58;208H~@k       [12;20H[58;208H          [11;20H[58;218H170,16        96%[11;20H[58;208H~@k       [11;20H[58;208H          [10;20H[58;218H169,16        96%[10;20H[58;208H~@k       [10;20H[58;208H          [9;20H[58;218H168,16        96%[9;20H[58;208H~@k       [9;20H[58;208H          [8;5H[58;218H167,0-1       96%[8;5H[58;208H~@k       [8;5H[58;208H          [7;5H[58;218H166,0-1       96%[7;5H[58;208H~@k       [7;5H[58;208H          [6;5H[58;218H165,0-1       96%[6;5H[58;208H~@k       [6;5H[58;208H          [5;20H[58;218H164,16        96%[5;20H[58;208H~@k       [5;20H[58;208H          [4;12H[58;218H163,8         96%[4;12H[58;208H~@k       [4;12H[58;208H          [3;20H[58;218H162,16        96%[3;20H[58;208H~@k       [3;20H[58;208H          [2;15H[58;218H161,11        96%[2;15H[58;208H~@k       [2;15H[58;208H          [1;20H[58;218H160,16        96%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m159 [m[8C shutil.move("[31mmavid2.mfa[m","[31mmavid.mfa[m")[58;1H[K[58;218H159,16        96%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m158 [m[20C fmavid2.write(line.rstrip())[58;218H[K[58;218H158,16        95%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m157 [m[17C [33melse[m:[58;218H[K[58;218H157,16        95%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m156 [m[20C fmavid2.write("[35m\n[m"+line)[58;218H[K[58;218H156,16        94%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m155 [m[17C [33mif[m line[0]=='[31m>[m':[58;218H[K[58;218H155,16        93%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m154 [m[14C [33mfor[m line [33min[m fmavid.readlines():[58;218H[K[58;218H154,16        93%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m153 [m[14C fmavid2.write("[31m [m"+r5coord[0]+"[31m [m"+str(r5coord[1])+"[31m [m"+str(r5coord[2])+"[35m\n[m")[58;218H[K[58;218H153,16        92%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m152 [m[14C fmavid2.write(firstline.rstrip())[58;218H[K[58;218H152,16        92%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m151 [m[14C firstline=fmavid.readline()[58;218H[K[58;218H151,16        91%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m150 [m[11C [33mwith[m open ("[31mmavid2.mfa[m","[31mw[m") [35mas[m fmavid2:[58;218H[K[58;218H150,16        90%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m149 [m[8C [33mwith[m open("[31mmavid.mfa[m") [35mas[m fmavid:[58;218H[K[58;218H149,16        90%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m148 [m[8C os.chdir(i[0])[58;218H[K[58;218H148,16        89%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m147 [m      [33mif[m  r5coord != ["", 0, 0]:[58;218H[K[58;218H147,16        89%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m146 [m      r5coord=mapping.r4_map(coordmel)[58;218H[K[58;218H146,16        88%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m145 [m      coordmel[2]=int(coordmel[2])[58;218H[K[58;218H145,16        87%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m144 [m      coordmel[1]=int(coordmel[1])+1[58;218H[K[58;218H144,16        87%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m143 [m      coordmel[0]=coordmel[0][3:][58;218H[K[58;218H143,16        86%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m142 [m   [33mif[m coordmel[1]!="[31mNA[m" [33mand[m coordmel[2]!='[31mNA[m':[58;218H[K[58;218H142,16        85%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m141 [m   coordmel=i[1:4][58;218H[K[58;218H141,16        85%[1;20H[58;208H~@k       [1;20H[58;208H          [1;18H[1;57r[1;1H[L[1;58r[1;1H[33m140 for[m i [33min[m maps:[58;218H[K[58;218H140,14        84%[1;18H[58;208H~@k       [1;18H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m139 [m[58;218H[K[58;218H139,0-1       84%[1;5H[58;208H~@k       [1;5H[58;208H          [1;14H[1;57r[1;1H[L[1;58r[1;1H[33m138 [mfmap.close[58;218H[K[58;218H138,10        83%[1;14H[58;208H~@k       [1;14H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m137 [mmaps=[i.rstrip[46m()[m.split("[35m\t[m") [33mfor[m i [33min[m fmap.readlines()][58;218H[K[58;218H137,16        82%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m136 [mfmap=open[46m([m"[31mmap[m"[46m)[m[2;19H()[58;218H[K[58;218H136,16        82%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m135 [mos.chdir("[31malignments[m")[2;14H([5C)[58;218H[K[58;218H135,16        81%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m134 [m[34m## Iterate over alignment files[m[58;218H[K[58;218H134,16        81%[1;20H[58;208H~@k       [1;20H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m133 [m[58;218H[K[58;218H133,0-1       80%[1;5H[58;208H~@k       [1;5H[58;208H          [1;17H[1;57r[1;1H[L[1;58r[1;1H[33m132 [m   [33mreturn[m pos[58;218H[K[58;218H132,13        79%[1;17H[58;208H~@k       [1;17H[58;208H          [1;19H[1;57r[1;1H[L[1;58r[1;1H[33m131 [m      pos=pos-1[58;218H[K[58;218H131,15        79%[1;19H[58;208H~@k       [1;19H[58;208H          [1;16H[1;57r[1;1H[L[1;58r[1;1H[33m130 [m   [33mif[m pos>0:[58;218H[K[58;218H130,12        78%[1;16H[58;208H~@k       [1;16H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m129 [m   pos=bisect.bisect_left(coordlist,coord)[58;218H[K[58;218H129,16        78%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m128 def[m [36mposrecordleft[m(coordlist,coord):[58;218H[K[58;218H128,16        77%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m127 [m[34m## Record selection functions[m[58;218H[K[58;218H127,16        76%[1;20H[58;208H~@k       [1;20H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m126 [m[58;218H[K[58;218H126,0-1       76%[1;5H[58;208H~@k       [1;5H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m125 [m[8C curpos+=1[58;218H[K[58;218H125,16        75%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m124 [m[14C seq[i]=string.lower(s)[58;218H[K[58;218H124,16        75%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m123 [m[11C [33melif[m mode==1:[58;218H[K[58;218H123,16        74%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m122 [m[14C seq[i]='[31mN[m'[58;218H[K[58;218H122,16        73%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m121 [m[11C [33mif[m mode==0:[58;218H[K[58;218H121,16        73%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m120 [m[8C [33mif[m curpos>=start [33mand[m curpos<=stop:[58;218H[K[58;218H120,16        72%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m119 [m      [33mif[m s!='[31m-[m' [33mand[m s!='[35m\n[m':[58;218H[K[58;218H119,16        71%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m118 [m   [33mfor[m i,s [33min[m enumerate(seq):[58;218H[K[58;218H118,16        71%[1;20H[58;208H~@k       [1;20H[58;208H          [1;15H[1;57r[1;1H[L[1;58r[1;1H[33m117 [m   curpos=0[58;218H[K[58;218H117,11        70%[1;15H[58;208H~@k       [1;15H[58;208H          [1;10H[1;57r[1;1H[L[1;58r[1;1H[33m116 [m[31m   [m"""[58;218H[K[58;218H116,6         70%[1;10H[58;208H~@k       [1;10H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m115 [m[31m   mode 1 mask by converting the letter to lowercase[m[58;218H[K[58;218H115,16        69%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m114 [m[31m   mode 0 mask with N[m[58;218H[K[58;218H114,16        68%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m113 [m[31m   start and stop should be integers with 0 corresponding to the start of the given sequence[m[58;218H[K[58;218H113,16        68%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m112 [m   """[31mMask an aligned sequence (do not take into account gaps)[m[58;218H[K[58;218H112,16        67%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m111 def[m [36mmaskseq[m(start,stop,seq,mode):[58;218H[K[58;218H111,16        67%[1;20H[58;208H~@k       [1;20H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m110 [m[34m## Mask functions[m[58;218H[K[58;218H110,16        66%[1;20H[58;208H~@k       [1;20H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m109 [m[58;218H[K[58;218H109,0-1       65%[1;5H[58;208H~@k       [1;5H[58;208H          [1;20H[1;57r[1;1H[L[1;58r[1;1H[33m108 print[m("[31mRelevant coordinates successfully imported.[m")[58;218H[K[58;218H108,16        65%[1;20H[58;208H~@k       [1;20H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m107 [m[58;218H[K[58;218H107,0-1       64%[1;5H[58;208H~@k       [1;5H[58;208H          [1;18H[1;57r[1;1H[L[1;58r[1;1H[33m106 [mos.chdir[46m([m"[31m..[m"[46m)[m[58;218H[K[58;218H106,14        64%[1;18H[58;208H~@k       [1;18H[58;208H          [1;5H[1;57r[1;1H[L[1;58r[1;1H[33m105 [m[2;13H([4C)[58;218H[K[58;218H105,0-1       63%[1;5H[58;208H/         [1;5H[58;208H[K[58;1H/T[m[H[2J[1;1H[33m  1 [m[34m#!/usr/bin/env python[m
+[33m  2 [m[34m#    [m
+[33m  3 [m[34m# Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>[m
+[33m  4 [m[34m# Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>[m
+[33m  5 [m[34m# [m
+[33m  6 [m[34m# [m[7m[34mT[m[34mhis file is part of Imogene.[m
+[33m  7 [m[34m# [m
+[33m  8 [m[34m# Imogene is free software: you can redistribute it and/or modify[m
+[33m  9 [m[34m# it under the terms of the GNU General Public License as published by[m
+[33m 10 [m[34m# the Free Software Foundation, either version 3 of the License, or[m
+[33m 11 [m[34m# (at your option) any later version.[m
+[33m 12 [m[34m# [m
+[33m 13 [m[34m# Imogene is distributed in the hope that it will be useful,[m
+[33m 14 [m[34m# but WITHOUT ANY WARRANTY; without even the implied warranty of[m
+[33m 15 [m[34m# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the[m
+[33m 16 [m[34m# GNU General Public License for more details.[m
+[33m 17 [m[34m# [m
+[33m 18 [m[34m# You should have received a copy of the GNU General Public License[m
+[33m 19 [m[34m# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.[m
+[33m 20 
+ 21 [m[35mimport[m sys
+[33m 22 [m[35mimport[m os
+[33m 23 [m[35mimport[m shutil
+[33m 24 [m[35mimport[m string
+[33m 25 [m[35mimport[m glob
+[33m 26 [m[35mimport[m datetime
+[33m 27 [m[35mimport[m bisect
+[33m 28 [m[35mimport[m errno
+[33m 29 
+ 30 def[m [36mmkdir[m(path):
+[33m 31 [m   [33mtry[m:
+[33m 32 [m      os.mkdir(path)
+[33m 33 [m   [33mexcept[m os.error, e:
+[33m 34 [m      [33mif[m e.errno != errno.EEXIST:
+[33m 35 [m[8C [33mraise
+ 36 
+ 37 [msys.path.append("[31m@pythondir@[m")
+[33m 38 [m[35mimport[m mapping
+[33m 39 
+ 40 [mos.chdir('[31m@pkgdatadir@[m')
+[33m 41 [mmkdir('[31mdroso[m')
+[33m 42 [mos.chdir('[31mdroso[m')
+[33m 43 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Downloading Mavid Mercator alignment files...[m"
+[33m 44 print
+ 45 
+ 46 [mos.system('[31mwget -c "http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/fly_CAF1.1.tar.gz"[m')
+[33m 47 
+ 48 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Extracting alignment files...[m"
+[33m 49 print
+ 50 
+ 51 [mos.system('[31mtar xzf fly_CAF1.1.tar.gz[m')
+[33m 52 [mos.system('[31mmv Dro*.agp map genomes treefile alignments[m')
+[33m 53 [m[34m#os.remove("fly_CAF1.1.tar.gz")[m
+[33m 54 
+ 55 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Downloading Flybase annotation files...[m"
+[33m 56 print
+ 57 [m[58;218H6,3           Top/T[58;218H[K[58;3HS[m[H[2J[1;1H[33m 85 [m[31m}[m[35m\'[m[31m dmel*.gff | uniq > [m[7m[31mTS[m[31mS-coord.dat[m')
+[33m 86 
+ 87 
+ 88 def[m [36mprocesscoord[m(coords):
+[33m 89 [m   [33mfor[m i [33min[m coords:
+[33m 90 [m      i[1]=int(i[1])
+[33m 91 [m      i[2]=int(i[2])
+[33m 92 [m   coords.sort()
+[33m 93 
+ 94 [m[34m## Open file containing coding sequence coordinates[m
+[33m 95 [mfcds=open("[31mCDS-coord.dat[m")
+[33m 96 [mcds=[i.rstrip().split("[31m [m") [33mfor[m i [33min[m fcds.readlines()]
+[33m 97 [mprocesscoord(cds)
+[33m 98 [mfcds.close()
+[33m 99 
+100 [m[34m## Open file containing repeated sequence coordinates[m
+[33m101 [mfrepeat=open("[31mrepeat-coord.dat[m")
+[33m102 [mrepeat=[i.rstrip().split("[31m [m") [33mfor[m i [33min[m frepeat.readlines()]
+[33m103 [mprocesscoord(repeat)
+[33m104 [mfrepeat.close()
+[33m105 
+106 [mos.chdir("[31m..[m")
+[33m107 
+108 print[m("[31mRelevant coordinates successfully imported.[m")
+[33m109 
+110 [m[34m## Mask functions[m
+[33m111 def[m [36mmaskseq[m(start,stop,seq,mode):
+[33m112 [m   """[31mMask an aligned sequence (do not take into account gaps)[m
+[33m113 [m[31m   start and stop should be integers with 0 corresponding to the start of the given sequence[m
+[33m114 [m[31m   mode 0 mask with N[m
+[33m115 [m[31m   mode 1 mask by converting the letter to lowercase[m
+[33m116 [m[31m   [m"""
+[33m117 [m   curpos=0
+[33m118 [m   [33mfor[m i,s [33min[m enumerate(seq):
+[33m119 [m      [33mif[m s!='[31m-[m' [33mand[m s!='[35m\n[m':
+[33m120 [m[8C [33mif[m curpos>=start [33mand[m curpos<=stop:
+[33m121 [m[11C [33mif[m mode==0:
+[33m122 [m[14C seq[i]='[31mN[m'
+[33m123 [m[11C [33melif[m mode==1:
+[33m124 [m[14C seq[i]=string.lower(s)
+[33m125 [m[8C curpos+=1
+[33m126 
+127 [m[34m## Record selection functions[m
+[33m128 def[m [36mposrecordleft[m(coordlist,coord):
+[33m129 [m   pos=bisect.bisect_left(coordlist,coord)
+[33m130 [m   [33mif[m pos>0:
+[33m131 [m      pos=pos-1
+[33m132 [m   [33mreturn[m pos
+[33m133 
+134 [m[34m## Iterate over alignment files[m
+[33m135 [mos.chdir("[31malignments[m")
+[33m136 [mfmap=open("[31mmap[m")
+[33m137 [mmaps=[i.rstrip().split("[35m\t[m") [33mfor[m i [33min[m fmap.readlines()]
+[33m138 [mfmap.close
+[33m139 
+140 for[m i [33min[m maps:
+[33m141 [m   coordmel=i[1:4][58;218H85,24         51%/TS[58;218H[K[58;4HS[1;30H[7m[31mS[m[58;218H85,24         51%/TSS[58;218H[K[58;5H/TSS[31msearch hit BOTTOM, continuing at TOP[m[171C          [1;28H[31mTSS[m[58;218H85,24         51%[31msearch hit BOTTOM, continuing at TOP[m[58;218H[K[58;218H85,24         51%[1;28H[58;208H~@k       [1;28H[58;208H          [1;9H[1;57r[1;1H[L[1;58r[1;1H[33m 84 [m[31m   }[m[35m\[m[58;1H[K[58;218H84,5          50%[1;9H[58;208H~@k       [1;9H[58;208H          [2;28H[58;218H85,24         50%[2;28H[58;208Hn         [2;28H[58;1H/TSS[58;208H[K[58;1H[31msearch hit BOTTOM, continuing at TOP[m[171C          [2;28H[58;218H85,24         50%[31msearch hit BOTTOM, continuing at TOP[m[58;218H[K[58;218H85,24         50%[2;28H[58;208Hn         [2;28H[58;1H/TSS[58;5H[K[58;1H[31msearch hit BOTTOM, continuing at TOP[m[171C          [2;28H[58;218H85,24         50%[31msearch hit BOTTOM, continuing at TOP[m[58;218H[K[58;218H85,24         50%[2;28H[58;208Hn         [2;28H[58;1H/TSS[58;5H[K[58;1H[31msearch hit BOTTOM, continuing at TOP[m[171C          [2;28H[58;218H85,24         50%[31msearch hit BOTTOM, continuing at TOP[m[58;218H[K[58;218H85,24         50%[2;28H[58;208Hn         [2;28H[58;1H/TSS[58;5H[K[58;1H[31msearch hit BOTTOM, continuing at TOP[m[171C          [2;28H[58;218H85,24         50%[31msearch hit BOTTOM, continuing at TOP[m[58;218H[K[58;218H85,24         50%[2;28H[58;208Hn         [2;28H[58;1H/TSS[58;5H[K[58;1H[31msearch hit BOTTOM, continuing at TOP[m[171C          [2;28H[58;218H85,24         50%[31msearch hit BOTTOM, continuing at TOP[m[58;218H[K[58;218H85,24         50%[2;28H[58;208H/         [2;28H[58;1H[K[58;1H/C[12;16H[7m[31mC[m[58;218H95,12         50%/C[58;218H[K[58;3HD[12;17H[7m[31mD[m[58;218H95,12         50%/CD[58;218H[K[58;4HS[12;18H[7m[31mS[m[58;218H95,12         50%/CDS[58;218H[K[58;5H/CDS[207C          [12;16H[31mCDS[m[58;218H95,12         50%[12;16H[58;208Hn         [12;16H[58;1H/CDS[58;208H[K[58;1H[31msearch hit BOTTOM, continuing at TOP[m[171C          [1;32H[1;57r[1;1H[6L[1;58r[1;1H[33m 78 [mos.system('[31mawk [m[35m\'[m[31m/FlyBase[m[35m\t[m[31mCDS[m[35m\t[m[31m/ {print $1,$4,$5}[m[35m\'[m[31m dmel*.gff | uniq > CDS-coord.dat[m')
+[33m 79 [mos.system('[31mawk [m[35m\'[m[31m/FlyBase[m[35m\t[m[31mmRNA[m[35m\t[m[31m/ {[m[35m\[m
+[33m 80 [m[31m   if ($7 == "+"){[m[35m\[m
+[33m 81 [m[31m      print $1,$4[m[35m\[m
+[33m 82 [m[31m   } else {[m[35m\[m
+[33m 83 [m[31m      print $1,$5[m[35m\[m[58;1H[K[58;218H78,28         46%[31msearch hit BOTTOM, continuing at TOP[m[58;218H[K[58;218H78,28         46%[1;32H[58;208Hn         [1;32H[58;1H/CDS[58;5H[K[58;1H[207C          [1;77H[58;218H78,73         46%[1;77H[58;208Hn         [1;77H[58;1H/CDS[58;208H[K[58;1H[207C          [18;16H[58;218H95,12         46%[18;16H[58;208Hn         [18;16H[58;1H/CDS[58;208H[K[58;1H[31msearch hit BOTTOM, continuing at TOP[m[171C          [1;32H[58;218H78,28         46%[31msearch hit BOTTOM, continuing at TOP[m[58;218H[K[58;218H78,28         46%[1;32H[58;208Hn         [1;32H[58;1H/CDS[58;5H[K[58;1H[207C          [1;77H[58;218H78,73         46%[1;77H[58;208H~@k       [1;77H[58;208H          [1;77H[1;57r[1;1H[L[1;58r[1;1H[33m 77 [mos.system('[31mawk [m[35m\'[m[31m/repeatmasker_dummy[m[35m\t[m[31mmatch[m[35m\t[m[31m/ {print $1,$4,$5}[m[35m\'[m[31m dmel*.gff | uniq > repeat-coord.dat[m')[58;1H[K[58;218H77,73         46%[1;77H[58;208H:         [1;77H[58;208H[K[58;1H:q[58;1H[K[58;1H[?1l>[2J[?47l8]2;Marc@toscane: ~imogene/scripts/python]1;..cripts/python[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mpython [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[K~ ....
+]2;cd ../..]1;...]2;Marc@toscane: ~imogene]1;~imogene[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36m~imogene [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kccd test/ 
+]2;cd test]1;cd]2;Marc@toscane: ~imogene/test]1;~imogene/test[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mtest [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Ke
+[0mEGID               easy_install-2.6   echotc             editres            else               enable             enscript           epsffit            erb                etex               exit               extconv          
+ERRNO              easy_install-2.7   echoti             edquota            emacs              enc2xs             env                epspdf             errinfo            eval               expand             [1;31mextract[0m/         
+EUID               ebb                ed                 efax               emacs-i386         enc2xs5.10.0       envvars            epspdftk           error              eventlogadm        expect             extract_cmdline.c
+e2pall             ebong              edit-command-line  efix               emacs-undumped     enc2xs5.8.9        envvars-std        epstopdf           esac               ex                 export             extract_cmdline.h
+easy_install       ebuild             editra             egrep              emacsclient        encode_keychange   eplain             eqn                escputil           exec               expr               extractbb        
+[Jeasy_install-2.5   [Jecho               [Jeditra.py          [Jelif               [Jemulate            [Jend                [Jeps2eps            [Jeqn2graph          [Jetags              [Jexecsnoop          [Jextcheck           [Jextractres       [J[6A[m[m[m[23Ce[Kex
+[J[0mex                 execsnoop          expand             export             extcheck           [1;31mextract[0m/           extract_cmdline.h  extractres                                                                             
+[Jexec               [Jexit               [Jexpect             [Jexpr               [Jextconv            [Jextract_cmdline.c  [Jextractbb          [J                                                                                     [A[A[m[m[m[23Cex[Kt
+[J[J[0mextcheck           [Jextconv            [J[1;31mextract[0m/           [Jextract_cmdline.c  [Jextract_cmdline.h  [Jextractbb          [Jextractres       [J[A[m[m[m[23Cext[Kra
+[J[A[28Cct
+[J]2;extract]1;extract]2;Marc@toscane: ~imogene/test/extract]1;../test/extract[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mextract [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kl
+]2;ls -G -l]1;ltotal 16
+drwxr-xr-x  3 Marc  staff  102 19 sep 12:10 [1m[36malign[m[m
+-rw-r--r--@ 1 Marc  staff  105 14 sep 15:28 coords-droso.dat
+-rw-r--r--@ 1 Marc  staff   35 14 sep 15:28 coords-eutherian.dat
+]2;Marc@toscane: ~imogene/test/extract]1;../test/extract[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mextract [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kiimogene escangen -s eutherian -m motifs.txt -t 525[39Dgenmot[P[15Ca align           [11D[28Dscangen -s eutherian -m motifs.txt -t 59107 4547     -t 11     [34Dextract[2Cb -s droso -i background-droso-coords.dat[50Dscangen[2Cs eutherian -m motifs.txt                [16D[34Dextract[2Cb -s droso -i background-droso-coords.dat[P[39C [40D[P[39C [40D[P[38C [40D[1C[1C[1C[1C[P[34C [35D[P[33C [34D[P[32C [33D[P[31C [32D[P[30C [31D[P[29C [30D[P[28C [29D[P[27C [28D[P[26C [27D[P[25C [26D[P[24C [25D[P[23C [24D[P[22C [23D[P[21C [22D[P[20C [21D[P[19C [20D[P[18C [19D[P[17C [18D[P[16C [17D[P[15C [16D[P[14C [15D[P[13C [14D[P[12C [13D[P[11C [12D[P[10C [11Doords.dat [10D[1Crds.dat [9Drds.dat [8Dds.dat s.dat .dat dat at t   e[12Dscangen[5Cutherian -m motifs.txt[13D             [14D[11Dh -s eutherian[12D            [13D[10Dgenmot -s eutherian -a align[28Dextract -s eutherian -i background-eutherian-coords.dat -b  [55Dgenmo[P[16Ca align                           [27D[28Dextract -s eutherian -i background-eutherian-coords.dat[55Dgenmo[P[16Ca align                           [27D[28Dextract -s eutherian -i background-eutherian-coords.dat                               coords-eutherian.dat 
+]2;imogene extract -s eutherian -i coords-eutherian.dat]1;imogeneReading eutherian alignments...
+Extraction start
+Writing sequences in align/...
+test-overlap
+Extraction stop
+exit normally
+]2;Marc@toscane: ~imogene/test/extract]1;../test/extract[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mextract [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kvvi align/test-overlap_1_100072115_100072135.fa 
+]2;vi align/test-overlap_1_100072115_100072135.fa]1;vi7[?47h[?1h=[1;58r[m[H[2J[58;1H"align/test-overlap_1_100072115_100072135.fa" "align/test-overlap_1_100072115_100072135.fa" 22L, 352C[>c[1;1H[33m  1 [m>MusMus 1 100072115 100072135
+[33m  2 [mctgaaaTCAAGTCTTGAAAGG
+[33m  3 [m>RatNor
+[33m  4 [mCTGAAATCAAGTCTTGAAAGG
+[33m  5 [m>PanTro
+[33m  6 [mCTAAAATCAAGTCTTGAAGGG
+[33m  7 [m>HomSap
+[33m  8 [mctaaaaTCAAGTCTTGAAGGG
+[33m  9 [m>GorGor
+[33m 10 [mctaaaaTCAAGTCTTGAAGGG
+[33m 11 [m>PonAbe
+[33m 12 [mCTAAAATCAAGTCTTGAAGGG
+[33m 13 [m>MacMul
+[33m 14 [mCTAAAATCAAGTCTTGAAGGG
+[33m 15 [m>CalJac
+[33m 16 [mctaaaaTCAAGTCTTGAAGGG
+[33m 17 [m>EquCab
+[33m 18 [mCTGAAATCAAGTCTTGAAGGG
+[33m 19 [m>CanFam
+[33m 20 [mCTGAAATCAAGTCTTGAGGGG
+[33m 21 [m>SusScr
+[33m 22 [mCTGAAATCAAGTCTTGAGGGA
+[1m[34m~                                                                                                                                                                                                                                          [24;1H~                                                                                                                                                                                                                                          [25;1H~                                                                                                                                                                                                                                          [26;1H~                                                                                                                                                                                                                                          [27;1H~                                                                                                                                                                                                                                          [28;1H~                                                                                                                                                                                                                                          [29;1H~                                                                                                                                                                                                                                          [30;1H~                                                                                                                                                                                                                                          [31;1H~                                                                                                                                                                                                                                          [32;1H~                                                                                                                                                                                                                                          [33;1H~                                                                                                                                                                                                                                          [34;1H~                                                                                                                                                                                                                                          [35;1H~                                                                                                                                                                                                                                          [36;1H~                                                                                                                                                                                                                                          [37;1H~                                                                                                                                                                                                                                          [38;1H~                                                                                                                                                                                                                                          [39;1H~                                                                                                                                                                                                                                          [40;1H~                                                                                                                                                                                                                                          [41;1H~                                                                                                                                                                                                                                          [42;1H~                                                                                                                                                                                                                                          [43;1H~                                                                                                                                                                                                                                          [44;1H~                                                                                                                                                                                                                                          [45;1H~                                                                                                                                                                                                                                          [46;1H~                                                                                                                                                                                                                                          [47;1H~                                                                                                                                                                                                                                          [48;1H~                                                                                                                                                                                                                                          [49;1H~                                                                                                                                                                                                                                          [50;1H~                                                                                                                                                                                                                                          [51;1H~                                                                                                                                                                                                                                          [52;1H~                                                                                                                                                                                                                                          [53;1H~                                                                                                                                                                                                                                          [54;1H~                                                                                                                                                                                                                                          [55;1H~                                                                                                                                                                                                                                          [56;1H~                                                                                                                                                                                                                                          [57;1H~                                                                                                                                                                                                                                          [m[58;218H1,1           All[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[58;208H~@k       [1;5H[58;208H          [2;5H[58;218H2,1           All[2;5H[58;208H:         [2;5H[58;1H[K[58;1H:q[58;1H[K[58;1H[?1l>[2J[?47l8]2;Marc@toscane: ~imogene/test/extract]1;../test/extract[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mextract [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[K

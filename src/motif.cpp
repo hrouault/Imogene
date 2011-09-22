@@ -286,6 +286,13 @@ Motif::setscorethr2meaninfo()
 }
 
 
+GroupInstance::GroupInstance()
+{
+   nbmots=vint(nbmots_for_score,0);
+   discarded=0;
+   totmots=0;
+}
+
 GroupInstance::GroupInstance(int sta,int sto,int chr)
 {
    start=sta;
@@ -549,6 +556,17 @@ Instance::Instance(int chr,int pos, int sen, int moti,double sco,string s)
    site=s;
 }
 
+ostream & operator <<(ostream &os,const Instance & inst)
+{
+   os << inst.motindex << "\t";
+   os << inst.site << "\t";
+   os << chromfromint(inst.chrom) << "\t";
+   os << inst.coord << "\t";
+   os << inst.sens << "\t";
+   os << inst.score << endl;
+   return os;
+}
+
 // compare binding sites by their affinity
 // sorts with highests scoring TFBSs first
 bool operator<(const TFBS & bs1,const TFBS & bs2)
@@ -589,6 +607,19 @@ operator <<(ostream &os,const vtfbs & vbs)
 bool operator<(const GroupInstance & ginst1,const GroupInstance & ginst2)
 {
    return ginst1.score > ginst2.score;
+}
+
+ostream & operator <<(ostream &os,const GroupInstance & ginst)
+{
+   os << chromfromint(ginst.chrom) << " ";
+   os << ginst.start << " ";
+   os << ginst.stop << " ";
+   os << ginst.score << " ";
+   os << "\n";
+   for (civinst iv=ginst.instances.begin();iv!=ginst.instances.end();iv++){
+      os << *iv;
+   }
+   return os;
 }
 
 bool operator<(const Combination & comb1,const Combination & comb2)
