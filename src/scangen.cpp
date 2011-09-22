@@ -170,7 +170,7 @@ scanmots()
    string pchrom(""); // for display purpose
    unsigned int totlen(0),totlentb(0);
    //for (ivcoord ivc=alignscoord.begin();ivc!=alignscoord.end();ivc++){
-   for (ivcoord ivc=alignscoord.begin();ivc!=alignscoord.begin()+10;ivc++){
+   for (ivcoord ivc=alignscoord.begin()+100;ivc!=alignscoord.begin()+110;ivc++){
       Sequence seq;
       seq=coordtoseq(*ivc);
       string chrom=chromfromint(seq.chrom);
@@ -324,6 +324,7 @@ compgroupedinst()
 
          for (ivinst iv=ginst.instances.begin();iv!=ginst.instances.end();iv++){
             ginst.nbmots[iv->motindex]++;
+            ginst.totmots++;
          }
 
          ginst.compscore(motsdef,nbmots_for_score);
@@ -344,7 +345,7 @@ compgroupedinst()
          groupedinst[ivi->chrom].push_back(ginst);
       }
    }
-   exit(9);
+   
    // assign nearest TSS to genes
    cout << "Assign CRMs to nearest gene..." << endl;
    for (unsigned int i=0;i<nbchrom;i++){
@@ -372,6 +373,33 @@ compgroupedinst()
          }
       }
    }
+   
+   vginst fininst;
+   for (unsigned int i=0;i<nbchrom;i++){
+      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
+         fininst.push_back(*ivg);
+      }
+   }
+   cout << "Sorting" << endl;
+   sort(fininst.begin(),fininst.end());
+   
+   cout << "Displaying" << endl;
+   stringstream filename;
+   filename << "result" << nbmots_for_score << ".dat";
+   ofstream res(filename.str().c_str());
+   for (ivginst ivg=fininst.begin();ivg!=fininst.end();ivg++){
+      res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
+      res << (*ivg).besttss.gene << " ";
+      for (ivTSS ivt=(*ivg).TSSs.begin();ivt!=(*ivg).TSSs.end();ivt++){
+         res << (*ivt).gene << ";";
+      }
+      res << " ";
+      for (ivint ivi=(*ivg).nbmots.begin();ivi!=(*ivg).nbmots.end();ivi++){
+         res << *ivi << " ";
+      }
+      res << "\n";
+   }
+   res.close();
 
 }
    
@@ -631,28 +659,29 @@ scangen_args_init()
       nbspecies=12;
       conca=0.3; 
       nbchrom=6;
+      annotextent=10000;
    } else if (!strcmp(scangen_args.species_arg,"eutherian")){
       species="eutherian";
       nbspecies=12;
       conca=0.263;
-     nbchrom=21; 
+      nbchrom=21; 
+      annotextent=1000000;
    }
    concc=0.5-conca;
    conct=conca;
    concg=concc;
-   
+
    scanwidth=scangen_args.scanwidth_arg;
    scanstep=scangen_args.scanstep_arg;
    annotextent=scangen_args.annotextent_arg;
 
    nbmots_for_score=scangen_args.nbmots_arg;
-   
-   
+
    neighbext=scangen_args.neighbext_arg;
 
 }
 
-int
+   int
 cmd_scangen(int argc, char **argv)
 {
 
@@ -660,21 +689,21 @@ cmd_scangen(int argc, char **argv)
       exit(1);
 
    scangen_args_init();
-      
+
    cout << "Loading Motifs" << endl;
    loadmots(scangen_args.motifs_arg,motsdef); 
    cout << "Loaded " << motsdef.size() << " motifs." << endl;
    if ( nbmots_for_score < motsdef.size() ) 
       motsdef.erase( motsdef.begin() + nbmots_for_score , motsdef.end() );
    cout << "Nb mots for score: " << nbmots_for_score  << endl;
-   
+
    // *** It would be nice to set the threshold by bp, in bits.
    width=motsdef[0].bsinit.size();
    scorethr2=width*scangen_args.threshold_arg/10;
    scorethr=width*(scorethr2-1.0)/10;
    scorethrcons=width*(scorethr2-1.0)/10;
    cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-      
+
    for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
       ivm->motscorethr2=scorethr2;
       ivm->motscorethr=scorethr;
@@ -684,7 +713,7 @@ cmd_scangen(int argc, char **argv)
 
    //cout << "Loading phenotypes" << endl;
    //loadannots();
-   
+
    cout << "Scanning genome for conserved motif instances" << endl;
    scanmots();
 
@@ -692,16 +721,8 @@ cmd_scangen(int argc, char **argv)
    //initgroupedinst();
    compgroupedinst();
 
-   ifstream potregs;
-   if (species=="droso") potregs.open("/home/santolin/these/files/droso/align/all/align-files.dat");
-   else if (species=="eutherian") potregs.open("/home/santolin/these/files/mus/epo/align-files.dat");
-   vstring regs;
-   back_insert_iterator<vstring> dest(regs);
-   copy(iisstring(potregs),iisstring(),dest);
-   potregs.close();
-
-   cout << "Scanning seqs" << endl;
-   scanseqs(regs);
+   //cout << "Scanning seqs" << endl;
+   //scanseqs(regs);
 
 
 }

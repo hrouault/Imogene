@@ -664,7 +664,7 @@ operator <<(ostream &os,const vcombi & vcomb)
    void
 GroupInstance::compbestannot()
 {
-   unsigned int dist=100000;
+   unsigned int dist=1000000;// 1Mb
    for (ivTSS ivt=TSSs.begin();ivt!=TSSs.end();ivt++){
       if (abs((int)((*ivt).coord)-(int)start+(int)scanwidth/2)<(int)dist){
          dist=abs((int)(*ivt).coord-(int)start+(int)scanwidth/2);
