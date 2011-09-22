@@ -238,7 +238,7 @@ for i in lines:
    i[1]=str(i[1])
 with open("align.dat","w") as fout:
    for li in lines:
-      fout.write("".join(i+" " for i in lines))
+      fout.write("".join(i+" " for i in li))
       fout.write("\n")
 
 print "[",datetime.datetime.now(),"]  Exit normally."
