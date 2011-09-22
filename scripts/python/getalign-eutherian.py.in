@@ -72,30 +72,50 @@ for file in glob.glob('*.emf'):
 
 os.chdir('..')
 
-print "[",datetime.datetime.now(),"]  Getting UCSC refGene annotation file..."
-print 
-
 mkdir("annot")
 os.chdir("annot")
 
+
+print "[",datetime.datetime.now(),"]  Getting UCSC refGene annotation file for TSS coordinates..."
+print 
+
 os.system('wget -c "http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz"')
 
-print "[",datetime.datetime.now(),"]  Extracting coordinate files..."
+print "[",datetime.datetime.now(),"]  Extracting..."
 print
 
 os.system('gunzip -vf refGene.txt.gz')
 
-print "[",datetime.datetime.now(),"]  Relevant coordinate extraction."
+print "[",datetime.datetime.now(),"]  TSS coordinates extraction."
 print 
 
-os.system('awk \'{print substr($3,4),$7,$8}\' refGene.txt | sort -k 1,1 -k 2,2g > CDS-coord.dat')
+## Here we add 1 to the start positions (UCSC files are 0-based)
 os.system('awk \'{\
    if ($4 == "+"){\
-      print substr($3,4),$5\
+      print $2,$5+1,$4,substr($3,4),$13\
    } else {\
-      print substr($3,4),$6\
+      print $2,$6,$4,substr($3,4),$13\
    }\
-}\' refGene.txt | sort -k 1,1 -k 2,2g > TSS-coord.dat')
+}\' refGene.txt | sort -k 5,5 -k 2,2g |\
+                  uniq -f 1 | awk \'{print $2,$3,$4,$5,$1}\' |\
+                  sort -k 3,3 -k 1,1g > TSS-coord.dat')
+
+
+print "[",datetime.datetime.now(),"]  Getting ENSEMBL gtf annotation file for CDS coordinates..."
+print 
+
+os.system('wget -c "ftp://ftp.ensembl.org//pub/release-64/gtf//mus_musculus/Mus_musculus.NCBIM37.64.gtf.gz"')
+
+print "[",datetime.datetime.now(),"]  Extracting..."
+print
+
+os.system('gunzip -vf Mus_musculus.NCBIM37.64.gtf.gz')
+
+print "[",datetime.datetime.now(),"]  CDS coordinates extraction."
+print 
+
+os.system('awk \'$3=="CDS"{print $1,$4,$5}\' Mus_musculus.NCBIM37.64.gtf |\
+      sort -k 1,1 -k 2,2g | uniq  > CDS-coord.dat')
 
 def processcoord(coords):
    for i in coords:

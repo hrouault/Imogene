@@ -83,6 +83,29 @@ os.system('awk \'/FlyBase\tmRNA\t/ {\
       print $1,$5\
    }\
 }\' dmel*.gff | uniq > TSS-coord.dat')
+
+os.system('awk \'/FlyBase\tmRNA\t/ {\
+      namestart=match($9,"Name=")+5;\
+      name=substr($9,namestart);\
+      namestop=match(name,"[-;]")-1;\
+      name=substr(name,0,namestop);\
+      if ($9~"Alias="){\
+         aliasstart=match($9,"Alias=")+6;\
+         alias=substr($9,aliasstart);\
+         aliasstop=match(alias,"[-,;]")-1;\
+         alias=substr(alias,0,aliasstop);\
+      }\
+      else {\
+         alias="---"\
+      }\
+      if ($7 == "+"){\
+      print alias,$4,$7,$1,name\
+      } else {\
+      print alias,$5,$7,$1,name\
+      }\
+      }\' *.gff | sort -k 5,5 -k 2,2g |\
+                  uniq -f 1 | awk \'{print $2,$3,$4,$5,$1}\' |\
+                  sort -k 3,3 -k 1,1g  > TSS-coord.dat')
    
 
 def processcoord(coords):
