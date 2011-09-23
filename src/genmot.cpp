@@ -204,7 +204,7 @@ genmot_args_init()
    
    // *** It would be nice to set the threshold by bp, in bits.
    scorethr2=width*genmot_args.threshold_arg/10;
-   scorethr=width*(scorethr2-1.0)/10;
+   scorethr=width*(scorethr2-2.0)/10;
    scorethrcons=width*(scorethr2-1.0)/10;
 
    evolutionary_model=genmot_args.evolutionary_model_arg;

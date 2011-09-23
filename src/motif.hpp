@@ -74,32 +74,6 @@ typedef vector<vinst> vvinst;
 
 ostream & operator <<(ostream &os,const Instance & inst);
 
-class TFBS
-{
-
-   public:
-      vint site;
-      
-      double score; // score w current motif
-      double prob; // probability as observed in sequences
-      double probref,probini,probmix; // probability to observe such a motif under the initial PWM, the PWM with refinement, or the Kmeans mixture
-      int num; // number of instances found in a given set of sequences
-      int numrand; // number of instances found in a(n average of) random sample(s) of TFBS from the PWM.
-
-      vd scores; // one score for each motif
-
-
-      TFBS();
-};
-
-typedef vector<TFBS> vtfbs;
-typedef vtfbs::iterator ivtfbs;
-typedef vtfbs::const_iterator civtfbs;
-
-bool operator<(const TFBS & bs1,const TFBS & bs2);
-ostream & operator <<(ostream &os,const TFBS & bs);
-ostream & operator <<(ostream &os,const vtfbs & vbs);
-
 class Motif
 {
    public:
@@ -121,16 +95,16 @@ class Motif
       int* distmot;
       double scorepoiss;
       vma seqs;
-      bool check;
+      bool check; // for distinfo
       vvinst instances;
       
       Sequence refinstances; 
       vinst refinstances_short; // basic infos about motifs instances for scangen
   
       string name;
-      string id; //for jaspar matrices
-      vint indexes; //for clustered motifs
+      unsigned int index;
 
+      // *** allow motif specific threshold. Not of use in current context.
       double motscorethr2;
       double motscorethr;
       double motscorethrcons;
@@ -138,36 +112,17 @@ class Motif
 
       unsigned int tottest; // number of true bases in the background
 
-      double optthr; //thr for optimal discernemnt
-      double optauc; // best ROC area
-      double optTP; // TP at optimal thr
-      double  optFP; // FP at optimal thr
-      unsigned int index;
-
       Motif();
       void matinit(double scth);
       void matinitforscanmots(Sequence & seq);
-      void matinithamming(double scth,unsigned int numhamm);
       void compprec();
       void compprec_MCMC();
-      void comprefinstances(vseq & regs,unsigned int nspe);
-      void comprefinstancescons(unsigned int nspe);
-      void comprefmot();
       void pvaluecomp();
-      void calclambdaposneg(vseq & vscore);
       void calclambda();
       void calclambdaback();
-      void lambdacomp();
       void updatebacksites(Sequence & seq);
-      void lambdacompcons();
       void display(ostream & streamfile);
-      void displaywname(ostream & streamfile);
-      bool isdiff();
-      Motif copy();
-      int nbmatchmat(const Sequence & seq);
       int nbmatchcons(Sequence & seq);
-      double scorematchcons (Sequence & seq);
-      int nbmatchconsnmask(Sequence & seq);
       int nbmatchnmask(Sequence & seq,unsigned int moti);
       int nbmatchwomask(Sequence & seq,unsigned int moti);
       void findinstancesnmask(Sequence &seq);
@@ -251,8 +206,6 @@ double likelyhood(vd x, void *params);
 double loglikelyhood(vd x, void *params);
 double loglikely(const gsl_vector *v, void *params);
 void loadmots ( const char * filename, vmot & mots );
-void loadmotswnames ( const char * filename, vmot & mots );
-void loadjaspardb ( vmot & mots );
    
 void displayhist(vginst & vgi,ostream & ostr);
 void displayhist_set(vginst & vgi, vstring geneset,ostream & ostr);
