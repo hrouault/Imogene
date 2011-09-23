@@ -100,6 +100,11 @@ os.system('awk \'{\
                   uniq -f 1 | awk \'{print $2,$3,$4,$5,$1}\' |\
                   sort -k 3,3 -k 1,1g > TSS-coord.dat')
 
+print "[",datetime.datetime.now(),"]  Genes list creation."
+print 
+
+os.system('awk \'{print $4}\' TSS-coord.dat | sort -u > genelist.dat')
+
 
 print "[",datetime.datetime.now(),"]  Getting ENSEMBL gtf annotation file for CDS coordinates..."
 print 
