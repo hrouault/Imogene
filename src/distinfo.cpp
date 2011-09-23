@@ -48,7 +48,6 @@ scalprod ( vd & col1, vd & col2 )
    return sum;
 }		/* -----  end of function sumcol  ----- */
 
-
    double
 ftomin(double x, vvd mat)
 {

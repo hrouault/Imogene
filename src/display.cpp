@@ -37,284 +37,16 @@ using namespace std;
 
 display_args_info display_args;
    
-   void
-scanseq(Sequence &seq,vmot & mots)
+
+svg::svg()
 {
-   //cout << seq.name << " " << seq.finame << "\n";
-   int nbmot=0;
-   vd nbcorr;
-   double nmcorr=0;
-   unsigned int moti=0;
-   for (ivmot im=mots.begin();im!=mots.begin()+nbmots_for_score;im++){//im!=mots.end();im++){}
-      int nm=0;
-      if (display_args.svg_given){
-         nm=(*im).nbmatchnmaskforsvg(seq,moti);
-      } else {
-         //nm=(*im).nbmatchnmask(seq,moti);
-         nm=(*im).nbmatchwomask(seq,moti);
-      }
-      nbmot=nm;
+   xsize=800;
+   ysize=600;
+   xoffset=140;
+   yoffset=65;
+   pos=0;
+};
 
-//      if (args_info.weightmots_given){
-//         nmcorr+=nm*log((*im).lambdatrain/(*im).lambda);
-//      }
-//      else{
-//         nmcorr+=nm;
-//      }
-//      nbcorr.push_back(nmcorr);
-      //if (nbmot!=0){cout << moti << "->" << nbmot << "\n";};
-      moti++;
-      //cout << seq.name << " " << nbmot << " " << endl;
-      //            for (ivinst ivs=(*im).instances[0].begin();ivs!=(*im).instances[0].end();ivs++){
-      //               cout << ivs->coord << " ";
-      //            }
-      //            cout << endl;
-   }
-   //      for (ivd iv=nbcorr.begin();iv!=nbcorr.end();iv++){
-   //        cout << *iv << " ";
-   //    }
-}
-   void
-scanseqforinstancesnmask(Sequence &seq,vmot & mots)
-{
-   // We mask a tmp sequence
-   Sequence seqtomask=seq;
-   for (ivmot im=mots.begin();im!=min(mots.end(),mots.begin()+nbmots_for_score);im++){
-      im->findinstancesnmask(seqtomask);
-   }
-   seq.instances=seqtomask.instances;
-   return;
-}
-
-   void
-scanseqsforinstancesnmask(vseq & align,vmot & mots)
-{     
-   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-      scanseqforinstancesnmask(*ivs,mots);
-   }
-   return;
-}
-
-
-// tex header for a table of conserved motifs per enhancer
-// TODO: portability + translation
-
-   void
-dispinit(ofstream & outf)
-{
-   outf << "\\documentclass[11pt,twoside,reqno,a4paper]{article}\n"<<
-      "\\usepackage[french]{babel}\n"<<
-      "\\usepackage{color}\n"<<
-      "\\usepackage[utf8]{inputenc}\n"<<
-      "\\usepackage{geometry}\n"<<
-      "\\geometry{a4paper}\n"<<          
-      "\\usepackage{graphicx}\n"<<
-      "\\usepackage{array,multirow,longtable}\n" <<
-      "\\setlongtables\n" <<
-      "\\begin{document}\n"<<
-      "\\noindent\n"<<
-      "\\begin{longtable}[!t]\n" <<
-      "{|c|c|c|c|}\n" <<
-      "\\hline\n" <<
-      "Nom & \\# cons & Score & Pos/Neg " <<
-      "\\endfirsthead\n" <<
-      "\\hline\n" <<
-      "Nom & \\# cons & Score & Pos/Neg\\\\\n" <<
-      "\\hline\n" <<
-      "\\endhead\n" <<
-      "\\endlastfoot \\hline\n";
-}
-
-// more generality than previous.
-// TODO: keep this one and modify code where needed to use it.
-   void
-dispinit(ofstream & outf,vmot & vmoti)
-{
-   outf << "\\documentclass[11pt,twoside,reqno,a4paper]{article}\n"<<
-      "\\usepackage[french]{babel}\n"<<
-      "\\usepackage{color}\n"<<
-      "\\usepackage[utf8]{inputenc}\n"<<
-      "\\usepackage{geometry}\n"<<
-      "\\geometry{a4paper}\n"<<          
-      "\\usepackage{graphicx}\n"<<
-      "\\usepackage{array,multirow,longtable}\n" <<
-      "\\setlongtables\n" <<
-      "\\begin{document}\n"<<
-      "\\noindent\n"<<
-      "\\begin{longtable}[!t]\n" <<
-      "{|c|";
-   for (int i=0;i<vmoti.size();i++){
-      outf << "c|";
-   }
-   outf <<"c|c|}\n" <<
-      "\\hline\n" <<
-      "Nom &";
-   for (ivmot ivm=vmoti.begin();ivm!=vmoti.end();ivm++){
-      outf << "\\#" << ivm->index+1 << " &";
-   }
-   outf <<" Score & Pos/Neg " <<
-      "\\endfirsthead\n" <<
-      "\\hline\n" <<
-      "Nom &";
-   for (ivmot ivm=vmoti.begin();ivm!=vmoti.end();ivm++){
-      outf << "\\#" << ivm->index+1 << " &";
-   }
-   outf <<" Score & Pos/Neg " <<
-      "\\hline\n" <<
-      "\\endhead\n" <<
-      "\\endlastfoot \\hline\n";
-}
-
-// for long tables
-   void
-dispinitforrank(ofstream & outf,vmot & vmoti)
-{
-   outf << "\\documentclass[11pt,landscape,twoside,reqno,a4paper]{article}\n"<<
-      "\\usepackage[french]{babel}\n"<<
-      "\\usepackage{color}\n"<<
-      "\\usepackage[utf8]{inputenc}\n"<<
-      "\\usepackage{geometry}\n"<<
-      "\\geometry{a4paper}\n"<<          
-      "\\usepackage{graphicx}\n"<<
-      "\\usepackage{array,multirow,longtable}\n" <<
-      "\\setlongtables\n" <<
-      "\\begin{document}\n"<<
-      "\\noindent\n"<<
-      "\\begin{longtable}[!t]\n" <<
-      "{|c|c|c|c|";
-   for (int i=0;i<vmoti.size();i++){
-      outf << "c|";
-   }
-   outf <<"c|}\n" <<
-      "\\hline\n" <<
-      "Nom & Chrom & Start & Stop &";
-   for (ivmot ivm=vmoti.begin();ivm!=vmoti.end();ivm++){
-      if (ivm->name!=""){
-         outf << ivm->name << " &";
-      }
-      else{
-         outf << "\\#" << ivm->index+1 << " &";
-      }
-   }
-   outf <<" Score" <<
-      "\\endfirsthead\n" <<
-      "\\hline\n" <<
-      "Nom & Chrom & Start & Stop &";
-   for (ivmot ivm=vmoti.begin();ivm!=vmoti.end();ivm++){
-      if (ivm->name!=""){
-         outf <<  ivm->name << " &";
-      }
-      else{
-         outf << "\\#" << ivm->index+1 << " &";
-      }
-   }
-   outf <<" Score" <<
-      "\\endhead\n" <<
-      "\\endlastfoot \\hline\n";
-}
-
-   void
-dispclose(ofstream & outf)
-{
-   outf <<	"\\end{document}";
-}
-
-// display nb of conserved motifs in a tex file, for pos/neg seqs
-   void
-dispscore(vseq & vscore, Motif & mot)
-{
-   ofstream disp;
-   ostringstream disps;
-   disps << "score/dispscore/dispscore_" << mot.index << ".tex";
-   disp.open(disps.str().c_str());
-   dispinit(disp);
-   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-      string sign;
-      if ((*ivs).sign==1) sign="+";
-      else sign="-";
-      disp << (*ivs).name << " & " << (*ivs).motis[mot.index] << " & "
-         << setprecision(3) <<  (*ivs).score << " & " << sign << " \\\\\n" <<
-         "\\hline\n";
-
-   }
-   disp  << "\\caption{\\small Motif " << mot.index << 
-      " at threshold " << scorethr2 << "}\n"<<
-      "\\end{longtable}\n";
-   dispclose(disp);
-   disp.close();
-}
-
-// display nb of conserved motifs (for several motifs) in a tex file, for pos/neg seqs
-   void
-dispscore(vseq & vscore, vmot & vmoti)
-{
-   ofstream disp;
-   ostringstream disps;
-   disps << "score/dispscore/dispscore_";
-   for (ivmot mot=vmoti.begin();mot!=vmoti.end();mot++){
-      if (mot!=vmoti.begin()) disps << "+";
-      disps << mot->index;
-   }
-   disps << ".tex";
-   disp.open(disps.str().c_str());
-   dispinit(disp,vmoti);
-   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-      string sign;
-      if ((*ivs).sign==1) sign="+";
-      else sign="-";
-      disp << (*ivs).name << " & "; 
-      for (ivmot ivm=vmoti.begin();ivm!=vmoti.end();ivm++){
-         disp << (*ivs).motis[ivm->index] << " & ";
-      }
-      disp << setprecision(3) <<  (*ivs).score << " & " << sign << " \\\\\n" <<
-         "\\hline\n";
-
-   }
-   disp  << "\\caption{\\small Motifs ";
-
-   for (ivmot ivm=vmoti.begin();ivm!=vmoti.end();ivm++){
-      disp << ivm->index << " ";
-   }
-   disp <<" at threshold " << scorethr2 << "}\n"<<
-      "\\end{longtable}\n";
-   dispclose(disp);
-   disp.close();
-}
-
-// general tex display for nb of conserved motifs
-   void
-dispscoreforrank(vseq & vscore, vmot & vmoti,ofstream & disp)
-{
-   dispinitforrank(disp,vmoti);
-   for (ivseq ivs=vscore.begin();ivs!=vscore.end();ivs++){
-      disp << (*ivs).name << " & "; 
-      disp << chromfromint(ivs->chrom) << " & "; 
-      disp << ivs->start << " & "; 
-      disp << ivs->stop << " & "; 
-      for (ivmot ivm=vmoti.begin();ivm!=vmoti.end();ivm++){
-         disp << (*ivs).motis[ivm->index] << " & ";
-      }
-      disp << setprecision(3) <<  (*ivs).score << " \\\\\n" <<
-         "\\hline\n";
-
-   }
-   disp  << "\\caption{\\small Motifs ";
-
-   for (ivmot ivm=vmoti.begin();ivm!=vmoti.end();ivm++){
-      if (ivm->name!=""){
-         disp <<  ivm->name << " ";
-      }
-      else{
-         disp << "\\#" << ivm->index+1 << " &";
-      }
-   }
-   disp <<" at threshold " << scorethr2 << "}\n"<<
-      "\\end{longtable}\n";
-   dispclose(disp);
-}
-
-/////////
-   
    void
 texify (string & str)
 {
@@ -346,15 +78,6 @@ colfromint(int i)
    return "black";
 
 }
-
-svg::svg()
-{
-   xsize=800;
-   ysize=600;
-   xoffset=140;
-   yoffset=65;
-   pos=0;
-};
 
    void
 svginit(ofstream & svgfile, svg s)
@@ -820,17 +543,22 @@ cmd_display(int argc, char **argv)
    cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
 
    cout << "Loading alignments " << endl;
+   
    vseq align;
    align=loadseqs(display_args.align_arg);
    cout << "Nb sequences to scan: " << align.size() << endl;
 
    cout << "Loading Motifs" << endl;
+   
    vmot mots;
    loadmots(display_args.motifs_arg,mots); 
    if (nbmots_for_score<mots.size()) mots.erase(mots.begin()+nbmots_for_score,mots.end());
+   
    for (ivmot iv=mots.begin();iv!=mots.end();iv++){
+      
       // use same score on all species for detection
       iv->motscorethrcons=iv->motscorethr2;
+      
       // avoid problems with _ and # characters for latex
       texify(iv->name);
    }

@@ -20,7 +20,7 @@
 
 #include <cmath>
 #include <cstdlib>
-#include<algorithm>
+#include <algorithm>
 
 #include <iostream>
 #include <iomanip>
@@ -36,21 +36,20 @@
 #include <numeric>
 #include <time.h>
 
-
 #include "const.hpp"
 #include "vectortypes.hpp"
 #include "random.hpp"
 #include "motif.hpp"
 #include "sequence.hpp"
-#include "scangen.hpp"
 #include "genmot.hpp"
 #include "tree.hpp"
-//#include "montecarlo.hpp" *** see how to include it
 
 using namespace std;
 
 Motif::Motif()
 {
+   // *** only way to do if we want to define distwith in the cpp 
+   distmot=new int[distwidth];
    for (unsigned int i=0;i<distwidth;i++){
       distmot[i]=0;
    }
@@ -62,7 +61,6 @@ Motif::Motif()
    lambdatrain=0;
    pvalue=0;
    scorepoiss=0;
-   meanval=0;
    nbmot=0;
    ntrain=0;
    check=true;
@@ -1313,28 +1311,6 @@ Motif::compprec_MCMC()
    matprecrevcomp=reversecomp(matprec);
 }
 
-   vvd 
-mattoenergy(vvd & mat)
-{
-   vd dumd(4,0.0);
-   vvd matenergy(width,dumd);
-   int i=0;
-   for (ivvd iv=mat.begin();iv!=mat.end();iv++){
-      double max=-100.;
-      for (ivd col=(*iv).begin();col!=(*iv).end();col++){
-         if (*col>max) max=*col;
-      }
-      int j=0;
-      for (ivd col=(*iv).begin();col!=(*iv).end();col++){
-         matenergy[i][j]=max-*col;
-         j++;
-      }
-      i++;
-   }
-   return matenergy;
-
-}
-
    vvd
 mattofreq(vvd & mat)
 {
@@ -1736,7 +1712,6 @@ loadmots ( const char * filename, vmot & mots )
          }
       }
       mot1.matfreq=mattofreq(mot1.matprec);
-      mot1.matenergy=mattoenergy(mot1.matprec);
       mot1.matprecrevcomp=reversecomp(mot1.matprec);
       fmotifs >> mot1.distmot;
       fmotifs >> dum;
@@ -1797,7 +1772,6 @@ loadmotswnames ( const char * filename, vmot & mots )
          }
       }
       mot1.matfreq=mattofreq(mot1.matprec);
-      mot1.matenergy=mattoenergy(mot1.matprec);
       mot1.matprecrevcomp=reversecomp(mot1.matprec);
       fmotifs >> mot1.distmot;
       fmotifs >> dum;
@@ -1854,7 +1828,6 @@ loadjaspardb ( vmot & mots )
          }
       }
       mot1.matfreq=mattofreq(mot1.matprec);
-      mot1.matenergy=mattoenergy(mot1.matprec);
       mot1.matprecrevcomp=reversecomp(mot1.matprec);
       fmotifs >> mot1.distmot;
       fmotifs >> dum;
@@ -1892,7 +1865,6 @@ loadjaspardb ( vmot & mots )
          }
       }
       mot1.matfreq=mattofreq(mot1.matprec);
-      mot1.matenergy=mattoenergy(mot1.matprec);
       mot1.matprecrevcomp=reversecomp(mot1.matprec);
       fmotifs >> mot1.distmot;
       fmotifs >> dum;
@@ -2120,5 +2092,67 @@ matfreqdisp(vvd& matrice)
    return;
 }
 
+   void
+scanseqforinstances(Sequence &seq,vmot & mots)
+{
+   seq.instances.clear();
+   for (ivmot im=mots.begin();im!=min(mots.end(),mots.begin()+nbmots_for_score);im++){
+      im->findinstances(seq);
+   }
+   return;
+}
+   
+//   void
+//scanseqforconsinstances(Sequence &seq,vmot & mots)
+//{
+//   seq.instances.clear();
+//   for (ivmot im=mots.begin();im!=mots.end();im++){
+//      if (seq.iseqs[0].size()>im->motwidth){
+//         im->matinitforscanmots(seq);
+//      }
+//   }
+//   return;
+//}
+
+   void
+scanseqsforinstances(vseq & align,vmot & mots)
+{     
+   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
+      scanseqforinstances(*ivs,mots);
+   }
+   return;
+}
+
+   void
+scanseqsforinstances(vseq & align,Motif & mot)
+{     
+   vmot mots;
+   mots.push_back(mot);
+   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
+      scanseqforinstances(*ivs,mots);
+   }
+   return;
+}
+      
+   void
+scanseqforinstancesnmask(Sequence &seq,vmot & mots)
+{
+   // We mask a tmp sequence
+   Sequence seqtomask=seq;
+   for (ivmot im=mots.begin();im!=min(mots.end(),mots.begin()+nbmots_for_score);im++){
+      im->findinstancesnmask(seqtomask);
+   }
+   seq.instances=seqtomask.instances;
+   return;
+}
+
+   void
+scanseqsforinstancesnmask(vseq & align,vmot & mots)
+{     
+   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
+      scanseqforinstancesnmask(*ivs,mots);
+   }
+   return;
+}
 
 

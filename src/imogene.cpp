@@ -24,51 +24,23 @@
 #endif
 
 #include <iostream>
-#include <string>
-#include <cstring>
-
-#include <algorithm> // used by sort
-
-#include "genmot_cmdline.h"
-
-
-// *** See if the following are required...
-#include<cmath>
-#include<iomanip>
-#include<vector>
-#include<fstream>
-#include<limits>
-#include<sstream>
-#include<algorithm>
-#include<gsl/gsl_math.h>
-#include<gsl/gsl_sf.h>
-#include<gsl/gsl_randist.h>
-#include<gsl/gsl_cdf.h>
-#include <numeric>
 
 using namespace std;
 
 #include "config.h"
 
 #include "const.hpp"
-#include "vectortypes.hpp"
-#include "random.hpp"
 #include "sequence.hpp"
 #include "motif.hpp"
-#include "tree.hpp"
-//#include "montecarlo.hpp"
-
+#include "vectortypes.hpp"
+#include "sequence.hpp"
 #include "imogene.hpp"
-
 #include "distinfo.hpp"
 #include "display.hpp"
 #include "extract.hpp"
 #include "genmot.hpp"
 #include "help.hpp"
 #include "scangen.hpp"
-
-
-genmot_args_info args_info;
 
 
 const char usage_string[] =
@@ -172,145 +144,6 @@ void list_cmds_help(void)
 	}
 }
 
-
-   void
-findnearestgene_sides(vcoord & vgenes, vcoord & vpeaks)
-{
-
-   double peak;
-   for (ivcoord ivc=vpeaks.begin();ivc!=vpeaks.end();ivc++){
-      cout << ivc->name << " -> ";
-      peak=(ivc->stop+ivc->start)/2;
-      double distmin(1e9);
-      ivcoord bestcoord;
-      for (ivcoord ivg=vgenes.begin();ivg!=vgenes.end();ivg++){
-         if (ivg->chrom==ivc->chrom){
-            double dist;
-            dist=fabs(peak-ivg->start);
-            if (fabs(peak-ivg->stop)<dist) dist=fabs(peak-ivg->stop);
-            if (dist<distmin){
-               ivc->name=ivg->name;
-               bestcoord=ivg;
-               distmin=dist;
-            }
-         }
-      }
-
-      if (distmin==1e6){
-         ivc->neargenes.push_back("None");
-         ivc->neargenes.push_back("None");
-         ivc->neargenes.push_back("None");
-         ivc->neargenes.push_back("None");
-         continue;
-      }
-
-      //TSS in 3', or 5'
-      if (peak-bestcoord->start>0){
-         for (ivcoord ivg=bestcoord-1;ivg!=bestcoord+3;ivg++){
-            if (ivg>=vgenes.begin() && ivg<vgenes.end() && ivg->chrom==bestcoord->chrom){
-               ivc->neargenes.push_back(ivg->name);
-            }
-            else {
-               ivc->neargenes.push_back("None");
-            } 
-         }
-      }
-      else{
-         for (ivcoord ivg=bestcoord-2;ivg!=bestcoord+2;ivg++){
-            if (ivg>=vgenes.begin() && ivg<vgenes.end() && ivg->chrom==bestcoord->chrom){
-               ivc->neargenes.push_back(ivg->name);
-            }
-            else {
-               ivc->neargenes.push_back("None");
-            } 
-         }
-      }
-
-      for (ivstring ivs=ivc->neargenes.begin();ivs!=ivc->neargenes.end();ivs++){
-         cout << *ivs << "\t";
-      }
-      cout << endl;
-
-   }
-   return;
-}
-
-   void
-findnearestgene(vcoord & vgenes, vcoord & vpeaks)
-{
-
-   //   ofstream outf("peak_dist.dat");
-   double peak;
-   for (ivcoord ivc=vpeaks.begin();ivc!=vpeaks.end();ivc++){
-      //cout << ivc->name << " -> ";
-      peak=(ivc->stop+ivc->start)/2;
-      double distmin(1e12);
-      double distminsigned(1e12);
-      for (ivcoord ivg=vgenes.begin();ivg!=vgenes.end();ivg++){
-         if (ivg->chrom==ivc->chrom){
-            double dist;
-            // distance to TSS, depends on strand
-            //if (ivg->strand==-1) dist=peak-ivg->stop;
-            //else dist=peak-ivg->start;
-            dist=peak-ivg->start;
-            //        if (fabs(peak-ivg->stop)<dist) dist=fabs(peak-ivg->stop);
-            if (fabs(dist)<distmin){
-               ivc->name=ivg->name;
-               distmin=fabs(dist);
-               if (ivg->strand==-1) distminsigned=-dist;
-               else distminsigned=dist;
-            }
-         }
-      }
-      //      if (fabs(distminsigned)!=1e6) outf << distminsigned << " " << ivc->name << endl;
-      //cout << ivc->name << endl;
-   }
-   return;
-}
-
-
-
-   void
-scanseqforinstances(Sequence &seq,vmot & mots)
-{
-   seq.instances.clear();
-   for (ivmot im=mots.begin();im!=min(mots.end(),mots.begin()+nbmots_for_score);im++){
-      im->findinstances(seq);
-   }
-   return;
-}
-   
-//   void
-//scanseqforconsinstances(Sequence &seq,vmot & mots)
-//{
-//   seq.instances.clear();
-//   for (ivmot im=mots.begin();im!=mots.end();im++){
-//      if (seq.iseqs[0].size()>im->motwidth){
-//         im->matinitforscanmots(seq);
-//      }
-//   }
-//   return;
-//}
-
-   void
-scanseqsforinstances(vseq & align,vmot & mots)
-{     
-   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-      scanseqforinstances(*ivs,mots);
-   }
-   return;
-}
-
-   void
-scanseqsforinstances(vseq & align,Motif & mot)
-{     
-   vmot mots;
-   mots.push_back(mot);
-   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-      scanseqforinstances(*ivs,mots);
-   }
-   return;
-}
 
    void
 print_reportbugs()

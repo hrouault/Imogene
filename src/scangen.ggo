@@ -49,9 +49,6 @@ groupoption "discard-on-gene-names" -  "" group="discarding"
 groupoption "discard-on-position" -  "" group="discarding" details="(default)"
 
 
-option  "scanstep" - "Step of scanned genome"
-            int typestr="int" default="50" optional
-
 option  "phenotype" p  "file containing a list of genes annotated with a relevant phenotype (used for histograms construction)"
             string typestr="str" optional 
 

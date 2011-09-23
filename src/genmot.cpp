@@ -57,7 +57,6 @@ genmot_args_info genmot_args;
 vstring regtests;
 vseq regints;
 
-
 /** 
  * ===  FUNCTION  ======================================================================
  *         Name:  motscoreorder
@@ -76,6 +75,7 @@ motchi2order ( Motif mot1, Motif mot2 )
    return mot1.scorepoiss<mot2.scorepoiss;
 }		/* -----  end of function motscoreorder  ----- */
 
+// infinite norm
    double
 distcv(vvd& mat1, vvd& mat2)
 {
@@ -140,7 +140,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       if (compN(bs)>0) continue;
       Motif currmot;
       currmot.bsinit=vinttostring(bs);
-      currmot.seqinit=currseq.name;
       currmot.pos=i;
       motiftomat(bs,currmot);
       currmot.matricerevcomp=reversecomp(currmot.matrice);
@@ -148,6 +147,7 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       currmot.matprecrevcomp=currmot.matricerevcomp;
       vvd pmat=currmot.matprec;
       unsigned int nbconv(0);
+      // *** TODO better convergence check
       for (int nb=1;nb<=nbiter;nb++){
          double max=0.01;
          int iter(0);
@@ -173,12 +173,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
 
       currmot.matinit(scorethr2);
       if (currmot.nbmot>2){
-         //currmot.pvaluecomp(); // THIS IS DONE IN THE END
-         //currmot.display(streamfile);
-         //		for (ivma ima=currmot.seqs.begin();ima!=currmot.seqs.end();ima++){
-         //  cout << (*ima).alignseq[0] << endl;
-         //		}
-         //cout << currmot.matprec << endl;
          currmot.matprecrevcomp=reversecomp(currmot.matprec);
          currmot.matfreq=mattofreq(currmot.matprec);
          currmot.motscorethr=scorethr2;
@@ -189,7 +183,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
    }
    cout << endl;
 }
-
 
 void
 genmot_args_init()
@@ -245,26 +238,22 @@ cmd_genmot(int argc, char **argv)
    cout << "alpha=" << alpha << endl;
 
    cout << "Loading background file names..." << endl;
-
+   
    if (species=="droso") regtests=loadfilenames(DATA_PATH"/droso/background");
    else if (species=="eutherian") regtests=loadfilenames(DATA_PATH"/eutherian/background");
-
    cout << "Background set size : " << regtests.size() << endl;
 
    cout << "Loading training set..." << endl;
 
    regints=loadseqs(genmot_args.align_arg);
-
    cout << "Training set size : " << regints.size() << endl;
    
    cout << "Masking repeats in training set..." << endl;
-
    maskrepeats(regints);
 
    inittreedist();
 
    cout << "Generating motifs..." << endl;
-
    vmot genmots;
    for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
       cout << (*iseq).name << endl;
@@ -290,7 +279,7 @@ cmd_genmot(int argc, char **argv)
    cout << "\n";
    
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
-      ivm->pvaluecomp(); // THIS IS DONE IN THE END
+      ivm->pvaluecomp();
    }
    
 
@@ -330,8 +319,6 @@ cmd_genmot(int argc, char **argv)
    }
    motmeldb.close();
    
-   
-
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);
    cout << "exit normally" << endl;

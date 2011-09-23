@@ -24,8 +24,9 @@
 #include <vector>
 #include <gsl/gsl_vector.h>
 
-#include "sequence.hpp"
+#include "vectortypes.hpp"
 #include "const.hpp"
+#include "sequence.hpp"
 
 class Motif;
 
@@ -103,26 +104,21 @@ class Motif
 {
    public:
       int pos;
-      string seqinit;
       string bsinit;
       vvd matrice;
       vvd matprec;
       vvd matfreq;
-      vvd matenergy;
       int nbmot;
       vvd matricerevcomp;
       vvd matprecrevcomp;
-      vvd matwocons;
-      vvd matwoconsrevcomp;
       double lambda;
       double lambdatrain;
       int ntrain;
       double pvalue;
       double meanpoiss;
-       double meanval;
       int nbmatchback;
       unsigned int nbmatch;
-      int distmot[distwidth];
+      int* distmot;
       double scorepoiss;
       vma seqs;
       bool check;
@@ -274,6 +270,13 @@ Motif comprefmot(Motif & mot);
 vvd mattofreq(vvd & mat);
 void  matfreqdisp(vvd& matrice);
 void displaymat(vvd & mat);
+   
+void scanseqforinstances(Sequence &seq,vmot & mots);
+void scanseqsforinstances(vseq & align,Motif & mot);
+void scanseqsforinstances(vseq & align,Motif & mot);
+void scanseqforinstancesnmask(Sequence &seq,vmot & mots);
+void scanseqsforinstancesnmask(vseq & align,vmot & mots);
+void scanseqforconsinstances(Sequence &seq,vmot & mots);
 
 
 #endif // Motif_H

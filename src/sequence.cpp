@@ -28,15 +28,8 @@
 #include "sequence.hpp"
 #include "tree.hpp"
 
-vint lengthchrom;
-
 vcoord alignscoord;
 
-bool 
-operator<(const Chromosome & chr1,const Chromosome & chr2)
-{
-   return intfromchrom(chr1.name) < intfromchrom(chr2.name); 
-}
 
 bool 
 operator<(const Coordinate & coord1,const Coordinate & coord2)
@@ -183,6 +176,10 @@ remgaps(string & seq)
    return oseq;
 }
 
+TSS::TSS()
+{
+}
+
 TSS::TSS(int position,char dir,string chr,string gname,string gnamevar)
 {
    if (chr=="2L"){
@@ -204,18 +201,6 @@ TSS::TSS(int position,char dir,string chr,string gname,string gnamevar)
    } else sens=-1;
    gene=gname;
    genevar=gnamevar;
-}
-
-ostream& 
-operator <<(ostream &os,const vTSS &vt)
-{
-   for (civTSS ivt=vt.begin();ivt!=vt.end();ivt++){
-      os << ivt->chrom << " ";
-      os << ivt->coord << " ";
-      os << ivt->sens << " ";
-      os << ivt->gene << ";";
-   }
-   return os;
 }
 
 string
@@ -356,10 +341,6 @@ intfromchrom(string chrname)
    }
 }
 
-TSS::TSS()
-{
-}
-
 istream &
 operator >>(istream &is,TSS & tss)
 {
@@ -390,29 +371,12 @@ operator >>(istream &is,TSS & tss)
    return is;
 }
 
-istream &
-operator >>(istream &is,Chromosome & chrom)
+   void
+importTSS(vTSS & vt,ifstream & file)
 {
-   getline(is,chrom.name);
-   if (chrom.name.find('>')!=string::npos){
-      chrom.name=chrom.name.substr(1);
-   }
-   chrom.name=chrom.name.substr(0,chrom.name.find(" "));
-   string dumseq="";
-   getline(is,dumseq,'>');
-
-   string::iterator ist=dumseq.begin();
-
-   chrom.seq="";
-   while (ist!=dumseq.end())
-   {
-      if (*ist!='\n'){
-         chrom.seq.push_back(*ist);
-      }
-      ist++;
-   }
-
-   return is;
+   back_insert_iterator<vTSS> dest(vt);
+   copy(iisTSS(file),iisTSS(),dest);
+//   cout << vt.size() << endl;
 }
 
 istream &
@@ -484,24 +448,10 @@ ostream&
 operator <<(ostream &os,const Sequence & s)
 {
       os << s.name << "\t";
-      os << "score: " << s.score << "\t";
       os << "chrom: " << chromfromint(s.chrom) << "\t";
       os << "start: " << s.start << "\t";
       os << "stop: " << s.stop << "\t";
       os << "length: " << s.iseqs[0].size() << "\t";
-      if (s.motis.size()!=0){
-         unsigned int motindex(1);
-         for (civint iv=s.motis.begin();iv!=s.motis.end();iv++){   
-            os << "#"<< motindex << ": " << *iv << "\t";
-            motindex++;
-         }
-      }
-      if (s.sign==1){
-         os << "+" ;
-      }
-      else if (s.sign==-1){
-         os << "-" ;
-      }
       os << endl;
       return os;
 }
@@ -510,26 +460,7 @@ operator <<(ostream &os,const Sequence & s)
 operator <<(ostream &os,const vseq &vs)
 {
    for (civseq ivs=vs.begin();ivs!=vs.end();ivs++){
-      os << (*ivs).name << "\t";
-      os << "score: " << (*ivs).score << "\t";
-      os << "chrom: " << chromfromint(ivs->chrom) << "\t";
-      os << "start: " << ivs->start << "\t";
-      os << "stop: " << ivs->stop << "\t";
-      os << "length: " << ivs->iseqs[0].size() << "\t";
-      if ((*ivs).motis.size()!=0){
-         unsigned int motindex(1);
-         for (civint iv=(*ivs).motis.begin();iv!=(*ivs).motis.end();iv++){   
-            os << "#"<< motindex << ": " << *iv << "\t";
-            motindex++;
-         }
-      }
-      if ((*ivs).sign==1){
-         os << "+" ;
-      }
-      else if ((*ivs).sign==-1){
-         os << "-" ;
-      }
-      os << endl;
+      os << *ivs;
    }
    return os;
 }
@@ -575,29 +506,6 @@ operator <<(ostream &os,vinstseq &vist)
    }
 
    return os;
-}
-
-   ostream &
-operator <<(ostream &os,vvinstseq &vvist)
-{
-
-   for (ivvinstseq ivvs=vvist.begin();ivvs!=vvist.end();ivvs++){
-      for (ivinstseq ivs=ivvs->begin();ivs!=ivvs->end();ivs++){
-         os << *ivs;
-      }
-      os << "\n";
-   }
-
-   return os;
-}
-   
-
-   void
-importTSS(vTSS & vt,ifstream & file)
-{
-   back_insert_iterator<vTSS> dest(vt);
-   copy(iisTSS(file),iisTSS(),dest);
-//   cout << vt.size() << endl;
 }
    
    vint
@@ -669,72 +577,6 @@ reversecomp(vvd & matrice)
    return matrev;
 }
 
-//used for regs2000.fa
-   vseq
-loadsequences(ifstream & list)
-{
-   vseq seqs;
-   string id,seqstr;
-   int i=0;
-   string tmpstring;
-   getline(list,tmpstring);
-   while (!list.eof()){
-      Sequence seq;
-      string curline;
-      seq.name=tmpstring;
-      getline(list,curline);
-      seq.seqs.push_back(curline);
-      vint iseq=stringtoint(curline);
-      seq.iseqs.push_back(iseq);
-      seq.nbN=compN(iseq);
-      seq.nbtb=curline.size()-seq.nbN;
-      seqs.push_back(seq);
-      i++;
-      getline(list,tmpstring);
-   }
-   return seqs;
-}
-
-   vseq
-loadsequencesints(ifstream & list)
-{
-   vseq seqs;
-   string id,seqstr;
-   int i=0;
-   string tmpstring;
-   getline(list,tmpstring);
-   while (!list.eof()){
-      Sequence seq;
-      string curline;
-      seq.name=tmpstring;
-      getline(list,curline);
-      seq.seqsrealigned.push_back(curline);
-      seq.imaps.push_back(alignedtomap(curline));
-      seq.imapsinv.push_back(alignedtorevmap(curline));
-      for (unsigned int j=0;j<3;j++){
-         getline(list,curline);
-         getline(list,curline);
-         seq.seqsrealigned.push_back(curline);
-         seq.imaps.push_back(alignedtomap(curline));
-         seq.imapsinv.push_back(alignedtorevmap(curline));
-      }
-      for (unsigned int j=0;j<4;j++){
-         getline(list,curline);
-         getline(list,curline);
-         seq.seqs.push_back(curline);
-         seq.iseqs.push_back(stringtoint(curline));
-      }
-      seq.nbN=compN(seq.iseqs[0]);
-      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
-      seqs.push_back(seq);
-//      cout << i << endl;
-      i++;
-//      cout << seq.name << endl;
-      getline(list,tmpstring);
-   }
-   return seqs;
-}
-
 Sequence loadseqconserv(string & filename)
 {
 	ifstream fseq;
@@ -747,144 +589,6 @@ Sequence loadseqconserv(string & filename)
 	return seq;
 }
    
-   vseq
-loadsequencesconserv(ifstream & list)
-{
-   vstring seqsfile;
-   back_insert_iterator<vstring> dest(seqsfile);
-   copy(iisstring(list),iisstring(),dest);
-
-   vseq seqs;
-
-	//cout << "inputs" << endl;
-
-   unsigned int counter=0;
-   for (ivstring is=seqsfile.begin();is!=seqsfile.end();is++){
-//      cout << *is << endl;
-//	   if (counter>300) break;
-	  ifstream fseq;
-      fseq.open((*is).c_str());
-      Sequence seq;
-      // get the filename
-      seq.finame=*is;
-//      cout << seq.finame << endl;
-      fseq >> seq;
-      //we capture the sequence name, between final / and .fa
-      string tname;
-      tname=*is;
-      tname.erase(tname.begin(),tname.begin()+tname.rfind('/')+1);
-      tname.erase(tname.begin()+tname.rfind('.'),tname.end());
-      int found=tname.find('_');
-      if (found!=string::npos){
-         //if there are mpre than two _
-         if (tname.find('_',found+1)!=string::npos){
-            //stop
-            found=tname.find_last_of('_');
-            tname=tname.substr(0,found);
-            //start
-            found=tname.find_last_of('_');
-            tname=tname.substr(0,found);
-            //chrom
-            found=tname.find_last_of('_');
-            tname=tname.substr(0,found);
-         }
-      }
-      seq.name=tname;//(*is).c_str(); // for display purpose
-      fseq.close();
-      seqs.push_back(seq);
-	   counter++;
-   }
-   return seqs;
-}
-
-   vseq
-loadsequencesconservonly(ifstream & list)
-{
-   vstring seqsfile;
-   back_insert_iterator<vstring> dest(seqsfile);
-   copy(iisstring(list),iisstring(),dest);
-
-   vseq seqs;
-
-	//cout << "inputs" << endl;
-
-   for (ivstring is=seqsfile.begin();is!=seqsfile.end();is++){
-      //      cout << *is << endl;
-      //	   if (counter>300) break;
-      ifstream fseq;
-      fseq.open((*is).c_str());
-      Sequence seq;
-      fseq >> seq;
-      vint spe;
-      int i=0;
-      for (ivint iv=seq.species.begin();iv!=seq.species.end();iv++){
-         if (*iv==1) spe.push_back(i);
-         i++;
-      }
-      if (iscons(spe)){ 
-         //we capture the sequence name, between final / and .fa
-         string tname;
-         tname=*is;
-         tname.erase(tname.begin(),tname.begin()+tname.rfind('/')+1);
-         tname.erase(tname.begin()+tname.rfind('.'),tname.end());
-         seq.name=tname;//(*is).c_str(); // for display purpose
-         fseq.close();
-         seqs.push_back(seq);
-      }
-   }
-   return seqs;
-}
-   
-   vcoord
-loadcoordconservwstrand(ifstream & list)
-{
-   vcoord vcds;
-   string dum;
-   getline(list,dum);
-   while(!list.eof()){
-      Coordinate coord;
-      stringstream line(dum);
-      string chrom;
-      line>>chrom;
-      coord.chrom=intfromchrom(chrom);
-      line>>coord.start;
-      line>>coord.stop;
-      line>>coord.strand;
-      line>>coord.name;
-      if (coord.chrom!=-1){
-         vcds.push_back(coord);
-      }
-      getline(list,dum);
-   }
-   return vcds;
-}
-   
-vcoord
-loadcoordfromTSS(ifstream & list)
-{
-   vcoord vcds;
-   string dum;
-   getline(list,dum);
-   while(!list.eof()){
-      Coordinate coord;
-      stringstream line(dum);
-      string chrom;
-      line>>coord.start;
-      coord.stop=coord.start;
-      line>>dum;
-      if (dum=="+") coord.strand=1;
-      else coord.strand=-1;
-      line>>coord.name;
-      line>>chrom;
-      coord.chrom=intfromchrom(chrom);
-      if (coord.chrom!=-1){
-         vcds.push_back(coord);
-      }
-      getline(list,dum);
-   }
-   return vcds;
-}
-
 int
 loadcoordconserv(string folder, vcoord output)
 {
@@ -965,7 +669,6 @@ loadfilenames(const char * folder)
    return filenames;
 }
 
-
    vcoord
 loadcoordconserv(ifstream & list)
 {
@@ -991,37 +694,8 @@ loadcoordconserv(ifstream & list)
    return vcds;
 }
 
-
-   double
-scorefshift(vint & seqint, vvd &matrice)
-{ 
-   int deca(1);
-   int dum(5);
-   vint seqtmp=seqint;
-   seqtmp.insert(seqtmp.begin(),deca,dum);
-   seqtmp.insert(seqtmp.end(),deca,dum);
-
-   double score(-100);
-   for (ivint ibs=seqtmp.begin();ibs!=seqtmp.end()-width+1;ibs++){
-      double sc=0;
-      ivint ibs1=ibs;
-      for (vvd::const_iterator imat=matrice.begin();imat!=matrice.end();imat++){
-      int base=*ibs1;
-         if (base==5){
-            sc += 0;
-         }
-         else if (base==4){
-            sc -= 100;
-         }
-         else sc+=(*imat)[base];
-         ibs1++;
-      }
-      if (sc>score) score=sc;
-   }
-   return score;
-}
    
-// the matrice is a scoring PWM (matprec)
+// the matrix is a scoring PWM (matprec)
    double
 scoref(vint::const_iterator &iseq, vvd &matrice)
 {
@@ -1054,23 +728,6 @@ scoref(vint site, vvd &matrice)
    return sc;
 }
    
-// here give a frequency matrix
-   double
-compprob(vint site, vvd &matrice)
-{
-   double sc=1;
-   unsigned int pos=0;
-   for (ivint iv=site.begin();iv!=site.end();iv++){
-      const int base=*iv;
-      if (base == 4){
-         sc*=exp(-100);
-      }
-      else sc*=matrice[pos][base];
-      pos++;
-   }
-   return sc;
-}
-
 unsigned int
 shift(vint::const_iterator iseq,vvd & matrice, vint::const_iterator &seq_end, unsigned int extent)
 {
@@ -1098,39 +755,6 @@ shift(vint::const_iterator iseq,vvd & matrice, vint::const_iterator &seq_end, un
 //   }
 
    return shift;
-}
-
-   int
-basetoint(char base)
-{
-   int valueb=4;
-   switch (base){
-      case 'A':
-         valueb=0;
-         break;
-      case 'a':
-         valueb=0;
-         break;
-      case 'C':
-         valueb=1;
-         break;
-      case 'c':
-         valueb=1;
-         break;
-      case 'G':
-         valueb=2;
-         break;
-      case 'g':
-         valueb=2;
-         break;
-      case 'T':
-         valueb=3;
-         break;
-      case 't':
-         valueb=3;
-         break;
-   }
-   return valueb;
 }
 
 Sequence
@@ -1331,12 +955,13 @@ iscons(vint & spe)
 Sequence::Sequence()
 {
    name="";
-   score=0;
-   sign=0;
-   cons=0;
-   vint dum(nbmots_for_score,0);
-   motis=dum;
-   signpermot=dum;
+   chrom=-1;
+   start=0;
+   stop=0;
+   nmot=0;
+   nbmot=0;
+   nbN=0;
+   nbtb=0;
 }
 
 Coordinate::Coordinate()
@@ -1353,7 +978,6 @@ void
 Sequence::instances2instancescons()
 {
    vint dum(nbmots_for_score,0);
-   motis=dum;
    vinstseq vdum;
    vvinstseq vvinstspe(nbspecies,vdum);
    for (ivinstseq ivs=instances.begin();ivs!=instances.end();ivs++){
@@ -1389,7 +1013,6 @@ Sequence::instances2instancescons()
 
       if (iscons(vspe)){
          instancescons.push_back(vtmp);
-         motis[ivi->motindex]++;
       }
 
    }
@@ -1407,4 +1030,3 @@ Instanceseq::Instanceseq(unsigned int moti,int s, unsigned int p,unsigned int tp
    score=sc;
    motname=n;
 }
-      
