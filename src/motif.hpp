@@ -104,7 +104,7 @@ class Motif
       string name;
       unsigned int index;
 
-      // *** allow motif specific threshold. Not of use in current context.
+      // *** allow motif specific threshold. Not of use in the current context.
       double motscorethr2;
       double motscorethr;
       double motscorethrcons;
@@ -123,8 +123,6 @@ class Motif
       void updatebacksites(Sequence & seq);
       void display(ostream & streamfile);
       int nbmatchcons(Sequence & seq);
-      int nbmatchnmask(Sequence & seq,unsigned int moti);
-      int nbmatchwomask(Sequence & seq,unsigned int moti);
       void findinstancesnmask(Sequence &seq);
       void findinstances(Sequence &seq);
       void findinstances(vseq &vs);
@@ -212,8 +210,6 @@ void displayhist_set(vginst & vgi, vstring geneset,ostream & ostr);
 
 int compalpha();
    
-void scoreseq(Sequence &seq,vmot & mots);
-
 void freqtolog(vvd & mat);
 void countfreq(vvd & mat);
 void countbases(Motif & mot,Sequence & bds);

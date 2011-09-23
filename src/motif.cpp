@@ -118,25 +118,6 @@ Motif::matinitforscanmots(Sequence & seq)
    }
 }
    
-   void
-scoreseq(Sequence &seq,vmot & mots)
-{
-   int nbmot=0;
-   vd nbcorr;
-   double nmcorr=0;
-   unsigned int moti=0;
-   for (ivmot im=mots.begin();im!=mots.end();im++){
-      int nm=0;
-      nm=(*im).nbmatchwomask(seq,moti);
-      nbmot=nm;
-
-      nmcorr+=nm*log((*im).lambdatrain/(*im).lambda);
-      nbcorr.push_back(nmcorr);
-      //if (nbmot!=0){cout << moti << "->" << nbmot << "\n";};
-      moti++;
-   }
-}
-
 
    void 
 freqtolog(vvd & mat)
@@ -466,108 +447,6 @@ nbmatches(vinst vin, int start)
 }
 
    int
-Motif::nbmatchnmask (Sequence & seq,unsigned int moti)
-{
-   width=motwidth;
-   int nmat=0;
-   unsigned int i=0;
-   unsigned int len=seq.iseqs[0].size();
-   for (civint istr=seq.iseqs[0].begin();istr!=seq.iseqs[0].end()-width+1;istr++){
-      double score=scoref(istr,matprec);
-
-      if (score>motscorethr2){
-         Motalign ma(i,seq,*this, 1);
-         if (ma.iscons()){
-            for (unsigned int j=i;j<i+width;j++){
-               seq.iseqs[0][j]=4;
-            }
-            ma.mask();
-            instances[seq.chrom].push_back(Instance(seq.chrom,seq.start+i,1,moti));
-            nmat++;
-
-            if (i<len-2*width){
-               istr+=width-1;
-               i+=width-1;
-            }
-            else {
-               break;
-            }
-         }
-      }
-      else {
-         score=scoref(istr,matprecrevcomp);
-         if (score>motscorethr2){
-            Motalign ma(i,seq,*this, -1);
-            if (ma.iscons()){
-               for (unsigned int j=i;j<i+width;j++){
-                  seq.iseqs[0][j]=4;
-               }
-               ma.mask();
-               instances[seq.chrom].push_back(Instance(seq.chrom,seq.start+i,-1,moti));
-               nmat++;
-               if (i<len-2*width){
-                  istr+=width-1;
-                  i+=width-1;
-               }
-               else {
-                  break;
-               }
-            }
-         }
-      }
-      i++;
-   }
-   return nmat;
-}
-
-   int
-Motif::nbmatchwomask (Sequence & seq,unsigned int moti)
-{
-   width=motwidth;
-   int nmat=0;
-   unsigned int i=0;
-   unsigned int len=seq.iseqs[0].size();
-   for (civint istr=seq.iseqs[0].begin();istr!=seq.iseqs[0].end()-width+1;istr++){
-      double score=scoref(istr,matprec);
-
-      if (score>motscorethr2){
-         Motalign ma(i,seq,*this, 1);
-         if (ma.iscons()){
-            instances[seq.chrom].push_back(Instance(seq.chrom,seq.start+i,1,moti));
-            nmat++;
-
-            if (i<len-2*width){
-               istr+=width-1;
-               i+=width-1;
-            }
-            else {
-               break;
-            }
-         }
-      }
-      else {
-         score=scoref(istr,matprecrevcomp);
-         if (score>motscorethr2){
-            Motalign ma(i,seq,*this, -1);
-            if (ma.iscons()){
-               instances[seq.chrom].push_back(Instance(seq.chrom,seq.start+i,-1,moti));
-               nmat++;
-               if (i<len-2*width){
-                  istr+=width-1;
-                  i+=width-1;
-               }
-               else {
-                  break;
-               }
-            }
-         }
-      }
-      i++;
-   }
-   return nmat;
-}
-
-   int
 Motif::nbmatchcons (Sequence & seq)
 {
    width=motwidth;
@@ -607,56 +486,6 @@ Motif::nbmatchcons (Sequence & seq)
          }
       }
       i++;
-   }
-   return nmat;
-}
-
-   int
-Motif::nbmatchnmaskforsvg (Sequence & seq,unsigned int moti)
-{
-   int nmat=0;
-   for (unsigned int spe=0;spe<nbspecies;spe++){
-      if (seq.species[spe]){
-         unsigned int len=seq.iseqs[spe].size();
-         unsigned int i=0;
-         for (civint istr=seq.iseqs[spe].begin();istr!=seq.iseqs[spe].end()-width+1;istr++){
-            double score=scoref(istr,matprec);
-            if (score>7){
-               for (unsigned int j=i;j<i+width;j++){
-                  seq.iseqs[spe][j]=4;
-               }
-               Instanceseq inst(moti,1,seq.imapsinv[spe][i],i,score,spe,name);
-               seq.instances.push_back(inst);
-               nmat++;
-               if (i<len-2*width){
-                  istr+=width-1;
-                  i+=width-1;
-               }
-               else {
-                  break;
-               }
-            }
-            else {
-               score=scoref(istr,matprecrevcomp);
-               if (score>7){
-                  for (unsigned int j=i;j<i+width;j++){
-                     seq.iseqs[spe][j]=4;
-                  }
-                  Instanceseq inst(moti,1,seq.imapsinv[spe][i],i,score,spe,name);
-                  seq.instances.push_back(inst);
-                  nmat++;
-                  if (i<len-2*width){
-                     istr+=width-1;
-                     i+=width-1;
-                  }
-                  else {
-                     break;
-                  }
-               }
-            }
-            i++;
-         }
-      }
    }
    return nmat;
 }
@@ -1638,18 +1467,6 @@ scanseqforinstances(Sequence &seq,vmot & mots)
    return;
 }
    
-//   void
-//scanseqforconsinstances(Sequence &seq,vmot & mots)
-//{
-//   seq.instances.clear();
-//   for (ivmot im=mots.begin();im!=mots.end();im++){
-//      if (seq.iseqs[0].size()>im->motwidth){
-//         im->matinitforscanmots(seq);
-//      }
-//   }
-//   return;
-//}
-
    void
 scanseqsforinstances(vseq & align,vmot & mots)
 {     
