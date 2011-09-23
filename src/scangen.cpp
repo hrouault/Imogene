@@ -73,8 +73,13 @@ loadannots()
    annots.close();
 
    ifstream glist;
-   if (species=="droso") glist.open("/home/rouault/these/sequence/genomes/genelist.dat");
-   else if (species=="eutherian") glist.open("/home/santolin/these/files/mus/biomart/genelist-protein-coding+miRNA.dat");
+   if (species=="droso"){
+      cout << "Reading droso genes list..." << endl;
+      glist.open(DATA_PATH"/droso/annot/genelist.dat");
+   } else if (species=="eutherian"){
+      cout << "Reading eutherian genes list..." << endl;
+      glist.open(DATA_PATH"/eutherian/annot/genelist.dat");
+   }
 
    back_insert_iterator<vstring> destg(gbacks);
    copy(iisstring(glist),iisstring(),destg);
@@ -169,21 +174,26 @@ scanmots()
 
    string pchrom(""); // for display purpose
    unsigned int totlen(0),totlentb(0);
-   //for (ivcoord ivc=alignscoord.begin();ivc!=alignscoord.end();ivc++){
-   for (ivcoord ivc=alignscoord.begin()+100;ivc!=alignscoord.begin()+110;ivc++){
+   ivcoord ivcstart=alignscoord.begin()+100;
+   ivcoord ivcstop=alignscoord.begin()+150;
+   for (ivcoord ivc=ivcstart;ivc!=ivcstop;ivc++){
       Sequence seq;
       seq=coordtoseq(*ivc);
       string chrom=chromfromint(seq.chrom);
       if (chrom!=pchrom){
-         cout << "chromosome " << chrom << endl;
+         if (seq.chrom!=0) cout << "\n";
+         cout << "chromosome " << chrom << "\n";
          pchrom=chrom;
       }
+      cout << "\r" << (double)(ivc-ivcstart+1)/(ivcstop-ivcstart)*100 << "%\t";
+      cout.flush();
 
       scanseqforconsinstances(seq,motsdef);
 
       totlen+=seq.nbtb+seq.nbN;
       totlentb+=seq.nbtb;
    }
+   cout << "\n";
    
    for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
       allinstances.insert(allinstances.end(),ivm->refinstances_short.begin(),ivm->refinstances_short.end());
@@ -191,9 +201,9 @@ scanmots()
 
    sort(allinstances.begin(),allinstances.end());
 
-   for (ivinst ivi=allinstances.begin();ivi!=allinstances.end();ivi++){
-      cout << *ivi;
-   }
+//   for (ivinst ivi=allinstances.begin();ivi!=allinstances.end();ivi++){
+//      cout << *ivi;
+//   }
 
    cout << "Total length of the alignement: " << (double)totlen/1000000 << " Mb, including " 
       << (double)totlentb/1000000 << " unmasked Mb" << endl;
@@ -202,74 +212,74 @@ scanmots()
 }
 
    
-   void
-initgroupedinst()
-{
-   cout << "Loading length chroms..." << endl;
-   lengthchrom=loadlengthchrom();
-
-   // *** This step is the time-consuming one.
-   //  We change it to a per motif search (see scanmots)
-   vginst dumvginst;
-   groupedinst=vvginst(nbchrom,dumvginst);
-   for (unsigned int i=0;i<nbchrom;i++){
-      for (unsigned int j=0;j<lengthchrom[i]/scanstep+1;j++){
-         cout << "\r" << i << " " << j;
-         cout.flush();
-         groupedinst[i].push_back(GroupInstance(j*scanstep,j*scanstep+scanwidth,i));
-      }
-      cout << "\n";
-   }
-   exit(9);
-   ifstream annots;
-   if (species=="droso"){
-      annots.open("/home/rouault/these/sequence/genomes/regres-wellform-all.dat");
-   } else if (species=="eutherian"){
-      annots.open("/home/santolin/these/files/mus/biomart/genes-n-strand-protein-coding+miRNA-no-MT-n-NT-TSS.dat");
-   }
-   importTSS(TSSall,annots);
-   annots.close();
-   // assign CRMs to genes in an annotextent region
-   cout << "Assign CRMs to genes in annotextend..." << endl;
-   for (ivTSS ivt=TSSall.begin();ivt!=TSSall.end();ivt++){
-      int start=0;
-      if (((*ivt).coord-annotextent-scanwidth/2)/scanstep+1>0) start=((*ivt).coord-annotextent-scanwidth/2)/scanstep;
-      int stop=((*ivt).coord+annotextent-scanwidth/2)/scanstep+1;
-      if (stop>lengthchrom[(*ivt).chrom]/scanstep+1) stop=lengthchrom[(*ivt).chrom]/scanstep+1;
-      for (unsigned int i=start;i<stop;i++){
-         groupedinst[(*ivt).chrom][i].TSSs.push_back(*ivt);
-         //       cout << (*ivt).gene << endl;
-      }
-   }
-   // assign nearest TSS to genes
-   cout << "Assign CRMs to nearest gene..." << endl;
-   for (unsigned int i=0;i<nbchrom;i++){
-      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
-         (*ivg).compbestannot();
-      }
-   }
-
-   // attribute phenotype to CRMs
-   cout << "Attribute phenotype to CRM..." << endl;
-   for (unsigned int i=0;i<nbchrom;i++){
-      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
-         (*ivg).isdiscarded();
-         if (!(*ivg).discarded){
-            for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
-               if ((*ivg).besttss.gene==*ivs){
-                  (*ivg).goodpheno=1;
-                  break;
-               } else {
-                  (*ivg).goodpheno=0;
-               }
-            }
-         } else {
-            (*ivg).goodpheno=0;
-         }
-      }
-   }
-
-}
+//   void
+//initgroupedinst()
+//{
+//   cout << "Loading length chroms..." << endl;
+//   lengthchrom=loadlengthchrom();
+//
+//   // *** This step is the time-consuming one.
+//   //  We change it to a per motif search (see scanmots)
+//   vginst dumvginst;
+//   groupedinst=vvginst(nbchrom,dumvginst);
+//   for (unsigned int i=0;i<nbchrom;i++){
+//      for (unsigned int j=0;j<lengthchrom[i]/scanstep+1;j++){
+//         cout << "\r" << i << " " << j;
+//         cout.flush();
+//         groupedinst[i].push_back(GroupInstance(j*scanstep,j*scanstep+scanwidth,i));
+//      }
+//      cout << "\n";
+//   }
+//   exit(9);
+//   ifstream annots;
+//   if (species=="droso"){
+//      annots.open("/home/rouault/these/sequence/genomes/regres-wellform-all.dat");
+//   } else if (species=="eutherian"){
+//      annots.open("/home/santolin/these/files/mus/biomart/genes-n-strand-protein-coding+miRNA-no-MT-n-NT-TSS.dat");
+//   }
+//   importTSS(TSSall,annots);
+//   annots.close();
+//   // assign CRMs to genes in an annotextent region
+//   cout << "Assign CRMs to genes in annotextend..." << endl;
+//   for (ivTSS ivt=TSSall.begin();ivt!=TSSall.end();ivt++){
+//      int start=0;
+//      if (((*ivt).coord-annotextent-scanwidth/2)/scanstep+1>0) start=((*ivt).coord-annotextent-scanwidth/2)/scanstep;
+//      int stop=((*ivt).coord+annotextent-scanwidth/2)/scanstep+1;
+//      if (stop>lengthchrom[(*ivt).chrom]/scanstep+1) stop=lengthchrom[(*ivt).chrom]/scanstep+1;
+//      for (unsigned int i=start;i<stop;i++){
+//         groupedinst[(*ivt).chrom][i].TSSs.push_back(*ivt);
+//         //       cout << (*ivt).gene << endl;
+//      }
+//   }
+//   // assign nearest TSS to genes
+//   cout << "Assign CRMs to nearest gene..." << endl;
+//   for (unsigned int i=0;i<nbchrom;i++){
+//      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
+//         (*ivg).compbestannot();
+//      }
+//   }
+//
+//   // attribute phenotype to CRMs
+//   cout << "Attribute phenotype to CRM..." << endl;
+//   for (unsigned int i=0;i<nbchrom;i++){
+//      for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
+//         (*ivg).isdiscarded();
+//         if (!(*ivg).discarded){
+//            for (ivstring ivs=phenos.begin();ivs!=phenos.end();ivs++){
+//               if ((*ivg).besttss.gene==*ivs){
+//                  (*ivg).goodpheno=1;
+//                  break;
+//               } else {
+//                  (*ivg).goodpheno=0;
+//               }
+//            }
+//         } else {
+//            (*ivg).goodpheno=0;
+//         }
+//      }
+//   }
+//
+//}
    
    void
 compgroupedinst()
@@ -336,26 +346,35 @@ compgroupedinst()
          }
    
 
-         cout << ginst << "\n";
-         for (ivTSS ivt=ginst.TSSs.begin();ivt!=ginst.TSSs.end();ivt++){
-            cout << ivt->gene << " ";
-         }
-         cout << "\n";
+//         cout << ginst;
+//         cout << "->";
+//         for (ivTSS ivt=ginst.TSSs.begin();ivt!=ginst.TSSs.end();ivt++){
+//            cout << ivt->gene << ",";
+//         }
+//         cout << "\n\n";
 
          groupedinst[ivi->chrom].push_back(ginst);
       }
    }
-   
-   // assign nearest TSS to genes
-   cout << "Assign CRMs to nearest gene..." << endl;
+   return;
+}
+
+void
+compTSSs()
+{  
+   // assign nearest TSS to CRMs
    for (unsigned int i=0;i<nbchrom;i++){
       for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
          (*ivg).compbestannot();
       }
    }
+   return;
+}
 
+   void 
+comppheno()
+{
    // attribute phenotype to CRMs
-   cout << "Attribute phenotype to CRM..." << endl;
    for (unsigned int i=0;i<nbchrom;i++){
       for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
          (*ivg).isdiscarded();
@@ -373,21 +392,26 @@ compgroupedinst()
          }
       }
    }
-   
-   vginst fininst;
+   return;
+}
+
+   void 
+outputresults()
+{
+   vginst finginst;
    for (unsigned int i=0;i<nbchrom;i++){
       for (ivginst ivg=groupedinst[i].begin();ivg!=groupedinst[i].end();ivg++){
-         fininst.push_back(*ivg);
+         finginst.push_back(*ivg);
       }
    }
    cout << "Sorting" << endl;
-   sort(fininst.begin(),fininst.end());
-   
-   cout << "Displaying" << endl;
+   sort(finginst.begin(),finginst.end());
+
+   cout << "Displaying results" << endl;
    stringstream filename;
    filename << "result" << nbmots_for_score << ".dat";
    ofstream res(filename.str().c_str());
-   for (ivginst ivg=fininst.begin();ivg!=fininst.end();ivg++){
+   for (ivginst ivg=finginst.begin();ivg!=finginst.end();ivg++){
       res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
       res << (*ivg).besttss.gene << " ";
       for (ivTSS ivt=(*ivg).TSSs.begin();ivt!=(*ivg).TSSs.end();ivt++){
@@ -401,11 +425,59 @@ compgroupedinst()
    }
    res.close();
 
+   stringstream filenameseqs;
+   filenameseqs << "mots" << nbmots_for_score << ".dat";
+   ofstream seqs(filenameseqs.str().c_str());
+   seqs << "chrom" << " ";
+   seqs << "start" << " ";
+   seqs << "stop" << " ";
+   seqs << "motif_index:position(0-based)" << "\n";
+   unsigned int count=0;
+   for (ivginst ivg=finginst.begin();ivg!=finginst.end();ivg++){
+      seqs << chromfromint(ivg->chrom) << " ";
+      seqs << ivg->start << " ";
+      seqs << ivg->stop << " ";
+      for (ivinst ivi=ivg->instances.begin();ivi!=ivg->instances.end();ivi++){
+         seqs << ivi->motindex+1 << ":" << ivi->coord-ivg->start << " ";
+      }
+      seqs << "\n";
+      count++;
+      if (count>100) break;
+   }
+   seqs << "\n";
+   seqs.close();
+
+   if (scangen_args.phenotype_given){
+      stringstream filehist;
+      filehist << "hist" << nbmots_for_score << ".dat";
+      ofstream histo(filehist.str().c_str());
+      // positions of phenotype genes in the reverse-sorted result file
+      displayhist(finginst,histo);
+      histo.close();
+      if (scangen_args.print_histo_sets_given){
+         stringstream filehist_back;
+         filehist_back << "hist-back" << nbmots_for_score << ".dat";
+         ofstream histo_back(filehist_back.str().c_str());
+         // best CRM score for phenotype genes
+         displayhist_set(finginst,gbacks,histo_back);
+         histo_back.close();
+
+         stringstream filehist_interest;
+         filehist_interest << "hist-interest" << nbmots_for_score << ".dat";
+         ofstream histo_interest(filehist_interest.str().c_str());
+         // best CRM score for other genes
+         displayhist_set(finginst,phenos,histo_interest);
+         histo_interest.close();
+      }
+   }
+   
+   return;
+
 }
    
    
    void
-outputresults(unsigned int nbmots_score)
+outputresultsnbmots(unsigned int nbmots_score)
 {
    cout << "Shuffling" << endl;
    random_shuffle(potregs.begin(),potregs.end());
@@ -532,123 +604,147 @@ outputresults(unsigned int nbmots_score)
 
 }
    
-   void
-scanseqs(vstring & regs)
+//   void
+//scanseqs(vstring & regs)
+//{
+//   vcoord pcoords;
+//   
+//   string pchrom("");
+//   for (ivstring is=regs.begin();is!=regs.end();is++){
+//      //cout << *is << endl;
+//      Sequence seq;
+//      ifstream fseq;
+//      fseq.open((*is).c_str());
+//      string fseqline;
+//      getline(fseq,fseqline);
+//      seq.name=fseqline;
+//      stringstream firstline(fseqline);
+//      string speciesname;
+//      firstline >> speciesname;
+//      string chrom;
+//      firstline >> chrom;
+//      if (chrom!=pchrom){
+//         cout << chrom << endl;
+//         pchrom=chrom;
+//      }
+//      seq.chrom=intfromchrom(chrom.substr(3));
+//      if (seq.chrom==-1) continue;
+//      //cout << "chromosome \"" << seq.chrom << "\"\n";
+//      firstline >> seq.start;
+//      //cout << "start \"" << seq.start << "\"\n";
+//      firstline >> seq.stop;
+//      seq.finame=*is;
+//      string dum;
+//      seq.species=vint(nbspecies,0);
+//      vint dumi;
+//      seq.iseqs=vvint(nbspecies,dumi);
+//      seq.imaps=vvint(nbspecies,dumi);
+//      seq.imapsinv=vvint(nbspecies,dumi);
+//      while (!fseq.eof()){
+//         //                cout << fseqline << endl;
+//         int seqnum=speciestonum(fseqline.substr(1,6));
+//         getline(fseq,fseqline);
+//         seq.imaps[seqnum]=alignedtomap(fseqline);
+//         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
+//         string seqwogap=remgaps(fseqline);
+//         if (seqwogap.size()>30){
+//            seq.species[seqnum]=1;
+//         }
+//         seq.iseqs[seqnum]=stringtoint(seqwogap);
+//         getline(fseq,fseqline);
+//      }
+//      seq.nbN=compN(seq.iseqs[0]);
+//      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
+//      
+//      for (ivcoord ivc=pcoords.begin();ivc!=pcoords.end();ivc++){
+//         if (ivc->chrom==seq.chrom){ 
+//            if ((ivc->start>=seq.start && ivc->start<=seq.stop) ||
+//                  (ivc->stop>=seq.start && ivc->stop <=seq.stop)){
+//                  int maskstart=max(ivc->start,seq.start);
+//                  int maskstop=min(ivc->stop,seq.stop);
+//      //            cout << ivc->name << endl;
+//      //            cout << vinttostring(seq.iseqs[0]) << endl;
+//                  for (unsigned int base=maskstart-seq.start;base<=maskstop-seq.start;base++){
+//                     seq.iseqs[0][base]=4;
+//                  }
+//      //            cout << vinttostring(seq.iseqs[0]) << endl;
+//            }
+//         }
+//      }
+//
+//      //check that ref species contains at least 30bp
+//      if (seq.species[0]){
+//         scoreseq(seq,motsdef);
+//      }
+//
+//      fseq.close();
+//   }
+//   unsigned int i=0;
+//
+//   cout << "Finding Instances" << endl;
+//   for (ivmot im=motsdef.begin();im!=motsdef.begin()+nbmots_for_score;im++){
+//      for (unsigned int j=0;j<nbchrom;j++){
+//         //           cout << "Instances size : " << (*im).instances.size() << "\n";
+//         sort((*im).instances[j].begin(),(*im).instances[j].end());
+//         for (ivinst iins=(*im).instances[j].begin();iins!=(*im).instances[j].end();iins++){
+//            Instance & curinst=*iins;
+//            int start=0;
+//            if ((curinst.coord-scanwidth)/scanstep+2>0) start=(curinst.coord-scanwidth)/scanstep+1;
+//            for (unsigned int k=start;k<curinst.coord/scanstep+1;k++){
+//               groupedinst[curinst.chrom][k].nbmots[i]++;
+//               groupedinst[curinst.chrom][k].totmots++;
+//               groupedinst[curinst.chrom][k].instances.push_back(curinst);
+//            }
+//         }
+//      }
+//      i++;
+//   }
+//
+//   for (unsigned int j=0;j<nbchrom;j++){
+//      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
+//         if ((*ivg).totmots==0){
+//            (*ivg).discarded=1;
+//         }
+//      }
+//   }
+//   for (unsigned int j=0;j<nbchrom;j++){
+//      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
+//         if (!(*ivg).discarded){
+//            potregs.push_back(*ivg);
+//         }
+//      }
+//   }
+//
+//   cout << "output results" << endl;
+//   for (unsigned int i=1;i<nbmots_for_score+1;i++){
+//      cout << "Motif " << i << endl;
+//      outputresults(i);
+//   }
+//
+//}
+
+void
+loadmotsforscangen()
 {
-   vcoord pcoords;
-   
-   string pchrom("");
-   for (ivstring is=regs.begin();is!=regs.end();is++){
-      //cout << *is << endl;
-      Sequence seq;
-      ifstream fseq;
-      fseq.open((*is).c_str());
-      string fseqline;
-      getline(fseq,fseqline);
-      seq.name=fseqline;
-      stringstream firstline(fseqline);
-      string speciesname;
-      firstline >> speciesname;
-      string chrom;
-      firstline >> chrom;
-      if (chrom!=pchrom){
-         cout << chrom << endl;
-         pchrom=chrom;
-      }
-      seq.chrom=intfromchrom(chrom.substr(3));
-      if (seq.chrom==-1) continue;
-      //cout << "chromosome \"" << seq.chrom << "\"\n";
-      firstline >> seq.start;
-      //cout << "start \"" << seq.start << "\"\n";
-      firstline >> seq.stop;
-      seq.finame=*is;
-      string dum;
-      seq.species=vint(nbspecies,0);
-      vint dumi;
-      seq.iseqs=vvint(nbspecies,dumi);
-      seq.imaps=vvint(nbspecies,dumi);
-      seq.imapsinv=vvint(nbspecies,dumi);
-      while (!fseq.eof()){
-         //                cout << fseqline << endl;
-         int seqnum=speciestonum(fseqline.substr(1,6));
-         getline(fseq,fseqline);
-         seq.imaps[seqnum]=alignedtomap(fseqline);
-         seq.imapsinv[seqnum]=alignedtorevmap(fseqline);
-         string seqwogap=remgaps(fseqline);
-         if (seqwogap.size()>30){
-            seq.species[seqnum]=1;
-         }
-         seq.iseqs[seqnum]=stringtoint(seqwogap);
-         getline(fseq,fseqline);
-      }
-      seq.nbN=compN(seq.iseqs[0]);
-      seq.nbtb=seq.iseqs[0].size()-seq.nbN;
-      
-      for (ivcoord ivc=pcoords.begin();ivc!=pcoords.end();ivc++){
-         if (ivc->chrom==seq.chrom){ 
-            if ((ivc->start>=seq.start && ivc->start<=seq.stop) ||
-                  (ivc->stop>=seq.start && ivc->stop <=seq.stop)){
-                  int maskstart=max(ivc->start,seq.start);
-                  int maskstop=min(ivc->stop,seq.stop);
-      //            cout << ivc->name << endl;
-      //            cout << vinttostring(seq.iseqs[0]) << endl;
-                  for (unsigned int base=maskstart-seq.start;base<=maskstop-seq.start;base++){
-                     seq.iseqs[0][base]=4;
-                  }
-      //            cout << vinttostring(seq.iseqs[0]) << endl;
-            }
-         }
-      }
+   loadmots(scangen_args.motifs_arg,motsdef); 
+   cout << "Loaded " << motsdef.size() << " motifs." << endl;
+   if ( nbmots_for_score < motsdef.size() ) 
+      motsdef.erase( motsdef.begin() + nbmots_for_score , motsdef.end() );
+   cout << "Nb mots for score: " << nbmots_for_score  << endl;
 
-      //check that ref species contains at least 30bp
-      if (seq.species[0]){
-         scoreseq(seq,motsdef);
-      }
+   // *** It would be nice to set the threshold by bp, in bits.
+   width=motsdef[0].bsinit.size();
+   scorethr2=width*scangen_args.threshold_arg/10;
+   scorethr=width*(scorethr2-1.0)/10;
+   scorethrcons=width*(scorethr2-1.0)/10;
+   cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
 
-      fseq.close();
+   for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
+      ivm->motscorethr2=scorethr2;
+      ivm->motscorethr=scorethr;
+      ivm->motscorethrcons=scorethrcons;
    }
-   unsigned int i=0;
-
-   cout << "Finding Instances" << endl;
-   for (ivmot im=motsdef.begin();im!=motsdef.begin()+nbmots_for_score;im++){
-      for (unsigned int j=0;j<nbchrom;j++){
-         //           cout << "Instances size : " << (*im).instances.size() << "\n";
-         sort((*im).instances[j].begin(),(*im).instances[j].end());
-         for (ivinst iins=(*im).instances[j].begin();iins!=(*im).instances[j].end();iins++){
-            Instance & curinst=*iins;
-            int start=0;
-            if ((curinst.coord-scanwidth)/scanstep+2>0) start=(curinst.coord-scanwidth)/scanstep+1;
-            for (unsigned int k=start;k<curinst.coord/scanstep+1;k++){
-               groupedinst[curinst.chrom][k].nbmots[i]++;
-               groupedinst[curinst.chrom][k].totmots++;
-               groupedinst[curinst.chrom][k].instances.push_back(curinst);
-            }
-         }
-      }
-      i++;
-   }
-
-   for (unsigned int j=0;j<nbchrom;j++){
-      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
-         if ((*ivg).totmots==0){
-            (*ivg).discarded=1;
-         }
-      }
-   }
-   for (unsigned int j=0;j<nbchrom;j++){
-      for (ivginst ivg=groupedinst[j].begin();ivg!=groupedinst[j].end();ivg++){
-         if (!(*ivg).discarded){
-            potregs.push_back(*ivg);
-         }
-      }
-   }
-
-   cout << "output results" << endl;
-   for (unsigned int i=1;i<nbmots_for_score+1;i++){
-      cout << "Motif " << i << endl;
-      outputresults(i);
-   }
-
+   return;
 }
    
    void
@@ -673,7 +769,9 @@ scangen_args_init()
 
    scanwidth=scangen_args.scanwidth_arg;
    scanstep=scangen_args.scanstep_arg;
-   annotextent=scangen_args.annotextent_arg;
+   if (scangen_args.annotextent_given){
+      annotextent=scangen_args.annotextent_arg;
+   }
 
    nbmots_for_score=scangen_args.nbmots_arg;
 
@@ -690,39 +788,35 @@ cmd_scangen(int argc, char **argv)
 
    scangen_args_init();
 
+   cout << "annotextent=" << annotextent << endl;
+
    cout << "Loading Motifs" << endl;
-   loadmots(scangen_args.motifs_arg,motsdef); 
-   cout << "Loaded " << motsdef.size() << " motifs." << endl;
-   if ( nbmots_for_score < motsdef.size() ) 
-      motsdef.erase( motsdef.begin() + nbmots_for_score , motsdef.end() );
-   cout << "Nb mots for score: " << nbmots_for_score  << endl;
+   loadmotsforscangen();
 
-   // *** It would be nice to set the threshold by bp, in bits.
-   width=motsdef[0].bsinit.size();
-   scorethr2=width*scangen_args.threshold_arg/10;
-   scorethr=width*(scorethr2-1.0)/10;
-   scorethrcons=width*(scorethr2-1.0)/10;
-   cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-
-   for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
-      ivm->motscorethr2=scorethr2;
-      ivm->motscorethr=scorethr;
-      ivm->motscorethrcons=scorethrcons;
+   if (scangen_args.phenotype_given){
+      cout << "Loading phenotypes" << endl;
+      loadannots();
    }
-
-
-   //cout << "Loading phenotypes" << endl;
-   //loadannots();
+   else{
+      cout << "No phenotype file given" << endl;
+   }
 
    cout << "Scanning genome for conserved motif instances" << endl;
    scanmots();
 
    cout << "Defining instances" << endl;
-   //initgroupedinst();
    compgroupedinst();
+   
+   cout << "Assign CRMs to nearest gene..." << endl;
+   compTSSs();
+   
+   if (scangen_args.phenotype_given){
+      cout << "Attribute phenotype to CRMs..." << endl;
+      comppheno();
+   }
 
-   //cout << "Scanning seqs" << endl;
-   //scanseqs(regs);
+   cout << "Output result..." << endl;
+   outputresults();
 
-
+   return EXIT_SUCCESS;
 }

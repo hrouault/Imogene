@@ -664,7 +664,7 @@ operator <<(ostream &os,const vcombi & vcomb)
    void
 GroupInstance::compbestannot()
 {
-   unsigned int dist=1000000;// 1Mb
+   unsigned int dist=annotextent;
    for (ivTSS ivt=TSSs.begin();ivt!=TSSs.end();ivt++){
       if (abs((int)((*ivt).coord)-(int)start+(int)scanwidth/2)<(int)dist){
          dist=abs((int)(*ivt).coord-(int)start+(int)scanwidth/2);
@@ -1982,15 +1982,11 @@ displayhist_set(vginst & vgi, vstring geneset,ostream & ostr)
    for (ivstring ivs=geneset.begin();ivs!=geneset.end();ivs++){
       double scoregene=0;
       for (ivginst ivg=vgi.begin();ivg!=vgi.end();ivg++){
-         //         for (ivTSS ivt=(*ivg).TSSs.begin();ivt!=(*ivg).TSSs.end();ivt++){}
-         //            if ((*ivt).besttss.gene==*ivs){
          if ((*ivg).besttss.gene==*ivs){
             if ((*ivg).score>scoregene){
                scoregene=(*ivg).score;
             }
-            //               break;
-            //            }
-      }
+         }
       }
       ostr << scoregene << "\t" << *ivs << "\n";
    }
