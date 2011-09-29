@@ -126,10 +126,8 @@ class Motif
       void findinstancesnmask(Sequence &seq);
       void findinstances(Sequence &seq);
       void findinstances(vseq &vs);
-      void matchmatincr(Sequence & seq);
       void calcmeanpoiss();
       void calcscorepoiss();
-      void printmatrice(ostream & streamfile);
       int dispmots (Sequence & seq, int motindex);
       void corrprec();
       int statemot (Sequence & seq,int pos,int num, double & scoremot);

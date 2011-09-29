@@ -431,15 +431,16 @@ operator >>(istream &is,Sequence & seq)
    return is;
 }
 
+// *** Comply with bed4 standard
 istream &
 operator >>(istream &is,Coordinate &coord)
 {
-   is >> coord.name;
    string chromname;
    is >> chromname;
    coord.chrom=intfromchrom(chromname);
    is >> coord.start;
    is >> coord.stop;
+   is >> coord.name;
 
    return is;
 }

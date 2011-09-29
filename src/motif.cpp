@@ -436,16 +436,6 @@ GroupInstance::compbestannot()
    }
 }
 
-   unsigned int
-nbmatches(vinst vin, int start)
-{
-   unsigned nbmat=0;
-   for (ivinst ivin=vin.begin();ivin!=vin.end();ivin++){
-      if ((*ivin).coord>=start && (*ivin).coord<start+scanwidth+1) nbmat++;
-      if ((*ivin).coord>start+scanwidth) return nbmat;
-   }
-}
-
    int
 Motif::nbmatchcons (Sequence & seq)
 {

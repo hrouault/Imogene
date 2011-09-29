@@ -104,4 +104,4 @@ while nbextracted<nbtoextract:
 coords.sort()
 
 for i,c in enumerate(coords):
-   print "back"+str(i),c[0],c[1],c[2]
+   print c[0],c[1],c[2],"back"+str(i)
