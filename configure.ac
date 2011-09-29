@@ -60,7 +60,6 @@ AC_CHECK_FUNCS([floor pow sqrt],[],[AC_MSG_ERROR([floor,pow and sqrt functions r
 AC_CONFIG_FILES([Makefile
                  scripts/Makefile
                  scripts/python/Makefile
-                 scripts/sh/Makefile
                  doc/Makefile
                  data/Makefile
                  src/Makefile])
