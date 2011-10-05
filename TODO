@@ -6,3 +6,4 @@ Use a log2 base threshold
 
 Marc:
 - check mcmc sampling process
+- put weblogo-display function in display.cpp

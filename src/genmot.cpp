@@ -299,8 +299,9 @@ cmd_genmot(int argc, char **argv)
    cout << "Creating logos and output file..." << endl;
    ofstream motmeldb("motifs.txt");
    unsigned int index=1;
+   unsigned int countertrue=1;
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
-      if ( ivm->check ) {
+      if ( ivm->check && countertrue<=20 ) {
          ivm->display(motmeldb);
          stringstream ss;
          ss << "python " << PYTHON_PATH"/weblogo-display.py ";
@@ -316,6 +317,7 @@ cmd_genmot(int argc, char **argv)
          system(ss.str().c_str());
          index++;
       }
+      countertrue++;
    }
    motmeldb.close();
    

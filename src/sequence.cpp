@@ -437,7 +437,7 @@ operator >>(istream &is,Coordinate &coord)
 {
    string chromname;
    is >> chromname;
-   coord.chrom=intfromchrom(chromname);
+   coord.chrom=intfromchrom(chromname.substr(4));
    is >> coord.start;
    is >> coord.stop;
    is >> coord.name;

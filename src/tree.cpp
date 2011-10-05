@@ -681,12 +681,16 @@ loglikely_column(const unsigned int pos,Motalign & ma, vpgslmat & vtrans, const 
       }
    }
 
-   if (gsl_matrix_get(probatree,0,noemax)<-0.5) cout << "error!!!\n"; // 16 instead of 22
+   if (gsl_matrix_get(probatree,0,noemax)<-0.5) cout << "error!!!\n";
    double w0=gsl_vector_get(w,0);
    double w1=gsl_vector_get(w,1);
    double w2=gsl_vector_get(w,2);
    double w3=1-w0-w1-w2;
-   double res=log(w0*gsl_matrix_get(probatree,0,noemax)+ //!!
+//   cout << log(w0*gsl_matrix_get(probatree,0,noemax)+
+//         w1*gsl_matrix_get(probatree,1,noemax)+
+//         w2*gsl_matrix_get(probatree,2,noemax)+
+//         w3*gsl_matrix_get(probatree,3,noemax)) << endl;
+   double res=log(w0*gsl_matrix_get(probatree,0,noemax)+
          w1*gsl_matrix_get(probatree,1,noemax)+
          w2*gsl_matrix_get(probatree,2,noemax)+
          w3*gsl_matrix_get(probatree,3,noemax));
