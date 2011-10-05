@@ -129,8 +129,10 @@ scanmots()
 
    string pchrom(""); // for display purpose
    unsigned int totlen(0),totlentb(0);
-   ivcoord ivcstart=alignscoord.begin()+100;
-   ivcoord ivcstop=alignscoord.begin()+150;
+   //ivcoord ivcstart=alignscoord.begin()+100;
+   //ivcoord ivcstop=alignscoord.begin()+150;
+   ivcoord ivcstart=alignscoord.begin();
+   ivcoord ivcstop=alignscoord.end();
    for (ivcoord ivc=ivcstart;ivc!=ivcstop;ivc++){
       Sequence seq;
       seq=coordtoseq(*ivc);
