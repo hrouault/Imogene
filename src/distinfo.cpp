@@ -501,6 +501,7 @@ compmotsthr(vmot &mots)
 }
 
 // sets check flags on/off to filter identical motifs in a p-value sorted motifs list
+// // *** BEWARE, hidden is a cutoff on vmot size
 void
 compmotsdist(vmot &mots)
 {
@@ -512,6 +513,7 @@ compmotsdist(vmot &mots)
    fback.push_back(concg);
    
    unsigned int counter=2;
+   unsigned int countertrue=1;
    
    for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
       
@@ -532,6 +534,8 @@ compmotsdist(vmot &mots)
             }
          }
       }
+      if (ivm->check==true) countertrue++;
+      if (countertrue>20) break; // *** CUTOFF TO AVOID LONG COMPUTATION
    }
    
    cout << "\n";
