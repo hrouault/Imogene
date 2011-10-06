@@ -51,6 +51,7 @@ using namespace std;
 #include "tree.hpp"
 #include "distinfo.hpp"
 #include "sequence.hpp"
+#include "display.hpp"
 
 genmot_args_info genmot_args;
 
@@ -293,33 +294,19 @@ cmd_genmot(int argc, char **argv)
    sort(genmots.begin(),genmots.end(),motscoreorder);
 
    // Cluster...
-   cout << "Clustering motifs..." << endl;
+   cout << "Clustering motifs (keeping only 20 best)..." << endl;
    compmotsdist(genmots);
    //
-   cout << "Creating logos and output file..." << endl;
+   cout << "Creating output file..." << endl;
    ofstream motmeldb("motifs.txt");
-   unsigned int index=1;
-   unsigned int countertrue=1;
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
-      if ( ivm->check && countertrue<=20 ) {
+      if ( ivm->check ) 
          ivm->display(motmeldb);
-         stringstream ss;
-         ss << "python " << PYTHON_PATH"/weblogo-display.py ";
-         ss << "Motif";
-         ss << index << " ";
-         ss << concc << " ";
-         for (ivvd ivv=ivm->matfreq.begin();ivv!=ivm->matfreq.end();ivv++){
-            for (ivd iv=ivv->begin();iv!=ivv->end()-1;iv++){
-               ss << *iv << ",";
-            }
-            ss << *(ivv->end()-1) << " ";
-         }
-         system(ss.str().c_str());
-         index++;
-      }
-      countertrue++;
    }
    motmeldb.close();
+   
+   cout << "Creating logos..." << endl;
+   dispweblogo(genmots);
    
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);

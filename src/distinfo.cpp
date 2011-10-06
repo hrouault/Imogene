@@ -514,6 +514,7 @@ compmotsdist(vmot &mots)
    
    unsigned int counter=2;
    unsigned int countertrue=1;
+   ivmot ivstop=mots.end()-1;
    
    for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
       
@@ -535,8 +536,13 @@ compmotsdist(vmot &mots)
          }
       }
       if (ivm->check==true) countertrue++;
-      if (countertrue>20) break; // *** CUTOFF TO AVOID LONG COMPUTATION
+      if (countertrue>=20){ // *** CUTOFF TO AVOID LONG COMPUTATION
+         cout << "More than 20 motifs where found. Stopping clustering." << endl;
+         ivstop=ivm;
+         break;
+      }
    }
+   if (ivstop!=mots.end()-1) mots.erase(ivstop+1,mots.end());
    
    cout << "\n";
    return;

@@ -252,7 +252,8 @@ Motif::pvaluecomp()
 
    for (iseq=regints.begin();iseq!=regints.end();iseq++){
       // Here we use nbmot (cons) and not nmot (not cons)
-      pvalue+=log(gsl_ran_poisson_pdf((*iseq).nbmot,lambda*(*iseq).nbtb));
+      if (lambda>0) pvalue+=log(gsl_ran_poisson_pdf((*iseq).nbmot,lambda*(*iseq).nbtb));
+      else pvalue+=0;
       nbbtrain+=(*iseq).nbtb;
       nbtot+=(*iseq).nbmot;
    }

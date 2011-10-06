@@ -37,6 +37,31 @@ using namespace std;
 
 display_args_info display_args;
    
+void
+dispweblogo(vmot& mots)
+{
+
+   unsigned int index=1;
+   for ( ivmot ivm=mots.begin();ivm!=mots.end();ivm++ ) {
+      if ( ivm->check ) {
+         stringstream ss;
+         ss << "python " << PYTHON_PATH"/weblogo-display.py ";
+         ss << "Motif";
+         ss << index << " ";
+         ss << concc << " ";
+         for (ivvd ivv=ivm->matfreq.begin();ivv!=ivm->matfreq.end();ivv++){
+            for (ivd iv=ivv->begin();iv!=ivv->end()-1;iv++){
+               ss << *iv << ",";
+            }
+            ss << *(ivv->end()-1) << " ";
+         }
+         system(ss.str().c_str());
+         index++;
+      }
+   }
+   return;
+
+}
 
 svg::svg()
 {
@@ -406,7 +431,7 @@ dispseqwmotswgaps (Sequence & seq, vmot & mots, ofstream & outf)
             int ppos=start;
             outf << "\\hspace*{" << 7 << "\\charwidth}";// species name + space = 7 characters
             for (unsigned int i=start;i<stop;i++){
-               
+
                if (vvstate[spe][i]>0  && vvstate[spe][i]!=pstate){
                   int deca;
                   deca=i-ppos;
@@ -461,7 +486,7 @@ disptexinit(ofstream & outf)
       "\\newlength{\\charwidth}"<<
       "\\settowidth{\\charwidth}{\\texttt{A}}";
 }
-   
+
    void
 disptexclose(ofstream & outf)
 {
@@ -543,22 +568,22 @@ cmd_display(int argc, char **argv)
    cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
 
    cout << "Loading alignments " << endl;
-   
+
    vseq align;
    align=loadseqs(display_args.align_arg);
    cout << "Nb sequences to scan: " << align.size() << endl;
 
    cout << "Loading Motifs" << endl;
-   
+
    vmot mots;
    loadmots(display_args.motifs_arg,mots); 
    if (nbmots_for_score<mots.size()) mots.erase(mots.begin()+nbmots_for_score,mots.end());
-   
+
    for (ivmot iv=mots.begin();iv!=mots.end();iv++){
-      
+
       // use same score on all species for detection
       iv->motscorethrcons=iv->motscorethr2;
-      
+
       // avoid problems with _ and # characters for latex
       texify(iv->name);
    }
