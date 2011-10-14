@@ -4,7 +4,6 @@ Display the consensus sequence for each motif, pvalue, frequency matrix, nb of c
 Display like TRANSFAC
 Use a log2 base threshold
 
-Create scangen and modify the way enhancers are defined : consider a per motif instance list.
-
 Marc:
 - check mcmc sampling process
+- put weblogo-display function in display.cpp

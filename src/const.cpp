@@ -28,34 +28,38 @@
 
 #include <string>
 
+#include "const.hpp"
+
 using namespace std;
 
+const unsigned int nbiter=3;
+const unsigned int distwidth=20; // max number of instances for background motif distribution
 
-unsigned int width;
+unsigned int width=10;
 
-double scorethr1;
-double scorethr2;
-double scorethr;
-double scorethrcons;
+//const unsigned int distwidth=20;
+unsigned int neighbext=20;
+
+double scorethr1=9;
+double scorethr2=9;
+double scorethr=8;
+double scorethrcons=8;
 
 double conca,conct,concc,concg;
-unsigned int evolutionary_model;
+int evolutionary_model;
 string species;
-unsigned int nbspecies;
-
-unsigned int neighbext=20;
+int nbspecies;
 
 unsigned int scanwidth=1000;
 unsigned int scanstep=50;
 
 unsigned int annotextent=10000;
 
-unsigned int nbmots_for_score=20;
+unsigned int nbmots_for_score=5;
 
 double alpha=0.176; // beta exponent for A,T
 double beta; // beta exponent for C,G
 
 unsigned int nbchrom;
 
-// sequences that are too short are considered as irrelevant in the sequence extraction process
 unsigned int extraction_cutoff=20; 

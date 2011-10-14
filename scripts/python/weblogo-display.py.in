@@ -31,7 +31,7 @@ concc=float(sys.argv[2])
 conca=(0.5-concc)
 conct=conca
 concg=concc
-backfreq=array([conca,conct,concc,concg])
+backfreq=array([conca,concc,concg,conct])
 
 # Motif base frequencies
 matfreq=[]

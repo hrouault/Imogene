@@ -48,9 +48,11 @@ struct cmdname_help {
 };
 
 static struct cmdname_help common_cmds[] = {
-   {"extract", "Extract an alignment from a coordinate file"},
+   {"display", "Display motifs on sequences"},
    {"distinfo", "Distance between PWMs"},
-   {"genmot", "Generating motifs de novo"}
+   {"extract", "Extract an alignment from a coordinate file"},
+   {"genmot", "Generating motifs de novo"},
+   {"scangen", "Scan genome for enhancers prediction"}
 };
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))

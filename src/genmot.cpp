@@ -51,12 +51,12 @@ using namespace std;
 #include "tree.hpp"
 #include "distinfo.hpp"
 #include "sequence.hpp"
+#include "display.hpp"
 
 genmot_args_info genmot_args;
 
 vstring regtests;
 vseq regints;
-
 
 /** 
  * ===  FUNCTION  ======================================================================
@@ -76,6 +76,7 @@ motchi2order ( Motif mot1, Motif mot2 )
    return mot1.scorepoiss<mot2.scorepoiss;
 }		/* -----  end of function motscoreorder  ----- */
 
+// infinite norm
    double
 distcv(vvd& mat1, vvd& mat2)
 {
@@ -140,7 +141,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       if (compN(bs)>0) continue;
       Motif currmot;
       currmot.bsinit=vinttostring(bs);
-      currmot.seqinit=currseq.name;
       currmot.pos=i;
       motiftomat(bs,currmot);
       currmot.matricerevcomp=reversecomp(currmot.matrice);
@@ -148,6 +148,7 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       currmot.matprecrevcomp=currmot.matricerevcomp;
       vvd pmat=currmot.matprec;
       unsigned int nbconv(0);
+      // *** TODO better convergence check
       for (int nb=1;nb<=nbiter;nb++){
          double max=0.01;
          int iter(0);
@@ -173,12 +174,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
 
       currmot.matinit(scorethr2);
       if (currmot.nbmot>2){
-         //currmot.pvaluecomp(); // THIS IS DONE IN THE END
-         //currmot.display(streamfile);
-         //		for (ivma ima=currmot.seqs.begin();ima!=currmot.seqs.end();ima++){
-         //  cout << (*ima).alignseq[0] << endl;
-         //		}
-         //cout << currmot.matprec << endl;
          currmot.matprecrevcomp=reversecomp(currmot.matprec);
          currmot.matfreq=mattofreq(currmot.matprec);
          currmot.motscorethr=scorethr2;
@@ -189,7 +184,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
    }
    cout << endl;
 }
-
 
 void
 genmot_args_init()
@@ -211,7 +205,7 @@ genmot_args_init()
    
    // *** It would be nice to set the threshold by bp, in bits.
    scorethr2=width*genmot_args.threshold_arg/10;
-   scorethr=width*(scorethr2-1.0)/10;
+   scorethr=width*(scorethr2-2.0)/10;
    scorethrcons=width*(scorethr2-1.0)/10;
 
    evolutionary_model=genmot_args.evolutionary_model_arg;
@@ -245,26 +239,22 @@ cmd_genmot(int argc, char **argv)
    cout << "alpha=" << alpha << endl;
 
    cout << "Loading background file names..." << endl;
-
+   
    if (species=="droso") regtests=loadfilenames(DATA_PATH"/droso/background");
    else if (species=="eutherian") regtests=loadfilenames(DATA_PATH"/eutherian/background");
-
    cout << "Background set size : " << regtests.size() << endl;
 
    cout << "Loading training set..." << endl;
 
    regints=loadseqs(genmot_args.align_arg);
-
    cout << "Training set size : " << regints.size() << endl;
    
    cout << "Masking repeats in training set..." << endl;
-
    maskrepeats(regints);
 
    inittreedist();
 
    cout << "Generating motifs..." << endl;
-
    vmot genmots;
    for (vseq::iterator iseq=regints.begin();iseq!=regints.end();iseq++){
       cout << (*iseq).name << endl;
@@ -290,7 +280,7 @@ cmd_genmot(int argc, char **argv)
    cout << "\n";
    
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
-      ivm->pvaluecomp(); // THIS IS DONE IN THE END
+      ivm->pvaluecomp();
    }
    
 
@@ -304,34 +294,20 @@ cmd_genmot(int argc, char **argv)
    sort(genmots.begin(),genmots.end(),motscoreorder);
 
    // Cluster...
-   cout << "Clustering motifs..." << endl;
+   cout << "Clustering motifs (keeping only 20 best)..." << endl;
    compmotsdist(genmots);
    //
-   cout << "Creating logos and output file..." << endl;
+   cout << "Creating output file..." << endl;
    ofstream motmeldb("motifs.txt");
-   unsigned int index=1;
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
-      if ( ivm->check ) {
+      if ( ivm->check ) 
          ivm->display(motmeldb);
-         stringstream ss;
-         ss << "python " << PYTHON_PATH"/weblogo-display.py ";
-         ss << "Motif";
-         ss << index << " ";
-         ss << concc << " ";
-         for (ivvd ivv=ivm->matfreq.begin();ivv!=ivm->matfreq.end();ivv++){
-            for (ivd iv=ivv->begin();iv!=ivv->end()-1;iv++){
-               ss << *iv << ",";
-            }
-            ss << *(ivv->end()-1) << " ";
-         }
-         system(ss.str().c_str());
-         index++;
-      }
    }
    motmeldb.close();
    
+   cout << "Creating logos..." << endl;
+   dispweblogo(genmots);
    
-
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);
    cout << "exit normally" << endl;

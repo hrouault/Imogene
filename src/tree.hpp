@@ -46,41 +46,9 @@ typedef vnoe::iterator ivnoe;
 
 extern vnoe treedist;
 
-
-class icprob
-{
-   public:
-      double ic;
-      double prob;
-};
-typedef vector<icprob> vic;
-typedef vector<vic> vvic;
-typedef vic::iterator ivic;
-typedef vvic::iterator ivvic;
-
-class column
-{
-   public:
-      vint bases;
-
-      column(Motalign & mots, int c);
-      void complete();
-      void compnoeud(noeud & noe);
-};
-
-
 typedef vector<gsl_matrix *> vpgslmat;
 typedef vpgslmat::iterator ivpgslmat;
 
-void phylotest(Motif & mot);
-void evolvesite(Motif & mot);
-void evolvesite(vmot & mots);
-void evolvebase(Motif & mot);
-void fitdistperbase(Motif & mot);
-void fitdistpersite(Motif & mot);
-void fitkmeanspersite(Motif & mot,const char * filename);
-void fitdistkmeanspersite(Motif & mot,const char * filename);
-void fitscorepersite(Motif & mot);
 void inittreedist();
 
 int speciestonum(string name);//species2num

@@ -433,4 +433,171 @@ exit normally
 [33m 20 [mCTGAAATCAAGTCTTGAGGGG
 [33m 21 [m>SusScr
 [33m 22 [mCTGAAATCAAGTCTTGAGGGA
-[1m[34m~                                                                                                                                                                                                                                          [24;1H~                                                                                                                                                                                                                                          [25;1H~                                                                                                                                                                                                                                          [26;1H~                                                                                                                                                                                                                                          [27;1H~                                                                                                                                                                                                                                          [28;1H~                                                                                                                                                                                                                                          [29;1H~                                                                                                                                                                                                                                          [30;1H~                                                                                                                                                                                                                                          [31;1H~                                                                                                                                                                                                                                          [32;1H~                                                                                                                                                                                                                                          [33;1H~                                                                                                                                                                                                                                          [34;1H~                                                                                                                                                                                                                                          [35;1H~                                                                                                                                                                                                                                          [36;1H~                                                                                                                                                                                                                                          [37;1H~                                                                                                                                                                                                                                          [38;1H~                                                                                                                                                                                                                                          [39;1H~                                                                                                                                                                                                                                          [40;1H~                                                                                                                                                                                                                                          [41;1H~                                                                                                                                                                                                                                          [42;1H~                                                                                                                                                                                                                                          [43;1H~                                                                                                                                                                                                                                          [44;1H~                                                                                                                                                                                                                                          [45;1H~                                                                                                                                                                                                                                          [46;1H~                                                                                                                                                                                                                                          [47;1H~                                                                                                                                                                                                                                          [48;1H~                                                                                                                                                                                                                                          [49;1H~                                                                                                                                                                                                                                          [50;1H~                                                                                                                                                                                                                                          [51;1H~                                                                                                                                                                                                                                          [52;1H~                                                                                                                                                                                                                                          [53;1H~                                                                                                                                                                                                                                          [54;1H~                                                                                                                                                                                                                                          [55;1H~                                                                                                                                                                                                                                          [56;1H~                                                                                                                                                                                                                                          [57;1H~                                                                                                                                                                                                                                          [m[58;218H1,1           All[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[58;208H~@k       [1;5H[58;208H          [2;5H[58;218H2,1           All[2;5H[58;208H:         [2;5H[58;1H[K[58;1H:q[58;1H[K[58;1H[?1l>[2J[?47l8]2;Marc@toscane: ~imogene/test/extract]1;../test/extract[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mextract [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[K
+[1m[34m~                                                                                                                                                                                                                                          [24;1H~                                                                                                                                                                                                                                          [25;1H~                                                                                                                                                                                                                                          [26;1H~                                                                                                                                                                                                                                          [27;1H~                                                                                                                                                                                                                                          [28;1H~                                                                                                                                                                                                                                          [29;1H~                                                                                                                                                                                                                                          [30;1H~                                                                                                                                                                                                                                          [31;1H~                                                                                                                                                                                                                                          [32;1H~                                                                                                                                                                                                                                          [33;1H~                                                                                                                                                                                                                                          [34;1H~                                                                                                                                                                                                                                          [35;1H~                                                                                                                                                                                                                                          [36;1H~                                                                                                                                                                                                                                          [37;1H~                                                                                                                                                                                                                                          [38;1H~                                                                                                                                                                                                                                          [39;1H~                                                                                                                                                                                                                                          [40;1H~                                                                                                                                                                                                                                          [41;1H~                                                                                                                                                                                                                                          [42;1H~                                                                                                                                                                                                                                          [43;1H~                                                                                                                                                                                                                                          [44;1H~                                                                                                                                                                                                                                          [45;1H~                                                                                                                                                                                                                                          [46;1H~                                                                                                                                                                                                                                          [47;1H~                                                                                                                                                                                                                                          [48;1H~                                                                                                                                                                                                                                          [49;1H~                                                                                                                                                                                                                                          [50;1H~                                                                                                                                                                                                                                          [51;1H~                                                                                                                                                                                                                                          [52;1H~                                                                                                                                                                                                                                          [53;1H~                                                                                                                                                                                                                                          [54;1H~                                                                                                                                                                                                                                          [55;1H~                                                                                                                                                                                                                                          [56;1H~                                                                                                                                                                                                                                          [57;1H~                                                                                                                                                                                                                                          [m[58;218H1,1           All[1;5H[58;208H~@k       [1;5H[58;208H          [1;5H[58;208H~@k       [1;5H[58;208H          [2;5H[58;218H2,1           All[2;5H[58;208H:         [2;5H[58;1H[K[58;1H:q[58;1H[K[58;1H[?1l>[2J[?47l8]2;Marc@toscane: ~imogene/test/extract]1;../test/extract[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mextract [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[K...
+]2;cd ..]1;..]2;Marc@toscane: ~imogene/test]1;~imogene/test[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mtest [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kl
+]2;ls -G -l]1;ltotal 0
+drwxr-xr-x   5 Marc  staff  170 19 sep 12:11 [1m[36mdisplay[m[m
+drwxr-xr-x   5 Marc  staff  170 19 sep 12:10 [1m[36mextract[m[m
+drwxr-xr-x   7 Marc  staff  238 21 sep 16:49 [1m[36mgenmot[m[m
+drwxr-xr-x  10 Marc  staff  340 23 sep 12:14 [1m[36mscangen[m[m
+]2;Marc@toscane: ~imogene/test]1;~imogene/test[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mtest [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[K...
+]2;cd ..]1;..]2;Marc@toscane: ~imogene]1;~imogene[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36m~imogene [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kl
+]2;ls -G -l]1;ltotal 1104
+-rw-r--r--   1 Marc  staff     126  4 aoû 15:36 AUTHORS
+-rw-r--r--   1 Marc  staff   35147  3 aoû 16:03 COPYING
+-rw-r--r--   1 Marc  staff     193  4 aoû 15:36 ChangeLog
+-rw-r--r--   1 Marc  staff    9416 14 sep 10:56 INSTALL
+-rw-r--r--   1 Marc  staff     841 16 sep 12:15 LICENSE
+-rw-r--r--   1 Marc  staff    1304 16 sep 12:15 Makefile.am
+-rw-r--r--   1 Marc  staff   20676 16 sep 12:17 Makefile.in
+-rw-r--r--   1 Marc  staff       0  3 aoû 16:03 NEWS
+-rw-r--r--   1 Marc  staff     602  7 sep 16:20 README
+-rw-r--r--   1 Marc  staff     350 21 sep 19:44 TODO
+-rw-r--r--   1 Marc  staff   40848 16 sep 12:17 aclocal.m4
+-rwxr-xr-x   1 Marc  staff      39  3 aoû 16:03 [31mautogen.sh[m[m
+drwxr-xr-x   7 Marc  staff     238 16 sep 12:17 [1m[36mautom4te.cache[m[m
+drwxr-xr-x  14 Marc  staff     476 22 sep 16:17 [1m[36mbuild[m[m
+-rwxr-xr-x   1 Marc  staff    3707  9 sep 16:03 [31mcompile[m[m
+-rw-r--r--   1 Marc  staff    2418 16 sep 12:17 config.h.in
+-rw-r--r--   1 Marc  staff    2418  9 sep 15:45 config.h.in~
+-rwxr-xr-x   1 Marc  staff  270949 16 sep 12:17 [31mconfigure[m[m
+-rw-r--r--   1 Marc  staff    2590 16 sep 12:15 configure.ac
+drwxr-xr-x   8 Marc  staff     272 21 sep 16:40 [1m[36mdata[m[m
+-rwxr-xr-x   1 Marc  staff   17574  9 sep 16:03 [31mdepcomp[m[m
+drwxr-xr-x  19 Marc  staff     646 23 sep 12:14 [1m[36mdoc[m[m
+drwxr-xr-x   5 Marc  staff     170 12 sep 16:01 [1m[36mexamples[m[m
+-rwxr-xr-x   1 Marc  staff   13184  9 sep 16:03 [31minstall-sh[m[m
+drwxr-xr-x   3 Marc  staff     102  3 aoû 16:03 [1m[36mm4[m[m
+-rwxr-xr-x   1 Marc  staff   11135  9 sep 16:03 [31mmissing[m[m
+-rwxr-xr-x   1 Marc  staff    4142  9 sep 16:03 [31mpy-compile[m[m
+drwxr-xr-x   6 Marc  staff     204 21 sep 11:25 [1m[36mscripts[m[m
+drwxr-xr-x  42 Marc  staff    1428 23 sep 12:14 [1m[36msrc[m[m
+drwxr-xr-x   7 Marc  staff     238 22 sep 10:14 [1m[36mtest[m[m
+drwxr-xr-x   3 Marc  staff     102  3 aoû 16:03 [1m[36mtools[m[m
+-rw-r--r--   1 Marc  staff   72947 22 sep 14:06 typescript
+]2;Marc@toscane: ~imogene]1;~imogene[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36m~imogene [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kccd scripts/python/ 
+]2;cd scripts/python]1;cd]2;Marc@toscane: ~imogene/scripts/python]1;..cripts/python[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mpython [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kl
+]2;ls -G -l]1;ltotal 120
+-rw-r--r--  1 Marc  staff   2337 21 sep 11:16 Makefile.am
+-rw-r--r--  1 Marc  staff  12415 21 sep 11:18 Makefile.in
+-rw-r--r--  1 Marc  staff   6655 22 sep 16:10 emf2fasta.pyx.in
+-rw-r--r--  1 Marc  staff   2950 22 sep 16:10 extractbackground-droso.py.in
+-rw-r--r--  1 Marc  staff   2839 22 sep 16:10 extractbackground-eutherian.py.in
+-rwxr-xr-x  1 Marc  staff   7769 23 sep 11:28 [31mgetalign-droso.py.in[m[m
+-rwxr-xr-x  1 Marc  staff   6322 23 sep 11:27 [31mgetalign-eutherian.py.in[m[m
+-rwxr-xr-x  1 Marc  staff   2619 16 sep 12:15 [31mmapping.py.in[m[m
+-rwxr-xr-x  1 Marc  staff   1903 21 sep 18:53 [31mweblogo-display.py.in[m[m
+]2;Marc@toscane: ~imogene/scripts/python]1;..cripts/python[1m[7m%[m[1m[m                                                                                                                                                                                                                                          [m[m[m[J[01;31m➜ [01;32m [36mpython [01;34mgit:([31mmaster[34m) [33m✗[00m[00m[01;34m [00m[Kvvi getalign-droso.py.in 
+]2;vi getalign-droso.py.in]1;vi7[?47h[?1h=[1;58r[m[H[2J[58;1H"getalign-droso.py.in" "getalign-droso.py.in" 249L, 7769C[>c[1;1H[33m  1 [m[34m#!/usr/bin/env python[m
+[33m  2 [m[34m#    [m
+[33m  3 [m[34m# Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>[m
+[33m  4 [m[34m# Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>[m
+[33m  5 [m[34m# [m
+[33m  6 [m[34m# This file is part of Imogene.[m
+[33m  7 [m[34m# [m
+[33m  8 [m[34m# Imogene is free software: you can redistribute it and/or modify[m
+[33m  9 [m[34m# it under the terms of the GNU General Public License as published by[m
+[33m 10 [m[34m# the Free Software Foundation, either version 3 of the License, or[m
+[33m 11 [m[34m# (at your option) any later version.[m
+[33m 12 [m[34m# [m
+[33m 13 [m[34m# Imogene is distributed in the hope that it will be useful,[m
+[33m 14 [m[34m# but WITHOUT ANY WARRANTY; without even the implied warranty of[m
+[33m 15 [m[34m# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the[m
+[33m 16 [m[34m# GNU General Public License for more details.[m
+[33m 17 [m[34m# [m
+[33m 18 [m[34m# You should have received a copy of the GNU General Public License[m
+[33m 19 [m[34m# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.[m
+[33m 20 
+ 21 [m[35mimport[m sys
+[33m 22 [m[35mimport[m os
+[33m 23 [m[35mimport[m shutil
+[33m 24 [m[35mimport[m string
+[33m 25 [m[35mimport[m glob
+[33m 26 [m[35mimport[m datetime
+[33m 27 [m[35mimport[m bisect
+[33m 28 [m[35mimport[m errno
+[33m 29 
+ 30 def[m [36mmkdir[m(path):
+[33m 31 [m   [33mtry[m:
+[33m 32 [m      os.mkdir(path)
+[33m 33 [m   [33mexcept[m os.error, e:
+[33m 34 [m      [33mif[m e.errno != errno.EEXIST:
+[33m 35 [m[8C [33mraise
+ 36 
+ 37 [msys.path.append("[31m@pythondir@[m")
+[33m 38 [m[35mimport[m mapping
+[33m 39 
+ 40 [mos.chdir('[31m@pkgdatadir@[m')
+[33m 41 [mmkdir('[31mdroso[m')
+[33m 42 [mos.chdir('[31mdroso[m')
+[33m 43 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Downloading Mavid Mercator alignment files...[m"
+[33m 44 print
+ 45 
+ 46 [mos.system('[31mwget -c "http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/fly_CAF1.1.tar.gz"[m')
+[33m 47 
+ 48 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Extracting alignment files...[m"
+[33m 49 print
+ 50 
+ 51 [mos.system('[31mtar xzf fly_CAF1.1.tar.gz[m')
+[33m 52 [mos.system('[31mmv Dro*.agp map genomes treefile alignments[m')
+[33m 53 [m[34m#os.remove("fly_CAF1.1.tar.gz")[m
+[33m 54 
+ 55 print[m "[31m[[m",datetime.datetime.now(),"[31m]  Downloading Flybase annotation files...[m"
+[33m 56 print
+ 57 [m[58;218H1,1           Top[1;5H[58;208H/         [1;5H[58;1H[K[58;1H/g[3;13H[7m[34mg[m[58;218H3,9           Top/g[58;218H[K[58;3He[3;13H[34mg[m[6;31H[7m[34mge[m[58;218H6,27          Top/ge[58;218H[K[58;4Hn[6;33H[7m[34mn[m[58;218H6,27          Top/gen[58;218H[K[58;5He[6;34H[7m[34me[m[58;218H6,27          Top/gene[58;218H[K[58;6Hs[m[H[2J[1;1H[33m 82 [m[31m   } else {[m[35m\[m
+[33m 83 [m[31m      print $1,$5[m[35m\[m
+[33m 84 [m[31m   }[m[35m\[m
+[33m 85 [m[31m}[m[35m\'[m[31m dmel*.gff | uniq > TSS-coord.dat[m')
+[33m 86 
+ 87 [mos.system('[31mawk [m[35m\'[m[31m/FlyBase[m[35m\t[m[31mmRNA[m[35m\t[m[31m/ {[m[35m\[m
+[33m 88 [m[31m      namestart=match($9,"Name=")+5;[m[35m\[m
+[33m 89 [m[31m      name=substr($9,namestart);[m[35m\[m
+[33m 90 [m[31m      namestop=match(name,"[-;]")-1;[m[35m\[m
+[33m 91 [m[31m      name=substr(name,0,namestop);[m[35m\[m
+[33m 92 [m[31m      if ($9~"Alias="){[m[35m\[m
+[33m 93 [m[31m         aliasstart=match($9,"Alias=")+6;[m[35m\[m
+[33m 94 [m[31m         alias=substr($9,aliasstart);[m[35m\[m
+[33m 95 [m[31m         aliasstop=match(alias,"[-,;]")-1;[m[35m\[m
+[33m 96 [m[31m         alias=substr(alias,0,aliasstop);[m[35m\[m
+[33m 97 [m[31m      }[m[35m\[m
+[33m 98 [m[31m      else {[m[35m\[m
+[33m 99 [m[31m         alias="---"[m[35m\[m
+[33m100 [m[31m      }[m[35m\[m
+[33m101 [m[31m      if ($7 == "+"){[m[35m\[m
+[33m102 [m[31m      print alias,$4,$7,$1,name[m[35m\[m
+[33m103 [m[31m      } else {[m[35m\[m
+[33m104 [m[31m      print alias,$5,$7,$1,name[m[35m\[m
+[33m105 [m[31m      }[m[35m\[m
+[33m106 [m[31m      }[m[35m\'[m[31m *.gff | sort -k 5,5 -k 2,2g |[m[35m\[m
+[33m107 [m[31m                  uniq -f 1 | awk [m[35m\'[m[31m{print $2,$3,$4,$5,$1}[m[35m\'[m[31m |[m[35m\[m
+[33m108 [m[31m                  sort -k 3,3 -k 1,1g  > TSS-coord.dat[m')
+[33m109 
+110 print[m "[31m[[m",datetime.datetime.now(),"[31m]  [m[7m[31mGenes[m[31m list creation.[m"
+[33m111 print
+112 
+113 [mos.system('[31mawk [m[35m\'[m[31m{print $4}[m[35m\'[m[31m TSS-coord.dat | sort -u > genelist.dat[m')
+[33m114 
+115 
+116 def[m [36mprocesscoord[m(coords):
+[33m117 [m   [33mfor[m i [33min[m coords:
+[33m118 [m      i[1]=int(i[1])
+[33m119 [m      i[2]=int(i[2])
+[33m120 [m   coords.sort()
+[33m121 
+122 [m[34m## Open file containing coding sequence coordinates[m
+[33m123 [mfcds=open("[31mCDS-coord.dat[m")
+[33m124 [mcds=[i.rstrip().split("[31m [m") [33mfor[m i [33min[m fcds.readlines()]
+[33m125 [mprocesscoord(cds)
+[33m126 [mfcds.close()
+[33m127 
+128 [m[34m## Open file containing repeated sequence coordinates[m
+[33m129 [mfrepeat=open("[31mrepeat-coord.dat[m")
+[33m130 [mrepeat=[i.rstrip().split("[31m [m") [33mfor[m i [33min[m frepeat.readlines()]
+[33m131 [mprocesscoord(repeat)
+[33m132 [mfrepeat.close()
+[33m133 
+134 [mos.chdir("[31m..[m")
+[33m135 
+136 print[m("[31mRelevant coordinates successfully imported.[m")
+[33m137 
+138 [m[34m## Mask functions[m[58;218H110,39        42%/genes[58;218H[K[58;7H/genes[207C          [29;43H[31mGenes[m[58;218H110,39        42%[29;43H

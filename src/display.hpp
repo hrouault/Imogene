@@ -37,6 +37,8 @@
 #ifndef Display_H
 #define Display_H
 
+#include "motif.hpp"
+
 class svg
 {
 public:
@@ -48,6 +50,8 @@ public:
 	
 	svg();
 };
+
+void dispweblogo(vmot& mots);
 
 int cmd_display(int argc, char **argv);
 
