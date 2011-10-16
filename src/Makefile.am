@@ -19,13 +19,7 @@
 #
 ## Process this file with automake to produce Makefile.in
 
-bin_PROGRAMS = imogene
-
-BUILT_SOURCES = extract_cmdline.c distinfo_cmdline.c genmot_cmdline.c imogene_cmdline.c display_cmdline.c scangen_cmdline.c
-   
-imogene_SOURCES = imogene.hpp imogene.cpp extract.cpp extract.hpp genmot.cpp genmot.hpp help.cpp help.hpp scangen.cpp scangen.hpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp distinfo.cpp distinfo.hpp display.cpp display.hpp imogene_cmdline.c distinfo_cmdline.c extract_cmdline.c display_cmdline.c genmot_cmdline.c scangen_cmdline.c
-imogene_CPPFLAGS = -DDATA_PATH='"${pkgdatadir}"' -DPYTHON_PATH='"${pythondir}"'
-	   
+dist_data_DATA = display.ggo distinfo.ggo extract.ggo genmot.ggo imogene.ggo scangen.ggo
 
 extract_cmdline.c: extract.ggo
 	gengetopt --input=$(top_srcdir)/src/extract.ggo --func-name=extract_cmdline_parser \
@@ -50,4 +44,11 @@ genmot_cmdline.c: genmot.ggo
 scangen_cmdline.c: scangen.ggo
 	gengetopt --input=$(top_srcdir)/src/scangen.ggo --func-name=scangen_cmdline_parser \
    	--arg-struct-name=scangen_args_info --file-name=scangen_cmdline
+
+
+bin_PROGRAMS = imogene
+
+imogene_SOURCES = imogene_cmdline.c imogene_cmdline.h distinfo_cmdline.c distinfo_cmdline.h extract_cmdline.c extract_cmdline.h display_cmdline.c display_cmdline.h genmot_cmdline.c genmot_cmdline.h scangen_cmdline.c scangen_cmdline.h imogene.hpp imogene.cpp extract.cpp extract.hpp genmot.cpp genmot.hpp help.cpp help.hpp scangen.cpp scangen.hpp sequence.cpp sequence.hpp motif.cpp motif.hpp tree.cpp tree.hpp random.cpp random.hpp vectortypes.cpp const.cpp const.hpp vectortypes.hpp distinfo.cpp distinfo.hpp display.cpp display.hpp
+imogene_CPPFLAGS = -DDATA_PATH='"${pkgdatadir}"' -DPYTHON_PATH='"${pythondir}"'
+	   
 
