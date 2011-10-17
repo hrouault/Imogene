@@ -19,7 +19,7 @@
 #
 ## Process this file with automake to produce Makefile.in
 
-dist_data_DATA = display.ggo distinfo.ggo extract.ggo genmot.ggo imogene.ggo scangen.ggo
+dist_noinst_DATA = display.ggo distinfo.ggo extract.ggo genmot.ggo imogene.ggo scangen.ggo
 
 extract_cmdline.c: extract.ggo
 	gengetopt --input=$(top_srcdir)/src/extract.ggo --func-name=extract_cmdline_parser \
