@@ -64,8 +64,4 @@ AC_CONFIG_FILES([Makefile
                  data/Makefile
                  src/Makefile])
 
-AC_MSG_NOTICE([ Next step instruction
-               Launch the script for alignment generation...
-               ])
-
 AC_OUTPUT
