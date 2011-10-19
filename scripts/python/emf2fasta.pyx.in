@@ -34,37 +34,21 @@ def mkdir(path):
       if e.errno != errno.EEXIST:
          raise
 
-def spe2short(name):
-   if name == "mus_musculus": return "MusMus"
-   elif name == "pan_troglodytes":  return "PanTro"
-   elif name == "pongo_abelii":  return "PonAbe"
-   elif name == "macaca_mulatta":   return "MacMul"
-   elif name == "homo_sapiens":  return "HomSap"
-   elif name == "rattus_norvegicus":   return "RatNor"
-   elif name == "equus_caballus":   return "EquCab"
-   elif name == "canis_familiaris": return "CanFam"
-   elif name == "bos_taurus": return "BosTau"
-   elif name == "sus_scrofa": return "SusScr"
-   elif name == "gorilla_gorilla":  return "GorGor"
-   elif name == "callithrix_jacchus":  return "CalJac"
-   else: return "NA"
-
-def spe2num(name):
-   if name == "mus_musculus": return 0
-   elif name == "pan_troglodytes":  return 1
-   elif name == "pongo_abelii":  return 2
-   elif name == "macaca_mulatta":   return 3
-   elif name == "homo_sapiens":  return 4
-   elif name == "rattus_norvegicus":   return 5
-   elif name == "equus_caballus":   return 6
-   elif name == "canis_familiaris": return 7
-   elif name == "bos_taurus": return 8
-   elif name == "sus_scrofa": return 9
-   elif name == "gorilla_gorilla":  return 10
-   elif name == "callithrix_jacchus":  return 11
-   else: return -1
+spe2prop = { "mus_musculus" : [ "MusMus", 0 ],
+   "pan_troglodytes":  [ "PanTro", 1 ],
+   "pongo_abelii":  [ "PonAbe", 2 ],
+   "macaca_mulatta":   [ "MacMul", 3 ],
+   "homo_sapiens":  [ "HomSap", 4 ],
+   "rattus_norvegicus":   [ "RatNor", 5 ],
+   "equus_caballus":   [ "EquCab", 6 ],
+   "canis_familiaris": [ "CanFam", 7 ],
+   "bos_taurus": [ "BosTau", 8 ],
+   "sus_scrofa": [ "SusScr", 9 ],
+   "gorilla_gorilla":  [ "GorGor", 10 ],
+   "callithrix_jacchus":  [ "CalJac", 11 ]}
 
 def chr2str(chr):
+   [
    if chr == "1": return "1"
    elif chr == "2":  return "2"
    elif chr == "3":  return "3"
@@ -124,9 +108,10 @@ def emf2fasta():
                   sta=coords[3]
                   sto=coords[4]
                   str=coords[5]
-                  ns=spe2num(spe)
+                  speprop=spe2prop.get(spe, ["NA",-1])
+                  ns=speprop[0]
                   cols[ns] = col
-                  spes[ns] = spe2short(spe)
+                  spes[ns] = speprop[1]
                   chrs[ns] = chr2str(chr)
                   stas[ns] = sta
                   stos[ns] = sto
@@ -136,7 +121,7 @@ def emf2fasta():
             
             ## CHECK MUS MUSCULUS IS PRESENT
 
-            nref=spe2num("mus_musculus")
+            nref=spe2prop["mus_musculus"][0]
             if cols[nref]==-1 or chrs[nref]=="":
                index += 1
                continue

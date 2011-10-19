@@ -43,6 +43,7 @@
 using namespace std;
 
 #include "extract_cmdline.h"
+#include "extract.hpp"
 #include "const.hpp"
 #include "sequence.hpp"
 #include "tree.hpp"
@@ -88,7 +89,7 @@ extractfromcoord(const char * coordfile)
 
    if (species=="droso"){
       cout << "Reading droso alignments..." << endl;
-      align.open(DATA_PATH"/droso/align.dat");
+      align.open( (datapath+"/droso/align.dat").c_str() );
    } else if (species=="eutherian"){
       cout << "Reading eutherian alignments..." << endl;
       align.open(DATA_PATH"/eutherian/align.dat");
@@ -144,6 +145,8 @@ extract_args_init()
    }
 }
 
+string datapath;
+
 /** 
  * ===  FUNCTION  ======================================================================
  *         Name:  cmd_extract
@@ -158,6 +161,13 @@ cmd_extract(int argc, char **argv)
       exit(1);
 
    extract_args_init();
+
+   const char * imo_datapath = getenv( "IMOGENE_DATAPATH" );
+   if (imo_datapath==NULL){
+      datapath = DATA_PATH;
+   } else {
+      datapath=imo_datapath;
+   }
 
    extractfromcoord(extract_args.input_arg);
 
