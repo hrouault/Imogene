@@ -45,6 +45,7 @@
 using namespace std;
 
 #include "scangen_cmdline.h"
+#include "scangen.hpp"
 #include "const.hpp"
 #include "motif.hpp"
 #include "tree.hpp"
@@ -74,10 +75,10 @@ loadannots()
    ifstream glist;
    if (species=="droso"){
       cout << "Reading droso genes list..." << endl;
-      glist.open(DATA_PATH"/droso/annot/genelist.dat");
+      glist.open( (scangen_datapath+"/droso/annot/genelist.dat").c_str() );
    } else if (species=="eutherian"){
       cout << "Reading eutherian genes list..." << endl;
-      glist.open(DATA_PATH"/eutherian/annot/genelist.dat");
+      glist.open( (scangen_datapath+"/eutherian/annot/genelist.dat").c_str() );
    }
 
    back_insert_iterator<vstring> destg(gbacks);
@@ -117,10 +118,10 @@ scanmots()
    ifstream align;
    if (species=="droso"){
       cout << "Reading droso alignments..." << endl;
-      align.open(DATA_PATH"/droso/align.dat");
+      align.open( (scangen_datapath+"/droso/align.dat").c_str() );
    } else if (species=="eutherian"){
       cout << "Reading eutherian alignments..." << endl;
-      align.open(DATA_PATH"/eutherian/align.dat");
+      align.open( (scangen_datapath+"/eutherian/align.dat").c_str() );
    }
 
    alignscoord=loadcoordconserv(align);
@@ -182,10 +183,10 @@ compgroupedinst()
    ifstream annots;
    if (species=="droso"){
       cout << "Reading droso TSS annot..." << endl;
-      annots.open(DATA_PATH"/droso/annot/TSS-coord.dat");
+      annots.open( (scangen_datapath+"/droso/annot/TSS-coord.dat").c_str() );
    } else if (species=="eutherian"){
       cout << "Reading eutherian TSS annot..." << endl;
-      annots.open(DATA_PATH"/eutherian/annot/TSS-coord.dat");
+      annots.open( (scangen_datapath+"/eutherian/annot/TSS-coord.dat").c_str() );
    }
    importTSS(TSSall,annots);
    annots.close();
@@ -546,6 +547,8 @@ scangen_args_init()
 
 }
 
+string scangen_datapath;
+
    int
 cmd_scangen(int argc, char **argv)
 {
@@ -554,6 +557,13 @@ cmd_scangen(int argc, char **argv)
       exit(1);
 
    scangen_args_init();
+
+   const char * imo_scangen_datapath = getenv( "IMOGENE_DATA" );
+   if (imo_scangen_datapath==NULL){
+      scangen_datapath = DATA_PATH;
+   } else {
+      scangen_datapath=imo_scangen_datapath;
+   }
 
    cout << "annotextent=" << annotextent << endl;
 

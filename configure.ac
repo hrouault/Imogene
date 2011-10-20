@@ -62,6 +62,7 @@ AC_CONFIG_FILES([Makefile
                  scripts/python/Makefile
                  doc/Makefile
                  data/Makefile
-                 src/Makefile])
+                 src/Makefile
+                 mobyle/Makefile])
 
 AC_OUTPUT

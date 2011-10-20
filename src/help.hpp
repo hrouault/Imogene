@@ -17,25 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
  *
- * =====================================================================================
- *
- *       Filename:  help.hpp
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  06.08.2011 14:18:58
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (), 
- *        Company:  
- *
- * =====================================================================================
  */
+
+#ifndef Help_H
+#define Help_H
 
 void list_common_cmds_help(void);
 
 int cmd_help(int argc, char **argv);
 
 int cmd_version(int argc, char **argv);
+
+#endif // Help_H

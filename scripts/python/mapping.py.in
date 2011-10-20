@@ -24,7 +24,11 @@ of the Drosophila melanogaster genome.
 See the website 'http://www.fruitfly.org/sequence/release5genomic.shtml' for further information
 """
 
-fmap=open('@pkgdatadir@/mapping.dat')
+try:
+   fmap=open(os.environ['IMOGENE_DATA']+'/mapping.dat')
+except KeyError:
+   fmap=open('@pkgdatadir@/mapping.dat')
+
 mappings=[i.rstrip().split("\t") for i in fmap.readlines()]
 fmap.close()
 for i in mappings:

@@ -38,7 +38,11 @@ def mkdir(path):
 sys.path.append("@pythondir@")
 import mapping
 
-os.chdir('@pkgdatadir@')
+try:
+   os.chdir(os.environ['IMOGENE_DATA'])
+except KeyError:
+   os.chdir('@pkgdatadir@')
+
 mkdir('eutherian')
 os.chdir('eutherian')
 print "[",datetime.datetime.now(),"]  Downloading Enrendo Pecan Ortheus alignment files from ENSEMBL..."

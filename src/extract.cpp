@@ -17,21 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
  *
- * =====================================================================================
- *
- *       Filename:  extract.cpp
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  06.08.2011 13:03:26
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (), 
- *        Company:  
- *
- * =====================================================================================
  */
 #include <iostream>
 #include <fstream>
@@ -89,10 +74,10 @@ extractfromcoord(const char * coordfile)
 
    if (species=="droso"){
       cout << "Reading droso alignments..." << endl;
-      align.open( (datapath+"/droso/align.dat").c_str() );
+      align.open( (extract_datapath+"/droso/align.dat").c_str() );
    } else if (species=="eutherian"){
       cout << "Reading eutherian alignments..." << endl;
-      align.open(DATA_PATH"/eutherian/align.dat");
+      align.open( (extract_datapath+"/eutherian/align.dat").c_str() );
    }
 
    alignscoord=loadcoordconserv(align);
@@ -102,11 +87,11 @@ extractfromcoord(const char * coordfile)
    stringstream basename;
    if (extract_args.background_given){
       if (species=="droso"){
-         mkdir(DATA_PATH"/droso/background",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
-         basename << DATA_PATH"/droso/background/";
+         mkdir( (extract_datapath+"/droso/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         basename << extract_datapath+"/droso/background/";
       } else if (species=="eutherian"){
-         mkdir(DATA_PATH"/eutherian/background",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
-         basename << DATA_PATH"/eutherian/background/";
+         mkdir( (extract_datapath+"/eutherian/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         basename << extract_datapath+"/eutherian/background/";
       }
    } else {
       mkdir("align",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
@@ -145,7 +130,7 @@ extract_args_init()
    }
 }
 
-string datapath;
+string extract_datapath;
 
 /** 
  * ===  FUNCTION  ======================================================================
@@ -162,11 +147,11 @@ cmd_extract(int argc, char **argv)
 
    extract_args_init();
 
-   const char * imo_datapath = getenv( "IMOGENE_DATAPATH" );
-   if (imo_datapath==NULL){
-      datapath = DATA_PATH;
+   const char * imo_extract_datapath = getenv( "IMOGENE_DATA" );
+   if (imo_extract_datapath==NULL){
+      extract_datapath = DATA_PATH;
    } else {
-      datapath=imo_datapath;
+      extract_datapath=imo_extract_datapath;
    }
 
    extractfromcoord(extract_args.input_arg);

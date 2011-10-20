@@ -31,7 +31,10 @@ limittry=nbtoextract*5
 aligncoords=[]
 weights=[]
 
-os.chdir('@pkgdatadir@/eutherian')
+try:
+   os.chdir(os.environ['IMOGENE_DATA']+'/eutherian')
+except KeyError:
+   os.chdir('@pkgdatadir@/eutherian')
 
 import sys
 

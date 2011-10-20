@@ -45,6 +45,7 @@
 using namespace std;
 
 #include "genmot_cmdline.h"
+#include "genmot.hpp"
 #include "const.hpp"
 #include "random.hpp"
 #include "motif.hpp"
@@ -214,6 +215,7 @@ genmot_args_init()
 
 }
 
+string genmot_datapath;
 
 /** 
  * ===  FUNCTION  ======================================================================
@@ -232,6 +234,13 @@ cmd_genmot(int argc, char **argv)
 
    rnginit();
 
+   const char * imo_genmot_datapath = getenv( "IMOGENE_DATA" );
+   if (imo_genmot_datapath==NULL){
+      genmot_datapath = DATA_PATH;
+   } else {
+      genmot_datapath=imo_genmot_datapath;
+   }
+
    //   printconfig(); *** to be written so that one can rerun exacltly the same instance
 
    compalpha();
@@ -240,8 +249,8 @@ cmd_genmot(int argc, char **argv)
 
    cout << "Loading background file names..." << endl;
    
-   if (species=="droso") regtests=loadfilenames(DATA_PATH"/droso/background");
-   else if (species=="eutherian") regtests=loadfilenames(DATA_PATH"/eutherian/background");
+   if (species=="droso") regtests=loadfilenames( (genmot_datapath+"/droso/background").c_str() );
+   else if (species=="eutherian") regtests=loadfilenames( (genmot_datapath+"/eutherian/background").c_str() );
    cout << "Background set size : " << regtests.size() << endl;
 
    cout << "Loading training set..." << endl;

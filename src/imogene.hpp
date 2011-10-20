@@ -18,8 +18,14 @@
  * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef Imogene_H
+#define Imogene_H
+
+
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 extern const char usage_string[];
 
 extern const char more_info_string[];
+
+#endif // Imogene_H

@@ -31,7 +31,10 @@ limittry=nbtoextract*5
 aligncoords=[]
 weights=[]
 
-os.chdir('@pkgdatadir@/droso')
+try:
+   os.chdir(os.environ['IMOGENE_DATA']+'/droso')
+except KeyError:
+   os.chdir('@pkgdatadir@/droso')
 
 for folder in glob.glob('alignments/[0-9]*/'):
    os.chdir(folder)

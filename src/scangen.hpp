@@ -39,4 +39,6 @@
 
 int cmd_scangen(int argc, char **argv);
 
+extern string scangen_datapath;
+
 #endif // Scangen_H
