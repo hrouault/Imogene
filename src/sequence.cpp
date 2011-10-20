@@ -288,6 +288,18 @@ intfromchrom(string chrname)
          return 4;
       } else if (chrname=="X"){
          return 5;
+      } else if (chrname=="chr2L"){
+         return 0;
+      } else if (chrname=="chr2R"){
+         return 1;
+      } else if (chrname=="chr3L"){
+         return 2;
+      } else if (chrname=="chr3R"){
+         return 3;
+      } else if (chrname=="chr4"){
+         return 4;
+      } else if (chrname=="chrX"){
+         return 5;
       } else {
          return -1;
       }
@@ -334,6 +346,48 @@ intfromchrom(string chrname)
       } else if (chrname=="X"){
          return 19;   
       } else if (chrname=="Y"){
+         return 20;   
+      } else if (chrname=="chr1"){
+         return 0;
+      } else if (chrname=="chr2"){
+         return 1;
+      } else if (chrname=="chr3"){
+         return 2;
+      } else if (chrname=="chr4"){
+         return 3;
+      } else if (chrname=="chr5"){
+         return 4;
+      } else if (chrname=="chr6"){
+         return 5;   
+      } else if (chrname=="chr7"){
+         return 6;   
+      } else if (chrname=="chr8"){
+         return 7;   
+      } else if (chrname=="chr9"){
+         return 8;   
+      } else if (chrname=="chr10"){
+         return 9;   
+      } else if (chrname=="chr11"){
+         return 10;   
+      } else if (chrname=="chr12"){
+         return 11;   
+      } else if (chrname=="chr13"){
+         return 12;   
+      } else if (chrname=="chr14"){
+         return 13;   
+      } else if (chrname=="chr15"){
+         return 14;   
+      } else if (chrname=="chr16"){
+         return 15;   
+      } else if (chrname=="chr17"){
+         return 16;   
+      } else if (chrname=="chr18"){
+         return 17;   
+      } else if (chrname=="chr19"){
+         return 18;   
+      } else if (chrname=="chrX"){
+         return 19;   
+      } else if (chrname=="chrY"){
          return 20;   
       } else {
          return -1;
