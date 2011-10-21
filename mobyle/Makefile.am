@@ -22,7 +22,7 @@ xmldir = $(pkgdatadir)/xml
 
 nodist_xml_DATA = imogene.xml
 
-do_subst = sed -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g' -e 's,[@]PACKAGE[@],$(PACKAGE),g'
+do_subst = sed -e 's,[@]BINDIR[@],$(bindir),g' -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g' -e 's,[@]PACKAGE[@],$(PACKAGE),g'
 
 imogene.xml: imogene.xml.in
 	$(do_subst) < $(srcdir)/imogene.xml.in > imogene.xml
