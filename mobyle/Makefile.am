@@ -16,8 +16,11 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+#
 
-BUILT_SOURCES = imogene.xml
+xmldir = $(pkgdatadir)/xml
+
+nodist_xml_DATA = imogene.xml
 
 do_subst = sed -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g' -e 's,[@]PACKAGE[@],$(PACKAGE),g'
 
