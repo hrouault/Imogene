@@ -24,6 +24,8 @@ of the Drosophila melanogaster genome.
 See the website 'http://www.fruitfly.org/sequence/release5genomic.shtml' for further information
 """
 
+import os
+
 try:
    fmap=open(os.environ['IMOGENE_DATA']+'/mapping.dat')
 except KeyError:
