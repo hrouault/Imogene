@@ -168,9 +168,12 @@
                   </datatype>
                </type>
                <format>
-                  <code proglang="python">"@bindir@/imogene extract -s " + species + " -i " + coord_file + ";\
+                  <code proglang="python">"echo \"Extracting the alignments from coordinates...\";\
+                     @bindir@/imogene extract -s " + species + " -i " + coord_file + ";\
+                     echo \"Predicting motifs...\";\
                      @bindir@/imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threeshold) + " -e " + str(extent) + " -a align ;\
-                     @bindir@/imogene display --help"</code>
+                     echo \"Generating motif logos...\";\
+                     @PYTHON@ @pythondir@/weblogo-display.py motifs.txt 0.2"</code>
                </format>
                <comment>
                   <text lang="en">list of sequence coordinates in the BED4 format:</text>
@@ -184,8 +187,8 @@
             </parameter>
 
             <parameter isout="1">
-               <name>distinfo</name>
-               <prompt>Distinfo output file</prompt>
+               <name>motifs</name>
+               <prompt>Motif file</prompt>
                <type>
                   <datatype>
                      <class>ScangenMotifDefinition</class>
@@ -193,14 +196,14 @@
                   </datatype>
                </type>
                <filenames>
-                  <code proglang="perl">"finalMotifs.dat"</code>
-                  <code proglang="python">"finalMotifs.dat"</code>
+                  <code proglang="perl">"motifs.txt"</code>
+                  <code proglang="python">"motifs.txt"</code>
                </filenames>
             </parameter>
 
             <parameter isout="1">
-               <name>GraphOutput0</name>
-               <prompt>Graph output</prompt>
+               <name>motiflogos</name>
+               <prompt>Motif logos</prompt>
                <type>
                   <datatype>
                      <class>Picture</class>
@@ -211,23 +214,8 @@
                   </dataFormat>
                </type>
                <filenames>
-                  <code proglang="perl">"mat-auto-0*"</code>
-                  <code proglang="python">"mat-auto-0*"</code>
-               </filenames>
-            </parameter> 
-
-            <parameter isout="1">
-               <name>GraphOutput1</name>
-               <prompt>Graph output</prompt>
-               <type>
-                  <datatype>
-                     <class>Picture</class>
-                     <superclass>Binary</superclass>
-                  </datatype>
-               </type>
-               <filenames>
-                  <code proglang="perl">"mat-auto-1*"</code>
-                  <code proglang="python">"mat-auto-1*"</code>
+                  <code proglang="perl">"mat-auto-*"</code>
+                  <code proglang="python">"mat-auto-*"</code>
                </filenames>
             </parameter> 
 
