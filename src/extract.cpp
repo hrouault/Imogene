@@ -79,6 +79,10 @@ extractfromcoord(const char * coordfile)
       cout << "Reading eutherian alignments..." << endl;
       align.open( (extract_datapath+"/eutherian/align.dat").c_str() );
    }
+   if (align.fail()){
+      cerr << "Alignment file opening failed: " << strerror(errno) << endl;
+      exit(-1);
+   }
 
    alignscoord=loadcoordconserv(align);
 

@@ -29,7 +29,7 @@ option   "threshold" t "Threshold used for motif scanning"
 option "species" s "Species used for motifs generation."
             string typestr="str" required
 
-option  "motifs" m  "file containing a list of motif definitons"
+option  "motifs" m  "file containing a list of motif definitions"
             string typestr="str" required
 
 option  "nbmots" n  "Number of motifs to display (max=4)"

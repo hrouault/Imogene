@@ -118,7 +118,9 @@ handle_command(int argc, char **argv)
          continue;
       exit(run_builtin(p, argc, argv));
    }
-   cout << "error!" << endl;
+   cout <<  "Usage : " << usage_string << endl;
+   list_common_cmds_help();
+   cout << "\n" << more_info_string << endl;
 }
 
 static inline void mput_char(char c, unsigned int num)

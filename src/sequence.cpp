@@ -645,25 +645,6 @@ Sequence loadseqconserv(string & filename)
 	return seq;
 }
    
-int
-loadcoordconserv(string folder, vcoord output)
-{
-   DIR *dp;
-   struct dirent *ep;
-
-   dp = opendir ("DATA_DIR");
-   if (dp != NULL)
-   {
-      while (ep = readdir (dp))
-         puts (ep->d_name);
-      (void) closedir (dp);
-   }
-   else
-      cerr << "Couldn't open the directory" << endl;
-
-   return 0;
-}
-
 //Loads seqs from a folder containing .fa aligned sequences
    vseq
 loadseqs(const char * folder)

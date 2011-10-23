@@ -13,11 +13,10 @@
       <doc>
          <title>@PACKAGE_NAME@</title>
          <description>
-            <text lang="en">Genomewide identification of cisregulatory motifs and modules</text>
+            <text lang="en">Genomewide identification of cis-regulatory motifs and modules</text>
          </description>
-         <authors>H Rouault, K Mazouni, L Couturier, V Hakim and V Schweisguth</authors>
-         <reference>Genomewide identification of cis regulatory motifs and modules underlying gene coregulation
-            using statistics and phylogeny, National Academy of Sciences of the United States of America. August 17, 2010 vol. 107 no. 33 14615-14620</reference>
+         <authors>H. Rouault, K. Mazouni, L. Couturier, V. Hakim and F. Schweisguth</authors>
+         <reference>Genome-wide identification of cis-regulatory motifs and modules underlying gene coregulation using statistics and phylogeny. Proc. Natl. Acad. Sci. U.S.A., 107:14615-14620, Aug 2010.</reference>
       </doc>
       <category>sequence:nucleic:regulation</category>
    </head>
@@ -171,9 +170,7 @@
                   <code proglang="python">"echo \"Extracting the alignments from coordinates...\";\
                      @bindir@/imogene extract -s " + species + " -i " + coord_file + ";\
                      echo \"Predicting motifs...\";\
-                     @bindir@/imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threeshold) + " -e " + str(extent) + " -a align ;\
-                     echo \"Generating motif logos...\";\
-                     @PYTHON@ @pythondir@/weblogo-display.py motifs.txt 0.2"</code>
+                     @bindir@/imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threeshold) + " -x " + str(extent) + " -e " + str(evolutionary) + " -a align"</code>
                </format>
                <comment>
                   <text lang="en">list of sequence coordinates in the BED4 format:</text>
@@ -214,8 +211,8 @@
                   </dataFormat>
                </type>
                <filenames>
-                  <code proglang="perl">"mat-auto-*"</code>
-                  <code proglang="python">"mat-auto-*"</code>
+                  <code proglang="perl">"Motif*.png"</code>
+                  <code proglang="python">"Motif*.png"</code>
                </filenames>
             </parameter> 
 
