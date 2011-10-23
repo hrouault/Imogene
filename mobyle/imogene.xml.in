@@ -220,18 +220,18 @@
       </paragraph>
 
 
-      <!--      <paragraph>
+      <paragraph>
          <name>scangen</name>
          <prompt lang="en">Scangen options</prompt>
          <precond>
-            <code proglang="perl">$model == ' '</code>
-            <code proglang="python">model == ' '</code>
+            <code proglang="perl">$model == 'scangen'</code>
+            <code proglang="python">model == 'scangen'</code>
          </precond>
          <argpos>2</argpos>
          <parameters>
 
             <parameter>
-               <name>scanwidth</name>
+               <name>crmwidth</name>
                <prompt lang="en">Width of selected enhancers</prompt>
                <type>
                   <datatype>
@@ -241,10 +241,6 @@
                <vdef>
                   <value>1000</value>
                </vdef>
-               <format>
-                  <code proglang="perl">(defined $value) ? " -s $value" : ""</code>
-                  <code proglang="python">( "" , " -s " + str( value ) )[value is not None and value !=vdef]</code>
-               </format>
             </parameter>
 
             <parameter>
@@ -258,10 +254,6 @@
                <vdef>
                   <value>50</value>
                </vdef>
-               <format>
-                  <code proglang="perl">(defined $value) ? " scanstep=$value" : ""</code>
-                  <code proglang="python">( "" , " scanstep=" + str( value ) )[value is not None and value !=vdef]</code>
-               </format>
             </parameter>
 
             <parameter>
@@ -273,24 +265,13 @@
                   </datatype>
                </type>
                <vdef>
-                  <value>20</value>
+                  <value>5</value>
                </vdef>
-               <format>
-                  <code proglang="perl">(defined $value) ? " -n $value" : ""</code>
-                  <code proglang="python">( "" , " -n " + str( value ) )[value is not None and value !=vdef]</code>
-               </format>
-               <ctrl>
-                  <message>
-                     <text lang="en">Value greater than or equal to 15 is required</text>
-                  </message>
-                  <code proglang="python">value &gt;= 15</code>
-               </ctrl>
             </parameter>
 
-            <parameter ishidden="1">
+            <parameter>
                <name>phenotype</name>
                <prompt lang="en">File containing a list of genes annotated with a relevant phenotype</prompt>
-
                <type>
                   <datatype>
                      <class>Phenotype</class>
@@ -298,8 +279,8 @@
                   </datatype>
                </type>
                <format>
-                  <code proglang="perl">" -p /local/gensoft/share/scangen/pheno.txt"</code>
-                  <code proglang="python">" -p /local/gensoft/share/scangen/pheno.txt"</code>
+                  <code proglang="python">"echo \"Predicting enhancers...\";\
+                     @bindir@/imogene scangen -s " + species + " -w " + str(width) + " -t " + str(threeshold) + " -x " + str(extent) + " -m motifs.txt"</code>
                </format>
             </parameter>
 
@@ -313,10 +294,6 @@
                      <superclass>AbstractText</superclass>
                   </datatype>
                </type>
-               <format>
-                  <code proglang="perl">(defined $value) ? " -m $value" : ""</code>
-                  <code proglang="python">( "" , " -m " + str( value ) )[value is not None]</code>
-               </format>
             </parameter>
 
 
@@ -330,15 +307,12 @@
                   </datatype>
                </type>
                <filenames>
-                  <code proglang="perl">"result*"</code>
                   <code proglang="python">"result*"</code>
-                  <code proglang="python">"seqs*"</code>
-                  <code proglang="python">"hist*"</code>
                </filenames>
             </parameter> 
 
          </parameters>
-      </paragraph> -->
+      </paragraph>
 
    </parameters>
 </program>

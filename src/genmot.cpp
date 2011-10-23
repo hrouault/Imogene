@@ -131,12 +131,9 @@ motiftomat(vint & seq,Motif & mot)
 seqanalysis(Sequence & currseq,vmot & genmots)
 {
    unsigned int i=0;
-//      for (int j=0;j<nbspecies;j++){
-//      cout << currseq.iseqs[j] << endl;
-//      }
    for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
-      cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
-      cout.flush();
+      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
+      //cout.flush();
      //cout << i << " " << bs << endl;
       vint bs(istr,istr+width);
       if (compN(bs)>0) continue;
@@ -274,8 +271,8 @@ cmd_genmot(int argc, char **argv)
    unsigned int counter=1;
    for (ivstring ivs=regtests.begin();ivs!=regtests.end();ivs++){
    
-      cout << "\r" << counter << "/" << regtests.size();
-      cout.flush();
+//      cout << "\r" << counter << "/" << regtests.size();
+//      cout.flush();
       counter++;
       
       Sequence seq;
