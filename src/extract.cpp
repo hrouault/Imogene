@@ -46,6 +46,10 @@ seq2fasta(Sequence &seq,string folder)
    file << seq.start << "_";
    file << seq.stop << ".fa";
    outf.open(file.str().c_str());
+   if (outf.fail()){
+      cerr << "Cannot open file for fasta recording: " << strerror(errno) << endl;
+      exit(-1);
+   }
    Sequence & s=seq;
    for (int i=0;i<nbspecies;i++){
       if (s.species[i]){

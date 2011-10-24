@@ -637,6 +637,10 @@ Sequence loadseqconserv(string & filename)
 {
 	ifstream fseq;
 	fseq.open(filename.c_str());
+   if (fseq.fail()){
+      cerr << "Sequence file opening failed: " << strerror(errno) << endl;
+      exit(-1);
+   }
 	Sequence seq;
 	fseq >> seq;
 	seq.name= filename.c_str(); // for display purpose

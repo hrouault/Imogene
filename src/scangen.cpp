@@ -66,6 +66,10 @@ loadannots()
 {
    ifstream annots;
    annots.open(scangen_args.phenotype_arg);
+   if (annots.fail()){
+      cerr << "Cannot open phenotype file: " << strerror(errno) << endl;
+      exit(-1);
+   }
 
    back_insert_iterator<vstring> dest(phenos);
    copy(iisstring(annots),iisstring(),dest);
@@ -79,6 +83,10 @@ loadannots()
    } else if (species=="eutherian"){
       cout << "Reading eutherian genes list..." << endl;
       glist.open( (scangen_datapath+"/eutherian/annot/genelist.dat").c_str() );
+   }
+   if (glist.fail()){
+      cerr << "Cannot open gene list file: " << strerror(errno) << endl;
+      exit(-1);
    }
 
    back_insert_iterator<vstring> destg(gbacks);
@@ -122,6 +130,10 @@ scanmots()
    } else if (species=="eutherian"){
       cout << "Reading eutherian alignments..." << endl;
       align.open( (scangen_datapath+"/eutherian/align.dat").c_str() );
+   }
+   if (align.fail()){
+      cerr << "Alignment file opening failed: " << strerror(errno) << endl;
+      exit(-1);
    }
 
    alignscoord=loadcoordconserv(align);
@@ -187,6 +199,10 @@ compgroupedinst()
    } else if (species=="eutherian"){
       cout << "Reading eutherian TSS annot..." << endl;
       annots.open( (scangen_datapath+"/eutherian/annot/TSS-coord.dat").c_str() );
+   }
+   if (annots.fail()){
+      cerr << "TSS annotation file opening failed: " << strerror(errno) << endl;
+      exit(-1);
    }
    importTSS(TSSall,annots);
    annots.close();

@@ -1189,6 +1189,10 @@ loadmots ( const char * filename, vmot & mots )
 
    ifstream fmotifs;
    fmotifs.open(filename);
+   if (fmotifs.fail()){
+      cerr << "Cannot open motif file: " << strerror(errno) << endl;
+      exit(-1);
+   }
 
    string dum;
    fmotifs >> dum;

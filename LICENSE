@@ -15,6 +15,3 @@ GNU General Public License for more details.
 
 The included file 'COPYING' is a copy of the GNU General Public License.
 
-gengetopt - generate a C function that uses getopt_long
-to parse command line arguments
-
