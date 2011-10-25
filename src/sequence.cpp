@@ -643,7 +643,7 @@ Sequence loadseqconserv(string & filename)
 	fseq.open(filename.c_str());
    if (fseq.fail()){
       cerr << "Sequence file opening failed: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 	Sequence seq;
 	fseq >> seq;
@@ -681,7 +681,7 @@ loadseqs(const char * folder)
       (void) closedir (dp);
    }
    else
-      cerr << "Couldn't open the directory" << endl;
+      cerr << "Couldn't open the directory:" << strerror(errno) << endl;
 
    return seqs;
 }
@@ -709,7 +709,7 @@ loadfilenames(const char * folder)
       (void) closedir (dp);
    }
    else
-      cerr << "Couldn't open the directory" << endl;
+      cerr << "Couldn't open the directory:" << strerror(errno) << endl;
 
    return filenames;
 }
@@ -839,6 +839,11 @@ coordtoseq(Coordinate & coord)
 
            Sequence trueali;
            ifstream fileseq(ali.name.c_str());
+           if (fileseq.fail()){
+              cerr << "Cannot open alignment sequence file for reading: " << strerror(errno) << endl;
+              exit(EXIT_FAILURE);
+           }
+
            fileseq >> trueali;
            fileseq.close();
            unsigned int pos=0;
@@ -893,9 +898,13 @@ coordtoseq(Coordinate & coord)
 
            if (isnextali){
               Coordinate & nextali=*(ivs+1);
-              ifstream fileseq(nextali.name.c_str());
-              fileseq >> trueali;
-              fileseq.close();
+              ifstream fileseq2(nextali.name.c_str());
+              if (fileseq2.fail()){
+                 cerr << "Cannot open alignment sequence file for reading: " << strerror(errno) << endl;
+                 exit(EXIT_FAILURE);
+              }
+              fileseq2 >> trueali;
+              fileseq2.close();
               // previous position
               int prevpos=ali.stop-nextali.start; //usually prevpos is -1
               pos=0;

@@ -68,6 +68,10 @@ extractfromcoord(const char * coordfile)
 
    // INPUT COORDINATES
    ifstream coordinates(coordfile);
+   if (coordinates.fail()){
+      cerr << "Cannot open coordinate file for reading: " << strerror(errno) << endl;
+      exit(-1);
+   }
 
    vcoord coords;
    back_insert_iterator<vcoord> dest(coords);
@@ -151,7 +155,7 @@ cmd_extract(int argc, char **argv)
 {
 
    if ( extract_cmdline_parser(argc, argv, & extract_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
 
    extract_args_init();
 
@@ -165,6 +169,6 @@ cmd_extract(int argc, char **argv)
    extractfromcoord(extract_args.input_arg);
 
    cout << "exit normally" << endl;
-   return 1;
+   return EXIT_SUCCESS;
 
 }		/* -----  end of function extract  ----- */
