@@ -7,7 +7,7 @@
 <!-- 'Biological Software and Databases' Group, Institut Pasteur, Paris.         -->
 <!-- Distributed under LGPLv2 License. Please refer to the COPYING.LIB document. -->
 <program>
-   <head>
+   <head xmlns:xi="http://www.w3.org/2001/XInclude">
       <name>@PACKAGE_NAME@</name>
       <version>@PACKAGE_VERSION@</version>
       <doc>
@@ -19,6 +19,9 @@
          <reference>Genome-wide identification of cis-regulatory motifs and modules underlying gene coregulation using statistics and phylogeny. Proc. Natl. Acad. Sci. U.S.A., 107:14615-14620, Aug 2010.</reference>
       </doc>
       <category>sequence:nucleic:regulation</category>
+      <xi:include href="../../Local/Services/Programs/Env/imogene_env.xml">
+      <xi:fallback/>
+    </xi:include>
    </head>
    <parameters>
 
@@ -55,7 +58,7 @@
          <argpos>1</argpos>
          <parameters>
 
-            <parameter>
+            <parameter ismandatory="1">
                <name>species</name>
                <prompt lang="en">Family of species to consider</prompt>
                <type>
@@ -82,7 +85,7 @@
                </vlist>
             </parameter>
 
-            <parameter>
+            <parameter ismandatory="1">
                <name>width</name>
                <prompt lang="en">Width of the motif</prompt>
                <type>
@@ -95,8 +98,8 @@
                </vdef>
             </parameter>
 
-            <parameter>
-               <name>threeshold</name>
+            <parameter ismandatory="1">
+               <name>threshold</name>
                <prompt lang="en">Threshold used for motif scanning</prompt>
                <type>
                   <datatype>
@@ -108,7 +111,7 @@
                </vdef>
             </parameter>
 
-            <parameter>
+            <parameter ismandatory="1">
                <name>extent</name>
                <prompt lang="en">Extent of the motif search within an alignment</prompt>
                <type>
@@ -134,7 +137,7 @@
          <argpos>2</argpos>
          <parameters>
 
-            <parameter>
+            <parameter ismandatory="1">
                <name>evolutionary</name>
                <prompt lang="en">Evolutionary model used for motif generation</prompt>
                <type>
@@ -157,7 +160,7 @@
                </vlist>
             </parameter>
 
-            <parameter>
+            <parameter ismandatory="1">
                <name>coord_file</name>
                <prompt lang="en">File of enhancer coordinates</prompt>
                <type>
@@ -166,12 +169,7 @@
                      <superclass>AbstractText</superclass>
                   </datatype>
                </type>
-               <format>
-                  <code proglang="python">"echo \"Extracting the alignments from coordinates...\";\
-                     @bindir@/imogene extract -s " + species + " -i " + coord_file + ";\
-                     echo \"Predicting motifs...\";\
-                     @bindir@/imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threeshold) + " -x " + str(extent) + " -e " + str(evolutionary) + " -a align"</code>
-               </format>
+              
                <comment>
                   <text lang="en">list of sequence coordinates in the BED4 format:</text>
                   <text lang="en">sequence_name chromosome_arm start_pos stop_pos</text>
@@ -182,7 +180,46 @@
                   3L 30000 31000 seq_name3
                </example>
             </parameter>
+            
+            <parameter ishidden="1">
+               <name>cmd_1</name>
+               <type>
+                  <datatype>
+                     <class>String</class>
+                  </datatype>
+               </type>
+               <format>
+                <code proglang="python">"imogene extract -s " + species + " -i " + coord_file +" &amp;&amp; "</code>
+               </format>
+               <argpos>1</argpos>
+            </parameter>
+            
+            <parameter ishidden="1">
+               <name>cmd_2</name>
+               <type>
+                  <datatype>
+                     <class>String</class>
+                  </datatype>
+               </type>
+               <format>
+                <code proglang="python">" imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threshold) + " -x " + str(extent) + " -e " + str(evolutionary) + " -a align  &amp;&amp;" </code>
+               </format>
+               <argpos>2</argpos>
+            </parameter>
 
+             <parameter ishidden="1">
+               <name>cmd_3</name>
+               <type>
+                  <datatype>
+                     <class>String</class>
+                  </datatype>
+               </type>
+               <format>
+                <code proglang="python">" imogene display -t "+ str(threshold) +" -s " + species +" -m motifs.txt -a align --html-ref"</code>
+               </format>
+               <argpos>3</argpos>
+            </parameter>
+            
             <parameter isout="1">
                <name>motifs</name>
                <prompt>Motif file</prompt>
@@ -280,7 +317,7 @@
                </type>
                <format>
                   <code proglang="python">"echo \"Predicting enhancers...\";\
-                     @bindir@/imogene scangen -s " + species + " -w " + str(width) + " -t " + str(threeshold) + " -x " + str(extent) + " -m motifs.txt"</code>
+                     imogene scangen -s " + species + " -w " + str(width) + " -t " + str(threeshold) + " -x " + str(extent) + " -m motifs.txt"</code>
                </format>
             </parameter>
 
