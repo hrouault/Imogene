@@ -336,7 +336,7 @@ outputresults()
    stringstream filenameseqs;
    filenameseqs << "mots" << nbmots_for_score << ".dat";
    ofstream seqs(filenameseqs.str().c_str());
-   if (seq.fail()){
+   if (seqs.fail()){
       cerr << "Cannot open sequence file for writing: " << strerror(errno) << endl;
       exit(EXIT_FAILURE);
    }
