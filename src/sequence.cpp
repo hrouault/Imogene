@@ -23,10 +23,14 @@
 #include <sstream>
 #include <cmath>
 #include <dirent.h>
+#include <cstring>
+#include <errno.h>
 
 #include "vectortypes.hpp"
 #include "sequence.hpp"
 #include "tree.hpp"
+
+using namespace std;
 
 vcoord alignscoord;
 

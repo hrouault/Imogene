@@ -35,6 +35,8 @@
 #include <math.h>
 #include <numeric>
 #include <time.h>
+#include <cstring>
+#include <errno.h>
 
 #include "const.hpp"
 #include "vectortypes.hpp"
