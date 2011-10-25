@@ -9,6 +9,7 @@ build
 autoscan.log
 depcomp
 install-sh
+INSTALL
 missing
 py-compile
 aclocal.m4
