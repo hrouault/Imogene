@@ -55,5 +55,6 @@ void dispweblogo(vmot& mots);
 
 int cmd_display(int argc, char **argv);
 
+extern string display_datapath;
 
 #endif // Display_Hpp

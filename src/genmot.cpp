@@ -147,7 +147,7 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       vvd pmat=currmot.matprec;
       unsigned int nbconv(0);
       // *** TODO better convergence check
-      for (int nb=1;nb<=nbiter;nb++){
+      for (unsigned int nb=1;nb<=nbiter;nb++){
          double max=0.01;
          int iter(0);
          while(max>0){

@@ -224,7 +224,7 @@ compgroupedinst()
          ivi->isassigned=1;
          if (ivi!=allinstances.end()-1){
             for (ivinst ivi2=ivi+1;ivi2!=allinstances.end();ivi2++){
-               if ( (ivi2->chrom == ivi->chrom) && (ivi2->coord - ivi->coord < scanwidth - width +1 ) ){
+               if ( (ivi2->chrom == ivi->chrom) && ( ivi2->coord - ivi->coord < scanwidth - width +1 ) ){
                   ginst.instances.push_back(*ivi2);
                   ginst.stop=ivi2->coord+width-1;
                   ivi2->isassigned=1;
@@ -461,7 +461,7 @@ cmd_scangen(int argc, char **argv)
 {
 
    if ( scangen_cmdline_parser(argc,argv, & scangen_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
 
    scangen_args_init();
 

@@ -51,7 +51,7 @@ seq2fasta(Sequence &seq,string folder)
       exit(-1);
    }
    Sequence & s=seq;
-   for (int i=0;i<nbspecies;i++){
+   for (unsigned int i=0;i<nbspecies;i++){
       if (s.species[i]){
          if (i==0) outf << ">" << numtospecies(i) << " " <<
             chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
