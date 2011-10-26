@@ -585,10 +585,6 @@ distinfo ( const char* motfile  )
    }
    outf.close();
 
-   cout << "\n";
-
-   cout << "exit normally" << endl;
-
 }				/* ----------  end of function main  ---------- */
 
 /** 
@@ -602,7 +598,7 @@ cmd_distinfo(int argc, char **argv)
 {
 
    if ( distinfo_cmdline_parser(argc, argv, & distinfo_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
    if (strcmp(distinfo_args.species_arg,"droso")){
       species="droso";
    } else if (strcmp(distinfo_args.species_arg,"eutherian")){
@@ -611,6 +607,6 @@ cmd_distinfo(int argc, char **argv)
 
    distinfo(distinfo_args.motifs_arg);
 
-   return 1;
+   return EXIT_SUCCESS;
 }		/* -----  end of function extract  ----- */
 

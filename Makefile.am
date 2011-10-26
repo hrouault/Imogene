@@ -18,7 +18,7 @@
 # along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
 
-SUBDIRS = src scripts doc data mobyle
+SUBDIRS = src scripts doc data mobyle css
 
 EXTRA_DIST = autogen.sh
 

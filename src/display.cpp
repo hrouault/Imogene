@@ -75,19 +75,17 @@ svg::svg()
    void
 texify (string & str)
 {
-   int found=str.find("_");
-   unsigned int deca=0;
+   size_t found=str.find("_");
    while (found!=string::npos){
       str.insert(found,"\\");
       found=str.find("_",found+3);
    }
+
    found=str.find("#");
-   deca=0;
    while (found!=string::npos){
       str.insert(found,"\\");
       found=str.find("#",found+3);
    }
-   return;
 }
 
 // for TFBS color
@@ -222,7 +220,7 @@ scanseqsforsvg(vseq & align,vmot & mots)
       ofstream svgfile(filename.c_str());
       if (svgfile.fail()){
          cerr << "Cannot open file for svg recording: " << strerror(errno) << endl;
-         exit(-1);
+         exit(EXIT_FAILURE);
       }
 
       //we set the size for the svg file
@@ -291,8 +289,8 @@ dispseqwmots (Sequence & seq, vmot & mots, ofstream & outf)
    }
 
    //DISPLAY
-   int start=0;
-   int stop=min(60,sizeseq);
+   unsigned int start=0;
+   unsigned int stop=min(60,sizeseq);
    outf << "\\texttt{";
    while (start<sizeseq){
       for (unsigned int spe=0;spe<1;spe++){
@@ -330,7 +328,7 @@ dispseqwmots (Sequence & seq, vmot & mots, ofstream & outf)
                   // to count the number of digits:
                   stringstream score;
                   score << setprecision(1) << fixed <<  scores[spe][i] ;
-                  for (int ii=1;ii<=score.str().size();ii++){
+                  for (unsigned int ii=1;ii<=score.str().size();ii++){
                      if ( i>0 && i%10 == 0 ) {
                         outf << "\\hspace*{1\\charwidth}";
                      }
@@ -353,10 +351,28 @@ dispseqwmots (Sequence & seq, vmot & mots, ofstream & outf)
    outf << "\\\\\n";
 }
 
+   void
+dispmotifs_html (ofstream & outf)
+{
+   outf << "<h2> Motifs</h2>" << endl;
+   outf << "<table>" << endl;
+   outf << "<tr>" << endl;
+   outf << "<th>rank</th> <th>logo</th>" << endl;
+   outf << "</tr>" << endl;
+   outf << "<tr>" << endl;
+   outf << "<td>1</td> <td><img src=\"../Motif1.png\" /></td>" << endl;
+   outf << "</tr>" << endl;
+   outf << "<tr>" << endl;
+   outf << "<td>2</td> <td><img src=\"../Motif2.png\" /></td>" << endl;
+   outf << "</tr>" << endl;
+   outf << "</table>" << endl;
+}
+
 // display TFBS on reference sequences
    void
 dispseqwmots_html (Sequence & seq, vmot & mots, ofstream & outf)
 {
+   outf << "<h2>Motif instances in the training set</h2>";
    //HEADER
    outf << "<h3>";
    string name=numtospecies(0);
@@ -405,63 +421,70 @@ dispseqwmots_html (Sequence & seq, vmot & mots, ofstream & outf)
    }
 
    //DISPLAY
-   int start=0;
-   int stop=min(60,sizeseq);
+   unsigned int start=0;
+   unsigned int stop2=min(60,sizeseq);
    outf << "<pre>" << endl;
+   int modulo=0;
    while (start<sizeseq){
-      for (unsigned int spe=0;spe<1;spe++){
-         if(seq.species[spe]){
-            for (unsigned int i=start;i<stop;i++){
-               if (vvstate[spe][i]==0){
-                  outf << seq.seqsrealigned[spe][i];
-               } else if (vvstate[spe][i]==1){
-                  outf << "<span class=\"mot" << vvcol[spe][i] << "\">";
-                  outf << seq.seqsrealigned[spe][i];
-                  outf << "</span>";
-
-               } else if (vvstate[spe][i]==2){
-                  outf << "\\textit{\\textcolor{" << colfromint(vvcol[spe][i]) << "}{";
-                  outf << seq.seqsrealigned[spe][i];
-                  outf << "}}";
-               }
-               if ( i>0 && i%10 == 0 ) {
-                  outf << "\t";
-               }
+      int check=0;
+      for (unsigned int i=start;i<stop2;i++){
+         if (i>=sizeseq) break;
+         if (vvstate[0][i]==0){
+            if (check==1){
+               outf << "</span>";
+               check=0;
             }
-            outf << "\\\\\n";
-            int pstate=0;
-            int ppos=start;
-            for (unsigned int i=start;i<stop;i++){
-               if (vvstate[spe][i]>0  && vvstate[spe][i]!=pstate){
-                  int deca;
-                  deca=i-ppos;
-                  outf << "\\hspace*{" << deca << "\\charwidth}";
-                  if (vvstate[spe][i]==2) outf << "\\textit{";
-                  outf << "\\textcolor{" << colfromint(vvcol[spe][i]) << "}{";
-                  outf << setprecision(1) << fixed <<  scores[spe][i] ;
-                  outf << "}";
-                  if (vvstate[spe][i]==2) outf << "}";
-                  // to count the number of digits:
-                  stringstream score;
-                  score << setprecision(1) << fixed <<  scores[spe][i] ;
-                  for (int ii=1;ii<=score.str().size();ii++){
-                     if ( i>0 && i%10 == 0 ) {
-                        outf << "\\hspace*{1\\charwidth}";
-                     }
-                     i++;
-                  }
-                  ppos=i;
-               }
-               pstate=vvstate[spe][i];
-               if ( i>0 && i%10 == 0 ) {
-                  outf << "\\hspace*{1\\charwidth}";
-               }
+         } else if (vvstate[0][i]==1){
+            if (check==0){
+               check=1;
+               outf << "<span class=\"mot" << vvcol[0][i] << "\">";
             }
-            outf << "\\\\\n";
+         } else if (vvstate[0][i]==2){
+            if (check==0){
+               check=1;
+               outf << "<span class=\"mot" << vvcol[0][i] << "\">";
+            }
+         }
+         if (seq.seqsrealigned[0][i]!='-'){
+            outf << seq.seqsrealigned[0][i];
+            if ( i>0 && (i+1-modulo)%10 == 0 ) {
+               outf << "  ";
+            }
+         } else {
+            stop2++;
+            modulo++;
          }
       }
-      start=stop;
-      stop=min(stop+60,sizeseq);
+      int pstate=0;
+      int ppos=start;
+//      for (unsigned int i=start;i<stop;i++){
+//         if (vvstate[0][i]>0  && vvstate[0][i]!=pstate){
+//            int deca;
+//            deca=i-ppos;
+//            outf << deca ;
+//            if (vvstate[0][i]==2) outf << "<span class=emph>";
+//            outf << "mot" << vvcol[0][i];
+//            outf << setprecision(1) << fixed <<  scores[0][i] ;
+//            if (vvstate[0][i]==2) outf << "}";
+//            // to count the number of digits:
+//            stringstream score;
+//            score << setprecision(1) << fixed <<  scores[0][i] ;
+//            for (unsigned int ii=1;ii<=score.str().size();ii++){
+//               if ( i>0 && i%10 == 0 ) {
+//                  outf << " ";
+//               }
+//               i++;
+//            }
+//            ppos=i;
+//         }
+//         pstate=vvstate[0][i];
+//         if ( i>0 && (i+1)%10 == 0 ) {
+//            outf << " ";
+//         }
+//      }
+      start=stop2;
+      stop2=min(stop2+60,sizeseq);
+      outf << endl;
    }
    outf << "</pre>" << endl;
 }
@@ -519,8 +542,8 @@ dispseqwmotswgaps (Sequence & seq, vmot & mots, ofstream & outf)
    }
 
    //DISPLAY
-   int start=0;
-   int stop=min(60,sizeseq);
+   unsigned int start=0;
+   unsigned int stop=min(60,sizeseq);
    outf << "\\texttt{";
    while (start<sizeseq){
       for (unsigned int spe=0;spe<nbspecies;spe++){
@@ -561,7 +584,7 @@ dispseqwmotswgaps (Sequence & seq, vmot & mots, ofstream & outf)
                   // to count the number of digits:
                   stringstream score;
                   score << setprecision(1) << fixed <<  scores[spe][i] ;
-                  for (int ii=1;ii<=score.str().size();ii++){
+                  for (unsigned int ii=1;ii<=score.str().size();ii++){
                      if ( i>0 && i%10 == 0 ) {
                         outf << "\\hspace*{1\\charwidth}";
                      }
@@ -614,17 +637,21 @@ disphtmlinit(ofstream & outf)
    outf << endl;
    outf << "<html xmlns=\"http://www.w3.org/1999/xhtml\">" << endl;
    outf << endl;
+   outf << "<link rel=\"stylesheet\" href=\"css/screen.css\"" << endl;
+   outf << " type=\"text/css\" media=\"screen, projection\" />" << endl;
+   outf << "<link rel=\"stylesheet\" href=\"css/print.css\"" << endl;
+   outf << " type=\"text/css\" media=\"print\" />" << endl;
+   outf << "<!--[if lt IE 8]>" << endl;
+   outf << "<link rel=\"stylesheet\" href=\"css/ie.css\"" << endl;
+   outf << " type=\"text/css\" media=\"screen, projection\" />" << endl;
+   outf << "<![endif]-->" << endl;
+   outf << endl;
    outf << "<head>" << endl;
-   outf << "<title>Reference sequence annotation</title>" << endl;
+   outf << "<title>Imogene genmot output</title>" << endl;
    outf << "</head>" << endl;
    outf << endl;
    outf << "<body>" << endl;
-}
-
-   void
-disptexclose(ofstream & outf)
-{
-   outf << "\\end{document}";
+   outf << "<h1>Imogene genmot output</h1>" << endl;
 }
 
    void
@@ -636,6 +663,12 @@ disphtmlclose(ofstream & outf)
 }
 
    void
+disptexclose(ofstream & outf)
+{
+   outf << "\\end{document}";
+}
+
+   void
 disptex(vseq & seqs,vmot & mots)
 {
    string filename;
@@ -643,7 +676,7 @@ disptex(vseq & seqs,vmot & mots)
    ofstream outf(filename.c_str());
    if (outf.fail()){
       cerr << "Cannot open file for tex recording: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    disptexinit(outf);
@@ -663,10 +696,18 @@ disphtml(vseq & seqs,vmot & mots)
    ofstream outf(filename.c_str());
    if (outf.fail()){
       cerr << "Cannot open file for html recording: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
+   }
+   int retsym = symlink ((display_datapath+"/css").c_str(), "display/css");
+   if (retsym && errno!=EEXIST){
+      cerr << "Cannot create symlink: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
    }
 
    disphtmlinit(outf);
+
+   dispmotifs_html(outf);
+
    for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){ 
       cout << "Scanning " << ivs->name << endl;
       dispseqwmots_html(*ivs,mots,outf);
@@ -718,6 +759,8 @@ display_args_init()
 
 }
 
+string display_datapath;
+
 /** 
  * ===  FUNCTION  ======================================================================
  *         Name:  cmd_display
@@ -728,9 +771,16 @@ display_args_init()
 cmd_display(int argc, char **argv)
 {
    if ( display_cmdline_parser(argc, argv, & display_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
 
    display_args_init();
+
+   const char * imo_display_datapath = getenv( "IMOGENE_DATA" );
+   if (imo_display_datapath==NULL){
+      display_datapath = DATA_PATH;
+   } else {
+      display_datapath=imo_display_datapath;
+   }
 
    cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
 
@@ -757,9 +807,9 @@ cmd_display(int argc, char **argv)
    cout << "Loaded " << mots.size() << " motifs." << endl;
 
    int mkdir_res = mkdir("display",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
-   if (mkdir && errno != EEXIST){
+   if (mkdir_res && errno != EEXIST){
       cerr << "Cannot create display directory: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    cout << "Scanning sequences for instances..." << endl;

@@ -36,7 +36,7 @@ extern unsigned int neighbext; // extent of conserved motifs search
 
 extern string species; // droso or eutherian
 extern int evolutionary_model; // 1 (felsen) or 2 (halpern)
-extern int nbspecies; 
+extern unsigned int nbspecies; 
 
 extern double scorethr1; // for distinfo use
 extern double scorethr2; //main threshold for scangen

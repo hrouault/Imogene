@@ -92,7 +92,7 @@ class Sequence
       vinstseq instances;
       vvinstseq instancescons;
       int nbN;
-      int nbtb;
+      unsigned int nbtb;
 
       Sequence();
       void instances2instancescons();
