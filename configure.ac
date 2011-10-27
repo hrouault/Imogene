@@ -57,6 +57,12 @@ AC_HEADER_STDBOOL
 # Checks for library functions.
 AC_CHECK_FUNCS([floor pow sqrt],[],[AC_MSG_ERROR([floor,pow and sqrt functions required])])
 
+dnl Mobyle feature
+AC_ARG_ENABLE([mobyle],
+              AS_HELP_STRING([--enable-mobyle], [Enable the creation of files related to the Mobyle interface]))
+
+AM_CONDITIONAL([ENABLE_MOBYLE], [test "x$enable_mobyle" = xyes])
+
 AC_CONFIG_FILES([Makefile
                  scripts/Makefile
                  scripts/python/Makefile

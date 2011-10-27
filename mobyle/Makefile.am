@@ -29,3 +29,12 @@ imogene.xml: imogene.xml.in
 
 imogene_env.xml: imogene_env.xml.in
 	$(do_subst) < $(srcdir)/imogene_env.xml.in > imogene_env.xml
+
+htmldir = $(pkgdatadir)/help
+
+html_DATA = mobyle-help.html
+
+mobyle-help.html: help.md
+	markdown2 $(srcdir)/help.md > help.html
+	sed -e '/[@]CONTENT[@]/ r help.html' -e '/[@]CONTENT[@]/ d' $(top_srcdir)/css/pagelayout.html.in >$@
+

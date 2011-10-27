@@ -6,6 +6,10 @@ Parameters
 * extent: shift allowed within alignments
 * ...
 
+### Sequence coordinates
+
+For drosophila, coordinates are expected to be in Release 5 format.
+
 Execution time
 --------------
 
@@ -16,5 +20,6 @@ Help
 ----
 
 If you have any question concerning the interface or imogene in general please find us on [github](https://github.com/hrouault/Imogene) or send e-mail to:
+
 * Hervé Rouault <herve.rouault@pasteur.fr>
 * Marc Santolini <santolin@lps.ens.fr>
