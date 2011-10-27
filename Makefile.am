@@ -17,8 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
+if ENABLE_MOBYLE
+	MOBYLE_DIR = mobyle
+endif
 
-SUBDIRS = src scripts doc data mobyle css
+SUBDIRS = src scripts doc data css $(MOBYLE_DIR)
 
 EXTRA_DIST = autogen.sh
 
