@@ -77,6 +77,7 @@ This manual is for Imogene
 * genmot:: 
 * display:: 
 * test::
+* mobyle::
 * copying::
 * Index::
 @end menu
@@ -94,7 +95,7 @@ This manual is for Imogene
 
 @include test.texi
 
-@c @include scangen.texi
+@include mobyle.texi
 
 @c @include help.texi
 

@@ -131,12 +131,9 @@ motiftomat(vint & seq,Motif & mot)
 seqanalysis(Sequence & currseq,vmot & genmots)
 {
    unsigned int i=0;
-//      for (int j=0;j<nbspecies;j++){
-//      cout << currseq.iseqs[j] << endl;
-//      }
    for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
-      cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
-      cout.flush();
+      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
+      //cout.flush();
      //cout << i << " " << bs << endl;
       vint bs(istr,istr+width);
       if (compN(bs)>0) continue;
@@ -150,7 +147,7 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       vvd pmat=currmot.matprec;
       unsigned int nbconv(0);
       // *** TODO better convergence check
-      for (int nb=1;nb<=nbiter;nb++){
+      for (unsigned int nb=1;nb<=nbiter;nb++){
          double max=0.01;
          int iter(0);
          while(max>0){
@@ -274,8 +271,8 @@ cmd_genmot(int argc, char **argv)
    unsigned int counter=1;
    for (ivstring ivs=regtests.begin();ivs!=regtests.end();ivs++){
    
-      cout << "\r" << counter << "/" << regtests.size();
-      cout.flush();
+//      cout << "\r" << counter << "/" << regtests.size();
+//      cout.flush();
       counter++;
       
       Sequence seq;
@@ -308,14 +305,16 @@ cmd_genmot(int argc, char **argv)
    //
    cout << "Creating output file..." << endl;
    ofstream motmeldb("motifs.txt");
+   if (motmeldb.fail()){
+      cerr << "Cannot write to motifs.txt file: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
+
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
       if ( ivm->check ) 
          ivm->display(motmeldb);
    }
    motmeldb.close();
-   
-   cout << "Creating logos..." << endl;
-   dispweblogo(genmots);
    
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);

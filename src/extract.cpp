@@ -46,8 +46,12 @@ seq2fasta(Sequence &seq,string folder)
    file << seq.start << "_";
    file << seq.stop << ".fa";
    outf.open(file.str().c_str());
+   if (outf.fail()){
+      cerr << "Cannot open file for fasta recording: " << strerror(errno) << endl;
+      exit(-1);
+   }
    Sequence & s=seq;
-   for (int i=0;i<nbspecies;i++){
+   for (unsigned int i=0;i<nbspecies;i++){
       if (s.species[i]){
          if (i==0) outf << ">" << numtospecies(i) << " " <<
             chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
@@ -64,6 +68,10 @@ extractfromcoord(const char * coordfile)
 
    // INPUT COORDINATES
    ifstream coordinates(coordfile);
+   if (coordinates.fail()){
+      cerr << "Cannot open coordinate file for reading: " << strerror(errno) << endl;
+      exit(-1);
+   }
 
    vcoord coords;
    back_insert_iterator<vcoord> dest(coords);
@@ -78,6 +86,10 @@ extractfromcoord(const char * coordfile)
    } else if (species=="eutherian"){
       cout << "Reading eutherian alignments..." << endl;
       align.open( (extract_datapath+"/eutherian/align.dat").c_str() );
+   }
+   if (align.fail()){
+      cerr << "Alignment file opening failed: " << strerror(errno) << endl;
+      exit(-1);
    }
 
    alignscoord=loadcoordconserv(align);
@@ -143,7 +155,7 @@ cmd_extract(int argc, char **argv)
 {
 
    if ( extract_cmdline_parser(argc, argv, & extract_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
 
    extract_args_init();
 
@@ -157,6 +169,6 @@ cmd_extract(int argc, char **argv)
    extractfromcoord(extract_args.input_arg);
 
    cout << "exit normally" << endl;
-   return 1;
+   return EXIT_SUCCESS;
 
 }		/* -----  end of function extract  ----- */

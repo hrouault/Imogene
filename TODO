@@ -1,9 +1,0 @@
-Genmot : 
-
-Display the consensus sequence for each motif, pvalue, frequency matrix, nb of conserved sites, non-conserved sites, nb found sites per base in the background
-Display like TRANSFAC
-Use a log2 base threshold
-
-Marc:
-- check mcmc sampling process
-- put weblogo-display function in display.cpp
