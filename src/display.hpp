@@ -39,18 +39,6 @@
 
 #include "motif.hpp"
 
-class svg
-{
-public:
-	int xsize;
-	int ysize;
-	int xoffset;
-	int yoffset;
-	int pos;
-	
-	svg();
-};
-
 void dispweblogo(vmot& mots);
 
 int cmd_display(int argc, char **argv);
