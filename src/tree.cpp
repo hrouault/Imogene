@@ -95,43 +95,43 @@ instant_rates_halpern (vd & w, double dist)
       exit(1);
    }
 
-   double fat=proba_fixation_rel(w1/w0);
-   double fac=proba_fixation_rel(pa*w2/pc/w0);
-   double fag=proba_fixation_rel(pa*w3/pc/w0);
+   double fat=proba_fixation_rel(w3/w0);
+   double fac=proba_fixation_rel(pa*w1/pc/w0);
+   double fag=proba_fixation_rel(pa*w2/pc/w0);
 
-   double fta=proba_fixation_rel(w0/w1);
-   double ftc=proba_fixation_rel(pa*w2/pc/w1);
-   double ftg=proba_fixation_rel(pa*w3/pc/w1);
+   double fta=proba_fixation_rel(w0/w3);
+   double ftc=proba_fixation_rel(pa*w1/pc/w3);
+   double ftg=proba_fixation_rel(pa*w2/pc/w3);
 
-   double fca=proba_fixation_rel(pc*w0/pa/w2);
-   double fct=proba_fixation_rel(pc*w1/pa/w2);
-   double fcg=proba_fixation_rel(w3/w2);
+   double fca=proba_fixation_rel(pc*w0/pa/w1);
+   double fct=proba_fixation_rel(pc*w3/pa/w1);
+   double fcg=proba_fixation_rel(w2/w1);
 
-   double fga=proba_fixation_rel(pc*w0/pa/w3);
-   double fgt=proba_fixation_rel(pc*w1/pa/w3);
-   double fgc=proba_fixation_rel(w2/w3);
+   double fga=proba_fixation_rel(pc*w0/pa/w2);
+   double fgt=proba_fixation_rel(pc*w3/pa/w2);
+   double fgc=proba_fixation_rel(w1/w2);
 
    double prefact=1.0/(4*kappa*pa*pc+0.5);
 
    gsl_matrix_set(m1, 0, 0, -(pa*fat+pc*fac+pc*kappa*fag));
-   gsl_matrix_set(m1, 0, 1, pa*fta);
-   gsl_matrix_set(m1, 0, 2, pa*fca);
-   gsl_matrix_set(m1, 0, 3, pa*kappa*fga);
+   gsl_matrix_set(m1, 0, 1, pa*fca);
+   gsl_matrix_set(m1, 0, 2, pa*kappa*fga);
+   gsl_matrix_set(m1, 0, 3, pa*fta);
 
    gsl_matrix_set(m1, 1, 0, pa*fat);
-   gsl_matrix_set(m1, 1, 1, -(pa*fta+pc*kappa*ftc+pc*ftg));
-   gsl_matrix_set(m1, 1, 2, pa*kappa*fct);
-   gsl_matrix_set(m1, 1, 3, pa*fgt);
+   gsl_matrix_set(m1, 1, 1, pa*kappa*fct);
+   gsl_matrix_set(m1, 1, 2, pa*fgt);
+   gsl_matrix_set(m1, 1, 3, -(pa*fta+pc*kappa*ftc+pc*ftg));
 
    gsl_matrix_set(m1, 2, 0, pc*fac);
-   gsl_matrix_set(m1, 2, 1, pc*kappa*ftc);
-   gsl_matrix_set(m1, 2, 2, -(pa*fca+pa*kappa*fct+pc*fcg));
-   gsl_matrix_set(m1, 2, 3, pc*fgc);
+   gsl_matrix_set(m1, 2, 1, -(pa*fca+pa*kappa*fct+pc*fcg));
+   gsl_matrix_set(m1, 2, 2, pc*fgc);
+   gsl_matrix_set(m1, 2, 3, pc*kappa*ftc);
 
    gsl_matrix_set(m1, 3, 0, pc*kappa*fag);
-   gsl_matrix_set(m1, 3, 1, pc*ftg);
-   gsl_matrix_set(m1, 3, 2, pc*fcg);
-   gsl_matrix_set(m1, 3, 3, -(pa*kappa*fga+pa*fgt+pc*fgc));
+   gsl_matrix_set(m1, 3, 1, pc*fcg);
+   gsl_matrix_set(m1, 3, 2, -(pa*kappa*fga+pa*fgt+pc*fgc));
+   gsl_matrix_set(m1, 3, 3, pc*ftg);
 
    gsl_matrix_scale(m1,prefact*dist);
 
@@ -392,43 +392,43 @@ instant_rates (const gsl_vector * w, gsl_matrix * rates)
       return -1;
    }
 
-   double fat=proba_fixation_rel(w1/w0);
-   double fac=proba_fixation_rel(pa*w2/pc/w0);
-   double fag=proba_fixation_rel(pa*w3/pc/w0);
+   double fat=proba_fixation_rel(w3/w0);
+   double fac=proba_fixation_rel(pa*w1/pc/w0);
+   double fag=proba_fixation_rel(pa*w2/pc/w0);
 
-   double fta=proba_fixation_rel(w0/w1);
-   double ftc=proba_fixation_rel(pa*w2/pc/w1);
-   double ftg=proba_fixation_rel(pa*w3/pc/w1);
+   double fta=proba_fixation_rel(w0/w3);
+   double ftc=proba_fixation_rel(pa*w1/pc/w3);
+   double ftg=proba_fixation_rel(pa*w2/pc/w3);
 
-   double fca=proba_fixation_rel(pc*w0/pa/w2);
-   double fct=proba_fixation_rel(pc*w1/pa/w2);
-   double fcg=proba_fixation_rel(w3/w2);
+   double fca=proba_fixation_rel(pc*w0/pa/w1);
+   double fct=proba_fixation_rel(pc*w3/pa/w1);
+   double fcg=proba_fixation_rel(w2/w1);
 
-   double fga=proba_fixation_rel(pc*w0/pa/w3);
-   double fgt=proba_fixation_rel(pc*w1/pa/w3);
-   double fgc=proba_fixation_rel(w2/w3);
+   double fga=proba_fixation_rel(pc*w0/pa/w2);
+   double fgt=proba_fixation_rel(pc*w3/pa/w2);
+   double fgc=proba_fixation_rel(w1/w2);
 
    double prefact=1.0/(4*kappa*pa*pc+0.5);
 
    gsl_matrix_set(m1, 0, 0, -(pa*fat+pc*fac+pc*kappa*fag));
-   gsl_matrix_set(m1, 0, 1, pa*fta);
-   gsl_matrix_set(m1, 0, 2, pa*fca);
-   gsl_matrix_set(m1, 0, 3, pa*kappa*fga);
+   gsl_matrix_set(m1, 0, 1, pa*fca);
+   gsl_matrix_set(m1, 0, 2, pa*kappa*fga);
+   gsl_matrix_set(m1, 0, 3, pa*fta);
 
    gsl_matrix_set(m1, 1, 0, pa*fat);
-   gsl_matrix_set(m1, 1, 1, -(pa*fta+pc*kappa*ftc+pc*ftg));
-   gsl_matrix_set(m1, 1, 2, pa*kappa*fct);
-   gsl_matrix_set(m1, 1, 3, pa*fgt);
+   gsl_matrix_set(m1, 1, 1, pa*kappa*fct);
+   gsl_matrix_set(m1, 1, 2, pa*fgt);
+   gsl_matrix_set(m1, 1, 3, -(pa*fta+pc*kappa*ftc+pc*ftg));
 
    gsl_matrix_set(m1, 2, 0, pc*fac);
-   gsl_matrix_set(m1, 2, 1, pc*kappa*ftc);
-   gsl_matrix_set(m1, 2, 2, -(pa*fca+pa*kappa*fct+pc*fcg));
-   gsl_matrix_set(m1, 2, 3, pc*fgc);
+   gsl_matrix_set(m1, 2, 1, -(pa*fca+pa*kappa*fct+pc*fcg));
+   gsl_matrix_set(m1, 2, 2, pc*fgc);
+   gsl_matrix_set(m1, 2, 3, pc*kappa*ftc);
 
    gsl_matrix_set(m1, 3, 0, pc*kappa*fag);
-   gsl_matrix_set(m1, 3, 1, pc*ftg);
-   gsl_matrix_set(m1, 3, 2, pc*fcg);
-   gsl_matrix_set(m1, 3, 3, -(pa*kappa*fga+pa*fgt+pc*fgc));
+   gsl_matrix_set(m1, 3, 1, pc*fcg);
+   gsl_matrix_set(m1, 3, 2, -(pa*kappa*fga+pa*fgt+pc*fgc));
+   gsl_matrix_set(m1, 3, 3, pc*ftg);
 
    gsl_matrix_scale(m1,prefact*integr_step);
 
@@ -865,7 +865,7 @@ loglikely(const gsl_vector *w, void *params)
    double w1=gsl_vector_get(w,1);
    double w2=gsl_vector_get(w,2);
    double w3=1-w0-w1-w2;
-   logli+=alpha*(log(w0)+log(w1))+beta*(log(w2)+log(w3));
+   logli+=alpha*(log(w0)+log(w3))+beta*(log(w1)+log(w2));
    // logli+=(alpha-1.)*(log(w0)+log(w1))+(beta-1.)*(log(w2)+log(w3));
    
 
@@ -1038,7 +1038,7 @@ likelyhood(vd x, void *params)
    double w1=gsl_vector_get(w,1);
    double w2=gsl_vector_get(w,2);
    double w3=1-w0-w1-w2;
-   logli+=(alpha-1.)*(log(w0)+log(w1))+(beta-1.)*(log(w2)+log(w3));
+   logli+=(alpha-1.)*(log(w0)+log(w3))+(beta-1.)*(log(w1)+log(w2));
 
    return exp(logli);
 }
@@ -1209,7 +1209,7 @@ loglikelyhood(vd x, void *params)
    double w1=gsl_vector_get(w,1);
    double w2=gsl_vector_get(w,2);
    double w3=1-w0-w1-w2;
-   logli+=(alpha-1.)*(log(w0)+log(w1))+(beta-1.)*(log(w2)+log(w3));
+   logli+=(alpha-1.)*(log(w0)+log(w3))+(beta-1.)*(log(w1)+log(w2));
 
    return logli;
 }
