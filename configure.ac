@@ -63,6 +63,7 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  data/Makefile
                  src/Makefile
-                 mobyle/Makefile])
+                 mobyle/Makefile
+                 css/Makefile])
 
 AC_OUTPUT

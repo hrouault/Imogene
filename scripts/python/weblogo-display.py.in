@@ -62,3 +62,7 @@ format = LogoFormat(data,options)
 # PDF output
 fout = open(motname+'.pdf', 'w')
 pdf_formatter(data,format,fout)
+# PNG output
+fout2 = open(motname+'.png', 'w')
+png_formatter(data,format,fout2)
+

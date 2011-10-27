@@ -66,6 +66,10 @@ loadannots()
 {
    ifstream annots;
    annots.open(scangen_args.phenotype_arg);
+   if (annots.fail()){
+      cerr << "Cannot open phenotype file: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
 
    back_insert_iterator<vstring> dest(phenos);
    copy(iisstring(annots),iisstring(),dest);
@@ -79,6 +83,10 @@ loadannots()
    } else if (species=="eutherian"){
       cout << "Reading eutherian genes list..." << endl;
       glist.open( (scangen_datapath+"/eutherian/annot/genelist.dat").c_str() );
+   }
+   if (glist.fail()){
+      cerr << "Cannot open gene list file: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
    }
 
    back_insert_iterator<vstring> destg(gbacks);
@@ -122,6 +130,10 @@ scanmots()
    } else if (species=="eutherian"){
       cout << "Reading eutherian alignments..." << endl;
       align.open( (scangen_datapath+"/eutherian/align.dat").c_str() );
+   }
+   if (align.fail()){
+      cerr << "Alignment file opening failed: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
    }
 
    alignscoord=loadcoordconserv(align);
@@ -188,6 +200,10 @@ compgroupedinst()
       cout << "Reading eutherian TSS annot..." << endl;
       annots.open( (scangen_datapath+"/eutherian/annot/TSS-coord.dat").c_str() );
    }
+   if (annots.fail()){
+      cerr << "TSS annotation file opening failed: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
    importTSS(TSSall,annots);
    annots.close();
 
@@ -208,7 +224,7 @@ compgroupedinst()
          ivi->isassigned=1;
          if (ivi!=allinstances.end()-1){
             for (ivinst ivi2=ivi+1;ivi2!=allinstances.end();ivi2++){
-               if ( (ivi2->chrom == ivi->chrom) && (ivi2->coord - ivi->coord < scanwidth - width +1 ) ){
+               if ( (ivi2->chrom == ivi->chrom) && ( ivi2->coord - ivi->coord < scanwidth - width +1 ) ){
                   ginst.instances.push_back(*ivi2);
                   ginst.stop=ivi2->coord+width-1;
                   ivi2->isassigned=1;
@@ -299,6 +315,10 @@ outputresults()
    stringstream filename;
    filename << "result" << nbmots_for_score << ".dat";
    ofstream res(filename.str().c_str());
+   if (res.fail()){
+      cerr << "Cannot open scangen result file for writing: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
    for (ivginst ivg=finginst.begin();ivg!=finginst.end();ivg++){
       res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
       res << (*ivg).besttss.gene << " ";
@@ -316,6 +336,10 @@ outputresults()
    stringstream filenameseqs;
    filenameseqs << "mots" << nbmots_for_score << ".dat";
    ofstream seqs(filenameseqs.str().c_str());
+   if (seqs.fail()){
+      cerr << "Cannot open sequence file for writing: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
    seqs << "chrom" << " ";
    seqs << "start" << " ";
    seqs << "stop" << " ";
@@ -339,6 +363,10 @@ outputresults()
       stringstream filehist;
       filehist << "hist" << nbmots_for_score << ".dat";
       ofstream histo(filehist.str().c_str());
+      if (histo.fail()){
+         cerr << "Cannot open histogram file for writing: " << strerror(errno) << endl;
+         exit(EXIT_FAILURE);
+      }
       // positions of phenotype genes in the reverse-sorted result file
       displayhist(finginst,histo);
       histo.close();
@@ -346,6 +374,10 @@ outputresults()
          stringstream filehist_back;
          filehist_back << "hist-back" << nbmots_for_score << ".dat";
          ofstream histo_back(filehist_back.str().c_str());
+         if (histo_back.fail()){
+            cerr << "Cannot open histogram background file for writing: " << strerror(errno) << endl;
+            exit(EXIT_FAILURE);
+         }
          // best CRM score for phenotype genes
          displayhist_set(finginst,gbacks,histo_back);
          histo_back.close();
@@ -353,6 +385,10 @@ outputresults()
          stringstream filehist_interest;
          filehist_interest << "hist-interest" << nbmots_for_score << ".dat";
          ofstream histo_interest(filehist_interest.str().c_str());
+         if (histo_interest.fail()){
+            cerr << "Cannot open histogram interest file for writing: " << strerror(errno) << endl;
+            exit(EXIT_FAILURE);
+         }
          // best CRM score for other genes
          displayhist_set(finginst,phenos,histo_interest);
          histo_interest.close();
@@ -360,135 +396,6 @@ outputresults()
    }
 
    return;
-
-}
-
-
-   void
-outputresultsfornbmots(unsigned int nbmots_score)
-{
-   cout << "Shuffling" << endl;
-   random_shuffle(potregs.begin(),potregs.end());
-   for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
-      (*ivg).compscore(motsdef,nbmots_score);
-   }
-   cout << "Sorting" << endl;
-   sort(potregs.begin(),potregs.end());
-   cout << "Discarding" << endl;
-   vstring gnames;
-   vginst potregs_def;
-
-   // Keep best scoring enhancer per gene
-   // OR
-   // Keep all enhancers per gene, removing overlapping low score ones
-   if (scangen_args.discard_on_gene_names_given){
-      cout << "discard on gene" << endl;
-      int test=0;
-      for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
-         test=0;
-         for (ivstring ivs=gnames.begin();ivs!=gnames.end();ivs++){
-            if ((*ivg).besttss.gene==*ivs){
-               (*ivg).discarded=1;
-               test=1;
-               break;
-            }
-         }
-         if (test==0){
-            gnames.push_back((*ivg).besttss.gene);
-         }
-      }
-   } 
-   else {
-      for (ivginst ivg=potregs.begin();ivg!=potregs.end();ivg++){
-         int test=0;
-         for (ivginst ivg2=potregs_def.begin();ivg2!=potregs_def.end();ivg2++){
-            if ((*ivg).distance(*ivg2)<scanwidth){
-               test=1;
-               break;
-            }
-         }
-         if (test==0){
-            potregs_def.push_back(*ivg);
-         }
-      }
-   }
-   cout << "Displaying" << endl;
-   stringstream filename;
-   filename << "result" << nbmots_score << ".dat";
-   ofstream res(filename.str().c_str());
-   for (ivginst ivg=potregs_def.begin();ivg!=potregs_def.end();ivg++){
-      if (!(*ivg).discarded){
-         res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
-         res << (*ivg).besttss.gene << " ";
-         for (ivTSS ivt=(*ivg).TSSs.begin();ivt!=(*ivg).TSSs.end();ivt++){
-            res << (*ivt).gene << ";";
-         }
-         res << " ";
-         for (ivint ivi=(*ivg).nbmots.begin();ivi!=(*ivg).nbmots.end();ivi++){
-            res << *ivi << " ";
-         }
-         res << "\n";
-         //         for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
-         //            cout << "\t" << chromfromint((*ivi).chrom) << ":" << (*ivi).coord << "\n";
-         //         }
-      }
-   }
-   res << "\n";
-   res.close();
-
-   //	stringstream filenameseqs;
-   //	filenameseqs << "seqs-" << nbmots_score << ".dat";
-   //	ofstream seqs(filenameseqs.str().c_str());
-   //	unsigned int count=0;
-   //	for (ivginst ivg=potregs_def.begin();ivg!=potregs_def.end();ivg++){
-   //		if (!(*ivg).discarded){
-   //			unsigned int mini=scanwidth;
-   //			unsigned int max=0;
-   //			seqs << "chrom : " << (*ivg).chrom << "\n";
-   //			seqs << "start : " << (*ivg).start << "\n";
-   //			seqs << "stop : " << (*ivg).stop << "\n";
-   //			for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
-   //				if ((*ivi).coord<mini) mini=(*ivi).coord;
-   //				if ((*ivi).coord>max) max=(*ivi).coord;
-   //			}
-   //			seqs << "mini : " << mini << "\n";
-   //			seqs << "max : " << max << "\n";
-   //			unsigned int start=(mini+max)/2-scanwidth/2;
-   //			unsigned int stop=(mini+max)/2+scanwidth/2;
-   //			for (ivinst ivi=(*ivg).instances.begin();ivi!=(*ivg).instances.end();ivi++){
-   //				seqs << "motif " << (*ivi).motindex << " at position " << (*ivi).coord-start << "\n";;
-   //			}
-   //			seqs << ">seq_" << count << " annotated " << (*ivg).besttss.gene;
-   //			seqs << " ";
-   //			seqs << "\n";
-   //			seqs << chromints[(*ivg).chrom].seq.substr(start,stop-start) << "\n";
-   //			count++;
-   //			if (count>100) break;
-   //		}
-   //	}
-   //	seqs << "\n";
-   //	seqs.close();
-
-   if (scangen_args.phenotype_given){
-      stringstream filehist;
-      filehist << "hist" << nbmots_score << ".dat";
-      ofstream histo(filehist.str().c_str());
-      displayhist(potregs_def,histo);
-      histo.close();
-      if (scangen_args.print_histo_sets_given){
-         stringstream filehist_back;
-         filehist_back << "hist-back" << nbmots_score << ".dat";
-         ofstream histo_back(filehist_back.str().c_str());
-         displayhist_set(potregs_def,gbacks,histo_back);
-         histo_back.close();
-
-         stringstream filehist_interest;
-         filehist_interest << "hist-interest" << nbmots_score << ".dat";
-         ofstream histo_interest(filehist_interest.str().c_str());
-         displayhist_set(potregs_def,phenos,histo_interest);
-         histo_interest.close();
-      }
-   }
 
 }
 
@@ -557,7 +464,7 @@ cmd_scangen(int argc, char **argv)
 {
 
    if ( scangen_cmdline_parser(argc,argv, & scangen_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
 
    scangen_args_init();
 

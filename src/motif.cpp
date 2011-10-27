@@ -35,6 +35,8 @@
 #include <math.h>
 #include <numeric>
 #include <time.h>
+#include <cstring>
+#include <errno.h>
 
 #include "const.hpp"
 #include "vectortypes.hpp"
@@ -1189,6 +1191,10 @@ loadmots ( const char * filename, vmot & mots )
 
    ifstream fmotifs;
    fmotifs.open(filename);
+   if (fmotifs.fail()){
+      cerr << "Cannot open motif file: " << strerror(errno) << endl;
+      exit(-1);
+   }
 
    string dum;
    fmotifs >> dum;
@@ -1362,7 +1368,7 @@ compalpha()
    int iter = 0, max_iter = 100;
    const gsl_root_fdfsolver_type *T;
    gsl_root_fdfsolver *s;
-   double x0, x = 0.1, r_expected = sqrt (5.0);
+   double x0, x = 0.1;
    gsl_function_fdf FDF;
 
    ic=scorethr2/width;
@@ -1399,7 +1405,7 @@ displaymat(vvd & mat)
 {
    cout.precision(4);
    for (int i=0;i<4;i++){
-      for (int j=0;j<mat.size();j++){
+      for (unsigned int j=0;j<mat.size();j++){
          cout << mat[j][i] << "\t";
       }
       cout << "\n";

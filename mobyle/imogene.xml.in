@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- This file has by adapted for the needs of imogene by                                        -->
+<!-- This file has been adapted for the needs of imogene by                                        -->
 <!-- Hervé Rouault <rouault@lps.ens.fr                                                           -->
 <!--                                                                                             -->
 <!--                                                                                             -->
@@ -7,478 +7,349 @@
 <!-- 'Biological Software and Databases' Group, Institut Pasteur, Paris.         -->
 <!-- Distributed under LGPLv2 License. Please refer to the COPYING.LIB document. -->
 <program>
-  <head>
-    <name>@PACKAGE_NAME@</name>
-    <version>@PACKAGE_VERSION@</version>
-    <doc>
-      <title>@PACKAGE_NAME@</title>
-      <description>
-        <text lang="en">Genomewide identification of cisregulatory motifs and modules</text>
-      </description>
-      <authors>H Rouault, K Mazouni, L Couturier, V Hakim and V Schweisguth</authors>
-      <reference>Genomewide identification of cis regulatory motifs and modules underlying gene coregulation
-      using statistics and phylogeny, National Academy of Sciences of the United States of America. August 17, 2010 vol. 107 no. 33 14615-14620</reference>
-    </doc>
-    <category>sequence:nucleic:regulation</category>
-    <command>@PACKAGE@</command>
-  </head>
-  <parameters>
-  
-  <parameter ismandatory="1">
-        <name>model</name>
-      <prompt lang="en">Execution mode</prompt>
-      <type>
-        <datatype>
-          <class>Choice</class>
-        </datatype>
-      </type>
-      <vdef>
-        <value>null</value>
-      </vdef>
-      <vlist>
-          <velem undef="1">
+   <head xmlns:xi="http://www.w3.org/2001/XInclude">
+      <name>@PACKAGE_NAME@</name>
+      <version>@PACKAGE_VERSION@</version>
+      <doc>
+         <title>@PACKAGE_NAME@</title>
+         <description>
+            <text lang="en">Genomewide identification of cis-regulatory motifs and modules</text>
+         </description>
+         <authors>H. Rouault, K. Mazouni, L. Couturier, V. Hakim and F. Schweisguth</authors>
+         <reference>Genome-wide identification of cis-regulatory motifs and modules underlying gene coregulation using statistics and phylogeny. Proc. Natl. Acad. Sci. U.S.A., 107:14615-14620, Aug 2010.</reference>
+      </doc>
+      <category>sequence:nucleic:regulation</category>
+      <xi:include href="../../Local/Services/Programs/Env/imogene_env.xml">
+      <xi:fallback/>
+    </xi:include>
+   </head>
+   <parameters>
+
+      <parameter ismandatory="1">
+         <name>model</name>
+         <prompt lang="en">Execution mode</prompt>
+         <type>
+            <datatype>
+               <class>Choice</class>
+            </datatype>
+         </type>
+         <vdef>
             <value>null</value>
-            <label>Choice</label>
-          </velem>
-         <velem>
-          <value>motgen</value>
-          <label>motgen: Generate motifs from a training set</label>
-         </velem>
-         <velem>
-          <value> </value>
-          <label>scangen: Find instances of a list of motifs in the genome</label>
-         </velem>
-       </vlist>
-      <format>
-        <code proglang="perl">(defined $value and $value ne $vdef) ? " $value " : ""</code>
-        <code proglang="python">( "" , " " + str(value) )[ value is not None and value !=vdef]</code>
-      </format>
+         </vdef>
+         <vlist>
+            <velem undef="1">
+               <value>null</value>
+               <label>Choice</label>
+            </velem>
+            <velem>
+               <value>genmot</value>
+               <label>genmot: Generate motifs from a training set</label>
+            </velem>
+            <velem>
+               <value>scangen</value>
+               <label>scangen: Find instances of a list of motifs in the genome</label>
+            </velem>
+         </vlist>
       </parameter>
-  
-  <paragraph>
-    <name>general</name>
-     <prompt lang="en">General options</prompt>
-     <argpos>1</argpos>
-     <parameters>
-  
-  <parameter>
-      <name>width</name>
-      <prompt lang="en">Width of the motif</prompt>
-      <type>
-        <datatype>
-          <class>Integer</class>
-        </datatype>
-      </type>
-      <vdef>
-        <value>10</value>
-      </vdef>
-      <format>
-         <code proglang="perl">(defined $value) ? " -w $value" : ""</code>
-         <code proglang="python">( "" , " -w " + str( value ) )[value is not None]</code>
-      </format>
-    </parameter>
-    
-    
-    <parameter>
-      <name>threeshold</name>
-      <prompt lang="en">Threshold used for motif scanning</prompt>
-      <type>
-        <datatype>
-          <class>Float</class>
-        </datatype>
-      </type>
-      <vdef>
-        <value>13.0</value>
-      </vdef>
-      <format>
-         <code proglang="perl">(defined $value) ? " -t $value" : ""</code>
-         <code proglang="python">( "" , " -t " + str( value ) )[value is not None]</code>
-      </format>
-    </parameter>
-    
-    <parameter>
-      <name>extent</name>
-      <prompt lang="en">Extent of the motif search within an alignment</prompt>
-      <type>
-        <datatype>
-          <class>Integer</class>
-        </datatype>
-      </type>
-      <vdef>
-        <value>20</value>
-      </vdef>
-      <format>
-         <code proglang="perl">(defined $value) ? " -x $value" : ""</code>
-         <code proglang="python">( "" , " -x " + str( value ) )[value is not None]</code>
-      </format>
-    </parameter>
-    
-</parameters>
-</paragraph>
 
-<paragraph>
-    <name>motgen</name>
-     <prompt lang="en">Motgen options</prompt>
-     <precond>
-         <code proglang="perl">$model == '--motgen'</code>
-         <code proglang="python">model == '--motgen'</code>
-     </precond>
-     <argpos>2</argpos>
-     <parameters>
-  
-  <parameter>
-      <name>evolutionary</name>
-      <prompt lang="en">Evolutionary model used for motif generation</prompt>
-      <type>
-        <datatype>
-          <class>Choice</class>
-        </datatype>
-      </type>
-        <vdef>
-        <value>1</value>
-      </vdef>
-      <vlist>
-         <velem>
-          <value>1</value>
-          <label>Felsenstein model</label>
-         </velem>
-         <velem>
-          <value>2</value>
-          <label>Halpern-bruno model</label>
-         </velem>
-       </vlist>
-      <format>
-        <code proglang="perl">(defined $value and $value ne $vdef) ? " -e $value " : ""</code>
-        <code proglang="python">( "" , " -e " + str(value) )[ value is not None and value !=vdef]</code>
-      </format>
-    </parameter>
+      <paragraph>
+         <name>general</name>
+         <prompt lang="en">General options</prompt>
+         <argpos>1</argpos>
+         <parameters>
 
-  <parameter>
-      <name>coord_file</name>
-      <prompt lang="en">File of enhancer coordinates</prompt>
-      
-      <type>
-        <datatype>
-          <class>Coordinates</class>
-          <superclass>AbstractText</superclass>
-        </datatype>
-      </type>
-      <precond>
-        <code proglang="perl">$align_file is not defined</code>
-        <code proglang="python">align_file is None</code>
-      </precond>
-      <format>
-         <code proglang="perl">(defined $value) ? " --coord-file $value" : ""</code>
-         <code proglang="python">( "" , " --coord-file " + str( value ) )[value is not None]</code>
-      </format>
-      <comment>
-        <text lang="en">list of sequence coordinates in the BED4 format:</text>
-        <text lang="en">sequence_name chromosome_arm start_pos stop_pos</text>
-      </comment>
-      <example>
+            <parameter ismandatory="1">
+               <name>species</name>
+               <prompt lang="en">Family of species to consider</prompt>
+               <type>
+                  <datatype>
+                     <class>Choice</class>
+                  </datatype>
+               </type>
+               <vdef>
+                  <value>null</value>
+               </vdef>
+               <vlist>
+                  <velem undef="1">
+                     <value>null</value>
+                     <label>Choice</label>
+                  </velem>
+                  <velem>
+                     <value>droso</value>
+                     <label>Drosophilae</label>
+                  </velem>
+                  <velem>
+                     <value>eutherian</value>
+                     <label>Eutherians</label>
+                  </velem>
+               </vlist>
+            </parameter>
+
+            <parameter ismandatory="1">
+               <name>width</name>
+               <prompt lang="en">Width of the motif</prompt>
+               <type>
+                  <datatype>
+                     <class>Integer</class>
+                  </datatype>
+               </type>
+               <vdef>
+                  <value>10</value>
+               </vdef>
+            </parameter>
+
+            <parameter ismandatory="1">
+               <name>threshold</name>
+               <prompt lang="en">Threshold used for motif scanning</prompt>
+               <type>
+                  <datatype>
+                     <class>Float</class>
+                  </datatype>
+               </type>
+               <vdef>
+                  <value>13.0</value>
+               </vdef>
+            </parameter>
+
+            <parameter ismandatory="1">
+               <name>extent</name>
+               <prompt lang="en">Extent of the motif search within an alignment</prompt>
+               <type>
+                  <datatype>
+                     <class>Integer</class>
+                  </datatype>
+               </type>
+               <vdef>
+                  <value>20</value>
+               </vdef>
+            </parameter>
+
+         </parameters>
+      </paragraph>
+
+      <paragraph>
+         <name>genmot</name>
+         <prompt lang="en">Genmot options</prompt>
+         <precond>
+            <code proglang="perl">$model == 'genmot'</code>
+            <code proglang="python">model == 'genmot'</code>
+         </precond>
+         <argpos>2</argpos>
+         <parameters>
+
+            <parameter ismandatory="1">
+               <name>evolutionary</name>
+               <prompt lang="en">Evolutionary model used for motif generation</prompt>
+               <type>
+                  <datatype>
+                     <class>Choice</class>
+                  </datatype>
+               </type>
+               <vdef>
+                  <value>1</value>
+               </vdef>
+               <vlist>
+                  <velem>
+                     <value>1</value>
+                     <label>Felsenstein model</label>
+                  </velem>
+                  <velem>
+                     <value>2</value>
+                     <label>Halpern-bruno model</label>
+                  </velem>
+               </vlist>
+            </parameter>
+
+            <parameter ismandatory="1">
+               <name>coord_file</name>
+               <prompt lang="en">File of enhancer coordinates</prompt>
+               <type>
+                  <datatype>
+                     <class>Coordinates</class>
+                     <superclass>AbstractText</superclass>
+                  </datatype>
+               </type>
+              
+               <comment>
+                  <text lang="en">list of sequence coordinates in the BED4 format:</text>
+                  <text lang="en">sequence_name chromosome_arm start_pos stop_pos</text>
+               </comment>
+               <example>
 X 10000 11000 seq_name1
 2L 20000 21000 seq_name2
 3L 30000 31000 seq_name3
-      </example>
-    </parameter>
-      
-	<parameter>
-		<name>graph_format</name>
-		<prompt lang="en">Graph output format</prompt>
-		<type>
-			<datatype>
-				<class>Choice</class>
-			</datatype>
-		</type>
-		<vdef>
-			<value>png</value>
-		</vdef>
-		<vlist>
-         <velem>
-          <value>png</value>
-          <label>png</label>
-         </velem>
-         <velem>
-          <value>pdf</value>
-          <label>pdf</label>
-         </velem>
-       </vlist>
-		
-	</parameter>
-	
-	<parameter ismandatory="1" >
-		<name>graph_word</name>
-		<prompt lang="en">Graph output width motif</prompt>
-		<type>
-			<datatype>
-				<class>Integer</class>
-			</datatype>
-		</type>
-		<vdef>
-			<value>10</value>
-		</vdef>
-				
-	</parameter>
-	
-	<parameter ishidden="1">
-      <name>graphic</name>
-      <prompt lang="en">Graphic plot</prompt>
-      
-      <type>
-        <datatype>
-          <class>Filename</class>
-        </datatype>
-      </type>
-      
-      <format>
-         <code proglang="perl">" &amp;&amp; motpic-warg -w %s -f %s  matrices.txt" % (graph_word,graph_format)</code>
-         <code proglang="python">" &amp;&amp; motpic-warg -w %s -f %s matrices.txt" % (graph_word,graph_format)</code>
-      </format>
-    </parameter>
+               </example>
+            </parameter>
+            
+            <parameter ishidden="1">
+               <name>cmd_1</name>
+               <type>
+                  <datatype>
+                     <class>String</class>
+                  </datatype>
+               </type>
+               <format>
+                <code proglang="python">"imogene extract -s " + species + " -i " + coord_file +" &amp;&amp; "</code>
+               </format>
+               <argpos>1</argpos>
+            </parameter>
+            
+            <parameter ishidden="1">
+               <name>cmd_2</name>
+               <type>
+                  <datatype>
+                     <class>String</class>
+                  </datatype>
+               </type>
+               <format>
+                <code proglang="python">" imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threshold) + " -x " + str(extent) + " -e " + str(evolutionary) + " -a align  &amp;&amp;" </code>
+               </format>
+               <argpos>2</argpos>
+            </parameter>
 
-<!--     <parameter isout="1">
-          <name>outfile</name>
-          <prompt>Modgen output file</prompt>
-          <type>
-        <datatype>
-          <class>ModgenMotif</class>
-          <superclass>AbstractText</superclass>
-          </datatype>
-          </type>
-          <precond>
-         <code proglang="perl">$model == '-motgen'</code>
-         <code proglang="python">model == '-motgen'</code>
-         </precond>
-          <filenames>
-            <code proglang="perl">"motmeldb.txt"</code>
-            <code proglang="python">"motmeldb.txt"</code>
-          </filenames>
-        </parameter>
-    
-    <parameter isout="1">
-          <name>filterOutfile</name>
-          <prompt>Modgen output file filtered</prompt>
-          <type>
-        <datatype>
-          <class>ModgenMotif</class>
-          <superclass>AbstractText</superclass>
-          </datatype>
-          </type>
-          <precond>
-         <code proglang="perl">$model == '-motgen'</code>
-         <code proglang="python">model == '-motgen'</code>
-         </precond>
-          <filenames>
-            <code proglang="perl">"bestmotspval.dat"</code>
-            <code proglang="python">"bestmotspval.dat"</code>
-          </filenames>
-        </parameter> -->
-        
-        <parameter isout="1">
-          <name>distinfo</name>
-          <prompt>Distinfo output file</prompt>
-          <type>
-        <datatype>
-          <class>ScangenMotifDefinition</class>
-          <superclass>AbstractText</superclass>
-          </datatype>
-          </type>
-          <precond>
-         <code proglang="perl">$model == '--motgen'</code>
-         <code proglang="python">model == '--motgen'</code>
-         </precond>
-          <filenames>
-            <code proglang="perl">"finalMotifs.dat"</code>
-            <code proglang="python">"finalMotifs.dat"</code>
-          </filenames>
-        </parameter>
+             <parameter ishidden="1">
+               <name>cmd_3</name>
+               <type>
+                  <datatype>
+                     <class>String</class>
+                  </datatype>
+               </type>
+               <format>
+                <code proglang="python">" imogene display -t "+ str(threshold) +" -s " + species +" -m motifs.txt -a align --html-ref"</code>
+               </format>
+               <argpos>3</argpos>
+            </parameter>
+            
+            <parameter isout="1">
+               <name>motifs</name>
+               <prompt>Motif file</prompt>
+               <type>
+                  <datatype>
+                     <class>ScangenMotifDefinition</class>
+                     <superclass>AbstractText</superclass>
+                  </datatype>
+               </type>
+               <filenames>
+                  <code proglang="perl">"motifs.txt"</code>
+                  <code proglang="python">"motifs.txt"</code>
+               </filenames>
+            </parameter>
 
-  <!--       <parameter isout="1">
-          <name>matrixOutfile</name>
-          <prompt>Matrix output file</prompt>
-          <type>
-             <datatype>
-                <class>MatrixReport</class>
-                 <superclass>AbstractText</superclass>
-              </datatype>
-          </type>
-<precond>
-         <code proglang="perl">$model == '-motgen'</code>
-         <code proglang="python">model == '-motgen'</code>
-         </precond>
-          <filenames>
-            <code proglang="perl">"matrices.txt"</code>
-            <code proglang="python">"matrices.txt"</code>
-          </filenames>
-        </parameter> -->
-     
-    <parameter isout="1">
-          <name>GraphOutput0</name>
-          <prompt>Graph output</prompt>
-          <type>
-             <datatype>
-                <class>Picture</class>
-                <superclass>Binary</superclass>
-              </datatype>
-              <dataFormat>
-              	<ref param="graph_format"></ref>
-              </dataFormat>
-          </type>
-          <precond>
-         <code proglang="perl">$model == '--motgen'</code>
-         <code proglang="python">model == '--motgen'</code>
-         </precond>
-          <filenames>
-            <code proglang="perl">"mat-auto-0*"</code>
-            <code proglang="python">"mat-auto-0*"</code>
-          </filenames>
-        </parameter> 
-     
-     <parameter isout="1">
-          <name>GraphOutput1</name>
-          <prompt>Graph output</prompt>
-          <type>
-             <datatype>
-                <class>Picture</class>
-                <superclass>Binary</superclass>
-              </datatype>
-          </type>
-          <precond>
-         <code proglang="perl">$model == '--motgen'</code>
-         <code proglang="python">model == '--motgen'</code>
-         </precond>
-          <filenames>
-            <code proglang="perl">"mat-auto-1*"</code>
-            <code proglang="python">"mat-auto-1*"</code>
-          </filenames>
-        </parameter> 
+            <parameter isout="1">
+               <name>motiflogos</name>
+               <prompt>Motif logos</prompt>
+               <type>
+                  <datatype>
+                     <class>Picture</class>
+                     <superclass>Binary</superclass>
+                  </datatype>
+                  <dataFormat>
+                     <ref param="graph_format"></ref>
+                  </dataFormat>
+               </type>
+               <filenames>
+                  <code proglang="perl">"Motif*.png"</code>
+                  <code proglang="python">"Motif*.png"</code>
+               </filenames>
+            </parameter> 
 
-    </parameters>
-    </paragraph>
-    
-    
-    <paragraph>
-    <name>scangen</name>
-     <prompt lang="en">Scangen options</prompt>
-     <precond>
-         <code proglang="perl">$model == ' '</code>
-         <code proglang="python">model == ' '</code>
-     </precond>
-     <argpos>2</argpos>
-     <parameters>
-      
-      <parameter>
-      <name>scanwidth</name>
-      <prompt lang="en">Width of selected enhancers</prompt>
-      <type>
-        <datatype>
-          <class>Integer</class>
-        </datatype>
-      </type>
-      <vdef>
-        <value>1000</value>
-      </vdef>
-      <format>
-         <code proglang="perl">(defined $value) ? " -s $value" : ""</code>
-         <code proglang="python">( "" , " -s " + str( value ) )[value is not None and value !=vdef]</code>
-      </format>
-    </parameter>
-      
-      <parameter>
-      <name>scanstep</name>
-      <prompt lang="en">Step of scanned genome</prompt>
-      <type>
-        <datatype>
-          <class>Integer</class>
-        </datatype>
-      </type>
-      <vdef>
-        <value>50</value>
-      </vdef>
-      <format>
-         <code proglang="perl">(defined $value) ? " --scanstep=$value" : ""</code>
-         <code proglang="python">( "" , " --scanstep=" + str( value ) )[value is not None and value !=vdef]</code>
-      </format>
-    </parameter>
-      
-      <parameter>
-      <name>nbmots</name>
-      <prompt lang="en">Number of motifs to consider</prompt>
-      <type>
-        <datatype>
-          <class>Integer</class>
-        </datatype>
-      </type>
-      <vdef>
-        <value>20</value>
-      </vdef>
-      <format>
-         <code proglang="perl">(defined $value) ? " -n $value" : ""</code>
-         <code proglang="python">( "" , " -n " + str( value ) )[value is not None and value !=vdef]</code>
-      </format>
-      <ctrl>
-            <message>
-              <text lang="en">Value greater than or equal to 15 is required</text>
-            </message>
-            <code proglang="python">value &gt;= 15</code>
-          </ctrl>
-    </parameter>
-      
-      <parameter ishidden="1">
-      <name>phenotype</name>
-      <prompt lang="en">File containing a list of genes annotated with a relevant phenotype</prompt>
-      
-      <type>
-        <datatype>
-          <class>Phenotype</class>
-          <superclass>AbstractText</superclass>
-        </datatype>
-      </type>
-      <format>
-         <code proglang="perl">" -p /local/gensoft/share/scangen/pheno.txt"</code>
-         <code proglang="python">" -p /local/gensoft/share/scangen/pheno.txt"</code>
-      </format>
-    </parameter>
-    
-      <parameter>
-      <name>motifs</name>
-      <prompt lang="en">File containing a list of motif definitons</prompt>
-      
-      <type>
-        <datatype>
-          <class>ScangenMotifDefinition</class>
-          <superclass>AbstractText</superclass>
-        </datatype>
-      </type>
-      <format>
-         <code proglang="perl">(defined $value) ? " -m $value" : ""</code>
-         <code proglang="python">( "" , " -m " + str( value ) )[value is not None]</code>
-      </format>
-    </parameter>
-      
-     
-     <parameter isout="1">
-          <name>scangenOutfile</name>
-          <prompt>Scangen output file</prompt>
-          <type>
-             <datatype>
-                <class>ScnagenReport</class>
-                 <superclass>AbstractText</superclass>
-              </datatype>
-          </type>
-          <filenames>
-            <code proglang="perl">"result*"</code>
-            <code proglang="python">"result*"</code>
-            <code proglang="python">"seqs*"</code>
-            <code proglang="python">"hist*"</code>
-          </filenames>
-        </parameter> 
-     
-	</parameters>
-     </paragraph>
-    
+         </parameters>
+      </paragraph>
 
-    
-    
-  </parameters>
+
+      <paragraph>
+         <name>scangen</name>
+         <prompt lang="en">Scangen options</prompt>
+         <precond>
+            <code proglang="perl">$model == 'scangen'</code>
+            <code proglang="python">model == 'scangen'</code>
+         </precond>
+         <argpos>2</argpos>
+         <parameters>
+
+            <parameter>
+               <name>crmwidth</name>
+               <prompt lang="en">Width of selected enhancers</prompt>
+               <type>
+                  <datatype>
+                     <class>Integer</class>
+                  </datatype>
+               </type>
+               <vdef>
+                  <value>1000</value>
+               </vdef>
+            </parameter>
+
+            <parameter>
+               <name>scanstep</name>
+               <prompt lang="en">Step of scanned genome</prompt>
+               <type>
+                  <datatype>
+                     <class>Integer</class>
+                  </datatype>
+               </type>
+               <vdef>
+                  <value>50</value>
+               </vdef>
+            </parameter>
+
+            <parameter>
+               <name>nbmots</name>
+               <prompt lang="en">Number of motifs to consider</prompt>
+               <type>
+                  <datatype>
+                     <class>Integer</class>
+                  </datatype>
+               </type>
+               <vdef>
+                  <value>5</value>
+               </vdef>
+            </parameter>
+
+            <parameter>
+               <name>phenotype</name>
+               <prompt lang="en">File containing a list of genes annotated with a relevant phenotype</prompt>
+               <type>
+                  <datatype>
+                     <class>Phenotype</class>
+                     <superclass>AbstractText</superclass>
+                  </datatype>
+               </type>
+               <format>
+                  <code proglang="python">"echo \"Predicting enhancers...\";\
+                     imogene scangen -s " + species + " -w " + str(width) + " -t " + str(threeshold) + " -x " + str(extent) + " -m motifs.txt"</code>
+               </format>
+            </parameter>
+
+            <parameter>
+               <name>motifs</name>
+               <prompt lang="en">File containing a list of motif definitons</prompt>
+
+               <type>
+                  <datatype>
+                     <class>ScangenMotifDefinition</class>
+                     <superclass>AbstractText</superclass>
+                  </datatype>
+               </type>
+            </parameter>
+
+
+            <parameter isout="1">
+               <name>scangenOutfile</name>
+               <prompt>Scangen output file</prompt>
+               <type>
+                  <datatype>
+                     <class>ScangenReport</class>
+                     <superclass>AbstractText</superclass>
+                  </datatype>
+               </type>
+               <filenames>
+                  <code proglang="python">"result*"</code>
+               </filenames>
+            </parameter> 
+
+         </parameters>
+      </paragraph>
+
+   </parameters>
 </program>

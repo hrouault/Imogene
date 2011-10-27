@@ -69,7 +69,7 @@ gsl_matrix * pij;
 gsl_matrix * pijp;
 
 gsl_vector * proba2;
-int noemax;
+unsigned int noemax;
 
 // ** TODO the following functions use the not-enough-tested-yet 
 // exponential function from gsl, they could nicely replace
@@ -238,8 +238,10 @@ evolvedist_felsen(vd & probs,vd & freqs, double dist)
    vd 
 evolvedist(vd probs,vd freqs, double dist)
 {
+   vd dum;
    if (evolutionary_model==1) return evolvedist_felsen(probs,freqs,dist);
    else if (evolutionary_model==2) return evolvedist_halpern(probs,freqs,dist);
+   return dum;
 }
 
    void   // Currently used phylogenetic tree for drosophilae :  Heger and Pontig, 2007
@@ -326,7 +328,6 @@ speciestonum(string name)
       else if (name=="DroVir") return 9;
       else if (name=="DroMoj") return 10;
       else if (name=="DroGri") return 11;
-      else return -1;
    }
    else if (species=="eutherian"){
       if (name == "MusMus") return 0;
@@ -341,8 +342,8 @@ speciestonum(string name)
       else if (name == "CanFam") return 9;
       else if (name == "SusScr") return 10;
       else if (name == "BosTau") return 11;
-      else return -1;
    }
+   return -1;
 }
 
 string numtospecies(int num)
@@ -377,7 +378,7 @@ string numtospecies(int num)
       else if (num == 11) return "BosTau";
       else return "No name";
    }
-
+   return ("");
 }
 
    int
@@ -429,17 +430,11 @@ instant_rates (const gsl_vector * w, gsl_matrix * rates)
    gsl_matrix_set(m1, 3, 2, pc*fcg);
    gsl_matrix_set(m1, 3, 3, -(pa*kappa*fga+pa*fgt+pc*fgc));
 
-   //   if (species==1) integr_step=0.01;
-   //   else if (species==2) integr_step=0.001;
    gsl_matrix_scale(m1,prefact*integr_step);
-   gsl_matrix * mattemp;
 
    gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,0.5,m1,m1,0.0,m2);
    gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1/3.0,m1,m2,0.0,m3);
    gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1/4.0,m1,m3,0.0,m4);
-
-   //Matrice d'évolution Runge Kutta 4
-   // Mat(RG4) = Id + h*M + h^2/2*M^2 + h^3/6*M^3 + h^4/24*M^4
 
    gsl_matrix_memcpy(rates,id);
    gsl_matrix_add(rates,m1);
@@ -588,7 +583,7 @@ proba_fixation_rel(double ratio)
    return ratio*log(ratio)/(ratio-1.0);
 }
 
-   double
+void
 initprobatree(const unsigned int pos,Motalign & ma, gsl_matrix * probatree)
 {
    for (unsigned int i=0;i<nbspecies;i++){ 
@@ -642,7 +637,7 @@ loglikely_column(const unsigned int pos,Motalign & ma, vpgslmat & vtrans, const 
             gsl_vector_mul(&pnoe.vector,pnoe2out);
          }
       }
-      else if (evolutionary_model=1){
+      else if (evolutionary_model==1){
          double prox1=iv->prox1;
          double prox2=iv->prox2;
          if (gsl_matrix_get(probatree,0,n1)<-0.5 && gsl_matrix_get(probatree,0,n2)<-0.5){
