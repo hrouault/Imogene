@@ -210,6 +210,7 @@ GroupInstance::GroupInstance()
    nbmots=vint(nbmots_for_score,0);
    discarded=0;
    totmots=0;
+   distbesttss=1e10;
 }
 
 GroupInstance::GroupInstance(int sta,int sto,int chr)
@@ -429,11 +430,12 @@ operator <<(ostream &os,const vcombi & vcomb)
    void
 GroupInstance::compbestannot()
 {
-   unsigned int dist=annotextent;
+   unsigned int dist=1e10;
    for (ivTSS ivt=TSSs.begin();ivt!=TSSs.end();ivt++){
       if (abs((int)((*ivt).coord)-(int)start+(int)scanwidth/2)<(int)dist){
          dist=abs((int)(*ivt).coord-(int)start+(int)scanwidth/2);
          besttss=*ivt;
+         distbesttss=dist;
          //cout << besttss.gene << endl;
       }
    }

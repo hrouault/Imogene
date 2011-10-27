@@ -321,7 +321,7 @@ outputresults()
    }
    for (ivginst ivg=finginst.begin();ivg!=finginst.end();ivg++){
       res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
-      res << (*ivg).besttss.gene << " ";
+      res << (*ivg).besttss.gene << " (" << ivg->distbesttss << ") ";
       for (ivTSS ivt=(*ivg).TSSs.begin();ivt!=(*ivg).TSSs.end();ivt++){
          res << (*ivt).gene << ";";
       }
@@ -434,13 +434,13 @@ scangen_args_init()
       nbspecies=12;
       conca=0.3; 
       nbchrom=6;
-      annotextent=10000;
+      annotextent=10000; // 10 kb
    } else if (!strcmp(scangen_args.species_arg,"eutherian")){
       species="eutherian";
       nbspecies=12;
       conca=0.263;
       nbchrom=21; 
-      annotextent=1000000;
+      annotextent=100000; // 100 kb
    }
    concc=0.5-conca;
    conct=conca;
