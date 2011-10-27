@@ -499,6 +499,9 @@ loadmotsforscangen()
    cout << "Loaded " << motsdef.size() << " motifs." << endl;
    if ( nbmots_for_score < motsdef.size() ) 
       motsdef.erase( motsdef.begin() + nbmots_for_score , motsdef.end() );
+   if ( nbmots_for_score > motsdef.size() ) 
+      nbmots_for_score = motsdef.size();
+
    cout << "Nb mots for score: " << nbmots_for_score  << endl;
 
    // *** It would be nice to set the threshold by bp, in bits.
