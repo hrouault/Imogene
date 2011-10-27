@@ -544,16 +544,16 @@ reversecomp(vint & istr)
    vint revistr;
    for (vint::reverse_iterator is=istr.rbegin();is!=istr.rend();is++){
       if (*is==0){
-         revistr.push_back(1);
-      }
-      else if (*is==1){
-         revistr.push_back(0);
-      }
-      else if (*is==2){
          revistr.push_back(3);
       }
-      else if (*is==3){
+      else if (*is==1){
          revistr.push_back(2);
+      }
+      else if (*is==2){
+         revistr.push_back(1);
+      }
+      else if (*is==3){
+         revistr.push_back(0);
       }
       else revistr.push_back(*is);
    }
@@ -566,10 +566,10 @@ reversecomp(vvd & matrice)
    vvd matrev;
    for (vvd::reverse_iterator imat=matrice.rbegin();imat!=matrice.rend();imat++){
       vd line;
-      line.push_back((*imat)[1]);
-      line.push_back((*imat)[0]);
       line.push_back((*imat)[3]);
       line.push_back((*imat)[2]);
+      line.push_back((*imat)[1]);
+      line.push_back((*imat)[0]);
       matrev.push_back(line);
    }
    return matrev;
