@@ -305,14 +305,16 @@ cmd_genmot(int argc, char **argv)
    //
    cout << "Creating output file..." << endl;
    ofstream motmeldb("motifs.txt");
+   if (motmeldb.fail()){
+      cerr << "Cannot write to motifs.txt file: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
+
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
       if ( ivm->check ) 
          ivm->display(motmeldb);
    }
    motmeldb.close();
-   
-   cout << "Creating logos..." << endl;
-   dispweblogo(genmots);
    
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);
