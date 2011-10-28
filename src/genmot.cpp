@@ -111,18 +111,18 @@ motiftomat(vint & seq,Motif & mot)
          a=(1+alpha)/(1+2*alpha+2*beta);
       }
       else if (base==1){
-         t=(1+alpha)/(1+2*alpha+2*beta);
-      }
-      else if (base==2){
          c=(1+beta)/(1+2*alpha+2*beta);
       }
-      else if (base==3){
+      else if (base==2){
          g=(1+beta)/(1+2*alpha+2*beta);
       }
+      else if (base==3){
+         t=(1+alpha)/(1+2*alpha+2*beta);
+      }
       (*imat)[0]=log(a/conca);
-      (*imat)[1]=log(t/conct);
-      (*imat)[2]=log(c/concc);
-      (*imat)[3]=log(g/concg);
+      (*imat)[1]=log(c/concc);
+      (*imat)[2]=log(g/concg);
+      (*imat)[3]=log(t/conct);
       imat++;
    }
 }
@@ -134,7 +134,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
    for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
       //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
       //cout.flush();
-     //cout << i << " " << bs << endl;
       vint bs(istr,istr+width);
       if (compN(bs)>0) continue;
       Motif currmot;
@@ -168,7 +167,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
             currmot.matprecrevcomp=reversecomp(currmot.matprec);
          }
       }
-      //cout << currmot.nbmot << " " ; 
 
       currmot.matinit(scorethr2);
       if (currmot.nbmot>2){
