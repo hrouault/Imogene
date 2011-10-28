@@ -877,7 +877,6 @@ cmd_display(int argc, char **argv)
    cout << "Defining conserved instances..." << endl;
    for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
       ivs->instances2instancescons();
-      //cout << ivs->name << "\n" << ivs->instancescons;
    }
 
    if (display_args.tex_ref_given){

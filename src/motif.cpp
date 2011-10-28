@@ -128,7 +128,7 @@ freqtolog(vvd & mat)
    for (ivvd col=mat.begin();col!=mat.end();col++){
       int i=0;
       for (ivd line=(*col).begin();line!=(*col).end();line++){
-         if (i==0||i==1){
+         if (i==0||i==3){
             if ((*line)==0) (*line)=-1000;
             else (*line)=log((*line)/conca);
          }
@@ -210,7 +210,7 @@ GroupInstance::GroupInstance()
    nbmots=vint(nbmots_for_score,0);
    discarded=0;
    totmots=0;
-   distbesttss=1e10;
+   distbesttss=1e9;
 }
 
 GroupInstance::GroupInstance(int sta,int sto,int chr)
@@ -296,18 +296,18 @@ Motif::corrprec()
    for (ivvd iv=matprec.begin();iv!=matprec.end();iv++){
       vd & col=*iv;
       double fra=conca*exp(col[0])+alpha;
-      double frt=conct*exp(col[1])+alpha;
-      double frc=concc*exp(col[2])+beta;
-      double frg=concg*exp(col[3])+beta;
+      double frc=concc*exp(col[1])+beta;
+      double frg=concg*exp(col[2])+beta;
+      double frt=conct*exp(col[3])+alpha;
       double sum=fra+frt+frc+frg;
       fra/=sum;
       frt/=sum;
       frc/=sum;
       frg/=sum;
       col[0]=log(fra/conca);
-      col[1]=log(frt/conct);
-      col[2]=log(frc/concc);
-      col[3]=log(frg/concg);
+      col[1]=log(frc/concc);
+      col[2]=log(frg/concg);
+      col[3]=log(frt/conct);
    }
 }
 
@@ -430,7 +430,7 @@ operator <<(ostream &os,const vcombi & vcomb)
    void
 GroupInstance::compbestannot()
 {
-   unsigned int dist=1e10;
+   unsigned int dist=1e9;
    for (ivTSS ivt=TSSs.begin();ivt!=TSSs.end();ivt++){
       if (abs((int)((*ivt).coord)-(int)start+(int)scanwidth/2)<(int)dist){
          dist=abs((int)(*ivt).coord-(int)start+(int)scanwidth/2);
@@ -501,6 +501,7 @@ Motif::findinstancesnmask (Sequence & seq)
             if (score>thr){
                //pos relative to start and including gaps (for inter-species comparison)
                Instanceseq inst(index,1,seq.imapsinv[spe][i],i,score,spe,name);
+               cout << inst << endl;
                inst.iseq=vint(istr,istr+motwidth);
                inst.seq=vinttostring(inst.iseq);
                seq.instances.push_back(inst);
@@ -832,9 +833,9 @@ mattofreq(vvd & mat)
    for (ivvd iv=mat.begin();iv!=mat.end();iv++){
       vd & col=*iv;
       mfreq[i][0]=conca*exp(col[0]);//A
-      mfreq[i][1]=conct*exp(col[1]);//T
-      mfreq[i][2]=concc*exp(col[2]);//C
-      mfreq[i][3]=concg*exp(col[3]);//G
+      mfreq[i][1]=concc*exp(col[1]);//C
+      mfreq[i][2]=concg*exp(col[2]);//G
+      mfreq[i][3]=conct*exp(col[3]);//T
       // AVOID PROBLEMS OF >1 TOTAL FREQUENCY!
       double sum=mfreq[i][0]+mfreq[i][1]+mfreq[i][2]+mfreq[i][3];
       mfreq[i][0]/=sum;
@@ -907,9 +908,9 @@ colopti(unsigned int pos,Motif * mot)
    double w2=gsl_vector_get(s->x,2);
    double w3=1.0-w0-w1-w2;
    res.push_back(log(w0/conca));
-   res.push_back(log(w1/conct));
-   res.push_back(log(w2/concc));
-   res.push_back(log(w3/concg));
+   res.push_back(log(w1/concc));
+   res.push_back(log(w2/concg));
+   res.push_back(log(w3/conct));
 
    gsl_vector_free(x);
    gsl_vector_free(ss);
@@ -947,9 +948,9 @@ colmean(unsigned int pos,Motif * mot)
    // INIT
    vd winit(4,0.);
    winit[0]=conca*exp(mot->matprec[pos][0]);
-   winit[1]=conct*exp(mot->matprec[pos][1]);
-   winit[2]=concc*exp(mot->matprec[pos][2]);
-   winit[3]=concg*exp(mot->matprec[pos][3]);
+   winit[1]=concc*exp(mot->matprec[pos][1]);
+   winit[2]=concg*exp(mot->matprec[pos][2]);
+   winit[3]=conct*exp(mot->matprec[pos][3]);
    double sum=winit[0]+winit[1]+winit[2]+winit[3];
    winit[0]/=sum;
    winit[1]/=sum;
@@ -1073,9 +1074,9 @@ colmean(unsigned int pos,Motif * mot)
 
    vd res;
    res.push_back(log(wmean[0]/conca));
-   res.push_back(log(wmean[1]/conct));
-   res.push_back(log(wmean[2]/concc));
-   res.push_back(log(wmean[3]/concg));
+   res.push_back(log(wmean[1]/concc));
+   res.push_back(log(wmean[2]/concg));
+   res.push_back(log(wmean[3]/conct));
 
 
    return res;
