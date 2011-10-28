@@ -50,6 +50,14 @@ C++ and make
 @item weblogo : 
 @end itemize
 
+For compiling mobyle related files:
+
+@itemize
+@item python markdown2
+@end itemize
+
+you will then need to indicate that you want to create mobyle files with the @command{--enable-mobyle} option if the @command{configure} script.
+
 If you use a development version, you will need some additional tools:
 @itemize
 @item GNU Automake: @uref{http://www.gnu.org/software/autoconf}
