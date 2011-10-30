@@ -17,9 +17,8 @@
 @c You should have received a copy of the GNU General Public License
 @c along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
-@node install
+@node Install
 @chapter Installation
-
 @cindex installation
 
 @section Download

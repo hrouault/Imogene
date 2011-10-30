@@ -317,7 +317,7 @@ cmd_genmot(int argc, char **argv)
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);
    cout << "exit normally" << endl;
-   return 1;
+   return EXIT_SUCCESS;
 }		/* -----  end of function genmot  ----- */
 
 

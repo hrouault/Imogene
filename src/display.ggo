@@ -18,35 +18,44 @@
 # along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
 #
      
-purpose  "Display motifs instances on sequences, with conservation shown in italics."
+#purpose  "Display motifs instances on sequences, with conservation shown in italics."
+purpose  "Display the different output of imogene"
 
-args "--unamed-opts=<motifs>"
 
-     # Options
-option   "threshold" t "Threshold used for motif scanning"
-            double typestr="double" default="9" optional
+section "Display the output of imogene genmot"
+defmode "genmot"
 
-option "species" s "Species used for motifs generation."
-            string typestr="str" required
+modeoption "motifs" m "file containing a list of motif definitions"
+            string typestr="str" mode="genmot" required
 
-option  "motifs" m  "file containing a list of motif definitions"
-            string typestr="str" required
+modeoption  "threshold" t "Threshold used for motif scanning"
+            double typestr="double" default="9" mode="genmot" optional
 
-option  "nbmots" n  "Number of motifs to display (max=4)"
-            int typestr="int" default="4" optional
+modeoption "species" s "Species used for motifs generation."
+            string typestr="str" mode="genmot" required
 
-option  "align"   a  "Folder containing the fasta formatted (.fa) files of enhancer alignments."
-            string   typestr="str"  required
+modeoption  "nbmots" n  "Number of motifs to display (max=4)"
+            int typestr="int" default="4" mode="genmot" optional
 
-option  "tex-ref" - "Output is tex formatted. Display only reference species sequence." 
-            optional
+modeoption  "align" a "Folder containing the fasta formatted (.fa) files of enhancer alignments."
+            string   typestr="str" mode="genmot"  required
 
-option  "html-ref" - "Output is html formatted. Display only reference species sequence." 
-            optional
+modeoption  "tex-ref" - "Output is tex formatted. Display only reference species sequence." 
+            mode="genmot" optional
 
-option "tex-align" - "Output is tex formatted. Display the entire alignment."
-            optional
+modeoption  "html-ref" - "Output is html formatted. Display only reference species sequence." 
+            mode="genmot" optional
 
-option  "svg" -  "Output is svg formatted." 
-            optional
+modeoption "tex-align" - "Output is tex formatted. Display the entire alignment."
+            mode="genmot" optional
+
+modeoption  "svg" -  "Output is svg formatted." 
+            mode="genmot" optional
+
+
+section "Display the output of imogene scangen"
+defmode "scangen"
+
+modeoption "enhancers" e "file containing a list of enhancer definitions"
+            string typestr="str" mode="scangen" required
 

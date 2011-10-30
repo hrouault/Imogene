@@ -59,8 +59,6 @@ dispweblogo(vmot& mots)
          index++;
       }
    }
-   return;
-
 }
 
    void
@@ -665,7 +663,7 @@ disptexinit(ofstream & outf)
 // general html header
 // TODO: more portable for international languages?
    void
-disphtmlinit(ofstream & outf)
+disphtmlinit(ofstream & outf, string title)
 {
    outf << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" ";
    outf << "\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">" << endl;
@@ -685,13 +683,13 @@ disphtmlinit(ofstream & outf)
    outf << " type=\"text/css\" media=\"print, projection, screen\" />" << endl;
    outf << endl;
    outf << "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />" << endl;
-   outf << "<title>Imogene genmot output</title>" << endl;
+   outf << "<title>" << title << "</title>" << endl;
    outf << "</head>" << endl;
    outf << endl;
    outf << "<body>" << endl;
    outf << "<div class=\"container\">" << endl;
    outf << "<div class=\"span-24\">" << endl;
-   outf << "<h1>Imogene genmot output</h1>" << endl;
+   outf << "<h1>" << title << "</h1>" << endl;
 }
 
    void
@@ -731,7 +729,7 @@ disptex(vseq & seqs,vmot & mots)
 }
 
    void
-disphtml(vseq & seqs,vmot & mots)
+disphtml_genmot(vseq & seqs,vmot & mots)
 {
    // Generate svg files
    for (ivseq ivs=seqs.begin();ivs!=seqs.end();ivs++){ 
@@ -739,7 +737,7 @@ disphtml(vseq & seqs,vmot & mots)
    }
 
    string filename;
-   filename ="display/results.html";
+   filename ="display/results_genmot.html";
    ofstream outf(filename.c_str());
    if (outf.fail()){
       cerr << "Cannot open file for html recording: " << strerror(errno) << endl;
@@ -751,7 +749,7 @@ disphtml(vseq & seqs,vmot & mots)
       exit(EXIT_FAILURE);
    }
 
-   disphtmlinit(outf);
+   disphtmlinit(outf,"Imogene genmot output");
 
    dispmotifs_html(outf,mots);
 
@@ -771,6 +769,64 @@ disphtml(vseq & seqs,vmot & mots)
       filename+=".svg";
       outf << "<object data=\"" + filename + "\" width=\"950px\" type=\"image/svg+xml\"></object>" << endl;
    }
+   disphtmlclose(outf);
+   outf.close();
+}
+
+   void
+disphtml_scangen()
+{
+   string filename;
+   filename ="display/results_scangen.html";
+   ofstream outf(filename.c_str());
+   if (outf.fail()){
+      cerr << "Cannot open file for html recording: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
+   int retsym = symlink ((display_datapath+"/css").c_str(), "display/css");
+   if (retsym && errno!=EEXIST){
+      cerr << "Cannot create symlink: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
+
+   disphtmlinit(outf,"Imogene scangen output");
+
+   outf << "<h2>Genome-wide predicted enhancers</h2>" << endl;
+
+   ifstream enhf(display_args.enhancers_arg);
+   if (enhf.fail()){
+      cerr << "Cannot open enhancer file: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
+
+   outf << "<table>" << endl;
+   outf << "<tr>" << endl;
+   outf << "<th>Score</th><th>Coordinate</th> <th>Closest TSS</th><th>TSSs</th>" << endl;
+   outf << "</tr>" << endl;
+   unsigned int i=0;
+   while (! enhf.eof()){
+      double score;
+      enhf >> score;
+      string coordinate;
+      enhf >> coordinate;
+      string closetss;
+      enhf >> closetss;
+      string tsses;
+      enhf >> tsses;
+
+      outf << "<tr><td>" << score << "</td><td>" << coordinate << "</td><td>";
+      outf << closetss << "</td><td>" << tsses << "</td></tr>" << endl;
+      if (i>200){
+         break;
+      }
+      i++;
+   }
+
+   if (i==0){//No motifs
+      cerr << "No motifs" << endl;
+      exit(EXIT_FAILURE);
+   }
+
    disphtmlclose(outf);
    outf.close();
 }
@@ -796,26 +852,47 @@ disptexwgaps(vseq & align,vmot & mots)
    void
 display_args_init()
 {
-   if (!strcmp(display_args.species_arg,"droso")){
-      species="droso";
-      nbspecies=12;
-      conca=0.3; 
-   } else if (!strcmp(display_args.species_arg,"eutherian")){
-      species="eutherian";
-      nbspecies=12;
-      conca=0.263; 
+   if (display_args.genmot_mode_counter){
+      if (!strcmp(display_args.species_arg,"droso")){
+         species="droso";
+         nbspecies=12;
+         conca=0.3; 
+      } else if (!strcmp(display_args.species_arg,"eutherian")){
+         species="eutherian";
+         nbspecies=12;
+         conca=0.263; 
+      }
+      concc=0.5-conca;
+      conct=conca;
+      concg=concc;
+
+      // *** It would be nice to set the threshold by bp, in bits.
+      scorethr2=display_args.threshold_arg;
+      scorethr=scorethr2-1.0;
+      scorethrcons=scorethr2-1.0;
+
+      nbmots_for_score=display_args.nbmots_arg;
    }
-   concc=0.5-conca;
-   conct=conca;
-   concg=concc;
 
-   // *** It would be nice to set the threshold by bp, in bits.
-   scorethr2=display_args.threshold_arg;
-   scorethr=scorethr2-1.0;
-   scorethrcons=scorethr2-1.0;
+}
 
-   nbmots_for_score=display_args.nbmots_arg;
+   void
+loadenhancers ( const char * filename)
+{
+   if (!filename){
+      cout << "Please give a enhancer file. Exiting..." << endl;
+      exit(1);
+   }
 
+   ifstream fmotifs;
+   fmotifs.open(filename);
+   if (fmotifs.fail()){
+      cerr << "Cannot open enhancer file: " << strerror(errno) << endl;
+      exit(-1);
+   }
+
+   string dum;
+   fmotifs >> dum;
 }
 
 string display_datapath;
@@ -841,64 +918,72 @@ cmd_display(int argc, char **argv)
       display_datapath=imo_display_datapath;
    }
 
-   cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
-
-   cout << "Loading alignments " << endl;
-
-   vseq align;
-   align=loadseqs(display_args.align_arg);
-   cout << "Nb sequences to scan: " << align.size() << endl;
-
-   cout << "Loading Motifs" << endl;
-
-   vmot mots;
-   loadmots(display_args.motifs_arg,mots); 
-   if (nbmots_for_score<mots.size()) mots.erase(mots.begin()+nbmots_for_score,mots.end());
-
-   for (ivmot iv=mots.begin();iv!=mots.end();iv++){
-
-      // use same score on all species for detection
-      iv->motscorethrcons=iv->motscorethr2;
-
-      // avoid problems with _ and # characters for latex
-      texify(iv->name);
-   }
-   cout << "Loaded " << mots.size() << " motifs." << endl;
-
    int mkdir_res = mkdir("display",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
    if (mkdir_res && errno != EEXIST){
       cerr << "Cannot create display directory: " << strerror(errno) << endl;
       exit(EXIT_FAILURE);
    }
 
-   cout << "Scanning sequences for instances..." << endl;
-   scanseqsforinstancesnmask(align,mots);
 
-   cout << "Defining conserved instances..." << endl;
-   for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-      ivs->instances2instancescons();
-   }
+   if (display_args.genmot_mode_counter){
 
-   if (display_args.tex_ref_given){
-      cout << "Creating tex file for reference species... " << endl;
-      disptex(align,mots);
-   }
-   else if (display_args.html_ref_given){
-      cout << "Creating html file for reference species... " << endl;
-      disphtml(align,mots);
-   }
-   else if (display_args.tex_align_given){
-      cout << "Creating fasta/tex files... " << endl;
-      disptexwgaps(align,mots);
-   }
-   else if (display_args.svg_given){
+      cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
+
+      cout << "Loading alignments " << endl;
+
+      vseq align;
+      align=loadseqs(display_args.align_arg);
+      cout << "Nb sequences to scan: " << align.size() << endl;
+
+      cout << "Loading Motifs" << endl;
+
+      vmot mots;
+      loadmots(display_args.motifs_arg,mots); 
+      if (nbmots_for_score<mots.size()) mots.erase(mots.begin()+nbmots_for_score,mots.end());
+
+      for (ivmot iv=mots.begin();iv!=mots.end();iv++){
+
+         // use same score on all species for detection
+         iv->motscorethrcons=iv->motscorethr2;
+
+         // avoid problems with _ and # characters for latex
+         texify(iv->name);
+      }
+      cout << "Loaded " << mots.size() << " motifs." << endl;
+
+      cout << "Scanning sequences for instances..." << endl;
+      scanseqsforinstancesnmask(align,mots);
+
+      cout << "Defining conserved instances..." << endl;
       for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
-         scanseqforsvg(*ivs,mots);
+         ivs->instances2instancescons();
+      }
+
+      if (display_args.tex_ref_given){
+         cout << "Creating tex file for reference species... " << endl;
+         disptex(align,mots);
+      }
+      else if (display_args.html_ref_given){
+         cout << "Creating html file for reference species... " << endl;
+         disphtml_genmot(align,mots);
+      }
+      else if (display_args.tex_align_given){
+         cout << "Creating fasta/tex files... " << endl;
+         disptexwgaps(align,mots);
+      }
+      else if (display_args.svg_given){
+         for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
+            scanseqforsvg(*ivs,mots);
+         }
+      }
+      else{
+         cout << "No output mode was given. Exiting." << endl;
+      }
+   } else {
+      if (display_args.scangen_mode_counter){
+         disphtml_scangen();
       }
    }
-   else{
-      cout << "No mode was given. Exiting." << endl;
-   }
 
-   return 1;
+   return EXIT_SUCCESS;
 }		/* -----  end of function extract  ----- */
