@@ -21,11 +21,19 @@ if MOBYLE_OPT
 MOBYLE_DIR = mobyle
 endif
 
+BUILT_SOURCES = $(top_srcdir)/.version
+
+$(top_srcdir)/.version:
+	echo $(VERSION) > $@-t && mv $@-t $@
+dist-hook:
+
+
 SUBDIRS = src scripts doc data css $(MOBYLE_DIR)
 
 EXTRA_DIST = autogen.sh
 
 dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
 	@if test -d "$(srcdir)/.git"; \
 		then \
 		echo Creating ChangeLog && \
