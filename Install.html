@@ -1,0 +1,146 @@
+<html lang="en">
+<head>
+<title>Install - Imogene Manual beta.1-101-3001-dirty</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Imogene Manual beta.1-101-3001-dirty">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="index.html#Top" title="Top">
+<link rel="next" href="Extract.html#Extract" title="Extract">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for Imogene
+(version beta.1-101-3001-dirty, 28 October 2011).
+
+Copyright (C) 2005-2011 Herve' Rouault
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, with the Front-Cover Texts
+     being ``A GNU Manual,'' and with the Back-Cover Texts as in (a)
+     below.  A copy of the license is included in the section entitled
+     ``GNU Free Documentation License.''
+
+     (a) The FSF's Back-Cover Text is: ``You have freedom to copy and
+     modify this GNU Manual, like GNU software.  Copies published by
+     the Free Software Foundation raise funds for GNU development.''
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Install"></a>
+Noeud « Next »:&nbsp;<a rel="next" accesskey="n" href="Extract.html#Extract">Extract</a>,
+Noeud « Previous »:&nbsp;<a rel="previous" accesskey="p" href="index.html#Top">Top</a>,
+Noeud « Up »:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<h2 class="chapter">1 Installation</h2>
+
+<p><a name="index-installation-1"></a>
+
+<h3 class="section">1.1 Download</h3>
+
+<h4 class="subsection">1.1.1 Stable version</h4>
+
+<p>The last stable version can be found on <em>github</em> at the address:
+
+   <p><a href="https://github.com/hrouault/Imogene/downloads">https://github.com/hrouault/Imogene/downloads</a>.
+
+<h4 class="subsection">1.1.2 Development version</h4>
+
+<p>This project's git repository can be checked out through the following
+clone instruction:
+<pre class="example">     git clone http://github.com/hrouault/Imogene.git
+</pre>
+   <h3 class="section">1.2 Requirements</h3>
+
+<p>C++ and make
+
+     <ul>
+<li>GNU Scientific Library
+<li>Python (version &gt;= 2.5 and &lt; 3.0) :
+<li>corebio :
+<li>weblogo :
+</ul>
+
+   <p>For compiling mobyle related files:
+
+     <ul>
+<li>python markdown2
+</ul>
+
+   <p>you will then need to indicate that you want to create mobyle files with the <samp><span class="command">--enable-mobyle</span></samp> option if the <samp><span class="command">configure</span></samp> script.
+
+   <p>If you use a development version, you will need some additional tools:
+     <ul>
+<li>GNU Automake: <a href="http://www.gnu.org/software/autoconf">http://www.gnu.org/software/autoconf</a>
+<li>GNU Autoconf: <a href="http://www.gnu.org/software/automake">http://www.gnu.org/software/automake</a>
+<li>GNU Libtool: <a href="http://www.gnu.org/software/libtool">http://www.gnu.org/software/libtool</a>
+<li>GNU Gengetopt <a href="http://www.gnu.org/software/gengetopt/">http://www.gnu.org/software/gengetopt/</a>
+</ul>
+   Many standard Unix systems include packages for these tools.
+
+   <p>In fact many files included in the distribution version have been generated automatically and are thus not included in the development version.
+
+<h3 class="section">1.3 Quick install</h3>
+
+<p>The first step is to invoke the usual commands to install a package (once you have extracted to tarball)<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>:
+<pre class="example">     mkdir build
+     cd build
+     ../configure --prefix="install/full/path"
+     make
+     make install
+</pre>
+   <h3 class="section">1.4 Alignment files download</h3>
+
+<p>To download the genomes, you have to execute the proper python script:
+<samp><span class="command">python $PREFIX/lib/python-yourversion/site-packages/getalign-{droso,eutherian}.py</span></samp>
+
+<h3 class="section">1.5 Background sequences generation</h3>
+
+<p>In order to compare the statistics of the sequences taken into account for motif generation, some background sequences need to be selected. Two options are offered to you:
+     <ol type=1 start=1>
+<li>use the set of coordinates provided in the data folder
+<li>generate a new set of coordinates
+        </ol>
+
+<h4 class="subsection">1.5.1 Generate a new set of coordinates</h4>
+
+<p>You have to execute the command <samp><span class="command">python $PREFIX/lib/python-yourversion/site-packages/extractbackground-{droso,eutherian}.py &gt; your-background-coords.dat</span></samp>.
+
+<!-- Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr> -->
+<!-- Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr> -->
+<!-- This file is part of Imogene. -->
+<!-- Imogene is free software: you can redistribute it and/or modify -->
+<!-- it under the terms of the GNU General Public License as published by -->
+<!-- the Free Software Foundation, either version 3 of the License, or -->
+<!-- (at your option) any later version. -->
+<!-- Imogene is distributed in the hope that it will be useful, -->
+<!-- but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!-- GNU General Public License for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>. -->
+<div class="footnote">
+<hr>
+<h4>Notes de bas de page</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> Note that if you use the development version from github, you have first to generate the configure script using <samp><span class="command">./autogen.sh</span></samp></p>
+
+   <p><hr></div>
+
+   </body></html>
+
