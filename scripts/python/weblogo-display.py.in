@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!@PYTHON@
 # -*- coding: utf-8 -*-
 #    
 # Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
@@ -62,3 +62,7 @@ format = LogoFormat(data,options)
 # PDF output
 fout = open(motname+'.pdf', 'w')
 pdf_formatter(data,format,fout)
+# PNG output
+fout2 = open(motname+'.png', 'w')
+png_formatter(data,format,fout2)
+

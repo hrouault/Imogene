@@ -17,25 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
  *
- * =====================================================================================
- *
- *       Filename:  genmot.hpp
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  06.08.2011 13:05:43
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (), 
- *        Company:  
- *
- * =====================================================================================
  */
+#ifndef Genmot_H
+#define Genmot_H
+
+#include "vectortypes.hpp"
+#include "sequence.hpp"
 
 extern vstring regtests; // filenames of background sequences
 extern vseq regints; // interest sequences
 
 int cmd_genmot(int argc, char **argv);
 
+extern string genmot_datapath;
+
+#endif // Genmot_H

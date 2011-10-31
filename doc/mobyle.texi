@@ -17,16 +17,12 @@
 @c You should have received a copy of the GNU General Public License
 @c along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
-@node Genmot
-@chapter Generating motifs de novo
+@node Mobyle
+@chapter Mobyle interface
 
-@cindex motif, generation
+@cindex mobyle, interface
 
+You can run imogene from the Mobyle interface:
 
-@section Invoking the command line tool
+@image{imogene-mob,17cm}
 
-This is the output of @code{imogene genmot --help}:
-
-@smallexample
-@include genmot.help
-@end smallexample

@@ -24,6 +24,7 @@
 @c @documentencoding ISO-8859-15
 @include version.texi
 @settitle Imogene Manual @value{VERSION}
+@finalout
 @c %**end of header
 
 @copying
@@ -48,6 +49,12 @@ Software Foundation raise funds for GNU development.''
 @end quotation
 @end copying
 
+@dircategory Bioinformatics prediction tools
+@direntry
+* Imogene: (imogene).   Predict motifs and cis-regulatory regions
+@end direntry
+
+
 @titlepage
 @title Imogene
 @subtitle for version @value{VERSION}, @value{UPDATED}
@@ -61,7 +68,6 @@ Software Foundation raise funds for GNU development.''
 @c Output the table of contents at the beginning.
 @contents
 
-
 @ifnottex
 @node Top
 @top Imogene
@@ -71,14 +77,15 @@ This manual is for Imogene
 @end ifnottex
 
 @menu
-* install:: 
-* extract::
-* distinfo::
-* genmot:: 
-* display:: 
-* test::
-* copying::
-* Index::
+* Install:: 
+* Extract::
+* Distinfo::
+* Genmot:: 
+* Display:: 
+* Test::
+* Mobyle::
+* Copying::
+* Indexg::
 @end menu
 
 
@@ -94,12 +101,12 @@ This manual is for Imogene
 
 @include test.texi
 
-@c @include scangen.texi
+@include mobyle.texi
 
 @c @include help.texi
 
 
-@node copying
+@node Copying
 @appendix Copying This Manual
 
 @c @menu
@@ -107,9 +114,10 @@ This manual is for Imogene
 @c @end menu
 @include fdl.texi
 
-@node Index
-@unnumbered Index
+@node Indexg
+@unnumbered Indexg
 
 @printindex cp
+
 
 @bye

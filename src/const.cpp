@@ -48,7 +48,7 @@ double scorethrcons=8;
 double conca,conct,concc,concg;
 int evolutionary_model;
 string species;
-int nbspecies;
+unsigned int nbspecies;
 
 unsigned int scanwidth=1000;
 unsigned int scanstep=50;

@@ -45,12 +45,14 @@
 using namespace std;
 
 #include "genmot_cmdline.h"
+#include "genmot.hpp"
 #include "const.hpp"
 #include "random.hpp"
 #include "motif.hpp"
 #include "tree.hpp"
 #include "distinfo.hpp"
 #include "sequence.hpp"
+#include "display.hpp"
 
 genmot_args_info genmot_args;
 
@@ -109,18 +111,18 @@ motiftomat(vint & seq,Motif & mot)
          a=(1+alpha)/(1+2*alpha+2*beta);
       }
       else if (base==1){
-         t=(1+alpha)/(1+2*alpha+2*beta);
-      }
-      else if (base==2){
          c=(1+beta)/(1+2*alpha+2*beta);
       }
-      else if (base==3){
+      else if (base==2){
          g=(1+beta)/(1+2*alpha+2*beta);
       }
+      else if (base==3){
+         t=(1+alpha)/(1+2*alpha+2*beta);
+      }
       (*imat)[0]=log(a/conca);
-      (*imat)[1]=log(t/conct);
-      (*imat)[2]=log(c/concc);
-      (*imat)[3]=log(g/concg);
+      (*imat)[1]=log(c/concc);
+      (*imat)[2]=log(g/concg);
+      (*imat)[3]=log(t/conct);
       imat++;
    }
 }
@@ -129,13 +131,9 @@ motiftomat(vint & seq,Motif & mot)
 seqanalysis(Sequence & currseq,vmot & genmots)
 {
    unsigned int i=0;
-//      for (int j=0;j<nbspecies;j++){
-//      cout << currseq.iseqs[j] << endl;
-//      }
    for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
-      cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
-      cout.flush();
-     //cout << i << " " << bs << endl;
+      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
+      //cout.flush();
       vint bs(istr,istr+width);
       if (compN(bs)>0) continue;
       Motif currmot;
@@ -148,7 +146,7 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       vvd pmat=currmot.matprec;
       unsigned int nbconv(0);
       // *** TODO better convergence check
-      for (int nb=1;nb<=nbiter;nb++){
+      for (unsigned int nb=1;nb<=nbiter;nb++){
          double max=0.01;
          int iter(0);
          while(max>0){
@@ -169,7 +167,6 @@ seqanalysis(Sequence & currseq,vmot & genmots)
             currmot.matprecrevcomp=reversecomp(currmot.matprec);
          }
       }
-      //cout << currmot.nbmot << " " ; 
 
       currmot.matinit(scorethr2);
       if (currmot.nbmot>2){
@@ -213,6 +210,7 @@ genmot_args_init()
 
 }
 
+string genmot_datapath;
 
 /** 
  * ===  FUNCTION  ======================================================================
@@ -231,6 +229,13 @@ cmd_genmot(int argc, char **argv)
 
    rnginit();
 
+   const char * imo_genmot_datapath = getenv( "IMOGENE_DATA" );
+   if (imo_genmot_datapath==NULL){
+      genmot_datapath = DATA_PATH;
+   } else {
+      genmot_datapath=imo_genmot_datapath;
+   }
+
    //   printconfig(); *** to be written so that one can rerun exacltly the same instance
 
    compalpha();
@@ -239,8 +244,8 @@ cmd_genmot(int argc, char **argv)
 
    cout << "Loading background file names..." << endl;
    
-   if (species=="droso") regtests=loadfilenames(DATA_PATH"/droso/background");
-   else if (species=="eutherian") regtests=loadfilenames(DATA_PATH"/eutherian/background");
+   if (species=="droso") regtests=loadfilenames( (genmot_datapath+"/droso/background").c_str() );
+   else if (species=="eutherian") regtests=loadfilenames( (genmot_datapath+"/eutherian/background").c_str() );
    cout << "Background set size : " << regtests.size() << endl;
 
    cout << "Loading training set..." << endl;
@@ -264,8 +269,8 @@ cmd_genmot(int argc, char **argv)
    unsigned int counter=1;
    for (ivstring ivs=regtests.begin();ivs!=regtests.end();ivs++){
    
-      cout << "\r" << counter << "/" << regtests.size();
-      cout.flush();
+//      cout << "\r" << counter << "/" << regtests.size();
+//      cout.flush();
       counter++;
       
       Sequence seq;
@@ -293,38 +298,26 @@ cmd_genmot(int argc, char **argv)
    sort(genmots.begin(),genmots.end(),motscoreorder);
 
    // Cluster...
-   cout << "Clustering motifs..." << endl;
+   cout << "Clustering motifs (keeping only 20 best)..." << endl;
    compmotsdist(genmots);
    //
-   cout << "Creating logos and output file..." << endl;
+   cout << "Creating output file..." << endl;
    ofstream motmeldb("motifs.txt");
-   unsigned int index=1;
-   unsigned int countertrue=1;
+   if (motmeldb.fail()){
+      cerr << "Cannot write to motifs.txt file: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
+
    for ( ivmot ivm=genmots.begin();ivm!=genmots.end();ivm++ ) {
-      if ( ivm->check && countertrue<=20 ) {
+      if ( ivm->check ) 
          ivm->display(motmeldb);
-         stringstream ss;
-         ss << "python " << PYTHON_PATH"/weblogo-display.py ";
-         ss << "Motif";
-         ss << index << " ";
-         ss << concc << " ";
-         for (ivvd ivv=ivm->matfreq.begin();ivv!=ivm->matfreq.end();ivv++){
-            for (ivd iv=ivv->begin();iv!=ivv->end()-1;iv++){
-               ss << *iv << ",";
-            }
-            ss << *(ivv->end()-1) << " ";
-         }
-         system(ss.str().c_str());
-         index++;
-      }
-      countertrue++;
    }
    motmeldb.close();
    
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);
    cout << "exit normally" << endl;
-   return 1;
+   return EXIT_SUCCESS;
 }		/* -----  end of function genmot  ----- */
 
 

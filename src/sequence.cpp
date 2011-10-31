@@ -23,10 +23,14 @@
 #include <sstream>
 #include <cmath>
 #include <dirent.h>
+#include <cstring>
+#include <errno.h>
 
 #include "vectortypes.hpp"
 #include "sequence.hpp"
 #include "tree.hpp"
+
+using namespace std;
 
 vcoord alignscoord;
 
@@ -203,7 +207,7 @@ TSS::TSS(int position,char dir,string chr,string gname,string gnamevar)
    genevar=gnamevar;
 }
 
-string
+   string
 chromfromint(int chr)
 {
    if (species=="droso"){
@@ -219,11 +223,8 @@ chromfromint(int chr)
          return "4";
       } else if (chr==5){
          return "X";
-      } else {
-         return "unknown";
       }
-   }
-   else if (species=="eutherian"){
+   } else if (species=="eutherian"){
       if (chr==0){
          return "1";
       } else if (chr==1){
@@ -266,86 +267,81 @@ chromfromint(int chr)
          return "X";
       } else if (chr==20){
          return "Y";
-      } else {
-         return "unknown";
       }
    }
+   return "unknown";
 }
 
 int
 intfromchrom(string chrname)
 {
    if (species=="droso"){	
-      if (chrname=="2L"){
+      if (chrname=="2L" || chrname=="chr2L"){
          return 0;
-      } else if (chrname=="2R"){
+      } else if (chrname=="2R" || chrname=="chr2R"){
          return 1;
-      } else if (chrname=="3L"){
+      } else if (chrname=="3L" || chrname=="chr3L"){
          return 2;
-      } else if (chrname=="3R"){
+      } else if (chrname=="3R" || chrname=="chr3R"){
          return 3;
-      } else if (chrname=="4"){
+      } else if (chrname=="4" || chrname=="chr4"){
          return 4;
-      } else if (chrname=="X"){
+      } else if (chrname=="X" || chrname=="chrX"){
          return 5;
-      } else {
-         return -1;
       }
    }
    else if (species=="eutherian"){	
-      if (chrname=="1"){
+      if (chrname=="1" || chrname=="chr1"){
          return 0;
-      } else if (chrname=="2"){
+      } else if (chrname=="2" || chrname=="chr2"){
          return 1;
-      } else if (chrname=="3"){
+      } else if (chrname=="3" || chrname=="chr3"){
          return 2;
-      } else if (chrname=="4"){
+      } else if (chrname=="4" || chrname=="chr4"){
          return 3;
-      } else if (chrname=="5"){
+      } else if (chrname=="5" || chrname=="chr5"){
          return 4;
-      } else if (chrname=="6"){
+      } else if (chrname=="6" || chrname=="chr6"){
          return 5;   
-      } else if (chrname=="7"){
+      } else if (chrname=="7" || chrname=="chr7"){
          return 6;   
-      } else if (chrname=="8"){
+      } else if (chrname=="8" || chrname=="chr8"){
          return 7;   
-      } else if (chrname=="9"){
+      } else if (chrname=="9" || chrname=="chr9"){
          return 8;   
-      } else if (chrname=="10"){
+      } else if (chrname=="10" || chrname=="chr10"){
          return 9;   
-      } else if (chrname=="11"){
+      } else if (chrname=="11" || chrname=="chr11"){
          return 10;   
-      } else if (chrname=="12"){
+      } else if (chrname=="12" || chrname=="chr12"){
          return 11;   
-      } else if (chrname=="13"){
+      } else if (chrname=="13" || chrname=="chr13"){
          return 12;   
-      } else if (chrname=="14"){
+      } else if (chrname=="14" || chrname=="chr14"){
          return 13;   
-      } else if (chrname=="15"){
+      } else if (chrname=="15" || chrname=="chr15"){
          return 14;   
-      } else if (chrname=="16"){
+      } else if (chrname=="16" || chrname=="chr16"){
          return 15;   
-      } else if (chrname=="17"){
+      } else if (chrname=="17" || chrname=="chr17"){
          return 16;   
-      } else if (chrname=="18"){
+      } else if (chrname=="18" || chrname=="chr18"){
          return 17;   
-      } else if (chrname=="19"){
+      } else if (chrname=="19" || chrname=="chr19"){
          return 18;   
-      } else if (chrname=="X"){
+      } else if (chrname=="X" || chrname=="chrX"){
          return 19;   
-      } else if (chrname=="Y"){
+      } else if (chrname=="Y" || chrname=="chrY"){
          return 20;   
-      } else {
-         return -1;
       }
    }
+   return -1;
 }
 
 istream &
 operator >>(istream &is,TSS & tss)
 {
    int pos;
-   char dum;
    char dir;
    string gname;
    string gnamevar;
@@ -418,7 +414,7 @@ operator >>(istream &is,Sequence & seq)
       string seqwogap=remgaps(fseqline);
       seq.seqs[numdro]=seqwogap;
       seq.iseqs[numdro]=stringtoint(seqwogap);
-      int nbtb=seq.iseqs[numdro].size()-compN(seq.iseqs[numdro]);
+      unsigned int nbtb=seq.iseqs[numdro].size()-compN(seq.iseqs[numdro]);
       if (nbtb>width+neighbext){//>5){
          seq.species[numdro]=1;
       } else {
@@ -438,7 +434,7 @@ operator >>(istream &is,Coordinate &coord)
    string chromname;
    is >> chromname;
    if (chromname=="") return is;
-   coord.chrom=intfromchrom(chromname.substr(3));
+   coord.chrom=intfromchrom(chromname);
    is >> coord.start;
    is >> coord.stop;
    is >> coord.name;
@@ -548,16 +544,16 @@ reversecomp(vint & istr)
    vint revistr;
    for (vint::reverse_iterator is=istr.rbegin();is!=istr.rend();is++){
       if (*is==0){
-         revistr.push_back(1);
-      }
-      else if (*is==1){
-         revistr.push_back(0);
-      }
-      else if (*is==2){
          revistr.push_back(3);
       }
-      else if (*is==3){
+      else if (*is==1){
          revistr.push_back(2);
+      }
+      else if (*is==2){
+         revistr.push_back(1);
+      }
+      else if (*is==3){
+         revistr.push_back(0);
       }
       else revistr.push_back(*is);
    }
@@ -570,10 +566,10 @@ reversecomp(vvd & matrice)
    vvd matrev;
    for (vvd::reverse_iterator imat=matrice.rbegin();imat!=matrice.rend();imat++){
       vd line;
-      line.push_back((*imat)[1]);
-      line.push_back((*imat)[0]);
       line.push_back((*imat)[3]);
       line.push_back((*imat)[2]);
+      line.push_back((*imat)[1]);
+      line.push_back((*imat)[0]);
       matrev.push_back(line);
    }
    return matrev;
@@ -583,6 +579,10 @@ Sequence loadseqconserv(string & filename)
 {
 	ifstream fseq;
 	fseq.open(filename.c_str());
+   if (fseq.fail()){
+      cerr << "Sequence file opening failed: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
+   }
 	Sequence seq;
 	fseq >> seq;
 	seq.name= filename.c_str(); // for display purpose
@@ -591,25 +591,6 @@ Sequence loadseqconserv(string & filename)
 	return seq;
 }
    
-int
-loadcoordconserv(string folder, vcoord output)
-{
-   DIR *dp;
-   struct dirent *ep;
-
-   dp = opendir ("DATA_DIR");
-   if (dp != NULL)
-   {
-      while (ep = readdir (dp))
-         puts (ep->d_name);
-      (void) closedir (dp);
-   }
-   else
-      cerr << "Couldn't open the directory" << endl;
-
-   return 0;
-}
-
 //Loads seqs from a folder containing .fa aligned sequences
    vseq
 loadseqs(const char * folder)
@@ -622,7 +603,7 @@ loadseqs(const char * folder)
    dp = opendir ( folder );
    if (dp != NULL)
    {
-      while (ep = readdir (dp)){
+      while ( (ep = readdir (dp)) ){
          string file = string(folder);
          file += "/";
          file += ep->d_name;
@@ -638,7 +619,7 @@ loadseqs(const char * folder)
       (void) closedir (dp);
    }
    else
-      cerr << "Couldn't open the directory" << endl;
+      cerr << "Couldn't open the directory:" << strerror(errno) << endl;
 
    return seqs;
 }
@@ -655,7 +636,7 @@ loadfilenames(const char * folder)
    dp = opendir ( folder );
    if (dp != NULL)
    {
-      while (ep = readdir (dp)){
+      while ( (ep = readdir (dp)) ){
          string file = string(folder);
          file += "/";
          file += ep->d_name;
@@ -666,7 +647,7 @@ loadfilenames(const char * folder)
       (void) closedir (dp);
    }
    else
-      cerr << "Couldn't open the directory" << endl;
+      cerr << "Couldn't open the directory:" << strerror(errno) << endl;
 
    return filenames;
 }
@@ -796,11 +777,16 @@ coordtoseq(Coordinate & coord)
 
            Sequence trueali;
            ifstream fileseq(ali.name.c_str());
+           if (fileseq.fail()){
+              cerr << "Cannot open alignment sequence file for reading: " << strerror(errno) << endl;
+              exit(EXIT_FAILURE);
+           }
+
            fileseq >> trueali;
            fileseq.close();
-           unsigned int pos=0;
-           unsigned int truestart=0;
-           unsigned int truestop=0;
+           int pos=0;
+           int truestart=0;
+           int truestop=0;
            unsigned int counter=0;
            
            for (istring is=trueali.seqsrealigned[0].begin();is!=trueali.seqsrealigned[0].end();is++){
@@ -850,9 +836,13 @@ coordtoseq(Coordinate & coord)
 
            if (isnextali){
               Coordinate & nextali=*(ivs+1);
-              ifstream fileseq(nextali.name.c_str());
-              fileseq >> trueali;
-              fileseq.close();
+              ifstream fileseq2(nextali.name.c_str());
+              if (fileseq2.fail()){
+                 cerr << "Cannot open alignment sequence file for reading: " << strerror(errno) << endl;
+                 exit(EXIT_FAILURE);
+              }
+              fileseq2 >> trueali;
+              fileseq2.close();
               // previous position
               int prevpos=ali.stop-nextali.start; //usually prevpos is -1
               pos=0;
@@ -992,14 +982,14 @@ Sequence::instances2instancescons()
       vinstseq vtmp;
       vtmp.push_back(*ivi);
 
-      for (int i=1;i<nbspecies;i++){
+      for (unsigned int i=1;i<nbspecies;i++){
 
-         int pdist=neighbext+1;
+         unsigned int pdist=neighbext+1;
          ivinstseq bestivc;
          
          for (ivinstseq ivc=vvinstspe[i].begin();ivc!=vvinstspe[i].end();ivc++){
             if (ivc->motindex==ivi->motindex){
-               int dist=fabs(ivc->pos-ivi->pos);
+               unsigned int dist=abs(ivc->pos-ivi->pos);
                if (dist<=neighbext && dist<pdist){
                   bestivc=ivc;
                   pdist=dist;

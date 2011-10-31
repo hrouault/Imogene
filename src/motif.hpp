@@ -151,6 +151,7 @@ class GroupInstance
       vinst instances;
       vTSS TSSs;
       TSS besttss;
+      int distbesttss;
       int goodpheno;
       int discarded;
       double score;
