@@ -1,0 +1,93 @@
+<html lang="en">
+<head>
+<title>Extract - Imogene Manual beta.1-101-3001-dirty</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Imogene Manual beta.1-101-3001-dirty">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="Install.html#Install" title="Install">
+<link rel="next" href="Distinfo.html#Distinfo" title="Distinfo">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for Imogene
+(version beta.1-101-3001-dirty, 28 October 2011).
+
+Copyright (C) 2005-2011 Herve' Rouault
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, with the Front-Cover Texts
+     being ``A GNU Manual,'' and with the Back-Cover Texts as in (a)
+     below.  A copy of the license is included in the section entitled
+     ``GNU Free Documentation License.''
+
+     (a) The FSF's Back-Cover Text is: ``You have freedom to copy and
+     modify this GNU Manual, like GNU software.  Copies published by
+     the Free Software Foundation raise funds for GNU development.''
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Extract"></a>
+Noeud « Next »:&nbsp;<a rel="next" accesskey="n" href="Distinfo.html#Distinfo">Distinfo</a>,
+Noeud « Previous »:&nbsp;<a rel="previous" accesskey="p" href="Install.html#Install">Install</a>,
+Noeud « Up »:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<h2 class="chapter">2 Extract an alignment from a coordinate file</h2>
+
+<p><a name="index-extract_002c-alignment-2"></a>
+This is the output of <code>imogene extract --help</code>:
+
+<pre class="smallexample">     Imogene beta.1-101-3001-dirty
+     
+     Alignment extraction.
+     
+     Usage: imogene [OPTIONS]...
+     
+       -h, --help         Print help and exit
+       -V, --version      Print version and exit
+       -i, --input=str    Coordinate file
+       -s, --species=str  Species selected  (possible values="droso",
+                            "eutherian")
+       -b, --background   When this flag is on, the alignments are moved to the
+                            folder dedicated to background sequences
+</pre>
+   <p>You mainly need to provide a coordinate file in the form of:
+
+<pre class="smallexample">     enhancer1 2L 2345  3456
+     enhancer2 2R 4567  5678
+</pre>
+   <p>You can find example files in the folder <samp><span class="file">example</span></samp> of the tarball. You can then try:
+<pre class="smallexample">     imogene extract --input example/enhancer-coords.dat
+</pre>
+   <!-- Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr> -->
+<!-- Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr> -->
+<!-- This file is part of Imogene. -->
+<!-- Imogene is free software: you can redistribute it and/or modify -->
+<!-- it under the terms of the GNU General Public License as published by -->
+<!-- the Free Software Foundation, either version 3 of the License, or -->
+<!-- (at your option) any later version. -->
+<!-- Imogene is distributed in the hope that it will be useful, -->
+<!-- but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!-- GNU General Public License for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>. -->
+</body></html>
+
