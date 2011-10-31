@@ -48,9 +48,11 @@ struct cmdname_help {
 };
 
 static struct cmdname_help common_cmds[] = {
-   {"extract", "Extract an alignment from a coordinate file"},
+   {"display", "Display motifs on sequences"},
    {"distinfo", "Distance between PWMs"},
-   {"genmot", "Generating motifs de novo"}
+   {"extract", "Extract an alignment from a coordinate file"},
+   {"genmot", "Generating motifs de novo"},
+   {"scangen", "Scan genome for enhancers prediction"}
 };
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
@@ -64,15 +66,14 @@ static inline void mput_char(char c, unsigned int num)
 void
 list_common_cmds_help(void)
 {
-   int i, longest = 0;
-
-	for (i = 0; i < ARRAY_SIZE(common_cmds); i++) {
+   unsigned int longest=0;
+	for (unsigned i = 0; i < ARRAY_SIZE(common_cmds); i++) {
 		if (longest < strlen(common_cmds[i].name))
 			longest = strlen(common_cmds[i].name);
 	}
 
    cout << "\n" << "The most commonly used imogene commands are:" << endl;
-	for (i = 0; i < ARRAY_SIZE(common_cmds); i++) {
+	for (unsigned i = 0; i < ARRAY_SIZE(common_cmds); i++) {
 		cout << "   " << common_cmds[i].name << "   ";
 		mput_char(' ', longest - strlen(common_cmds[i].name));
 		cout << common_cmds[i].help << endl;

@@ -17,21 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
  *
- * =====================================================================================
- *
- *       Filename:  extract.cpp
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  06.08.2011 13:03:26
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (), 
- *        Company:  
- *
- * =====================================================================================
  */
 #include <iostream>
 #include <fstream>
@@ -43,6 +28,7 @@
 using namespace std;
 
 #include "extract_cmdline.h"
+#include "extract.hpp"
 #include "const.hpp"
 #include "sequence.hpp"
 #include "tree.hpp"
@@ -60,8 +46,12 @@ seq2fasta(Sequence &seq,string folder)
    file << seq.start << "_";
    file << seq.stop << ".fa";
    outf.open(file.str().c_str());
+   if (outf.fail()){
+      cerr << "Cannot open file for fasta recording: " << strerror(errno) << endl;
+      exit(-1);
+   }
    Sequence & s=seq;
-   for (int i=0;i<nbspecies;i++){
+   for (unsigned int i=0;i<nbspecies;i++){
       if (s.species[i]){
          if (i==0) outf << ">" << numtospecies(i) << " " <<
             chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
@@ -78,6 +68,10 @@ extractfromcoord(const char * coordfile)
 
    // INPUT COORDINATES
    ifstream coordinates(coordfile);
+   if (coordinates.fail()){
+      cerr << "Cannot open coordinate file for reading: " << strerror(errno) << endl;
+      exit(-1);
+   }
 
    vcoord coords;
    back_insert_iterator<vcoord> dest(coords);
@@ -88,10 +82,14 @@ extractfromcoord(const char * coordfile)
 
    if (species=="droso"){
       cout << "Reading droso alignments..." << endl;
-      align.open(DATA_PATH"/droso/align.dat");
+      align.open( (extract_datapath+"/droso/align.dat").c_str() );
    } else if (species=="eutherian"){
       cout << "Reading eutherian alignments..." << endl;
-      align.open(DATA_PATH"/eutherian/align.dat");
+      align.open( (extract_datapath+"/eutherian/align.dat").c_str() );
+   }
+   if (align.fail()){
+      cerr << "Alignment file opening failed: " << strerror(errno) << endl;
+      exit(-1);
    }
 
    alignscoord=loadcoordconserv(align);
@@ -101,11 +99,11 @@ extractfromcoord(const char * coordfile)
    stringstream basename;
    if (extract_args.background_given){
       if (species=="droso"){
-         mkdir(DATA_PATH"/droso/background",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
-         basename << DATA_PATH"/droso/background/";
+         mkdir( (extract_datapath+"/droso/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         basename << extract_datapath+"/droso/background/";
       } else if (species=="eutherian"){
-         mkdir(DATA_PATH"/eutherian/background",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
-         basename << DATA_PATH"/eutherian/background/";
+         mkdir( (extract_datapath+"/eutherian/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         basename << extract_datapath+"/eutherian/background/";
       }
    } else {
       mkdir("align",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
@@ -144,6 +142,8 @@ extract_args_init()
    }
 }
 
+string extract_datapath;
+
 /** 
  * ===  FUNCTION  ======================================================================
  *         Name:  cmd_extract
@@ -155,13 +155,20 @@ cmd_extract(int argc, char **argv)
 {
 
    if ( extract_cmdline_parser(argc, argv, & extract_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
 
    extract_args_init();
+
+   const char * imo_extract_datapath = getenv( "IMOGENE_DATA" );
+   if (imo_extract_datapath==NULL){
+      extract_datapath = DATA_PATH;
+   } else {
+      extract_datapath=imo_extract_datapath;
+   }
 
    extractfromcoord(extract_args.input_arg);
 
    cout << "exit normally" << endl;
-   return 1;
+   return EXIT_SUCCESS;
 
 }		/* -----  end of function extract  ----- */

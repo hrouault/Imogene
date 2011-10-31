@@ -39,5 +39,6 @@
 
 int cmd_extract(int argc, char **argv);
 
+extern string extract_datapath;
 
 #endif // Extract_Hpp

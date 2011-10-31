@@ -37,19 +37,12 @@
 #ifndef Display_H
 #define Display_H
 
-class svg
-{
-public:
-	int xsize;
-	int ysize;
-	int xoffset;
-	int yoffset;
-	int pos;
-	
-	svg();
-};
+#include "motif.hpp"
+
+void dispweblogo(vmot& mots);
 
 int cmd_display(int argc, char **argv);
 
+extern string display_datapath;
 
 #endif // Display_Hpp

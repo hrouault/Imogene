@@ -514,6 +514,7 @@ compmotsdist(vmot &mots)
    
    unsigned int counter=2;
    unsigned int countertrue=1;
+   ivmot ivstop=mots.end()-1;
    
    for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
       
@@ -535,8 +536,13 @@ compmotsdist(vmot &mots)
          }
       }
       if (ivm->check==true) countertrue++;
-      if (countertrue>20) break; // *** CUTOFF TO AVOID LONG COMPUTATION
+      if (countertrue>=20){ // *** CUTOFF TO AVOID LONG COMPUTATION
+         cout << "More than 20 motifs where found. Stopping clustering." << endl;
+         ivstop=ivm;
+         break;
+      }
    }
+   if (ivstop!=mots.end()-1) mots.erase(ivstop+1,mots.end());
    
    cout << "\n";
    return;
@@ -579,10 +585,6 @@ distinfo ( const char* motfile  )
    }
    outf.close();
 
-   cout << "\n";
-
-   cout << "exit normally" << endl;
-
 }				/* ----------  end of function main  ---------- */
 
 /** 
@@ -596,7 +598,7 @@ cmd_distinfo(int argc, char **argv)
 {
 
    if ( distinfo_cmdline_parser(argc, argv, & distinfo_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
    if (strcmp(distinfo_args.species_arg,"droso")){
       species="droso";
    } else if (strcmp(distinfo_args.species_arg,"eutherian")){
@@ -605,6 +607,6 @@ cmd_distinfo(int argc, char **argv)
 
    distinfo(distinfo_args.motifs_arg);
 
-   return 1;
+   return EXIT_SUCCESS;
 }		/* -----  end of function extract  ----- */
 

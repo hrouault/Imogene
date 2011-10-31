@@ -112,13 +112,15 @@ static void
 handle_command(int argc, char **argv)
 {
 	char *cmd = argv[0];
-   for (int i = 0; i < ARRAY_SIZE(commands); i++) {
+   for (unsigned int i = 0; i < ARRAY_SIZE(commands); i++) {
       struct cmd_struct *p = commands+i;
       if (strcmp(p->cmd, cmd))
          continue;
       exit(run_builtin(p, argc, argv));
    }
-   cout << "error!" << endl;
+   cout <<  "Usage : " << usage_string << endl;
+   list_common_cmds_help();
+   cout << "\n" << more_info_string << endl;
 }
 
 static inline void mput_char(char c, unsigned int num)
@@ -130,15 +132,15 @@ static inline void mput_char(char c, unsigned int num)
 
 void list_cmds_help(void)
 {
-	int i, longest = 0;
+	unsigned int longest = 0;
 
-	for (i = 0; i < ARRAY_SIZE(commands); i++) {
+	for (unsigned int i = 0; i < ARRAY_SIZE(commands); i++) {
 		if (longest < strlen(commands[i].cmd))
 			longest = strlen(commands[i].cmd);
 	}
 
 	puts("The available Imogene commands are:");
-	for (i = 0; i < ARRAY_SIZE(commands); i++) {
+	for (unsigned int i = 0; i < ARRAY_SIZE(commands); i++) {
 		printf("   %s   ", commands[i].cmd);
 		mput_char(' ', longest - strlen(commands[i].cmd));
 		puts(commands[i].help);

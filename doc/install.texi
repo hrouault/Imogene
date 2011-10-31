@@ -17,10 +17,58 @@
 @c You should have received a copy of the GNU General Public License
 @c along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
-@node install
+@node Install
 @chapter Installation
-
 @cindex installation
+
+@section Download
+
+@subsection Stable version
+
+The last stable version can be found on @emph{github} at the address:
+
+@uref{https://github.com/hrouault/Imogene/downloads}.
+
+@subsection Development version
+
+This project's git repository can be checked out through the following
+clone instruction:
+@example
+git clone http://github.com/hrouault/Imogene.git
+@end example
+
+
+@section Requirements
+
+C++ and make
+
+@itemize
+@item GNU Scientific Library
+@item Python (version >= 2.5 and < 3.0) : 
+@item corebio : 
+@item weblogo : 
+@end itemize
+
+For compiling mobyle related files:
+
+@itemize
+@item python markdown2
+@end itemize
+
+you will then need to indicate that you want to create mobyle files with the @command{--enable-mobyle} option if the @command{configure} script.
+
+If you use a development version, you will need some additional tools:
+@itemize
+@item GNU Automake: @uref{http://www.gnu.org/software/autoconf}
+@item GNU Autoconf: @uref{http://www.gnu.org/software/automake}
+@item GNU Libtool: @uref{http://www.gnu.org/software/libtool}
+@item GNU Gengetopt @uref{http://www.gnu.org/software/gengetopt/}
+@end itemize
+Many standard Unix systems include packages for these tools.  
+
+In fact many files included in the distribution version have been generated automatically and are thus not included in the development version.
+
+@section Quick install
 
 The first step is to invoke the usual commands to install a package (once you have extracted to tarball)@footnote{Note that if you use the development version from github, you have first to generate the configure script using @command{./autogen.sh}}:
 @example 

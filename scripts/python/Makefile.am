@@ -17,11 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
-python_PYTHON = getalign-droso.py getalign-eutherian.py mapping.py emf2fasta.pyx extractbackground-droso.py extractbackground-eutherian.py weblogo-display.py
+BUILT_SOURCES = getalign-droso.py getalign-eutherian.py mapping.py emf2fasta.pyx extractbackground-droso.py extractbackground-eutherian.py weblogo-display.py
+
+nodist_python_PYTHON = getalign-droso.py getalign-eutherian.py mapping.py emf2fasta.pyx extractbackground-droso.py extractbackground-eutherian.py weblogo-display.py
 CLEANFILES = $(python_PYTHON)
 EXTRA_DIST = getalign-droso.py.in getalign-eutherian.py.in mapping.py.in emf2fasta.pyx.in extractbackground-droso.py.in extractbackground-eutherian.py.in weblogo-display.py.in
 
-do_subst = sed -e 's,[@]pythondir[@],$(pythondir),g' -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'
+do_subst = sed -e 's,[@]PYTHON[@],$(PYTHON),g' -e 's,[@]pythondir[@],$(pythondir),g' -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'
 
 getalign-droso.py: getalign-droso.py.in
 	$(do_subst) < $(srcdir)/getalign-droso.py.in > getalign-droso.py
