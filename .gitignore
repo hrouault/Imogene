@@ -30,3 +30,5 @@ cmdline.h
 .DS_Store
 test
 *.swp
+.version
+.tarball-version
