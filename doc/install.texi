@@ -1,0 +1,98 @@
+@c    
+@c Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+@c Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
+@c 
+@c This file is part of Imogene.
+@c 
+@c Imogene is free software: you can redistribute it and/or modify
+@c it under the terms of the GNU General Public License as published by
+@c the Free Software Foundation, either version 3 of the License, or
+@c (at your option) any later version.
+@c 
+@c Imogene is distributed in the hope that it will be useful,
+@c but WITHOUT ANY WARRANTY; without even the implied warranty of
+@c MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+@c GNU General Public License for more details.
+@c 
+@c You should have received a copy of the GNU General Public License
+@c along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+
+@node Install
+@chapter Installation
+@cindex installation
+
+@section Download
+
+@subsection Stable version
+
+The last stable version can be found on @emph{github} at the address:
+
+@uref{https://github.com/hrouault/Imogene/downloads}.
+
+@subsection Development version
+
+This project's git repository can be checked out through the following
+clone instruction:
+@example
+git clone http://github.com/hrouault/Imogene.git
+@end example
+
+
+@section Requirements
+
+C++ and make
+
+@itemize
+@item GNU Scientific Library
+@item Python (version >= 2.5 and < 3.0) : 
+@item corebio : 
+@item weblogo : 
+@end itemize
+
+For compiling mobyle related files:
+
+@itemize
+@item python markdown2
+@end itemize
+
+you will then need to indicate that you want to create mobyle files with the @command{--enable-mobyle} option if the @command{configure} script.
+
+If you use a development version, you will need some additional tools:
+@itemize
+@item GNU Automake: @uref{http://www.gnu.org/software/autoconf}
+@item GNU Autoconf: @uref{http://www.gnu.org/software/automake}
+@item GNU Libtool: @uref{http://www.gnu.org/software/libtool}
+@item GNU Gengetopt @uref{http://www.gnu.org/software/gengetopt/}
+@end itemize
+Many standard Unix systems include packages for these tools.  
+
+In fact many files included in the distribution version have been generated automatically and are thus not included in the development version.
+
+@section Quick install
+
+The first step is to invoke the usual commands to install a package (once you have extracted to tarball)@footnote{Note that if you use the development version from github, you have first to generate the configure script using @command{./autogen.sh}}:
+@example 
+mkdir build
+cd build
+../configure --prefix="install/full/path"
+make
+make install
+@end example
+
+@section Alignment files download
+
+To download the genomes, you have to execute the proper python script:
+@command{python $PREFIX/lib/python-yourversion/site-packages/getalign-@{droso,eutherian@}.py}
+
+
+@section Background sequences generation
+
+In order to compare the statistics of the sequences taken into account for motif generation, some background sequences need to be selected. Two options are offered to you:
+@enumerate
+@item use the set of coordinates provided in the data folder
+@item generate a new set of coordinates
+@end enumerate
+
+@subsection Generate a new set of coordinates
+
+You have to execute the command @command{python $PREFIX/lib/python-yourversion/site-packages/extractbackground-@{droso,eutherian@}.py > your-background-coords.dat}. 
