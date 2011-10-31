@@ -1,4 +1,0 @@
-<env name="PATH">@bindir@</env>
-<!-- to be defined for customized alignment files 
- <env name="IMOGENE_DATA"></env>    
-     -->
