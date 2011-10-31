@@ -1,0 +1,68 @@
+#!@PYTHON@
+# -*- coding: utf-8 -*-
+#    
+# Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+# Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
+# 
+# This file is part of Imogene.
+# 
+# Imogene is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Imogene is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+
+from weblogolib import *
+from numpy import array,transpose,log
+
+import sys
+
+motname=sys.argv[1]
+
+# background composition
+concc=float(sys.argv[2])
+conca=(0.5-concc)
+conct=conca
+concg=concc
+backfreq=array([conca,concc,concg,conct])
+
+# Motif base frequencies
+matfreq=[]
+for freqline in sys.argv[3:]: 
+   freqs=freqline.split(',')
+   for i in range(len(freqs)):
+      freqs[i]=float(freqs[i])
+   matfreq.append(freqs)
+matfreq=array(matfreq)
+
+# Initialize LogoData object and compute RELATIVE entropy
+data=LogoData.from_counts(alphabet='ACGT',counts=matfreq)
+for i in range(len(data.entropy)):
+   data.entropy[i]=0
+   for j in range(4):
+      data.entropy[i] += matfreq[i,j]*log(matfreq[i,j]/backfreq[j])
+#print data
+
+# Logo display options
+options = LogoOptions()
+#options.logo_title = motname
+#options.title_fontsize = 8
+options.fineprint = ""
+options.color_scheme = std_color_schemes["classic"]
+options.logo_font    = "Arial-BoldMT"
+format = LogoFormat(data,options)
+
+# PDF output
+fout = open(motname+'.pdf', 'w')
+pdf_formatter(data,format,fout)
+# PNG output
+fout2 = open(motname+'.png', 'w')
+png_formatter(data,format,fout2)
+

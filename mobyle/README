@@ -1,0 +1,11 @@
+
+This package contains program descriptions, for bioinformatics software and
+databanks, to be integrated into the Mobyle 1.0.x framework.
+
+For more information about the format of the program descriptions, please 
+refer to the documentation of the Mobyle distribution.
+
+It is developped at the Institut Pasteur, in the Software and
+Databanks group; and distributed under the LGPLv2 license.
+
+For further inquiries, please contact mobyle-support@pasteur.fr.

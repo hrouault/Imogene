@@ -1,0 +1,61 @@
+#     
+# Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+# Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
+# 
+#  This file is part of Imogene.
+# 
+#  Imogene is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+# 
+#  Imogene is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+# 
+#  You should have received a copy of the GNU General Public License
+#  along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
+
+purpose  "Genome-wide prediction of cis-regulatory modules."
+args "--unamed-opts=<motifs>"
+
+     # Options
+option   "threshold" t "Threshold used for motif scanning"
+            double typestr="double" default="9" optional
+
+option   "neighbext" x  "Extent of the motif search within an alignment"
+            int typestr="int" default="20" optional
+
+option  "motifs" m  "file containing a list of motif definitons"
+            string typestr="str" required
+
+option   "nbmots" n  "Number of motifs to consider at maximum"
+            int typestr="int" default="5" optional
+
+option "species" s "Species selected" 
+            string typestr="str" required values="droso","eutherian"
+
+option  "scanwidth" -  "Width of selected enhancers"
+            int  typestr="int" default="1000" optional
+
+option  "annotextent" -  "Extent for TSSs gene assignment (bp)"
+            int  typestr="int" default="10000" optional
+
+option "wocons" - "Do NOT use conservation" optional
+
+defgroup "discarding"   groupdesc="The way enhancers are grouped for the definitive sorting" 
+groupoption "discard-on-gene-names" -  "" group="discarding"
+groupoption "discard-on-position" -  "" group="discarding" details="(default)"
+
+
+option  "phenotype" p  "file containing a list of genes annotated with a relevant phenotype (used for histograms construction)"
+            string typestr="str" optional 
+
+option  "print-histo-sets" -  "Print histograms for different gene sets"
+            optional
+
+option  "score" - "Computes score on a set of sequences (for a given number of motifs)" 
+            string typestr="str" optional 
+
+
