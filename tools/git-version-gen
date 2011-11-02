@@ -102,7 +102,7 @@ if test -n "$v"
 then
     : # use $v
 elif test -d .git \
-    && v=`git describe --abbrev=4 --long HEAD 2>/dev/null | sed 's/-[a-z0-9]*$//'` \
+    && v=`git describe --abbrev=4 HEAD 2>/dev/null | sed 's/-[a-z0-9]*$//;s/-0$//'` \
     && v=`printf '%s\n' "$v" | sed "$tag_sed_script"`
 then
     # Is this a new git that lists number of commits since the last
