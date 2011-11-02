@@ -21,7 +21,8 @@
 @c %**start of header
 
 @setfilename imogene.info
-@c @documentencoding ISO-8859-15
+@documentencoding UTF-8
+@documentlanguage en
 @include version.texi
 @settitle Imogene Manual @value{VERSION}
 @finalout
