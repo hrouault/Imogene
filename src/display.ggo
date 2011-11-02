@@ -21,7 +21,6 @@
 #purpose  "Display motifs instances on sequences, with conservation shown in italics."
 purpose  "Display the different output of imogene"
 
-
 section "Display the output of imogene genmot"
 defmode "genmot"
 
@@ -49,9 +48,11 @@ modeoption  "html-ref" - "Output is html formatted. Display only reference speci
 modeoption "tex-align" - "Output is tex formatted. Display the entire alignment."
             mode="genmot" optional
 
-modeoption  "svg" -  "Output is svg formatted." 
+modeoption  "svg" -  "Training set multiple alignment with instances, svg formatted." 
             mode="genmot" optional
 
+modeoption  "logos" -  "Motif logos." 
+            mode="genmot" optional
 
 section "Display the output of imogene scangen"
 defmode "scangen"

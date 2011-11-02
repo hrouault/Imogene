@@ -617,9 +617,10 @@ loadseqs(const char * folder)
          }
       }
       (void) closedir (dp);
+   } else {
+      cerr << "Couldn't open the " << folder << " directory: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
    }
-   else
-      cerr << "Couldn't open the directory:" << strerror(errno) << endl;
 
    return seqs;
 }
@@ -645,9 +646,10 @@ loadfilenames(const char * folder)
          }
       }
       (void) closedir (dp);
+   } else {
+      cerr << "Couldn't open the " << folder << " directory: " << strerror(errno) << endl;
+      exit(EXIT_FAILURE);
    }
-   else
-      cerr << "Couldn't open the directory:" << strerror(errno) << endl;
 
    return filenames;
 }

@@ -58,4 +58,5 @@ option  "print-histo-sets" -  "Print histograms for different gene sets"
 option  "score" - "Computes score on a set of sequences (for a given number of motifs)" 
             string typestr="str" optional 
 
+option "progress" - "Show progression while running" optional
 

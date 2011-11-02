@@ -17,11 +17,11 @@
          </description>
          <authors>H. Rouault, K. Mazouni, L. Couturier, V. Hakim and F. Schweisguth</authors>
          <reference>Genome-wide identification of cis-regulatory motifs and modules underlying gene coregulation using statistics and phylogeny. Proc. Natl. Acad. Sci. U.S.A., 107:14615-14620, Aug 2010.</reference>
+         <doclink>http://hrouault.github.com/Imogene/Mobyle.html#Mobyle</doclink>
+         <doclink>http://hrouault.github.com/Imogene</doclink>
       </doc>
       <category>sequence:nucleic:regulation</category>
-      <xi:include href="../../Local/Services/Programs/Env/imogene_env.xml">
-      <xi:fallback/>
-    </xi:include>
+      <xi:include href="../../Local/Services/Programs/Env/imogene_env.xml"/>
    </head>
    <parameters>
 
@@ -202,13 +202,26 @@ X 10000 11000 seq_name1
                   </datatype>
                </type>
                <format>
-                <code proglang="python">" imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threshold) + " -x " + str(extent) + " -e " + str(evolutionary) + " -a align  &amp;&amp;" </code>
+                <code proglang="python">" imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threshold) + " -x " + str(extent) + " -e " + str(evolutionary) + " -a align &amp;&amp;" </code>
                </format>
                <argpos>2</argpos>
             </parameter>
 
              <parameter ishidden="1">
                <name>cmd_3</name>
+               <type>
+                  <datatype>
+                     <class>String</class>
+                  </datatype>
+               </type>
+               <format>
+                <code proglang="python">" imogene display -t "+ str(threshold) +" -s " + species +" -m motifs.txt -a align --logos &amp;&amp;"</code>
+               </format>
+               <argpos>3</argpos>
+            </parameter>
+            
+             <parameter ishidden="1">
+               <name>cmd_4</name>
                <type>
                   <datatype>
                      <class>String</class>
@@ -236,20 +249,17 @@ X 10000 11000 seq_name1
             </parameter>
 
             <parameter isout="1">
-               <name>genoutput</name>
+               <name>genmotoutput</name>
                <prompt>General output</prompt>
                <type>
                   <datatype>
                      <class>Picture</class>
                      <superclass>Binary</superclass>
                   </datatype>
-                  <dataFormat>
-                     <ref param="graph_format"></ref>
-                  </dataFormat>
+                  <dataFormat>HTML</dataFormat>
                </type>
                <filenames>
-                  <code proglang="perl">"Motif*.png"</code>
-                  <code proglang="python">"Motif*.png"</code>
+                  <code proglang="python">"display/results_genmot.html"</code>
                </filenames>
             </parameter> 
 
@@ -277,19 +287,6 @@ X 10000 11000 seq_name1
                </type>
                <vdef>
                   <value>1000</value>
-               </vdef>
-            </parameter>
-
-            <parameter>
-               <name>scanstep</name>
-               <prompt lang="en">Step of scanned genome</prompt>
-               <type>
-                  <datatype>
-                     <class>Integer</class>
-                  </datatype>
-               </type>
-               <vdef>
-                  <value>50</value>
                </vdef>
             </parameter>
 

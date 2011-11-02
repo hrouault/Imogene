@@ -62,4 +62,7 @@ extern unsigned int nbmots_for_score;
 // sequences that are too short are considered as irrelevant in the sequence extraction process
 extern unsigned int extraction_cutoff; 
 
+// Show progress on the command line
+extern bool progress;
+
 #endif // Const_H

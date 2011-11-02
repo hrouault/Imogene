@@ -501,7 +501,6 @@ Motif::findinstancesnmask (Sequence & seq)
             if (score>thr){
                //pos relative to start and including gaps (for inter-species comparison)
                Instanceseq inst(index,1,seq.imapsinv[spe][i],i,score,spe,name);
-               cout << inst << endl;
                inst.iseq=vint(istr,istr+motwidth);
                inst.seq=vinttostring(inst.iseq);
                seq.instances.push_back(inst);
@@ -1188,15 +1187,15 @@ Motalign::Motalign(unsigned int pos, Sequence & seq, Motif & mot,int sens)
 loadmots ( const char * filename, vmot & mots )
 {
    if (!filename){
-      cout << "Please give a motifs file. Exiting..." << endl;
-      exit(1);
+      cerr << "Please give a motifs file. Exiting..." << endl;
+      exit(EXIT_FAILURE);
    }
 
    ifstream fmotifs;
    fmotifs.open(filename);
    if (fmotifs.fail()){
       cerr << "Cannot open motif file: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    string dum;
@@ -1241,8 +1240,8 @@ loadmots ( const char * filename, vmot & mots )
    fmotifs.close();
 
    if (i==0){//No motifs
-      cout << "No motifs" << endl;
-      exit(1);
+      cerr << "No motifs" << endl;
+      exit(EXIT_FAILURE);
    } else if (i<nbmots_for_score-1) {
       nbmots_for_score=i;
       //cout << "Changed nbmots_for_score to value " << i << endl;
@@ -1496,7 +1495,6 @@ scanseqforinstancesnmask(Sequence &seq,vmot & mots)
       im->findinstancesnmask(seqtomask);
    }
    seq.instances=seqtomask.instances;
-   return;
 }
 
    void
@@ -1505,7 +1503,6 @@ scanseqsforinstancesnmask(vseq & align,vmot & mots)
    for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
       scanseqforinstancesnmask(*ivs,mots);
    }
-   return;
 }
 
 
