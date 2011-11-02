@@ -63,3 +63,5 @@ double beta; // beta exponent for C,G
 unsigned int nbchrom;
 
 unsigned int extraction_cutoff=20; 
+
+bool progress=false;

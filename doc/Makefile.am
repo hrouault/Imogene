@@ -31,5 +31,7 @@ genmot.help: $(top_builddir)/src/imogene
 display.help: $(top_builddir)/src/imogene
 	$(top_builddir)/src/imogene display --help > $@
 
+AM_MAKEINFOHTMLFLAGS = --css-include=$(top_srcdir)/css/texinfo.css
+
 info_TEXINFOS = imogene.texi
-imogene_TEXINFOS = fdl.texi extract.texi extract.help distinfo.texi distinfo.help genmot.texi genmot.help install.texi display.texi display.help test.texi
+imogene_TEXINFOS = fdl.texi extract.texi extract.help distinfo.texi distinfo.help genmot.texi genmot.help install.texi display.texi display.help test.texi $(top_srcdir)/css/screen.css

@@ -48,7 +48,7 @@ seq2fasta(Sequence &seq,string folder)
    outf.open(file.str().c_str());
    if (outf.fail()){
       cerr << "Cannot open file for fasta recording: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
    Sequence & s=seq;
    for (unsigned int i=0;i<nbspecies;i++){
@@ -70,7 +70,7 @@ extractfromcoord(const char * coordfile)
    ifstream coordinates(coordfile);
    if (coordinates.fail()){
       cerr << "Cannot open coordinate file for reading: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    vcoord coords;
@@ -89,7 +89,7 @@ extractfromcoord(const char * coordfile)
    }
    if (align.fail()){
       cerr << "Alignment file opening failed: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    alignscoord=loadcoordconserv(align);

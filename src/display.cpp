@@ -679,7 +679,7 @@ disphtmlinit(ofstream & outf, string title)
    outf << "<link rel=\"stylesheet\" href=\"css/ie.css\"";
    outf << " type=\"text/css\" media=\"screen, projection\" />" << endl;
    outf << "<![endif]-->" << endl;
-   outf << "<link rel=\"stylesheet\" href=\"css/genmot.css\"";
+   outf << "<link rel=\"stylesheet\" href=\"css/custom.css\"";
    outf << " type=\"text/css\" media=\"print, projection, screen\" />" << endl;
    outf << endl;
    outf << "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />" << endl;
@@ -880,15 +880,15 @@ display_args_init()
 loadenhancers ( const char * filename)
 {
    if (!filename){
-      cout << "Please give a enhancer file. Exiting..." << endl;
-      exit(1);
+      cerr << "Please give a enhancer file. Exiting..." << endl;
+      exit(EXIT_FAILURE);
    }
 
    ifstream fmotifs;
    fmotifs.open(filename);
    if (fmotifs.fail()){
       cerr << "Cannot open enhancer file: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    string dum;
@@ -970,6 +970,10 @@ cmd_display(int argc, char **argv)
       else if (display_args.tex_align_given){
          cout << "Creating fasta/tex files... " << endl;
          disptexwgaps(align,mots);
+      }
+      else if (display_args.logos_given){
+         cout << "Creating logos... " << endl;
+         dispweblogo(mots);
       }
       else if (display_args.svg_given){
          for (ivseq ivs=align.begin();ivs!=align.end();ivs++){

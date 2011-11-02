@@ -155,8 +155,10 @@ scanmots()
          cout << "chromosome " << chrom << "\n";
          pchrom=chrom;
       }
-      cout << "\r" << (double)(ivc-ivcstart+1)/(ivcstop-ivcstart)*100 << "%\t";
-      cout.flush();
+      if (scangen_args.progress_given){
+         cout << "\r" << (double)(ivc-ivcstart+1)/(ivcstop-ivcstart)*100 << "%\t";
+         cout.flush();
+      }
 
       scanseqforconsinstances(seq,motsdef);
 
@@ -455,6 +457,7 @@ scangen_args_init()
 
    neighbext=scangen_args.neighbext_arg;
 
+   if (scangen_args.progress_given) progress=true;
 }
 
 string scangen_datapath;
