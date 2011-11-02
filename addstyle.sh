@@ -17,6 +17,8 @@ sed -e '1 s;^;<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"\
     -e '/<body>/ s;$;\
     <div class="container">\
     <div class="span-24">;'\
+    -e 's;<samp>;<code>;'\
+    -e 's;</samp>;</code>;'\
     -e '/<\/body>/ s;$;\
     </div>\
     </div>;'\
