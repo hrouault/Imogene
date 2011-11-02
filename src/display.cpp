@@ -137,6 +137,9 @@ svginit(ofstream & svgfile,Sequence & seq)
    svgfile << ".notconserved {" << endl;
    svgfile << "   stroke-width: 0.1em;" << endl;
    svgfile << "}" << endl;
+   svgfile << ".score {" << endl;
+   svgfile << "   font-size: 0.7em;" << endl;
+   svgfile << "}" << endl;
    svgfile << "" << endl;
    svgfile << "      ]]>" << endl;
    svgfile << "    </style>" << endl;
@@ -229,8 +232,8 @@ svgdisplay(ofstream & svgfile,Sequence & seq)
             else
                motclass="notconserved";
 
-            svgfile << "<line class=\"" + motclass +" mot" << moti << "\" x1=\"" << xmot << "em\" y1=\"" << yline-0.5 << "em\" x2=\"" << xmot << "em\" y2=\"" << yline+0.5 << "em\"/>\n";
-            svgfile << "<text class=\"score\" x=\"" << xmot << "em\" y=\"" << yline+0.8 << "em\">" << fixed << setprecision(1) << (*ivi).score << "</text>\n";
+            svgfile << "<line class=\"" + motclass +" mot" << moti+1 << "\" x1=\"" << xmot << "em\" y1=\"" << yline-0.5 << "em\" x2=\"" << xmot << "em\" y2=\"" << yline+0.5 << "em\"/>\n";
+            svgfile << "<text x=\"" << xmot+0.2 << "em\" y=\"" << (yline+0.8) << "em\"><tspan class=\"score\">" << fixed << setprecision(1) << (*ivi).score << "</tspan></text>\n";
          }
       }
       groupnb++;
