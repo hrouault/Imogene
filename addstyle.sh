@@ -24,3 +24,5 @@ sed -e '1 s;^;<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"\
     </div>;'\
     -e '/^<hr>$/ d' $i > $defname
 done
+
+mv imogene.html index.html
