@@ -86,7 +86,7 @@ This manual is for Imogene
 * Test::
 * Mobyle::
 * Copying::
-* Indexg::
+* Index::
 @end menu
 
 
@@ -115,8 +115,8 @@ This manual is for Imogene
 @c @end menu
 @include fdl.texi
 
-@node Indexg
-@unnumbered Indexg
+@node Index
+@unnumbered Index
 
 @printindex cp
 
