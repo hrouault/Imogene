@@ -3,7 +3,7 @@ Overview
 
 **Imogene** works in two different modes. In the *genmot* mode, motifs are predicted on the basis of a set of functionally related enhancers. In the *scangen* mode, enhancers are predicted from a set of motifs.
 
-It is programmed in C++, accompanied by a bunch of python help scripts. In addition, an xml description page is provided for the mobyle system.
+It is programmed in C++, accompanied by a bunch of python help scripts. In addition, an xml description page is provided for the [mobyle](mobyle.pasteur.fr) system.
 
 
 Installation
