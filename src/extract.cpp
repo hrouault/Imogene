@@ -168,7 +168,6 @@ cmd_extract(int argc, char **argv)
 
    extractfromcoord(extract_args.input_arg);
 
-   cout << "exit normally" << endl;
    return EXIT_SUCCESS;
 
 }		/* -----  end of function extract  ----- */

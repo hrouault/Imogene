@@ -255,7 +255,7 @@ scanseqforsvg(Sequence & align,vmot & mots)
 {
    int xsize(0);
    int ysize(0);
-   string filename("display/");
+   string filename("");
    filename+=align.name;
    filename+=".svg";
    ofstream svgfile(filename.c_str());
@@ -396,8 +396,8 @@ dispmotifs_html (ofstream & outf, vmot & mots)
    unsigned int i=1;
    for (ivmot iv=mots.begin();iv!=mots.end();iv++){
       outf << "<tr>" << endl;
-      outf << "<td class=\"mot" << i << "\"></td><td>"<<i<<"</td> <td><a href=\"../Motif" << i;
-      outf << ".pdf\"><img src=\"../Motif" << i << ".png\" alt=\"Motif " << i;
+      outf << "<td class=\"mot" << i << "\"></td><td>"<<i<<"</td> <td><a href=\"Motif" << i;
+      outf << ".pdf\"><img src=\"Motif" << i << ".png\" alt=\"Motif " << i;
       outf << "\" /></a></td><td>"<<(*iv).pvalue << "</td><td>" << (*iv).lambdatrain/(*iv).lambda << "</td>" << endl;
       outf << "</tr>" << endl;
       i++;
@@ -715,7 +715,7 @@ disptexclose(ofstream & outf)
 disptex(vseq & seqs,vmot & mots)
 {
    string filename;
-   filename ="display/results.tex";
+   filename ="results.tex";
    ofstream outf(filename.c_str());
    if (outf.fail()){
       cerr << "Cannot open file for tex recording: " << strerror(errno) << endl;
@@ -740,13 +740,13 @@ disphtml_genmot(vseq & seqs,vmot & mots)
    }
 
    string filename;
-   filename ="display/results_genmot.html";
+   filename ="results_genmot.html";
    ofstream outf(filename.c_str());
    if (outf.fail()){
       cerr << "Cannot open file for html recording: " << strerror(errno) << endl;
       exit(EXIT_FAILURE);
    }
-   int retsym = symlink ((display_datapath+"/css").c_str(), "display/css");
+   int retsym = symlink ((display_datapath+"/css").c_str(), "css");
    if (retsym && errno!=EEXIST){
       cerr << "Cannot create symlink: " << strerror(errno) << endl;
       exit(EXIT_FAILURE);
@@ -780,13 +780,13 @@ disphtml_genmot(vseq & seqs,vmot & mots)
 disphtml_scangen()
 {
    string filename;
-   filename ="display/results_scangen.html";
+   filename ="results_scangen.html";
    ofstream outf(filename.c_str());
    if (outf.fail()){
       cerr << "Cannot open file for html recording: " << strerror(errno) << endl;
       exit(EXIT_FAILURE);
    }
-   int retsym = symlink ((display_datapath+"/css").c_str(), "display/css");
+   int retsym = symlink ((display_datapath+"/css").c_str(), "css");
    if (retsym && errno!=EEXIST){
       cerr << "Cannot create symlink: " << strerror(errno) << endl;
       exit(EXIT_FAILURE);
@@ -837,7 +837,7 @@ disphtml_scangen()
    void
 disptexwgaps(vseq & align,vmot & mots)
 {
-   string folder("display/");
+   string folder("");
    for (ivseq ivs=align.begin();ivs!=align.end();ivs++){ 
       stringstream file;
       file << folder;
@@ -920,13 +920,6 @@ cmd_display(int argc, char **argv)
    } else {
       display_datapath=imo_display_datapath;
    }
-
-   int mkdir_res = mkdir("display",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
-   if (mkdir_res && errno != EEXIST){
-      cerr << "Cannot create display directory: " << strerror(errno) << endl;
-      exit(EXIT_FAILURE);
-   }
-
 
    if (display_args.genmot_mode_counter){
 
