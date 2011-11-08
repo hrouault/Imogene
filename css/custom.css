@@ -10,27 +10,38 @@ h2 {
 h3 {
    border-top:3px solid #CCC;
 }
-pre, code, tt {font:1em monospace;line-height:1.5;}
+pre, code, tt {font:1.3em monospace;line-height:1.5;}
 
 .mot1 {
-   color: #730046;
+   color: #E0401C;
+   background: #471209;
    font-weight:bold;
 }
 
 .mot2 {
-   color: #BFBB11;
+   color: #E5B051;
+   background: #E2D5C0;
    font-weight:bold;
 }
 
 .mot3 {
-   color: #FFC200;
+   color: #272F30;
+   background: #A8CACC;
    font-weight:bold;
 }
 
 .mot4 {
-   color: #E88801;
+   color: #F7EDB7;
+   background: #F4CF31;
    font-weight:bold;
 }
+
+.mot5 {
+   color: #9E2B20;
+   background: ;
+   font-weight:bold;
+}
+
 table tr:nth-child(even) td.mot1 {
   background: #730046;
 }

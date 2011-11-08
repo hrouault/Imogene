@@ -30,9 +30,5 @@ imogene.xml: imogene.xml.in
 imogene_env.xml: imogene_env.xml.in
 	$(do_subst) < $(srcdir)/imogene_env.xml.in > imogene_env.xml
 
-htmldir = $(pkgdatadir)/help
-
-html_DATA = mobyle-help.html
-
 EXTRA_DIST =  help.md
 
