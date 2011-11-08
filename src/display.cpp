@@ -869,10 +869,9 @@ display_args_init()
       conct=conca;
       concg=concc;
 
-      // *** It would be nice to set the threshold by bp, in bits.
-      scorethr2=display_args.threshold_arg;
-      scorethr=scorethr2-1.0;
-      scorethrcons=scorethr2-1.0;
+      scorethr2=display_args.threshold_arg/log(2);
+      scorethr=scorethr2-1.5;
+      scorethrcons=scorethr2-1.5;
 
       nbmots_for_score=display_args.nbmots_arg;
    }
