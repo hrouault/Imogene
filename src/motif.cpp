@@ -68,10 +68,10 @@ Motif::Motif()
    vinst dumvinst;
    instances=vvinst(nbchrom,dumvinst);
 
-   motscorethr2=scorethr2;
    motwidth=width;
-   motscorethr=scorethr2-2*(double)motwidth/10;
-   motscorethrcons=scorethr2-(double)motwidth/10;
+   motscorethr2=scorethr2;
+   motscorethr=scorethr2*(1-2.0/motwidth);
+   motscorethrcons=scorethr2*(1-1.0/motwidth);
 
    tottest=0;
 }
@@ -200,8 +200,8 @@ Motif::setscorethr2meaninfo()
       maxinfo+=maxcol;
    }
    motscorethr2=min(0.95*maxinfo,meaninfo);
-   motscorethr=motwidth*(motscorethr2-1)/10;
-   motscorethrcons=motwidth*(motscorethr2-1)/10;
+   motscorethr=motscorethr2*(1-2./motwidth);
+   motscorethrcons=motscorethr2*(1-1./motwidth);
 }
 
 
@@ -243,6 +243,7 @@ Motif::pvaluecomp()
 {
    // Density of conserved binding sites in the background
    lambda=nbmatchback/(double)tottest;
+   cout << nbmatchback << " " << tottest << " " << lambda << endl;
 
    // Chi2 calculation
    calcscorepoiss();
@@ -1231,9 +1232,9 @@ loadmots ( const char * filename, vmot & mots )
       mot1.matprecrevcomp=reversecomp(mot1.matprec);
       fmotifs >> mot1.distmot;
       fmotifs >> dum;
-      mot1.motscorethr2=mot1.motwidth*scorethr2/10;
-      mot1.motscorethr=mot1.motwidth*(scorethr2-1)/10;
-      mot1.motscorethrcons=mot1.motwidth*(scorethr2-1)/10;
+      mot1.motscorethr2=scorethr2;
+      mot1.motscorethr=scorethr2*(1-2.0/mot1.motwidth);
+      mot1.motscorethrcons=scorethr2*(1-1.0/mot1.motwidth);
       mots.push_back(mot1);
       i++;
    }
