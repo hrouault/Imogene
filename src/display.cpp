@@ -18,6 +18,7 @@
  * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -898,10 +899,9 @@ display_args_init()
       conct=conca;
       concg=concc;
 
-      // *** It would be nice to set the threshold by bp, in bits.
-      scorethr2=display_args.threshold_arg;
-      scorethr=scorethr2-1.0;
-      scorethrcons=scorethr2-1.0;
+      scorethr2=display_args.threshold_arg*log(2);
+      //scorethr=scorethr2-1;
+      //scorethrcons=scorethr2-1;
 
       nbmots_for_score=display_args.nbmots_arg;
    }
@@ -952,7 +952,7 @@ cmd_display(int argc, char **argv)
 
    if (display_args.genmot_mode_counter){
 
-      cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
+      cout << "Thresholds: thr2=" << scorethr2/log(2) << " thr=" << scorethr/log(2) << " thrcons=" << scorethrcons/log(2) << endl;
 
       cout << "Loading alignments " << endl;
 
