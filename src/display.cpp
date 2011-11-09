@@ -40,7 +40,6 @@ display_args_info display_args;
 void
 dispweblogo(vmot& mots)
 {
-
    unsigned int index=1;
    for ( ivmot ivm=mots.begin();ivm!=mots.end();ivm++ ) {
       if ( ivm->check ) {
@@ -49,12 +48,19 @@ dispweblogo(vmot& mots)
          ss << "Motif";
          ss << index << " ";
          ss << concc << " ";
+         string sep1="";
          for (ivvd ivv=ivm->matfreq.begin();ivv!=ivm->matfreq.end();ivv++){
-            for (ivd iv=ivv->begin();iv!=ivv->end()-1;iv++){
-               ss << *iv << ",";
-            }
-            ss << *(ivv->end()-1) << " ";
+           ss << sep1;
+           string sep2="";
+           for (ivd iv=ivv->begin();iv!=ivv->end();iv++){
+             ss << sep2;
+             ss << *iv;
+             sep2=",";
+           }
+           sep1=":";
          }
+         if (display_args.png_given) ss << " --png ";
+         if (display_args.pdf_given) ss << " --pdf";
          system(ss.str().c_str());
          index++;
       }
@@ -731,6 +737,18 @@ disptex(vseq & seqs,vmot & mots)
    outf.close();
 }
 
+void
+copycss(string cssname)
+{
+  ifstream fin((display_datapath+"/css/"+cssname).c_str());
+  ofstream fout(("css/"+cssname).c_str(), fstream::trunc);
+  if (fin.fail() || fout.fail()){
+    cerr << "Cannot open " << cssname << ": " << strerror(errno) << endl;
+    exit(EXIT_FAILURE);
+  }
+  fout << fin.rdbuf();
+}
+
    void
 disphtml_genmot(vseq & seqs,vmot & mots)
 {
@@ -746,11 +764,22 @@ disphtml_genmot(vseq & seqs,vmot & mots)
       cerr << "Cannot open file for html recording: " << strerror(errno) << endl;
       exit(EXIT_FAILURE);
    }
+   int retcode=mkdir( "css" ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+   if (retcode){
+     cerr << "Cannot create directory: " << strerror(errno) << endl;
+     exit(EXIT_FAILURE);
+   }
+
    int retsym = symlink ((display_datapath+"/css").c_str(), "css");
    if (retsym && errno!=EEXIST){
       cerr << "Cannot create symlink: " << strerror(errno) << endl;
       exit(EXIT_FAILURE);
    }
+
+   copycss("screen.css");
+   copycss("print.css");
+   copycss("ie.css");
+   copycss("custom.css");
 
    disphtmlinit(outf,"Imogene genmot output");
 

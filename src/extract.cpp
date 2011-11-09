@@ -97,17 +97,22 @@ extractfromcoord(const char * coordfile)
    align.close();
 
    stringstream basename;
+   int retcode=0;
    if (extract_args.background_given){
       if (species=="droso"){
-         mkdir( (extract_datapath+"/droso/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         retcode=mkdir( (extract_datapath+"/droso/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
          basename << extract_datapath+"/droso/background/";
       } else if (species=="eutherian"){
-         mkdir( (extract_datapath+"/eutherian/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         retcode=mkdir( (extract_datapath+"/eutherian/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
          basename << extract_datapath+"/eutherian/background/";
       }
    } else {
-      mkdir("align",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
+      retcode=mkdir("align",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
       basename << "align/";
+   }
+   if (retcode){
+     cerr << "Cannot create directory: " << strerror(errno) << endl;
+     exit(EXIT_FAILURE);
    }
 
    // SEQUENCE EXTRACTION
@@ -165,6 +170,7 @@ cmd_extract(int argc, char **argv)
    } else {
       extract_datapath=imo_extract_datapath;
    }
+   sequence_datapath=extract_datapath;
 
    extractfromcoord(extract_args.input_arg);
 

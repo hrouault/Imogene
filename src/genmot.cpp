@@ -238,6 +238,7 @@ cmd_genmot(int argc, char **argv)
    } else {
       genmot_datapath=imo_genmot_datapath;
    }
+   sequence_datapath=genmot_datapath;
 
    //   printconfig(); *** to be written so that one can rerun exacltly the same instance
 
