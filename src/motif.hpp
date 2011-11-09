@@ -104,7 +104,6 @@ class Motif
       string name;
       unsigned int index;
 
-      // *** allow motif specific threshold. Not of use in the current context.
       double motscorethr2;
       double motscorethr;
       double motscorethrcons;
@@ -133,8 +132,6 @@ class Motif
       int statemot (Sequence & seq,int pos,int num, double & scoremot);
       int nbmatchnmaskforsvg (Sequence & seq,unsigned int moti);
       void setscorethr2meaninfo();
-      vvvd correlations(); //returns width matrices of correlation
-      vint drawsite(double scorethr);// draws a site with matfreq probs
 };
 
 typedef vector<Motif> vmot;
