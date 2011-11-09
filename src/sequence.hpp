@@ -160,4 +160,6 @@ Sequence coordtoseq(Coordinate & coord);
 
 bool iscons(vint & spe);
 
+extern string sequence_datapath;
+
 #endif // Sequence_H

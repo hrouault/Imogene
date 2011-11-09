@@ -35,7 +35,7 @@ backfreq=array([conca,concc,concg,conct])
 
 # Motif base frequencies
 matfreq=[]
-for freqline in sys.argv[3:]: 
+for freqline in sys.argv[3].split(':'): 
    freqs=freqline.split(',')
    for i in range(len(freqs)):
       freqs[i]=float(freqs[i])
@@ -60,9 +60,17 @@ options.logo_font    = "Arial-BoldMT"
 format = LogoFormat(data,options)
 
 # PDF output
-fout = open(motname+'.pdf', 'w')
-pdf_formatter(data,format,fout)
-# PNG output
-fout2 = open(motname+'.png', 'w')
-png_formatter(data,format,fout2)
+if len(sys.argv)>4:
+  for ftype in sys.argv[4:]:
+    if ftype=="--png":
+      fout2 = open(motname+'.png', 'w')
+      png_formatter(data,format,fout2)
+    elif ftype=="--pdf":
+      fout2 = open(motname+'.pdf', 'w')
+      pdf_formatter(data,format,fout2)
+    else:
+      print "format "+ftype+" not supported, no output generated for this flag"
+else:
+  fout2 = open(motname+'.png', 'w')
+  png_formatter(data,format,fout2)
 

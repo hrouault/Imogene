@@ -742,6 +742,8 @@ shift(vint::const_iterator iseq,vvd & matrice, vint::const_iterator &seq_end, un
    return shift;
 }
 
+string sequence_datapath;
+
 Sequence
 coordtoseq(Coordinate & coord)
 {
@@ -778,7 +780,14 @@ coordtoseq(Coordinate & coord)
            //if (species=="droso" && isnextali==1) continue; // pb with coordinates *** To be corrected ??
 
            Sequence trueali;
-           ifstream fileseq(ali.name.c_str());
+           string alifn;
+           if (species=="droso"){
+             alifn=sequence_datapath+"/droso/"+ali.name.c_str();
+           } else if (species=="eutherian"){
+
+             alifn=sequence_datapath+"/eutherian/"+ali.name.c_str();
+           }
+           ifstream fileseq(alifn.c_str());
            if (fileseq.fail()){
               cerr << "Cannot open alignment sequence file for reading: " << strerror(errno) << endl;
               exit(EXIT_FAILURE);
@@ -838,7 +847,14 @@ coordtoseq(Coordinate & coord)
 
            if (isnextali){
               Coordinate & nextali=*(ivs+1);
-              ifstream fileseq2(nextali.name.c_str());
+              string alifn;
+              if (species=="droso"){
+                alifn=sequence_datapath+"/droso/"+nextali.name.c_str();
+              } else if (species=="eutherian"){
+
+                alifn=sequence_datapath+"/eutherian/"+nextali.name.c_str();
+              }
+              ifstream fileseq2(alifn.c_str());
               if (fileseq2.fail()){
                  cerr << "Cannot open alignment sequence file for reading: " << strerror(errno) << endl;
                  exit(EXIT_FAILURE);

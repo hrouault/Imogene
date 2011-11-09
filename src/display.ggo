@@ -54,6 +54,12 @@ modeoption  "svg" -  "Training set multiple alignment with instances, svg format
 modeoption  "logos" -  "Motif logos." 
             mode="genmot" optional
 
+modeoption  "pdf" -  "Motif logo in pdf format." 
+            mode="genmot" optional
+
+modeoption  "png" -  "Motif logo in png format (default)" 
+            mode="genmot" optional
+
 section "Display the output of imogene scangen"
 defmode "scangen"
 

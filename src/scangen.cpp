@@ -142,8 +142,6 @@ scanmots()
 
    string pchrom(""); // for display purpose
    unsigned int totlen(0),totlentb(0);
-   //ivcoord ivcstart=alignscoord.begin()+100;
-   //ivcoord ivcstop=alignscoord.begin()+150;
    ivcoord ivcstart=alignscoord.begin();
    ivcoord ivcstop=alignscoord.end();
    for (ivcoord ivc=ivcstart;ivc!=ivcstop;ivc++){
@@ -477,6 +475,7 @@ cmd_scangen(int argc, char **argv)
    } else {
       scangen_datapath=imo_scangen_datapath;
    }
+   sequence_datapath=scangen_datapath;
 
    cout << "annotextent=" << annotextent << endl;
 
