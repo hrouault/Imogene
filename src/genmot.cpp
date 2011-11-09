@@ -272,8 +272,10 @@ cmd_genmot(int argc, char **argv)
    unsigned int counter=1;
    for (ivstring ivs=regtests.begin();ivs!=regtests.end();ivs++){
    
-//      cout << "\r" << counter << "/" << regtests.size();
-//      cout.flush();
+      if (progress){
+         cout << "\r" << counter << "/" << regtests.size();
+         cout.flush();
+      }
       counter++;
       
       Sequence seq;
