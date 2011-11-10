@@ -806,62 +806,77 @@ disphtml_genmot(vseq & seqs,vmot & mots)
    outf.close();
 }
 
-   void
+  void
 disphtml_scangen()
 {
-   string filename;
-   filename ="results_scangen.html";
-   ofstream outf(filename.c_str());
-   if (outf.fail()){
-      cerr << "Cannot open file for html recording: " << strerror(errno) << endl;
-      exit(EXIT_FAILURE);
-   }
-   int retsym = symlink ((display_datapath+"/css").c_str(), "css");
-   if (retsym && errno!=EEXIST){
-      cerr << "Cannot create symlink: " << strerror(errno) << endl;
-      exit(EXIT_FAILURE);
-   }
+  string filename;
+  filename ="results_scangen.html";
+  ofstream outf(filename.c_str());
+  if (outf.fail()){
+    cerr << "Cannot open file for html recording: " << strerror(errno) << endl;
+    exit(EXIT_FAILURE);
+  }
+  int retsym = symlink ((display_datapath+"/css").c_str(), "css");
+  if (retsym && errno!=EEXIST){
+    cerr << "Cannot create symlink: " << strerror(errno) << endl;
+    exit(EXIT_FAILURE);
+  }
 
-   disphtmlinit(outf,"Imogene scangen output");
+  disphtmlinit(outf,"Imogene scangen output");
 
-   outf << "<h2>Genome-wide predicted enhancers</h2>" << endl;
+  outf << "<h2>Genome-wide predicted enhancers</h2>" << endl;
 
-   ifstream enhf(display_args.enhancers_arg);
-   if (enhf.fail()){
-      cerr << "Cannot open enhancer file: " << strerror(errno) << endl;
-      exit(EXIT_FAILURE);
-   }
+  ifstream enhf(display_args.enhancers_arg);
+  if (enhf.fail()){
+    cerr << "Cannot open enhancer file: " << strerror(errno) << endl;
+    exit(EXIT_FAILURE);
+  }
 
-   outf << "<table>" << endl;
-   outf << "<tr>" << endl;
-   outf << "<th>Score</th><th>Coordinate</th> <th>Closest TSS</th><th>TSSs</th>" << endl;
-   outf << "</tr>" << endl;
-   unsigned int i=0;
-   while (! enhf.eof()){
-      double score;
-      enhf >> score;
-      string coordinate;
-      enhf >> coordinate;
-      string closetss;
-      enhf >> closetss;
-      string tsses;
-      enhf >> tsses;
+  outf << "<table>" << endl;
+  outf << "<tr>" << endl;
+  outf << "<th>Score</th><th>Coordinate</th> <th>Closest TSS</th><th>distance to closest TSS</th><th>TSSs</th>" << endl;
+  outf << "</tr>" << endl;
+  unsigned int i=0;
+  string strline;
+  string strfield;
+  getline(enhf, strline);
+  while (enhf){
+    stringstream line(strline);
 
-      outf << "<tr><td>" << score << "</td><td>" << coordinate << "</td><td>";
-      outf << closetss << "</td><td>" << tsses << "</td></tr>" << endl;
-      if (i>200){
-         break;
-      }
-      i++;
-   }
+    getline(line, strfield, ' ');
+    stringstream field(strfield);
+    double score;
+    field >> score;
 
-   if (i==0){//No motifs
-      cerr << "No motifs" << endl;
-      exit(EXIT_FAILURE);
-   }
+    string coordinate;
+    getline(line, coordinate, ' ');
 
-   disphtmlclose(outf);
-   outf.close();
+    string closesttss;
+    getline(line, closesttss, ' ');
+
+    string disttss;
+    getline(line, disttss, ' ');
+    int lendisttss=disttss.length();
+
+    string tsses;
+    getline(line, tsses, ' ');
+
+    outf << "<tr><td>" << score << "</td><td>" << coordinate << "</td><td>";
+    outf << closesttss << "</td><td>" << disttss.substr(1,lendisttss-2) << "</td><td>" <<tsses << "</td></tr>" << endl;
+    if (i>200){
+      break;
+    }
+    i++;
+    getline(enhf, strline);
+  }
+
+  if (i==0){//No motifs
+    cerr << "No motifs" << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  disphtmlclose(outf);
+  outf.close();
 }
 
    void
