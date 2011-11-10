@@ -968,8 +968,8 @@ Sequence::Sequence()
    chrom=-1;
    start=0;
    stop=0;
-   nmot=0;
-   nbmot=0;
+   nbtot=0;
+   nbcons=0;
    nbN=0;
    nbtb=0;
 }

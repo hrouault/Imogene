@@ -146,15 +146,15 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       currmot.matprec=currmot.matrice;
       currmot.matprecrevcomp=currmot.matricerevcomp;
       vvd pmat=currmot.matprec;
-      unsigned int nbconv(0);
+      unsigned int nbconv=0;
       // *** TODO better convergence check
       for (unsigned int nb=1;nb<=nbiter;nb++){
          double max=0.01;
-         int iter(0);
+         int iter=0;
          while(max>0){
             if (nb>2) currmot.matinit(scorethr2);
             else currmot.matinit(scorethr);
-            if (currmot.nbmot<1) break;
+            if (currmot.nbcons<1) break;
             
             currmot.compprec();
             max=distcv(currmot.matprec,pmat);
@@ -171,7 +171,7 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       }
 
       currmot.matinit(scorethr2);
-      if (currmot.nbmot>2){
+    if (currmot.nbcons>2){
          currmot.matprecrevcomp=reversecomp(currmot.matprec);
          currmot.matfreq=mattofreq(currmot.matprec);
          currmot.motscorethr=scorethr2;

@@ -405,7 +405,7 @@ dispmotifs_html (ofstream & outf, vmot & mots)
       outf << "<tr>" << endl;
       outf << "<td class=\"mot" << i << "\"></td><td>"<<i<<"</td> <td><a href=\"Motif" << i;
       outf << ".pdf\"><img src=\"Motif" << i << ".png\" alt=\"Motif " << i;
-      outf << "\" /></a></td><td>"<<(*iv).pvalue << "</td><td>" << (*iv).lambdatrain/(*iv).lambda << "</td>" << endl;
+      outf << "\" /></a></td><td>"<<(*iv).pvalue << "</td><td>" << (*iv).lambdatrain/(*iv).lambdaback << "</td>" << endl;
       outf << "</tr>" << endl;
       i++;
    }

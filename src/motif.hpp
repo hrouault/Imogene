@@ -82,18 +82,21 @@ class Motif
       vvd matrice;
       vvd matprec;
       vvd matfreq;
-      int nbmot;
-      vvd matricerevcomp;
-      vvd matprecrevcomp;
-      double lambda;
+
+      int nbtot;
+      int nbcons;
+      int nbconsback;
+      double lambdaback;
       double lambdatrain;
-      int ntrain;
       double pvalue;
       double meanpoiss;
-      int nbmatchback;
-      unsigned int nbmatch;
-      int* distmot;
+
       double scorepoiss;
+
+      int* distmot;
+
+      vvd matricerevcomp;
+      vvd matprecrevcomp;
       vma seqs;
       bool check; // for distinfo
       vvinst instances;
@@ -117,8 +120,6 @@ class Motif
       void compprec();
       void compprec_MCMC();
       void pvaluecomp();
-      void calclambda();
-      void calclambdaback();
       void updatebacksites(Sequence & seq);
       void display(ostream & streamfile);
       int nbmatchcons(Sequence & seq);
