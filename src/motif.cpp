@@ -56,14 +56,13 @@ Motif::Motif()
       distmot[i]=0;
    }
    name="";
-   nbmatch=0;
-   nbmatchback=0;
-   lambda=0;
+   nbconsback=0;
+   lambdaback=0;
    lambdatrain=0;
    pvalue=0;
    scorepoiss=0;
-   nbmot=0;
-   ntrain=0;
+   nbtot=0;
+   nbcons=0;
    check=true;
    vinst dumvinst;
    instances=vvinst(nbchrom,dumvinst);
@@ -235,15 +234,15 @@ Motif::updatebacksites(Sequence & seq)
    else nbbacktemp=nbmatchcons(seq);
    if (nbbacktemp<distwidth) distmot[nbbacktemp]++;
    
-   nbmatchback+=nbbacktemp;
+   nbconsback+=nbbacktemp;
 }
 
    void
 Motif::pvaluecomp()
 {
    // Density of conserved binding sites in the background
-   lambda=nbmatchback/(double)tottest;
-   cout << nbmatchback << " " << tottest << " " << lambda << endl;
+   lambdaback=nbconsback/(double)tottest;
+   cout << nbconsback << " " << tottest << " " << lambdaback << endl;
 
    // Chi2 calculation
    calcscorepoiss();
@@ -251,20 +250,16 @@ Motif::pvaluecomp()
    pvalue=0.0;
 
 
-   int nbtot=0;
    int nbbtrain=0;
 
    for (iseq=regints.begin();iseq!=regints.end();iseq++){
-      // Here we use nbmot (cons) and not nmot (not cons)
-      if (lambda>0) pvalue+=log(gsl_ran_poisson_pdf((*iseq).nbmot,lambda*(*iseq).nbtb));
-      else pvalue+=0;
+     int consseq=nbmatchcons(*iseq);
+      pvalue+=log(gsl_ran_poisson_pdf(consseq,lambdaback*(*iseq).nbtb));
       nbbtrain+=(*iseq).nbtb;
-      nbtot+=(*iseq).nbmot;
    }
 
    // Density of conserved binding sites in the training set
-   lambdatrain=(double)nbtot/(double)nbbtrain;
-   ntrain=nbtot;
+   lambdatrain=(double)nbcons/(double)nbbtrain;
 }
 
    void
@@ -319,11 +314,11 @@ Motif::display(ostream & streamfile)
    streamfile << "\t";
    streamfile << pvalue << "\t";
    streamfile << scorepoiss << "\t";
-   streamfile << nbmot << "\t";
-   streamfile << ntrain << "\t";
+   streamfile << nbtot << "\t";
+   streamfile << nbcons << "\t";
    streamfile << setprecision(3);
    streamfile << lambdatrain << "\t";
-   streamfile << lambda << "\t";
+   streamfile << lambdaback << "\t";
    streamfile << matprec;
 
    streamfile << setprecision(5);
@@ -684,81 +679,57 @@ Motif::statemot (Sequence & seq,int pos, int num, double & scoremot)
    void
 Motif::matinit(double scth)
 {
+  nbtot=0;
    seqs.clear();
    for (ivseq iseq=regints.begin();iseq!=regints.end();iseq++){
-      (*iseq).nmot=0;
-      (*iseq).nbmot=0;
+      (*iseq).nbtot=0;
+      (*iseq).nbcons=0;
    }
-   //   cout << "begin init\n";
    for (ivseq iseq=regints.begin();iseq!=regints.end();iseq++){
       Sequence & seq=*iseq;
       unsigned int len=seq.iseqs[0].size();
       unsigned int i=0;
       for (vint::const_iterator istr=seq.iseqs[0].begin();istr!=seq.iseqs[0].end()-width+1;istr++){
-         //         double score1,score2;
-         //         if (scoref(istr,matprec)>scth){
-         //            vint::const_iterator endci=seq.iseqs[0].end()-width+1;
-         //            unsigned int sh=shift(istr,matprec,endci,width);
-         //            score1=scoref(istr+sh,matprec);
-         //         }
-         //         else if (scoref(istr,matprecrevcomp)>scth){ 
-         //            vint::const_iterator endci=seq.iseqs[0].end()-width+1;
-         //            unsigned int sh=shift(istr,matprecrevcomp,endci,width);
-         //            score2=scoref(istr+sh,matprecrevcomp);
-         //         }
 
          if (scoref(istr,matprec)>scth){
             vint::const_iterator endci=seq.iseqs[0].end()-width+1;
             unsigned int sh=shift(istr,matprec,endci,width);
             Motalign ma(i+sh,seq,*this, 1);
-            //            ivint idro=ma.matches.begin();
-            //            for (ivvint iv=ma.alignseq.begin();iv!=ma.alignseq.end();iv++){
-            //               cout << *idro << " " << *iv << endl;
-            //               idro++;
-            //            }
-            //            cout << endl;
-            (*iseq).nmot++;
+            (*iseq).nbtot++;
+            nbtot++;
             if (ma.iscons()){
-               //               ma.print();
-               iseq->nbmot++;
+               iseq->nbcons++;
                seqs.push_back(ma);
                if (i+sh<len-2*width){
                   istr+=width-1+sh;
                   i+=width-1+sh;
                }
-               else {
+               else 
                   break;
-               }
             }
          }
          else if (scoref(istr,matprecrevcomp)>scth){ 
             vint::const_iterator endci=seq.iseqs[0].end()-width+1;
             unsigned int sh=shift(istr,matprecrevcomp,endci,width);
             Motalign ma(i+sh,seq,*this,-1);
-            //            for (ivvint iv=ma.alignseq.begin();iv!=ma.alignseq.end();iv++){
-            //               cout << *iv << endl;
-            //            }
-            //            cout << endl;
-            (*iseq).nmot++;
+            (*iseq).nbtot++;
+            nbtot++;
             if (ma.iscons()){
-               iseq->nbmot++;
+               iseq->nbcons++;
                seqs.push_back(ma);
-               //               ma.print();
                if (i+sh<len-2*width){
                   istr+=width-1+sh;
                   i+=width-1+sh;
                }
-               else {
+               else
                   break;
-               }
             }
          }
          i++;
          if (istr>seq.iseqs[0].end()-width) break;
       }
    }
-   //   cout << "end init\n";
-   nbmot=seqs.size();
+   nbcons=seqs.size();
 }
 
    bool
@@ -1215,10 +1186,10 @@ loadmots ( const char * filename, vmot & mots )
       mot1.motwidth=mot1.bsinit.size();
       fmotifs >> mot1.pvalue;
       fmotifs >> mot1.scorepoiss;
-      fmotifs >> mot1.nbmot;
-      fmotifs >> mot1.ntrain;
+      fmotifs >> mot1.nbtot;
+      fmotifs >> mot1.nbcons;
       fmotifs >> mot1.lambdatrain;
-      fmotifs >> mot1.lambda;
+      fmotifs >> mot1.lambdaback;
       vd dumd(4,0.0);
       vvd dummat(mot1.motwidth,dumd);
       mot1.matprec=dummat;
@@ -1256,8 +1227,7 @@ GroupInstance::compscore(vmot & lmots,unsigned int nbmots_score)
    score=0;
    unsigned int imot=0;
    for (ivmot ivm=lmots.begin();ivm!=lmots.begin()+nbmots_score;ivm++){
-      //      ivmot ivm=lmots.begin()+nbmots_score-1;
-      score+=nbmots[imot]*log((*ivm).lambdatrain/(*ivm).lambda);
+      score+=nbmots[imot]*log((*ivm).lambdatrain/(*ivm).lambdaback);
       imot++;
    }
 }

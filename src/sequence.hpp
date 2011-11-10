@@ -87,8 +87,8 @@ class Sequence
       vvint imaps; //relative pos w/o gaps (eg A-T, T is 2nd). i.e, given an aligned sequence (w/ gaps), gives position in iseq (w/o gaps)
       vvint imapsinv; //relative pos including gaps (eg A-T, T is 3rd). i.e, given an iseq (w/o gaps), gives position in an aligned seq (w/ gaps)
       vint species;//0 or 1 per species
-      int nmot; // nb mots NON CONS
-      int nbmot; // nb mots CONS
+      int nbtot; // formerly nmot nb mots NON CONS
+      int nbcons; // formerly nbmot nb mots CONS
       vinstseq instances;
       vvinstseq instancescons;
       int nbN;
