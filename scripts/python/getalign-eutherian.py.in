@@ -156,7 +156,7 @@ else:
   # Downloading alignment files
   alignfn='fly_CAF1.1.tar.gz'
   if not checkexist(alignfn, hashes[alignfn]):
-    geturl("http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/"+f,h)
+    geturl("http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/"+alignfn,hashes[alignfn])
 
 # Downloading annotation files
 os.chdir('..')
@@ -177,8 +177,8 @@ if args.species=='eutherian':
   if not checkexist(musmusc_annotfn, hashes[musmusc_annotfn]):
     print "[",datetime.datetime.now(),"]  Getting ENSEMBL gtf annotation file for CDS coordinates..."
     print 
-    geturl("http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/", \
-        sha1_eutherian_cdscoord)
+    geturl("ftp://ftp.ensembl.org/pub/release-64/gtf/mus_musculus/"+musmusc_annotfile, \
+        hashes[musmusc_annotfile])
 
 if args.download_only:
   print "Script finished. The files were only downloaded. Please process them further"
