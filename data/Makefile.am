@@ -18,5 +18,7 @@
 # along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
 
-dist_pkgdata_DATA = mapping.dat ../data/background-droso-coords.dat ../data/background-eutherian-coords.dat
+dist_pkgdata_DATA = mapping.dat background-droso-coords.dat background-eutherian-coords.dat\
+										MD5SUM
+
 
