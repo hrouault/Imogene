@@ -56,22 +56,21 @@ Motif::Motif()
       distmot[i]=0;
    }
    name="";
-   nbmatch=0;
-   nbmatchback=0;
-   lambda=0;
+   nbconsback=0;
+   lambdaback=0;
    lambdatrain=0;
    pvalue=0;
    scorepoiss=0;
-   nbmot=0;
-   ntrain=0;
+   nbtot=0;
+   nbcons=0;
    check=true;
    vinst dumvinst;
    instances=vvinst(nbchrom,dumvinst);
 
-   motscorethr2=scorethr2;
    motwidth=width;
-   motscorethr=scorethr2-2*(double)motwidth/10;
-   motscorethrcons=scorethr2-(double)motwidth/10;
+   motscorethr2=scorethr2;
+   motscorethr=scorethr2*(1-2.0/motwidth);
+   motscorethrcons=scorethr2*(1-1.0/motwidth);
 
    tottest=0;
 }
@@ -200,8 +199,8 @@ Motif::setscorethr2meaninfo()
       maxinfo+=maxcol;
    }
    motscorethr2=min(0.95*maxinfo,meaninfo);
-   motscorethr=motwidth*(motscorethr2-1)/10;
-   motscorethrcons=motwidth*(motscorethr2-1)/10;
+   motscorethr=motscorethr2*(1-2./motwidth);
+   motscorethrcons=motscorethr2*(1-1./motwidth);
 }
 
 
@@ -235,14 +234,15 @@ Motif::updatebacksites(Sequence & seq)
    else nbbacktemp=nbmatchcons(seq);
    if (nbbacktemp<distwidth) distmot[nbbacktemp]++;
    
-   nbmatchback+=nbbacktemp;
+   nbconsback+=nbbacktemp;
 }
 
    void
 Motif::pvaluecomp()
 {
    // Density of conserved binding sites in the background
-   lambda=nbmatchback/(double)tottest;
+   lambdaback=nbconsback/(double)tottest;
+   cout << nbconsback << " " << tottest << " " << lambdaback << endl;
 
    // Chi2 calculation
    calcscorepoiss();
@@ -250,20 +250,16 @@ Motif::pvaluecomp()
    pvalue=0.0;
 
 
-   int nbtot=0;
    int nbbtrain=0;
 
    for (iseq=regints.begin();iseq!=regints.end();iseq++){
-      // Here we use nbmot (cons) and not nmot (not cons)
-      if (lambda>0) pvalue+=log(gsl_ran_poisson_pdf((*iseq).nbmot,lambda*(*iseq).nbtb));
-      else pvalue+=0;
+     int consseq=nbmatchcons(*iseq);
+      pvalue+=log(gsl_ran_poisson_pdf(consseq,lambdaback*(*iseq).nbtb));
       nbbtrain+=(*iseq).nbtb;
-      nbtot+=(*iseq).nbmot;
    }
 
    // Density of conserved binding sites in the training set
-   lambdatrain=(double)nbtot/(double)nbbtrain;
-   ntrain=nbtot;
+   lambdatrain=(double)nbcons/(double)nbbtrain;
 }
 
    void
@@ -318,11 +314,11 @@ Motif::display(ostream & streamfile)
    streamfile << "\t";
    streamfile << pvalue << "\t";
    streamfile << scorepoiss << "\t";
-   streamfile << nbmot << "\t";
-   streamfile << ntrain << "\t";
+   streamfile << nbtot << "\t";
+   streamfile << nbcons << "\t";
    streamfile << setprecision(3);
    streamfile << lambdatrain << "\t";
-   streamfile << lambda << "\t";
+   streamfile << lambdaback << "\t";
    streamfile << matprec;
 
    streamfile << setprecision(5);
@@ -501,7 +497,6 @@ Motif::findinstancesnmask (Sequence & seq)
             if (score>thr){
                //pos relative to start and including gaps (for inter-species comparison)
                Instanceseq inst(index,1,seq.imapsinv[spe][i],i,score,spe,name);
-               cout << inst << endl;
                inst.iseq=vint(istr,istr+motwidth);
                inst.seq=vinttostring(inst.iseq);
                seq.instances.push_back(inst);
@@ -684,81 +679,57 @@ Motif::statemot (Sequence & seq,int pos, int num, double & scoremot)
    void
 Motif::matinit(double scth)
 {
+  nbtot=0;
    seqs.clear();
    for (ivseq iseq=regints.begin();iseq!=regints.end();iseq++){
-      (*iseq).nmot=0;
-      (*iseq).nbmot=0;
+      (*iseq).nbtot=0;
+      (*iseq).nbcons=0;
    }
-   //   cout << "begin init\n";
    for (ivseq iseq=regints.begin();iseq!=regints.end();iseq++){
       Sequence & seq=*iseq;
       unsigned int len=seq.iseqs[0].size();
       unsigned int i=0;
       for (vint::const_iterator istr=seq.iseqs[0].begin();istr!=seq.iseqs[0].end()-width+1;istr++){
-         //         double score1,score2;
-         //         if (scoref(istr,matprec)>scth){
-         //            vint::const_iterator endci=seq.iseqs[0].end()-width+1;
-         //            unsigned int sh=shift(istr,matprec,endci,width);
-         //            score1=scoref(istr+sh,matprec);
-         //         }
-         //         else if (scoref(istr,matprecrevcomp)>scth){ 
-         //            vint::const_iterator endci=seq.iseqs[0].end()-width+1;
-         //            unsigned int sh=shift(istr,matprecrevcomp,endci,width);
-         //            score2=scoref(istr+sh,matprecrevcomp);
-         //         }
 
          if (scoref(istr,matprec)>scth){
             vint::const_iterator endci=seq.iseqs[0].end()-width+1;
             unsigned int sh=shift(istr,matprec,endci,width);
             Motalign ma(i+sh,seq,*this, 1);
-            //            ivint idro=ma.matches.begin();
-            //            for (ivvint iv=ma.alignseq.begin();iv!=ma.alignseq.end();iv++){
-            //               cout << *idro << " " << *iv << endl;
-            //               idro++;
-            //            }
-            //            cout << endl;
-            (*iseq).nmot++;
+            (*iseq).nbtot++;
+            nbtot++;
             if (ma.iscons()){
-               //               ma.print();
-               iseq->nbmot++;
+               iseq->nbcons++;
                seqs.push_back(ma);
                if (i+sh<len-2*width){
                   istr+=width-1+sh;
                   i+=width-1+sh;
                }
-               else {
+               else 
                   break;
-               }
             }
          }
          else if (scoref(istr,matprecrevcomp)>scth){ 
             vint::const_iterator endci=seq.iseqs[0].end()-width+1;
             unsigned int sh=shift(istr,matprecrevcomp,endci,width);
             Motalign ma(i+sh,seq,*this,-1);
-            //            for (ivvint iv=ma.alignseq.begin();iv!=ma.alignseq.end();iv++){
-            //               cout << *iv << endl;
-            //            }
-            //            cout << endl;
-            (*iseq).nmot++;
+            (*iseq).nbtot++;
+            nbtot++;
             if (ma.iscons()){
-               iseq->nbmot++;
+               iseq->nbcons++;
                seqs.push_back(ma);
-               //               ma.print();
                if (i+sh<len-2*width){
                   istr+=width-1+sh;
                   i+=width-1+sh;
                }
-               else {
+               else
                   break;
-               }
             }
          }
          i++;
          if (istr>seq.iseqs[0].end()-width) break;
       }
    }
-   //   cout << "end init\n";
-   nbmot=seqs.size();
+   nbcons=seqs.size();
 }
 
    bool
@@ -1188,15 +1159,15 @@ Motalign::Motalign(unsigned int pos, Sequence & seq, Motif & mot,int sens)
 loadmots ( const char * filename, vmot & mots )
 {
    if (!filename){
-      cout << "Please give a motifs file. Exiting..." << endl;
-      exit(1);
+      cerr << "Please give a motifs file. Exiting..." << endl;
+      exit(EXIT_FAILURE);
    }
 
    ifstream fmotifs;
    fmotifs.open(filename);
    if (fmotifs.fail()){
       cerr << "Cannot open motif file: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    string dum;
@@ -1215,10 +1186,10 @@ loadmots ( const char * filename, vmot & mots )
       mot1.motwidth=mot1.bsinit.size();
       fmotifs >> mot1.pvalue;
       fmotifs >> mot1.scorepoiss;
-      fmotifs >> mot1.nbmot;
-      fmotifs >> mot1.ntrain;
+      fmotifs >> mot1.nbtot;
+      fmotifs >> mot1.nbcons;
       fmotifs >> mot1.lambdatrain;
-      fmotifs >> mot1.lambda;
+      fmotifs >> mot1.lambdaback;
       vd dumd(4,0.0);
       vvd dummat(mot1.motwidth,dumd);
       mot1.matprec=dummat;
@@ -1232,17 +1203,17 @@ loadmots ( const char * filename, vmot & mots )
       mot1.matprecrevcomp=reversecomp(mot1.matprec);
       fmotifs >> mot1.distmot;
       fmotifs >> dum;
-      mot1.motscorethr2=mot1.motwidth*scorethr2/10;
-      mot1.motscorethr=mot1.motwidth*(scorethr2-1)/10;
-      mot1.motscorethrcons=mot1.motwidth*(scorethr2-1)/10;
+      mot1.motscorethr2=scorethr2;
+      mot1.motscorethr=scorethr2*(1-2.0/mot1.motwidth);
+      mot1.motscorethrcons=scorethr2*(1-1.0/mot1.motwidth);
       mots.push_back(mot1);
       i++;
    }
    fmotifs.close();
 
    if (i==0){//No motifs
-      cout << "No motifs" << endl;
-      exit(1);
+      cerr << "No motifs" << endl;
+      exit(EXIT_FAILURE);
    } else if (i<nbmots_for_score-1) {
       nbmots_for_score=i;
       //cout << "Changed nbmots_for_score to value " << i << endl;
@@ -1256,8 +1227,7 @@ GroupInstance::compscore(vmot & lmots,unsigned int nbmots_score)
    score=0;
    unsigned int imot=0;
    for (ivmot ivm=lmots.begin();ivm!=lmots.begin()+nbmots_score;ivm++){
-      //      ivmot ivm=lmots.begin()+nbmots_score-1;
-      score+=nbmots[imot]*log((*ivm).lambdatrain/(*ivm).lambda);
+      score+=nbmots[imot]*log((*ivm).lambdatrain/(*ivm).lambdaback);
       imot++;
    }
 }
@@ -1496,7 +1466,6 @@ scanseqforinstancesnmask(Sequence &seq,vmot & mots)
       im->findinstancesnmask(seqtomask);
    }
    seq.instances=seqtomask.instances;
-   return;
 }
 
    void
@@ -1505,7 +1474,6 @@ scanseqsforinstancesnmask(vseq & align,vmot & mots)
    for (ivseq ivs=align.begin();ivs!=align.end();ivs++){
       scanseqforinstancesnmask(*ivs,mots);
    }
-   return;
 }
 
 

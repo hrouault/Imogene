@@ -239,7 +239,7 @@ lines=[]
 for fmavid in glob.glob('alignments/[0-9]*/mavid.mfa'):
    with open(fmavid) as mavid:
       line=mavid.readline().rstrip().split(" ")
-   line.append(os.getcwd()+"/"+fmavid)
+   line.append(fmavid)
    line[2]=int(line[2])
    lines.append(line[1:])
 

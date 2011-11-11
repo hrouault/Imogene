@@ -132,8 +132,10 @@ seqanalysis(Sequence & currseq,vmot & genmots)
 {
    unsigned int i=0;
    for (vint::iterator istr=currseq.iseqs[0].begin();istr!=currseq.iseqs[0].end()-width+1;istr++){
-      //cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
-      //cout.flush();
+      if (progress){
+         cout << "\r" << i+1 << "/" << currseq.iseqs[0].size()-width+1 ; 
+         cout.flush();
+      }
       vint bs(istr,istr+width);
       if (compN(bs)>0) continue;
       Motif currmot;
@@ -144,15 +146,15 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       currmot.matprec=currmot.matrice;
       currmot.matprecrevcomp=currmot.matricerevcomp;
       vvd pmat=currmot.matprec;
-      unsigned int nbconv(0);
+      unsigned int nbconv=0;
       // *** TODO better convergence check
       for (unsigned int nb=1;nb<=nbiter;nb++){
          double max=0.01;
-         int iter(0);
+         int iter=0;
          while(max>0){
             if (nb>2) currmot.matinit(scorethr2);
             else currmot.matinit(scorethr);
-            if (currmot.nbmot<1) break;
+            if (currmot.nbcons<1) break;
             
             currmot.compprec();
             max=distcv(currmot.matprec,pmat);
@@ -169,7 +171,7 @@ seqanalysis(Sequence & currseq,vmot & genmots)
       }
 
       currmot.matinit(scorethr2);
-      if (currmot.nbmot>2){
+    if (currmot.nbcons>2){
          currmot.matprecrevcomp=reversecomp(currmot.matprec);
          currmot.matfreq=mattofreq(currmot.matprec);
          currmot.motscorethr=scorethr2;
@@ -199,15 +201,15 @@ genmot_args_init()
 
    width=genmot_args.width_arg;
    
-   // *** It would be nice to set the threshold by bp, in bits.
-   scorethr2=width*genmot_args.threshold_arg/10;
-   scorethr=width*(scorethr2-2.0)/10;
-   scorethrcons=width*(scorethr2-1.0)/10;
+   scorethr2=genmot_args.threshold_arg*log(2);
+   scorethr=scorethr2*(1-2.0/width);
+   scorethrcons=scorethr2*(1-1.0/width);
 
    evolutionary_model=genmot_args.evolutionary_model_arg;
 
    neighbext=genmot_args.neighbext_arg;
 
+   if (genmot_args.progress_given) progress=true;
 }
 
 string genmot_datapath;
@@ -223,7 +225,7 @@ cmd_genmot(int argc, char **argv)
 {
 
    if ( genmot_cmdline_parser(argc,argv, & genmot_args)!=0)
-      exit(1);
+      exit(EXIT_FAILURE);
 
    genmot_args_init();
 
@@ -235,6 +237,7 @@ cmd_genmot(int argc, char **argv)
    } else {
       genmot_datapath=imo_genmot_datapath;
    }
+   sequence_datapath=genmot_datapath;
 
    //   printconfig(); *** to be written so that one can rerun exacltly the same instance
 
@@ -269,8 +272,10 @@ cmd_genmot(int argc, char **argv)
    unsigned int counter=1;
    for (ivstring ivs=regtests.begin();ivs!=regtests.end();ivs++){
    
-//      cout << "\r" << counter << "/" << regtests.size();
-//      cout.flush();
+      if (progress){
+         cout << "\r" << counter << "/" << regtests.size();
+         cout.flush();
+      }
       counter++;
       
       Sequence seq;
@@ -316,7 +321,6 @@ cmd_genmot(int argc, char **argv)
    
    gsl_rng_free(gslran);
    genmot_cmdline_parser_free(&genmot_args);
-   cout << "exit normally" << endl;
    return EXIT_SUCCESS;
 }		/* -----  end of function genmot  ----- */
 

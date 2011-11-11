@@ -47,6 +47,9 @@ C++ and make
 @item Python (version >= 2.5 and < 3.0) : 
 @item corebio : 
 @item weblogo : 
+@item python module argparse (for python version <2.7)
+@item for eutherian, it is better to have cython for higher speed of alignment
+conversion
 @end itemize
 
 For compiling mobyle related files:
@@ -87,12 +90,22 @@ To download the genomes, you have to execute the proper python script:
 
 @section Background sequences generation
 
-In order to compare the statistics of the sequences taken into account for motif generation, some background sequences need to be selected. Two options are offered to you:
-@enumerate
-@item use the set of coordinates provided in the data folder
-@item generate a new set of coordinates
+In order to compare the statistics of the sequences taken into account for
+motif generation, some background sequences need to be selected. Two options
+are offered to you: 
+@enumerate 
+@item use the set of coordinates provided in the data folder 
+@item generate a new set of coordinates 
 @end enumerate
 
-@subsection Generate a new set of coordinates
+@subsection Generate a new set of coordinates (optional)
+
+This step generates coordinates for background sequences. Note that background
+coordinates are already provided by the package so that this step is completely
+optional.
 
 You have to execute the command @command{python $PREFIX/lib/python-yourversion/site-packages/extractbackground-@{droso,eutherian@}.py > your-background-coords.dat}. 
+
+@subsection Download the alignements corresponding to the background coordinates
+
+You have to execute the command @command{imogene extract -i coordinate_file -s species --background}. If you want for instance, download the alignment for the drosophila background with the coordinates provided with the package, you would type @command{imogene extract -i $(prefix)/share/imogene/background-droso-coords.dat -s droso --background}.

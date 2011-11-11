@@ -39,3 +39,5 @@ option   "evolutionary-model" e  "Evolutionary model used for motif generation (
 option "species" s "Species selected" 
             string typestr="str" required values="droso","eutherian"
 
+option "progress" - "Show progression while running" optional
+

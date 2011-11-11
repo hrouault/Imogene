@@ -82,18 +82,21 @@ class Motif
       vvd matrice;
       vvd matprec;
       vvd matfreq;
-      int nbmot;
-      vvd matricerevcomp;
-      vvd matprecrevcomp;
-      double lambda;
+
+      int nbtot;
+      int nbcons;
+      int nbconsback;
+      double lambdaback;
       double lambdatrain;
-      int ntrain;
       double pvalue;
       double meanpoiss;
-      int nbmatchback;
-      unsigned int nbmatch;
-      int* distmot;
+
       double scorepoiss;
+
+      int* distmot;
+
+      vvd matricerevcomp;
+      vvd matprecrevcomp;
       vma seqs;
       bool check; // for distinfo
       vvinst instances;
@@ -104,7 +107,6 @@ class Motif
       string name;
       unsigned int index;
 
-      // *** allow motif specific threshold. Not of use in the current context.
       double motscorethr2;
       double motscorethr;
       double motscorethrcons;
@@ -118,8 +120,6 @@ class Motif
       void compprec();
       void compprec_MCMC();
       void pvaluecomp();
-      void calclambda();
-      void calclambdaback();
       void updatebacksites(Sequence & seq);
       void display(ostream & streamfile);
       int nbmatchcons(Sequence & seq);
@@ -133,8 +133,6 @@ class Motif
       int statemot (Sequence & seq,int pos,int num, double & scoremot);
       int nbmatchnmaskforsvg (Sequence & seq,unsigned int moti);
       void setscorethr2meaninfo();
-      vvvd correlations(); //returns width matrices of correlation
-      vint drawsite(double scorethr);// draws a site with matfreq probs
 };
 
 typedef vector<Motif> vmot;

@@ -91,8 +91,8 @@ instant_rates_halpern (vd & w, double dist)
    double w2=w[2];
    double w3=w[3];
    if (w0<0 || w1<0 || w2<0 || w3<0){
-      cout << "Problem in instant_rates_halpern" << endl;
-      exit(1);
+      cerr << "Problem in instant_rates_halpern" << endl;
+      exit(EXIT_FAILURE);
    }
 
    double fat=proba_fixation_rel(w3/w0);
