@@ -21,7 +21,7 @@
 
 import sys, os
 import shutil
-import string, glob
+import string, glob, re
 import datetime
 import errno
 import bisect
@@ -32,7 +32,7 @@ import gzip
 import argparse
 
 # Function used to retrive file from urls
-def geturl(url,sha1digest):
+def geturl(url,md5sum):
   file_name = url.split('/')[-1]
   u = urllib2.urlopen(url)
   f = open(file_name, 'wb')
@@ -43,7 +43,7 @@ def geturl(url,sha1digest):
   file_size_dl = 0
   block_sz = 8192
 
-  h = hashlib.sha1()
+  h = hashlib.md5()
 
   while True:
     buffer = u.read(block_sz)
@@ -59,15 +59,20 @@ def geturl(url,sha1digest):
     print status,
 
   f.close()
-  if h.hexdigest()!=sha1hash:
-    print "The sha1 hash of file ",file_name," is not correct! Aborting."
+  if h.hexdigest()!=md5sum:
+    print "The md5 sum of file ",file_name," is not correct! Aborting."
     sys.exit(1)
 
-def checkexist(filename, sha1digest):
+def checkexist(filename, md5sum):
   try:
     open(filename)
-    h=haslib.sha1()
-    if hashmatch:
+    h=hashlib.md5()
+    with open(filename) as file:
+      chunk=" "
+      while chunk:
+        chunk=file.read(32768)
+        h.update(chunk)
+    if h.hexdigest()==md5sum:
       print "File %s is already present." % \
           (filename)
       return True
@@ -91,12 +96,6 @@ def gunzip(filename):
       fout.write(gzipf.read())
   os.remove(f)
 
-# Hashes, used to make sure the files are correctly downloaded
-sha1drosoalign = '1de5529024a59d2d1cc63a0484ac7dda7f334aa9'
-sha1_eutherian_aligns = [['file1', 'sha1'],
-    ['',''],
-    ['','']]
-
 # Command line parser
 parser = argparse.ArgumentParser(description='Download genomic alignments.')
 
@@ -118,13 +117,22 @@ args = parser.parse_args()
 sys.path.append("@pythondir@")
 import mapping
 
+try:
+  datapath=os.environ['IMOGENE_DATA']
+except KeyError:
+  datapath='@pkgdatadir@'
+
 if args.dest:
   os.chdir(args.directory)
 else:
-  try:
-     os.chdir(os.environ['IMOGENE_DATA'])
-  except KeyError:
-     os.chdir('@pkgdatadir@')
+  os.chdir(datapath)
+
+# import hashes
+hashes = {}
+with open(datapath+"/MD5SUM") as hashf:
+  for i in hashf.readlines():
+    elt=i.rstrip().split()
+    hashes[elt[1]] = elt[0]
 
 mkdir(args.species)
 os.chdir(args.species)
@@ -132,14 +140,16 @@ mkdir('alignments')
 os.chdir("alignments")
 
 if args.species=='eutherian':
-  for f, h in sha1_eutherian_aligns:
-    if not checkexist(f, h):
-      print "[",datetime.datetime.now(),"]  Downloading Enrendo Pecan Ortheus alignment \
+  print "[",datetime.datetime.now(),"]  Downloading Enrendo Pecan Ortheus alignment \
 files from ENSEMBL..."
-      geturl("ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/"+f,h)
+  for f, h in hashes.iteritems():
+    if re.match('Compara.12_eutherian_mammals_EPO.', f):
+      if not checkexist(f, h):
+        geturl("ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/"+f,h)
 else:
   # Downloading alignment files
-  if not checkexist('fly_CAF1.1.tar.gz', sha1drosoalign):
+  alignfn='fly_CAF1.1.tar.gz'
+  if not checkexist(alignfn, hashes[alignfn]):
     geturl("http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/"+f,h)
 
 # Downloading annotation files
@@ -149,15 +159,20 @@ mkdir("annot")
 os.chdir("annot")
 
 if args.species=='eutherian':
-  if not checkexist('refGene.txt.gz', sha1_eutherian_refgene):
-    print "[",datetime.datetime.now(),"]  Getting UCSC refGene annotation file for TSS coordinates..."
+  refgenefn='refGene.txt.gz'
+  if not checkexist(regenefn, hashes[refgenefn]):
+    print "[",datetime.datetime.now(),"]  " + \
+        "Getting UCSC refGene annotation file for TSS coordinates..."
     print 
-    geturl("http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz",sha1_eutherian_refgene)
+    geturl("http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/" + \
+        refgenefn,hashes[refgenefn])
 
-  if not checkexist('Mus_musculus.NCBIM37.64.gtf.gz', sha1_eutherian_cdscoord):
+  musmusc_annotfn='Mus_musculus.NCBIM37.64.gtf.gz'
+  if not checkexist(musmusc_annotfn, hashes[musmusc_annotfn]):
     print "[",datetime.datetime.now(),"]  Getting ENSEMBL gtf annotation file for CDS coordinates..."
     print 
-    geturl("http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz",sha1_eutherian_cdscoord)
+    geturl("http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/", \
+        sha1_eutherian_cdscoord)
 
 if args.download_only:
   print "Script finished. The files were only downloaded. Please process them further"
