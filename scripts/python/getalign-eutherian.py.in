@@ -19,14 +19,64 @@
 # You should have received a copy of the GNU General Public License
 # along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import os
+import sys, os
 import shutil
-import string
-import glob
+import string, glob
 import datetime
-import bisect
 import errno
+import bisect
+
+import urllib2, hashlib
+import gzip
+
+import argparse
+
+# Function used to retrive file from urls
+def geturl(url,sha1digest):
+  file_name = url.split('/')[-1]
+  u = urllib2.urlopen(url)
+  f = open(file_name, 'wb')
+  meta = u.info()
+  file_size = int(meta.getheaders("Content-Length")[0])
+  print "Downloading: %s Bytes: %s" % (file_name, file_size)
+
+  file_size_dl = 0
+  block_sz = 8192
+
+  h = hashlib.sha1()
+
+  while True:
+    buffer = u.read(block_sz)
+    if not buffer:
+      break
+
+    h.update(buffer)
+
+    file_size_dl += len(buffer)
+    f.write(buffer)
+    status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
+    status = status + chr(8)*(len(status)+1)
+    print status,
+
+  f.close()
+  if h.hexdigest()!=sha1hash:
+    print "The sha1 hash of file ",file_name," is not correct! Aborting."
+    sys.exit(1)
+
+def checkexist(filename, sha1digest):
+  try:
+    open(filename)
+    h=haslib.sha1()
+    if hashmatch:
+      print "File %s is already present." % \
+          (filename)
+      return True
+    else:
+      print "File %s is present but seems to be corrupted. Re-downloading it." % \
+          (filename)
+      return False
+  except IOError as e:
+    return False
 
 def mkdir(path):
    try:
@@ -35,103 +85,154 @@ def mkdir(path):
       if e.errno != errno.EEXIST:
          raise
 
+def gunzip(filename):
+  with gzip.open(filename, 'rb') as gzipf:
+    with open(f.rstrip('.gz'), 'w') as fout:
+      fout.write(gzipf.read())
+  os.remove(f)
+
+# Hashes, used to make sure the files are correctly downloaded
+sha1drosoalign = '1de5529024a59d2d1cc63a0484ac7dda7f334aa9'
+sha1_eutherian_aligns = [['file1', 'sha1'],
+    ['',''],
+    ['','']]
+
+# Command line parser
+parser = argparse.ArgumentParser(description='Download genomic alignments.')
+
+parser.add_argument('--download-only', action='store_true', help='The alignment \
+will only be downloaded and won\'t be adapted to the needs of imogene!\n\
+You will have to rerun this script to modify the alignments')
+
+parser.add_argument('--species', choices=['droso', 'eutherian'], required=True,
+    help='Group of species for the alignments')
+
+parser.add_argument('--dest', metavar='directory', help='Directory where to \
+download the files. If given, the files will be downloaded in the \
+$(pkgdatadir) folder or in the IMOGENE_DATA folder if this environment \
+variable is defined.')
+
+args = parser.parse_args()
+
+
 sys.path.append("@pythondir@")
 import mapping
 
-try:
-   os.chdir(os.environ['IMOGENE_DATA'])
-except KeyError:
-   os.chdir('@pkgdatadir@')
+if args.dest:
+  os.chdir(args.directory)
+else:
+  try:
+     os.chdir(os.environ['IMOGENE_DATA'])
+  except KeyError:
+     os.chdir('@pkgdatadir@')
 
-mkdir('eutherian')
-os.chdir('eutherian')
-print "[",datetime.datetime.now(),"]  Downloading Enrendo Pecan Ortheus alignment files from ENSEMBL..."
-print 
-
+mkdir(args.species)
+os.chdir(args.species)
 mkdir('alignments')
 os.chdir("alignments")
-os.system('wget -c -nd ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/Compara*')
 
-print "[",datetime.datetime.now(),"]  Extracting alignment files..."
-print
+if args.species=='eutherian':
+  for f, h in sha1_eutherian_aligns:
+    if not checkexist(f, h):
+      print "[",datetime.datetime.now(),"]  Downloading Enrendo Pecan Ortheus alignment \
+files from ENSEMBL..."
+      geturl("ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/"+f,h)
+else:
+  # Downloading alignment files
+  if not checkexist(fly_CAF1.1.tar.gz, sha1drosoalign):
+    geturl("http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/"+f,h)
 
-os.system('gunzip -fv *.gz')
-
-print "[",datetime.datetime.now(),"]  Converting EMF files to fasta..."
-print
-
-try:
-   import Cython
-   print "[",datetime.datetime.now(),"]  Using Cython for emf2fasta conversion..."
-   print
-   import pyximport
-   pyximport.install()
-   import emf2fasta
-except:
-   print "[",datetime.datetime.now(),"]  Using Python for emf2fasta conversion..."
-   print
-   execfile("emf2fasta.pyx")
-
-for file in glob.glob('*.emf'):
-   os.remove(file)
-
+# Downloading annotation files
 os.chdir('..')
 
 mkdir("annot")
 os.chdir("annot")
 
+if args.species=='eutherian':
+  if not checkexist('refGene.txt.gz', sha1_eutherian_refgene):
+    print "[",datetime.datetime.now(),"]  Getting UCSC refGene annotation file for TSS coordinates..."
+    print 
+    geturl("http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz",sha1_eutherian_refgene)
 
-print "[",datetime.datetime.now(),"]  Getting UCSC refGene annotation file for TSS coordinates..."
-print 
+  if not checkexist('Mus_musculus.NCBIM37.64.gtf.gz', sha1_eutherian_cdscoord):
+    print "[",datetime.datetime.now(),"]  Getting ENSEMBL gtf annotation file for CDS coordinates..."
+    print 
+    geturl("http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz",sha1_eutherian_cdscoord)
 
-os.system('wget -c "http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz"')
+if args.download_only:
+  print "Script finished. The files were only downloaded. Please process them further"
+  sys.exit(0)
 
-print "[",datetime.datetime.now(),"]  Extracting..."
+
+# Alignment treatment
+os.chdir("../alignments")
+print "[",datetime.datetime.now(),"]  Extracting alignment files..."
 print
 
-os.system('gunzip -vf refGene.txt.gz')
+if args.species=='eutherian':
+  for f, h in sha1_eutherian_aligns:
+    print "Uncompressing file %s..." % f 
+    gunzip(f)
 
-print "[",datetime.datetime.now(),"]  TSS coordinates extraction."
-print 
+  print "[",datetime.datetime.now(),"]  Converting EMF files to fasta..."
+  print
 
-## Here we add 1 to the start positions (UCSC files are 0-based)
-os.system('awk \'{\
-   if ($4 == "+"){\
-      print $2,$5+1,$4,substr($3,4),$13\
-   } else {\
-      print $2,$6,$4,substr($3,4),$13\
-   }\
-}\' refGene.txt | sort -k 5,5 -k 2,2g |\
-                  uniq -f 1 | awk \'{print $2,$3,$4,$5,$1}\' |\
-                  sort -k 3,3 -k 1,1g > TSS-coord.dat')
+  try:
+     import Cython
+     print "[",datetime.datetime.now(),"]  Using Cython for emf2fasta conversion..."
+     print
+     import pyximport
+     pyximport.install()
+     import emf2fasta
+  except:
+     print "[",datetime.datetime.now(),"]  Using Python for emf2fasta conversion..."
+     print
+     execfile("emf2fasta.pyx")
 
-print "[",datetime.datetime.now(),"]  Genes list creation."
-print 
+  for file in glob.glob('*.emf'):
+     os.remove(file)
 
-os.system('awk \'{print $4}\' TSS-coord.dat | sort -u > genelist.dat')
+os.chdir("../annot")
 
-
-print "[",datetime.datetime.now(),"]  Getting ENSEMBL gtf annotation file for CDS coordinates..."
-print 
-
-os.system('wget -c "ftp://ftp.ensembl.org//pub/release-64/gtf//mus_musculus/Mus_musculus.NCBIM37.64.gtf.gz"')
-
-print "[",datetime.datetime.now(),"]  Extracting..."
+print "[",datetime.datetime.now(),"]  Extracting annotation archive..."
 print
 
-os.system('gunzip -vf Mus_musculus.NCBIM37.64.gtf.gz')
+if args.species=='eutherian':
+  gunzip('refGene.txt.gz')
+  print "[",datetime.datetime.now(),"]  TSS coordinates extraction."
+  print 
 
-print "[",datetime.datetime.now(),"]  CDS coordinates extraction."
-print 
+  ## Here we add 1 to the start positions (UCSC files are 0-based)
+  os.system('awk \'{\
+     if ($4 == "+"){\
+        print $2,$5+1,$4,substr($3,4),$13\
+     } else {\
+        print $2,$6,$4,substr($3,4),$13\
+     }\
+  }\' refGene.txt | sort -k 5,5 -k 2,2g |\
+                    uniq -f 1 | awk \'{print $2,$3,$4,$5,$1}\' |\
+                    sort -k 3,3 -k 1,1g > TSS-coord.dat')
 
-os.system('awk \'$3=="CDS"{print $1,$4,$5}\' Mus_musculus.NCBIM37.64.gtf |\
-      sort -k 1,1 -k 2,2g | uniq  > CDS-coord.dat')
+  print "[",datetime.datetime.now(),"]  Genes list creation."
+  print 
+
+  os.system('awk \'{print $4}\' TSS-coord.dat | sort -u > genelist.dat')
+
+  print "[",datetime.datetime.now(),"]  Extracting CDS coordinates archive..."
+  print
+  gunzip('Mus_musculus.NCBIM37.64.gtf.gz')
+
+  print "[",datetime.datetime.now(),"]  CDS coordinates extraction."
+  print 
+
+  os.system('awk \'$3=="CDS"{print $1,$4,$5}\' Mus_musculus.NCBIM37.64.gtf |\
+        sort -k 1,1 -k 2,2g | uniq  > CDS-coord.dat')
 
 def processcoord(coords):
-   for i in coords:
-      i[1]=int(i[1])
-      i[2]=int(i[2])
-   coords.sort()
+  for i in coords:
+    i[1]=int(i[1])
+    i[2]=int(i[2])
+  coords.sort()
 
 ## Open file containing coding sequence coordinates
 fcds=open("CDS-coord.dat")
@@ -223,6 +324,5 @@ with open("align.dat","w") as fout:
       fout.write("".join(i+" " for i in li))
       fout.write("\n")
 
+print "The script ran successfully."
 
-print "[",datetime.datetime.now(),"]  Exit normally."
-print 
