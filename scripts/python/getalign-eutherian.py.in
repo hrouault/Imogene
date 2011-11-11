@@ -38,7 +38,7 @@ def geturl(url,md5sum):
   f = open(file_name, 'wb')
   meta = u.info()
   file_size = int(meta.getheaders("Content-Length")[0])
-  print "Downloading: %s Bytes: %s" % (file_name, file_size)
+  print "Downloading: {} Bytes: {}".format(file_name, file_size)
 
   file_size_dl = 0
   block_sz = 8192
@@ -54,8 +54,7 @@ def geturl(url,md5sum):
 
     file_size_dl += len(buffer)
     f.write(buffer)
-    status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-    status = status + chr(8)*(len(status)+1)
+    status = "{:>15}  [{:.2%}]   \r".format(file_size_dl, float(file_size_dl) / file_size)
     print status,
 
   f.close()
@@ -142,10 +141,17 @@ os.chdir("alignments")
 if args.species=='eutherian':
   print "[",datetime.datetime.now(),"]  Downloading Enrendo Pecan Ortheus alignment \
 files from ENSEMBL..."
+  nbfile=0
+  for f in hashes:
+    if re.match('Compara.12_eutherian_mammals_EPO.', f):
+      nbfile+=1
+  ifile=1
   for f, h in hashes.iteritems():
     if re.match('Compara.12_eutherian_mammals_EPO.', f):
+      print "file {:3} / {}  ".format(ifile, nbfile),
       if not checkexist(f, h):
         geturl("ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/"+f,h)
+    ifile+=1
 else:
   # Downloading alignment files
   alignfn='fly_CAF1.1.tar.gz'
