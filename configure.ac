@@ -65,7 +65,6 @@ AM_CONDITIONAL([MOBYLE_OPT], [test "x$enable_mobyle" = xyes])
 
 AC_CONFIG_FILES([Makefile
                  scripts/Makefile
-                 scripts/python/Makefile
                  doc/Makefile
                  data/Makefile
                  src/Makefile
