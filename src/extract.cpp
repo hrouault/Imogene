@@ -48,7 +48,7 @@ seq2fasta(Sequence &seq,string folder)
    outf.open(file.str().c_str());
    if (outf.fail()){
       cerr << "Cannot open file for fasta recording: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
    Sequence & s=seq;
    for (unsigned int i=0;i<nbspecies;i++){
@@ -70,7 +70,7 @@ extractfromcoord(const char * coordfile)
    ifstream coordinates(coordfile);
    if (coordinates.fail()){
       cerr << "Cannot open coordinate file for reading: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    vcoord coords;
@@ -89,7 +89,7 @@ extractfromcoord(const char * coordfile)
    }
    if (align.fail()){
       cerr << "Alignment file opening failed: " << strerror(errno) << endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
    }
 
    alignscoord=loadcoordconserv(align);
@@ -97,17 +97,22 @@ extractfromcoord(const char * coordfile)
    align.close();
 
    stringstream basename;
+   int retcode=0;
    if (extract_args.background_given){
       if (species=="droso"){
-         mkdir( (extract_datapath+"/droso/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         retcode=mkdir( (extract_datapath+"/droso/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
          basename << extract_datapath+"/droso/background/";
       } else if (species=="eutherian"){
-         mkdir( (extract_datapath+"/eutherian/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
+         retcode=mkdir( (extract_datapath+"/eutherian/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
          basename << extract_datapath+"/eutherian/background/";
       }
    } else {
-      mkdir("align",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
+      retcode=mkdir("align",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
       basename << "align/";
+   }
+   if (retcode){
+     cerr << "Cannot create directory: " << strerror(errno) << endl;
+     exit(EXIT_FAILURE);
    }
 
    // SEQUENCE EXTRACTION
@@ -165,10 +170,10 @@ cmd_extract(int argc, char **argv)
    } else {
       extract_datapath=imo_extract_datapath;
    }
+   sequence_datapath=extract_datapath;
 
    extractfromcoord(extract_args.input_arg);
 
-   cout << "exit normally" << endl;
    return EXIT_SUCCESS;
 
 }		/* -----  end of function extract  ----- */

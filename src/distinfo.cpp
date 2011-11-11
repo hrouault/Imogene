@@ -518,8 +518,10 @@ compmotsdist(vmot &mots)
    
    for ( ivmot ivm=mots.begin()+1;ivm!=mots.end();ivm++ ) {
       
-      cout << "\r" << counter << "/" << mots.size();
-      cout.flush();
+      if (progress){
+         cout << "\r" << counter << "/" << mots.size();
+         cout.flush();
+      }
       counter++;
       
       for ( ivmot ivm2=mots.begin();ivm2!=ivm;ivm2++ ) {

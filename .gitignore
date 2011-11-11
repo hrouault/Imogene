@@ -1,5 +1,4 @@
 *~
-scripts/python/cython
 Makefile.in
 config.h.in
 config.h.in~
@@ -22,10 +21,11 @@ texinfo.tex
 stamp-vti
 version.texi
 tags
-scripts/python/cython/align
-scripts/python/cython/test
 *_cmdline.*
 cmdline.c
 cmdline.h
 .DS_Store
 test
+*.swp
+.version
+.tarball-version

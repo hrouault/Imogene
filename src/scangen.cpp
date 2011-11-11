@@ -142,8 +142,6 @@ scanmots()
 
    string pchrom(""); // for display purpose
    unsigned int totlen(0),totlentb(0);
-   //ivcoord ivcstart=alignscoord.begin()+100;
-   //ivcoord ivcstop=alignscoord.begin()+150;
    ivcoord ivcstart=alignscoord.begin();
    ivcoord ivcstop=alignscoord.end();
    for (ivcoord ivc=ivcstart;ivc!=ivcstop;ivc++){
@@ -155,8 +153,10 @@ scanmots()
          cout << "chromosome " << chrom << "\n";
          pchrom=chrom;
       }
-      cout << "\r" << (double)(ivc-ivcstart+1)/(ivcstop-ivcstart)*100 << "%\t";
-      cout.flush();
+      if (scangen_args.progress_given){
+         cout << "\r" << (double)(ivc-ivcstart+1)/(ivcstop-ivcstart)*100 << "%\t";
+         cout.flush();
+      }
 
       scanseqforconsinstances(seq,motsdef);
 
@@ -411,12 +411,12 @@ loadmotsforscangen()
 
    cout << "Nb mots for score: " << nbmots_for_score  << endl;
 
-   // *** It would be nice to set the threshold by bp, in bits.
    width=motsdef[0].bsinit.size();
-   scorethr2=width*scangen_args.threshold_arg/10;
-   scorethr=width*(scorethr2-1.0)/10;
-   scorethrcons=width*(scorethr2-1.0)/10;
-   cout << "Thresholds: thr2=" << scorethr2 << " thr=" << scorethr << " thrcons=" << scorethrcons << endl;
+   scorethr2=scangen_args.threshold_arg*log(2);
+   scorethr=scorethr2*(1-2.0/width);
+   scorethrcons=scorethr2*(1-1.0/width);
+      
+   cout << "Thresholds: thr2=" << scorethr2/log(2) << " thr=" << scorethr/log(2) << " thrcons=" << scorethrcons/log(2) << endl;
 
    for (ivmot ivm=motsdef.begin();ivm!=motsdef.end();ivm++){
       ivm->motscorethr2=scorethr2;
@@ -455,6 +455,7 @@ scangen_args_init()
 
    neighbext=scangen_args.neighbext_arg;
 
+   if (scangen_args.progress_given) progress=true;
 }
 
 string scangen_datapath;
@@ -474,6 +475,7 @@ cmd_scangen(int argc, char **argv)
    } else {
       scangen_datapath=imo_scangen_datapath;
    }
+   sequence_datapath=scangen_datapath;
 
    cout << "annotextent=" << annotextent << endl;
 

@@ -40,10 +40,10 @@ unsigned int width=10;
 //const unsigned int distwidth=20;
 unsigned int neighbext=20;
 
-double scorethr1=9;
-double scorethr2=9;
-double scorethr=8;
-double scorethrcons=8;
+double scorethr1=13;
+double scorethr2=13;
+double scorethr=11.5;
+double scorethrcons=11.5;
 
 double conca,conct,concc,concg;
 int evolutionary_model;
@@ -63,3 +63,5 @@ double beta; // beta exponent for C,G
 unsigned int nbchrom;
 
 unsigned int extraction_cutoff=20; 
+
+bool progress=false;
