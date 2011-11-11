@@ -59,7 +59,7 @@ def geturl(url,md5sum):
 
   f.close()
   if h.hexdigest()!=md5sum:
-    print "The md5 sum of file ",file_name," is not correct! Aborting."
+    print "The md5 sum of file ",file_name," is not correct!"
     sys.exit(1)
 
 def checkexist(filename, md5sum):
@@ -72,12 +72,10 @@ def checkexist(filename, md5sum):
         chunk=file.read(32768)
         h.update(chunk)
     if h.hexdigest()==md5sum:
-      print "File %s is already present." % \
-          (filename)
+      print "File {0} is already present.".format(filename)
       return True
     else:
-      print "File %s is present but seems to be corrupted. Re-downloading it." % \
-          (filename)
+      print "File {0} is present but seems to be corrupted. Re-downloading it.".format(filename)
       return False
   except IOError as e:
     return False
@@ -90,10 +88,29 @@ def mkdir(path):
          raise
 
 def gunzip(filename):
-  with gzip.open(filename, 'rb') as gzipf:
-    with open(f.rstrip('.gz'), 'w') as fout:
-      fout.write(gzipf.read())
-  os.remove(f)
+  gzipf = gzip.open(filename, 'rb')
+  with open(filename.rstrip('.gz'), 'wb') as fout:
+    fout.write(gzipf.read())
+  os.remove(filename)
+
+def query_yes_no(question):
+  valid = {"yes":True, "y":True, "ye":True, "no":False, "n":False}
+  prompt = " [y/N] "
+  count=0
+  while True:
+    sys.stdout.write(question + prompt)
+    choice = raw_input().lower()
+    if choice=='':
+      return False
+    elif choice in valid:
+      return valid[choice]
+    else:
+      sys.stdout.write("Please respond with 'yes' or 'no' "\
+          "(or 'y' or 'n').\n")
+    count+=1
+    if count>5:
+      print "I do no understand your answer. Aborting."
+      sys.exit(1)
 
 # Command line parser
 parser = argparse.ArgumentParser(description='Download genomic alignments.')
@@ -151,7 +168,7 @@ files from ENSEMBL..."
       print "file {0:3} / {1}  ".format(ifile, nbfile),
       if not checkexist(f, h):
         geturl("ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/"+f,h)
-    ifile+=1
+      ifile+=1
 else:
   # Downloading alignment files
   alignfn='fly_CAF1.1.tar.gz'
@@ -177,8 +194,8 @@ if args.species=='eutherian':
   if not checkexist(musmusc_annotfn, hashes[musmusc_annotfn]):
     print "[",datetime.datetime.now(),"]  Getting ENSEMBL gtf annotation file for CDS coordinates..."
     print 
-    geturl("ftp://ftp.ensembl.org/pub/release-64/gtf/mus_musculus/"+musmusc_annotfile, \
-        hashes[musmusc_annotfile])
+    geturl("ftp://ftp.ensembl.org/pub/release-64/gtf/mus_musculus/" + musmusc_annotfn, \
+        hashes[musmusc_annotfn])
 
 if args.download_only:
   print "Script finished. The files were only downloaded. Please process them further"
@@ -191,9 +208,15 @@ print "[",datetime.datetime.now(),"]  Extracting alignment files..."
 print
 
 if args.species=='eutherian':
-  for f, h in sha1_eutherian_aligns:
-    print "Uncompressing file %s..." % f 
-    gunzip(f)
+  nbfile=0
+  for f in hashes:
+    if re.match('Compara.12_eutherian_mammals_EPO.', f):
+      nbfile+=1
+  ifile=1
+  for f in hashes:
+    if re.match('Compara.12_eutherian_mammals_EPO.', f):
+      print "Uncompressing file {0}...".format(f)
+      gunzip(f)
 
   print "[",datetime.datetime.now(),"]  Converting EMF files to fasta..."
   print
@@ -206,12 +229,18 @@ if args.species=='eutherian':
      pyximport.install()
      import emf2fasta
   except:
-     print "[",datetime.datetime.now(),"]  Using Python for emf2fasta conversion..."
-     print
-     execfile("emf2fasta.pyx")
+    if not query_yes_no("You do not have Cython installed. Do you want to continue\n" + \
+        "anyway (much slower procedure)?"):
+      print "Aborting."
+      sys.exit(1)
+
+
+  print "[",datetime.datetime.now(),"]  Using Python for emf2fasta conversion..."
+  print
+  execfile("emf2fasta.pyx")
 
   for file in glob.glob('*.emf'):
-     os.remove(file)
+    os.remove(file)
 
 os.chdir("../annot")
 
