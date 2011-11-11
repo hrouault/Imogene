@@ -47,6 +47,9 @@ C++ and make
 @item Python (version >= 2.5 and < 3.0) : 
 @item corebio : 
 @item weblogo : 
+@item python module argparse (for python version <2.7)
+@item for eutherian, it is better to have cython for higher speed of alignment
+conversion
 @end itemize
 
 For compiling mobyle related files:

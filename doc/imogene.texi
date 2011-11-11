@@ -28,6 +28,7 @@
 @finalout
 @c %**end of header
 
+
 @copying
 This manual is for Imogene
 (version @value{VERSION}, @value{UPDATED}).
