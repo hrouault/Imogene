@@ -38,7 +38,7 @@ def geturl(url,md5sum):
   f = open(file_name, 'wb')
   meta = u.info()
   file_size = int(meta.getheaders("Content-Length")[0])
-  print "Downloading: {} Bytes: {}".format(file_name, file_size)
+  print "Downloading: {0} Bytes: {1}".format(file_name, file_size)
 
   file_size_dl = 0
   block_sz = 8192
@@ -54,7 +54,7 @@ def geturl(url,md5sum):
 
     file_size_dl += len(buffer)
     f.write(buffer)
-    status = "{:>15}  [{:.2%}]   \r".format(file_size_dl, float(file_size_dl) / file_size)
+    status = "{0:>15}  [{1:.2%}]   \r".format(file_size_dl, float(file_size_dl) / file_size)
     print status,
 
   f.close()
@@ -148,7 +148,7 @@ files from ENSEMBL..."
   ifile=1
   for f, h in hashes.iteritems():
     if re.match('Compara.12_eutherian_mammals_EPO.', f):
-      print "file {:3} / {}  ".format(ifile, nbfile),
+      print "file {0:3} / {1}  ".format(ifile, nbfile),
       if not checkexist(f, h):
         geturl("ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/"+f,h)
     ifile+=1
@@ -166,7 +166,7 @@ os.chdir("annot")
 
 if args.species=='eutherian':
   refgenefn='refGene.txt.gz'
-  if not checkexist(regenefn, hashes[refgenefn]):
+  if not checkexist(refgenefn, hashes[refgenefn]):
     print "[",datetime.datetime.now(),"]  " + \
         "Getting UCSC refGene annotation file for TSS coordinates..."
     print 
