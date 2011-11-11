@@ -139,7 +139,7 @@ files from ENSEMBL..."
       geturl("ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/"+f,h)
 else:
   # Downloading alignment files
-  if not checkexist(fly_CAF1.1.tar.gz, sha1drosoalign):
+  if not checkexist('fly_CAF1.1.tar.gz', sha1drosoalign):
     geturl("http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/"+f,h)
 
 # Downloading annotation files
