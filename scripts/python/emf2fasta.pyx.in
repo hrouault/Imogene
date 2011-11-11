@@ -48,29 +48,10 @@ spe2prop = { "mus_musculus" : [ "MusMus", 0 ],
    "callithrix_jacchus":  [ "CalJac", 11 ]}
 
 def chr2str(chr):
-   [
-   if chr == "1": return "1"
-   elif chr == "2":  return "2"
-   elif chr == "3":  return "3"
-   elif chr == "4":  return "4"
-   elif chr == "5":  return "5"
-   elif chr == "6":  return "6"
-   elif chr == "7":  return "7"
-   elif chr == "8":  return "8"
-   elif chr == "9":  return "9"
-   elif chr == "10": return "10"
-   elif chr == "11": return "11"
-   elif chr == "12": return "12"
-   elif chr == "13": return "13"
-   elif chr == "14": return "14"
-   elif chr == "15": return "15"
-   elif chr == "16": return "16"
-   elif chr == "17": return "17"
-   elif chr == "18": return "18"
-   elif chr == "19": return "19"
-   elif chr == "X":  return "X"
-   elif chr == "Y":  return "Y"
-   else: return "others"
+  if chr in [str(i) for i in range(1,20)] or chr in ['X', 'Y']:
+    return chr
+  else:
+    return 'others'
 
 def emf2fasta():
    for file in glob.glob('*.emf'):
