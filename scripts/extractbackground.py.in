@@ -42,7 +42,7 @@ mkdir(args.species)
 os.chdir(args.species)
 
 if args.species == 'eutherian':
-    for line in open("align.dat").readlines():
+    for line in open("align.dat"):
         line = line.rstrip().split()
         coord = [line[0], int(line[1]), int(line[2])]
         aligncoords.append(coord)
@@ -65,8 +65,8 @@ for i in range(len(weights)):
     weights[i] /= sumweights
 
 ## Open file containing coding sequence coordinates
-fcds = open('annot/CDS-coord.dat')
-cds = [i.rstrip().split() for i in fcds.readlines()]
+with fcds as open('annot/CDS-coord.dat'):
+    cds = [i.rstrip().split() for i in fcds]
 for i in cds:
     i[1] = int(i[1])
     i[2] = int(i[2])

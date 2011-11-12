@@ -165,7 +165,7 @@ else:
 # import hashes
 hashes = {}
 with open(datapath + "/MD5SUM") as hashf:
-    for i in hashf.readlines():
+    for i in hashf:
         elt = i.rstrip().split()
         hashes[elt[1]] = elt[0]
 
@@ -268,26 +268,38 @@ if args.species == 'eutherian':
     message('TSS coordinates extraction.')
 
     ## Here we add 1 to the start positions (UCSC files are 0-based)
-    os.system('awk \'{\
-       if ($4 == "+"){\
-          print $2, $5 + 1, $4, substr($3, 4), $13\
-       } else {\
-          print $2,$6,$4,substr($3,4),$13\
-       }\
-    }\' refGene.txt | sort -k 5,5 -k 2,2g |\
-                      uniq -f 1 | awk \'{print $2,$3,$4,$5,$1}\' |\
-                      sort -k 3,3 -k 1,1g > TSS-coord.dat')
+    ll = []
+    with fref as open('refGene.txt'):
+        for line in fref:
+            l = line.rstrip().split()
+            ll.append([l[2][3:], int(l[4] if l[3] == '+' else l[5]) + 1, l[3],
+                       l[12]])
+    defl = sorted(set(ll))
+    with fout as open('TSS-coord.dat', 'w'):
+        for l in defl:
+            fout.write('{0} {1} {2} {3}\n'.format(l[1], l[2], l[0], l[4]))
 
     message('Genes list creation.')
-    os.system('awk \'{print $4}\' TSS-coord.dat | sort -u > genelist.dat')
+    with fcoord as open('TSS-coord.dat'):
+        coords = [i.rstrip().split()[3] for i in fcoord]
+    with glist as open('genelist.dat', 'w'):
+        for i in sorted(set(coords)):
+            fout.write('{1}\n'.format(i))
 
     message('Extracting CDS coordinates archive...')
     gunzip('Mus_musculus.NCBIM37.64.gtf.gz')
 
     message('CDS coordinates extraction.')
-    os.system('awk \'$3=="CDS"{print $1,$4,$5}\' Mus_musculus.NCBIM37.64.gtf |\
-          sort -k 1,1 -k 2,2g | uniq  > CDS-coord.dat')
-
+    with fgtf as open('Mus_musculus.NCBIM37.64.gtf'):
+        lines = []
+        for line in fgtf:
+            linesp = line.rstrip().split()
+            if linesp[2] == 'CDS':
+                lines.append([linesp[0], int(linesp[3]), int(linesp[4]))
+    lines = sorted(set(lines))
+    with fgtfout as open('CDS-coord.dat', 'w'):
+        for line in lines:
+            fgtfout.write('{0} {1} {2}\n'.format(line[0], line[1], line[3])
 
 def processcoord(coords):
     for i in coords:
@@ -297,7 +309,7 @@ def processcoord(coords):
 
 ## Open file containing coding sequence coordinates
 fcds = open('CDS-coord.dat')
-cds = [i.rstrip().split(" ") for i in fcds.readlines()]
+cds = [i.rstrip().split(" ") for i in fcds]
 processcoord(cds)
 fcds.close()
 
@@ -361,7 +373,7 @@ for folder in glob.glob('chr*/'):
                         maskseq(record[1] - coordstart[1],
                                 record[2] - coordstart[1], seqline, 0)
                 fmavid2.write(''.join(seqline))
-                for i in fmavid.readlines():
+                for i in fmavid:
                     fmavid2.write(i)
         shutil.move("foo.fa", file)
     os.chdir("..")
