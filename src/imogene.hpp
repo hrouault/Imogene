@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *

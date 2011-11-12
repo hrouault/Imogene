@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
@@ -27,7 +27,7 @@
 extern vstring regtests; // filenames of background sequences
 extern vseq regints; // interest sequences
 
-int cmd_genmot(int argc, char **argv);
+int cmd_genmot(int argc, char ** argv);
 
 extern string genmot_datapath;
 

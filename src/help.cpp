@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
@@ -21,15 +21,15 @@
  *
  *       Filename:  help.cpp
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  06.08.2011 14:18:23
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  YOUR NAME (), 
- *        Company:  
+ *         Author:  YOUR NAME (),
+ *        Company:
  *
  * =====================================================================================
  */
@@ -43,56 +43,54 @@
 using namespace std;
 
 struct cmdname_help {
-   char name[16];
-   char help [80];
+    char name[16];
+    char help [80];
 };
 
 static struct cmdname_help common_cmds[] = {
-   {"display", "Display motifs on sequences"},
-   {"distinfo", "Distance between PWMs"},
-   {"extract", "Extract an alignment from a coordinate file"},
-   {"genmot", "Generating motifs de novo"},
-   {"scangen", "Scan genome for enhancers prediction"}
+    {"display", "Display motifs on sequences"},
+    {"distinfo", "Distance between PWMs"},
+    {"extract", "Extract an alignment from a coordinate file"},
+    {"genmot", "Generating motifs de novo"},
+    {"scangen", "Scan genome for enhancers prediction"}
 };
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 static inline void mput_char(char c, unsigned int num)
 {
-	while(num--)
-		cout << c;
+    while (num--)
+        cout << c;
 }
 
 void
 list_common_cmds_help(void)
 {
-   unsigned int longest=0;
-	for (unsigned i = 0; i < ARRAY_SIZE(common_cmds); i++) {
-		if (longest < strlen(common_cmds[i].name))
-			longest = strlen(common_cmds[i].name);
-	}
-
-   cout << "\n" << "The most commonly used imogene commands are:" << endl;
-	for (unsigned i = 0; i < ARRAY_SIZE(common_cmds); i++) {
-		cout << "   " << common_cmds[i].name << "   ";
-		mput_char(' ', longest - strlen(common_cmds[i].name));
-		cout << common_cmds[i].help << endl;
-	}
+    unsigned int longest = 0;
+    for (unsigned i = 0; i < ARRAY_SIZE(common_cmds); i++) {
+        if (longest < strlen(common_cmds[i].name))
+            longest = strlen(common_cmds[i].name);
+    }
+    cout << "\n" << "The most commonly used imogene commands are:" << endl;
+    for (unsigned i = 0; i < ARRAY_SIZE(common_cmds); i++) {
+        cout << "   " << common_cmds[i].name << "   ";
+        mput_char(' ', longest - strlen(common_cmds[i].name));
+        cout << common_cmds[i].help << endl;
+    }
 }
 
 int
-cmd_help(int argc, char **argv)
+cmd_help(int argc, char ** argv)
 {
-   cout <<  "Usage : " << usage_string << endl;
-   list_common_cmds_help();
-   cout << "\n" << more_info_string << endl;
-
-	return 0;
+    cout <<  "Usage : " << usage_string << endl;
+    list_common_cmds_help();
+    cout << "\n" << more_info_string << endl;
+    return 0;
 }
 
 int
-cmd_version(int argc, char **argv)
+cmd_version(int argc, char ** argv)
 {
-   cout << PACKAGE_NAME << " version " << PACKAGE_VERSION << endl;
-	return 0;
+    cout << PACKAGE_NAME << " version " << PACKAGE_VERSION << endl;
+    return 0;
 }

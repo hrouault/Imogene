@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
@@ -35,145 +35,128 @@ using namespace std;
 
 extract_args_info extract_args;
 
-   void
-seq2fasta(Sequence &seq,string folder)
+void
+seq2fasta(Sequence & seq, string folder)
 {
-   ofstream outf;
-   stringstream file;
-   file << folder;
-   file << seq.name << "_";
-   file << chromfromint(seq.chrom) << "_";
-   file << seq.start << "_";
-   file << seq.stop << ".fa";
-   outf.open(file.str().c_str());
-   if (outf.fail()){
-      cerr << "Cannot open file for fasta recording: " << strerror(errno) << endl;
-      exit(EXIT_FAILURE);
-   }
-   Sequence & s=seq;
-   for (unsigned int i=0;i<nbspecies;i++){
-      if (s.species[i]){
-         if (i==0) outf << ">" << numtospecies(i) << " " <<
-            chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
-         else  outf << ">" << numtospecies(i) << endl;
-         outf << s.seqsrealigned[i] << endl;
-      }; 
-   }
-   outf.close();
+    ofstream outf;
+    stringstream file;
+    file << folder;
+    file << seq.name << "_";
+    file << chromfromint(seq.chrom) << "_";
+    file << seq.start << "_";
+    file << seq.stop << ".fa";
+    outf.open(file.str().c_str());
+    if (outf.fail()) {
+        cerr << "Cannot open file for fasta recording: " << strerror(errno) << endl;
+        exit(EXIT_FAILURE);
+    }
+    Sequence & s = seq;
+    for (unsigned int i = 0; i < nbspecies; i++) {
+        if (s.species[i]) {
+            if (i == 0) outf << ">" << numtospecies(i) << " " <<
+                                 chromfromint(seq.chrom) << " " <<  seq.start << " " << seq.stop << endl;
+            else  outf << ">" << numtospecies(i) << endl;
+            outf << s.seqsrealigned[i] << endl;
+        };
+    }
+    outf.close();
 }
 
-   void
+void
 extractfromcoord(const char * coordfile)
 {
-
-   // INPUT COORDINATES
-   ifstream coordinates(coordfile);
-   if (coordinates.fail()){
-      cerr << "Cannot open coordinate file for reading: " << strerror(errno) << endl;
-      exit(EXIT_FAILURE);
-   }
-
-   vcoord coords;
-   back_insert_iterator<vcoord> dest(coords);
-   copy(iiscoord(coordinates),iiscoord(),dest);
-
-   // ALIGNMENTS COORDINATES
-   ifstream align;
-
-   if (species=="droso"){
-      cout << "Reading droso alignments..." << endl;
-      align.open( (extract_datapath+"/droso/align.dat").c_str() );
-   } else if (species=="eutherian"){
-      cout << "Reading eutherian alignments..." << endl;
-      align.open( (extract_datapath+"/eutherian/align.dat").c_str() );
-   }
-   if (align.fail()){
-      cerr << "Alignment file opening failed: " << strerror(errno) << endl;
-      exit(EXIT_FAILURE);
-   }
-
-   alignscoord=loadcoordconserv(align);
-
-   align.close();
-
-   stringstream basename;
-   int retcode=0;
-   if (extract_args.background_given){
-      if (species=="droso"){
-         retcode=mkdir( (extract_datapath+"/droso/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
-         basename << extract_datapath+"/droso/background/";
-      } else if (species=="eutherian"){
-         retcode=mkdir( (extract_datapath+"/eutherian/background").c_str() ,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);      
-         basename << extract_datapath+"/eutherian/background/";
-      }
-   } else {
-      retcode=mkdir("align",S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); 
-      basename << "align/";
-   }
-   if (retcode){
-     cerr << "Cannot create directory: " << strerror(errno) << endl;
-     exit(EXIT_FAILURE);
-   }
-
-   // SEQUENCE EXTRACTION
-   cout << "Extraction start" << endl;
-   cout << "Writing sequences in align/..." << endl;
-   for (ivcoord ivc=coords.begin();ivc!=coords.end();ivc++){
-
-      Sequence seqtoimport=coordtoseq(*ivc);
-      if (seqtoimport.species[0] && seqtoimport.nbtb>0)  {
-         cout << seqtoimport.name << endl;
-         seq2fasta(seqtoimport,basename.str());
-      }
-      //      cout << chromfromint(ivc->chrom) << endl;
-      //      cout << ivc->start << endl;
-      //      cout << ivc->stop << endl;
-      //      cout << seqtoimport.seqs[0] << endl;
-   }
-
-   cout << "Extraction stop" << endl;
-
+    // INPUT COORDINATES
+    ifstream coordinates(coordfile);
+    if (coordinates.fail()) {
+        cerr << "Cannot open coordinate file for reading: " << strerror(errno) << endl;
+        exit(EXIT_FAILURE);
+    }
+    vcoord coords;
+    back_insert_iterator<vcoord> dest(coords);
+    copy(iiscoord(coordinates), iiscoord(), dest);
+    // ALIGNMENTS COORDINATES
+    ifstream align;
+    if (species == "droso") {
+        cout << "Reading droso alignments..." << endl;
+        align.open((extract_datapath + "/droso/align.dat").c_str());
+    } else if (species == "eutherian") {
+        cout << "Reading eutherian alignments..." << endl;
+        align.open((extract_datapath + "/eutherian/align.dat").c_str());
+    }
+    if (align.fail()) {
+        cerr << "Alignment file opening failed: " << strerror(errno) << endl;
+        exit(EXIT_FAILURE);
+    }
+    alignscoord = loadcoordconserv(align);
+    align.close();
+    stringstream basename;
+    int retcode = 0;
+    if (extract_args.background_given) {
+        if (species == "droso") {
+            retcode = mkdir((extract_datapath + "/droso/background").c_str() , S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+            basename << extract_datapath + "/droso/background/";
+        } else if (species == "eutherian") {
+            retcode = mkdir((extract_datapath + "/eutherian/background").c_str() , S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+            basename << extract_datapath + "/eutherian/background/";
+        }
+    } else {
+        retcode = mkdir("align", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+        basename << "align/";
+    }
+    if (retcode) {
+        cerr << "Cannot create directory: " << strerror(errno) << endl;
+        exit(EXIT_FAILURE);
+    }
+    // SEQUENCE EXTRACTION
+    cout << "Extraction start" << endl;
+    cout << "Writing sequences in align/..." << endl;
+    for (ivcoord ivc = coords.begin(); ivc != coords.end(); ivc++) {
+        Sequence seqtoimport = coordtoseq(*ivc);
+        if (seqtoimport.species[0] && seqtoimport.nbtb > 0)  {
+            cout << seqtoimport.name << endl;
+            seq2fasta(seqtoimport, basename.str());
+        }
+        //      cout << chromfromint(ivc->chrom) << endl;
+        //      cout << ivc->start << endl;
+        //      cout << ivc->stop << endl;
+        //      cout << seqtoimport.seqs[0] << endl;
+    }
+    cout << "Extraction stop" << endl;
 }
 
-   void
+void
 extract_args_init()
 {
-   if (!strcmp(extract_args.species_arg,"droso")){
-      species="droso";
-      nbspecies=12;
-   } else if (!strcmp(extract_args.species_arg,"eutherian")){
-      species="eutherian";
-      nbspecies=12;
-   }
+    if (!strcmp(extract_args.species_arg, "droso")) {
+        species = "droso";
+        nbspecies = 12;
+    } else if (!strcmp(extract_args.species_arg, "eutherian")) {
+        species = "eutherian";
+        nbspecies = 12;
+    }
 }
 
 string extract_datapath;
 
-/** 
+/**
  * ===  FUNCTION  ======================================================================
  *         Name:  cmd_extract
  *  Description:  Alignment extraction
  * =====================================================================================
  */
-   int
-cmd_extract(int argc, char **argv)
+int
+cmd_extract(int argc, char ** argv)
 {
-
-   if ( extract_cmdline_parser(argc, argv, & extract_args)!=0)
-      exit(EXIT_FAILURE);
-
-   extract_args_init();
-
-   const char * imo_extract_datapath = getenv( "IMOGENE_DATA" );
-   if (imo_extract_datapath==NULL){
-      extract_datapath = DATA_PATH;
-   } else {
-      extract_datapath=imo_extract_datapath;
-   }
-   sequence_datapath=extract_datapath;
-
-   extractfromcoord(extract_args.input_arg);
-
-   return EXIT_SUCCESS;
-
+    if (extract_cmdline_parser(argc, argv, & extract_args) != 0)
+        exit(EXIT_FAILURE);
+    extract_args_init();
+    const char * imo_extract_datapath = getenv("IMOGENE_DATA");
+    if (imo_extract_datapath == NULL) {
+        extract_datapath = DATA_PATH;
+    } else {
+        extract_datapath = imo_extract_datapath;
+    }
+    sequence_datapath = extract_datapath;
+    extractfromcoord(extract_args.input_arg);
+    return EXIT_SUCCESS;
 }		/* -----  end of function extract  ----- */
