@@ -31,12 +31,12 @@ import os
 
 
 try:
-    fmap = open(os.environ['IMOGENE_DATA'] + '/mapping.dat')
+    fnmap = os.environ['IMOGENE_DATA'] + '/mapping.dat'
 except KeyError:
-    fmap = open('@pkgdatadir@/mapping.dat')
+    fnmap = '@pkgdatadir@/mapping.dat'
 
-mappings = [i.rstrip().split('\t') for i in fmap.readlines()]
-fmap.close()
+with fmap as open(fnmap):
+    mappings = [i.rstrip().split('\t') for i in fmap]
 for i in mappings:
     i[1] = int(i[1])
     i[2] = int(i[2])
