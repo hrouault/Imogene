@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
@@ -24,8 +24,8 @@
 
 void list_common_cmds_help(void);
 
-int cmd_help(int argc, char **argv);
+int cmd_help(int argc, char ** argv);
 
-int cmd_version(int argc, char **argv);
+int cmd_version(int argc, char ** argv);
 
 #endif // Help_H

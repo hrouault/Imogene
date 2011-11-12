@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
@@ -31,14 +31,14 @@ using namespace std;
 
 class noeud
 {
-   public:
-      int esp1;
-      int esp2;
-      int noe;
-      double prox1;
-      double prox2;
+    public:
+        int esp1;
+        int esp2;
+        int noe;
+        double prox1;
+        double prox2;
 
-      noeud(int e1,int e2, int n, double p1, double p2);
+        noeud(int e1, int e2, int n, double p1, double p2);
 };
 
 typedef vector<noeud> vnoe;
@@ -54,10 +54,10 @@ void inittreedist();
 int speciestonum(string name);//species2num
 string numtospecies(int num);//num2species
 
-int func (double t, const double y[], double f[], void *params);
-int jac (double t, const double y[], double *dfdy, double dfdt[], void *params);
+int func(double t, const double y[], double f[], void * params);
+int jac(double t, const double y[], double * dfdy, double dfdt[], void * params);
 double proba_fixation_rel(double ratio);
 
-int instant_rates (const gsl_vector * w, gsl_matrix * rates);
+int instant_rates(const gsl_vector * w, gsl_matrix * rates);
 
 #endif // Matcons_H
