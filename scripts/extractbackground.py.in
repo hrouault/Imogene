@@ -23,6 +23,7 @@ import glob
 import os
 import random
 import bisect
+import argparse
 
 nbtoextract=10000
 seqlength=2000
@@ -32,18 +33,29 @@ aligncoords=[]
 weights=[]
 
 try:
-   os.chdir(os.environ['IMOGENE_DATA']+'/droso')
+   os.chdir(os.environ['IMOGENE_DATA'])
 except KeyError:
-   os.chdir('@pkgdatadir@/droso')
+   os.chdir('@pkgdatadir@')
 
-for folder in glob.glob('alignments/[0-9]*/'):
-   os.chdir(folder)
-   with open("mavid.mfa") as fmavid:
-      firstline=fmavid.readline().rstrip().split(" ")
-      coord=[firstline[1],int(firstline[2]),int(firstline[3])]
+mkdir(args.species)
+os.chdir(args.species)
+
+if args.species == 'eutherian':
+  for line in open("align.dat").readlines():
+    line=line.rstrip().split()
+    coord=[line[0],int(line[1]),int(line[2])]
+    aligncoords.append(coord)
+    weights.append(float(coord[2]-coord[1]))
+else:
+  for folder in glob.glob('alignments/[0-9]*/'):
+    os.chdir(folder)
+    with open("mavid.mfa") as fmavid:
+      firstline=fmavid.readline().rstrip().split()
+      coord=[firstline[1], int(firstline[2]), int(firstline[3])]
       aligncoords.append(coord)
-      weights.append(float(coord[2]-coord[1]))
-   os.chdir("../..")
+      weights.append(float(coord[2] - coord[1]))
+    os.chdir('../..')
+
 
 sumweights=0.0
 for w in weights:

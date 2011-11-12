@@ -34,18 +34,18 @@ def mkdir(path):
       if e.errno != errno.EEXIST:
          raise
 
-spe2prop = { "mus_musculus" : [ "MusMus", 0 ],
-   "pan_troglodytes":  [ "PanTro", 1 ],
-   "pongo_abelii":  [ "PonAbe", 2 ],
-   "macaca_mulatta":   [ "MacMul", 3 ],
-   "homo_sapiens":  [ "HomSap", 4 ],
-   "rattus_norvegicus":   [ "RatNor", 5 ],
-   "equus_caballus":   [ "EquCab", 6 ],
-   "canis_familiaris": [ "CanFam", 7 ],
-   "bos_taurus": [ "BosTau", 8 ],
-   "sus_scrofa": [ "SusScr", 9 ],
-   "gorilla_gorilla":  [ "GorGor", 10 ],
-   "callithrix_jacchus":  [ "CalJac", 11 ]}
+spe2prop = { 'mus_musculus' : [ 'MusMus', 0 ],
+             'pan_troglodytes':  [ 'PanTro', 1 ],
+             'pongo_abelii':  [ 'PonAbe', 2 ],
+             'macaca_mulatta':   [ 'MacMul', 3 ],
+             'homo_sapiens':  [ 'HomSap', 4 ],
+             'rattus_norvegicus':   [ 'RatNor', 5 ],
+             'equus_caballus':   [ 'EquCab', 6 ],
+             'canis_familiaris': [ 'CanFam', 7 ],
+             'bos_taurus': [ 'BosTau', 8 ],
+             'sus_scrofa': [ 'SusScr', 9 ],
+             'gorilla_gorilla':  [ 'GorGor', 10 ],
+             'callithrix_jacchus':  [ 'CalJac', 11 ]}
 
 def chr2str(chr):
   if chr in [str(i) for i in range(1,20)] or chr in ['X', 'Y']:
@@ -53,100 +53,59 @@ def chr2str(chr):
   else:
     return 'others'
 
-def emf2fasta():
-   for file in glob.glob('*.emf'):
-      with open(file) as femf:
-         print "[",datetime.datetime.now(),"] Reading ",file+"..."
-         print 
-         lines=femf.readlines()
+
+def emf2fasta(filename):
+  with open(file) as femf:
+    line = femf.readline()
+    while True:
+      # Reading the header
+      while line[0:3] != 'SEQ':
+        line = femf.readline()
+
+      header = {}
+      col_considered = []
+      col = 0
+      while line[0:3] == 'SEQ':
+        coords = line.rstrip().split()
+        species = speprop.get(coords[1], ['NA', -1])
+        if species != 'ancestral_species':
+          header[species] = {chrom: coords[2],
+                             start: coords[3],
+                             stop: coords[4],
+                             strand: int(coords[5]),
+                             column: col}
+          col_considered.append(col)
+        col += 1
+        line = femf.readline()
+      if 'mus_musculus' not in header:
+        continue
+
+      columns = [[] for i in range(col)]
+      # Reading the sequence
+      while line[0:4] != 'DATA':
+        line = femf.readline()
+      while line[0:2] != '//':
+        for i in col_considered:
+          columns[i].append(line[i])
+        line = femf.readline()
+
+      # Writing fasta formatted file
+      inforef = header['mus_musculus']
+      folder = 'chr' + inforef[chrom]
+      mkdir(folder)
+      filename = '{0}/{1}-{2}.fa'.format(folder, inforef[start], inforef[stop])
+      with open(filename,'w') as fasta:
+        for i in header:
+          if i == 'MusMus':
+            fasta.write('>{0} {1} {2} {3}\n'.format(i, i[chrom], i[start], i[stop]))
+          else:
+            fasta.write('>{0}\n'.format(i))
+        if i[strand] == -1:
+          columns[i[column]].reverse()
+          seq = ''.join(columns[i[column]])
+          seq = seq.translate(string.maketrans('AaTtCcGg','TtAaGgCc'))
+        else:
+          seq = ''.join(columns[i[column]])
+        fasta.write(seq + '\n')
          
-         headers = [ index for index,line in enumerate(lines) if line.find('SEQ') != -1 and lines[index-1].find('SEQ') == -1 ]
-         startseqs = [ index+1 for index,line in enumerate(lines) if line.find('DATA') != -1 ]
-         stopseqs = [ index for index,line in enumerate(lines) if line.find('//') != -1 ]
-         
-         print "[",datetime.datetime.now(),"] Converting to fasta..."
-         print 
 
-         index = 0
-         while index < len(headers):
-            ## READ HEADER
-            cols = [ -1 for i in range(nspe) ]
-            spes = [ "" for i in range(nspe) ]
-            chrs = [ "" for i in range(nspe) ]
-            stas = [ -1 for i in range(nspe) ]
-            stos = [ -1 for i in range(nspe) ]
-            strs = [ 0 for i in range(nspe) ]
-            seqs = [ "" for i in range(nspe) ]
-            vseqs = [ [] for i in range(nspe) ]
-
-            line=lines[headers[index]]
-            col=0
-            while line[0:3] == 'SEQ':
-               coords=line.rstrip().split(" ")
-               if coords[1] != "ancestral_sequences":
-                  spe=coords[1]
-                  chr=coords[2]
-                  sta=coords[3]
-                  sto=coords[4]
-                  str=coords[5]
-                  speprop=spe2prop.get(spe, ["NA",-1])
-                  ns=speprop[0]
-                  cols[ns] = col
-                  spes[ns] = speprop[1]
-                  chrs[ns] = chr2str(chr)
-                  stas[ns] = sta
-                  stos[ns] = sto
-                  strs[ns] = int(str)
-               col+=1
-               line=lines[headers[index]+col]
-            
-            ## CHECK MUS MUSCULUS IS PRESENT
-
-            nref=spe2prop["mus_musculus"][0]
-            if cols[nref]==-1 or chrs[nref]=="":
-               index += 1
-               continue
-           
-            ## READ SEQUENCES
-            
-            strand=strs[nref]            
-            if strand == 1:  
-               for i in range(nspe):
-                  vseqs[i] = [ line[cols[i]] for line in lines[startseqs[index]:stopseqs[index]] if cols[i] != -1 ]
-                  seqs[i] = ''.join(vseqs[i])
-            elif strand == -1:
-               for i in range(nspe):
-                  vseqs[i] = [ line[cols[i]] for line in lines[startseqs[index]:stopseqs[index]] if cols[i] != -1 ]
-                  vseqs[i].reverse()
-                  seqs[i] = ''.join(vseqs[i])
-                  seqs[i]=seqs[i].translate(string.maketrans('AaTtCcGg','TtAaGgCc'))
-
-            ## DISPLAY PROGRESS BAR
-            sys.stdout.write('\r')
-            ipc = int(float(index+1)/len(headers)*100)
-            sys.stdout.write("[%-100s] %d%%" % ('='*ipc, ipc))
-            sys.stdout.flush()
-            #print " ",chrs[nref],stas[nref],stos[nref],strand,"length =",int(stos[nref])-int(stas[nref])+1
-            #for i in range(nspe):
-            #   print i,seqs[i][0:20],"...",seqs[i][len(seqs[i])-20:len(seqs[i])]
-
-            ## WRITE FASTA FORMATTED FILE
-            
-            folder="chr"+chrs[nref]
-            mkdir(folder)
-            filename=folder+"/"+stas[nref]+"-"+stos[nref]+".fa"
-            fasta=open(filename,'w')
-            
-            for i in range(nspe):
-               if spes[i] != "":
-                  if spes[i] == 'MusMus':
-                     fasta.write('>'+spes[i]+' '+chrs[i]+' '+stas[i]+' '+stos[i]+'\n')
-                  else:
-                     fasta.write('>'+spes[i]+'\n')
-                  fasta.write(seqs[i]+'\n')
-            
-            index += 1
-         
-         print
-
-emf2fasta()
