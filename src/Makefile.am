@@ -22,9 +22,25 @@
 
 dist_noinst_DATA = display.ggo distinfo.ggo extract.ggo genmot.ggo scangen.ggo
 
-%_cmdline.c: %.ggo
-	gengetopt --input=$< --func-name=%_cmdline_parser\
-   	--arg-struct-name=%_args_info --file-name=%_cmdline
+display_cmdline.c: display.ggo
+	  gengetopt --input=$< --func-name=display_cmdline_parser\
+   	--arg-struct-name=display_args_info --file-name=display_cmdline
+
+distinfo_cmdline.c: distinfo.ggo
+	  gengetopt --input=$< --func-name=distinfo_cmdline_parser\
+   	--arg-struct-name=distinfo_args_info --file-name=distinfo_cmdline
+
+extract_cmdline.c: extract.ggo
+	  gengetopt --input=$< --func-name=extract_cmdline_parser\
+   	--arg-struct-name=extract_args_info --file-name=extract_cmdline
+
+genmot_cmdline.c: genmot.ggo
+	  gengetopt --input=$< --func-name=genmot_cmdline_parser\
+   	--arg-struct-name=genmot_args_info --file-name=genmot_cmdline
+
+scangen_cmdline.c: scangen.ggo
+	  gengetopt --input=$< --func-name=scangen_cmdline_parser\
+   	--arg-struct-name=scangen_args_info --file-name=scangen_cmdline
 
 bin_PROGRAMS = imogene
 
