@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-#    
+#
 # Copyright (C) 2006-2011 Herve Rouault <rouault@lps.ens.fr>
 # Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
-# 
+#
 # This file is part of Imogene.
-# 
+#
 # Imogene is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # Imogene is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
-# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+# along with Imogene; see the file COPYING  If not, see
+# <http://www.gnu.org/licenses/>.
 
 import os
 import glob
@@ -27,85 +28,88 @@ import sys
 
 nspe = 12
 
-def mkdir(path):
-   try:
-      os.mkdir(path)
-   except os.error, e:
-      if e.errno != errno.EEXIST:
-         raise
 
-spe2prop = { 'mus_musculus' : [ 'MusMus', 0 ],
-             'pan_troglodytes':  [ 'PanTro', 1 ],
-             'pongo_abelii':  [ 'PonAbe', 2 ],
-             'macaca_mulatta':   [ 'MacMul', 3 ],
-             'homo_sapiens':  [ 'HomSap', 4 ],
-             'rattus_norvegicus':   [ 'RatNor', 5 ],
-             'equus_caballus':   [ 'EquCab', 6 ],
-             'canis_familiaris': [ 'CanFam', 7 ],
-             'bos_taurus': [ 'BosTau', 8 ],
-             'sus_scrofa': [ 'SusScr', 9 ],
-             'gorilla_gorilla':  [ 'GorGor', 10 ],
-             'callithrix_jacchus':  [ 'CalJac', 11 ]}
+def mkdir(path):
+    try:
+        os.mkdir(path)
+    except os.error, e:
+        if e.errno != errno.EEXIST:
+            raise
+
+spe2prop = {'mus_musculus': ['MusMus', 0],
+            'pan_troglodytes':  ['PanTro', 1],
+            'pongo_abelii':  ['PonAbe', 2],
+            'macaca_mulatta':   ['MacMul', 3],
+            'homo_sapiens':  ['HomSap', 4],
+            'rattus_norvegicus':   ['RatNor', 5],
+            'equus_caballus':   ['EquCab', 6],
+            'canis_familiaris': ['CanFam', 7],
+            'bos_taurus': ['BosTau', 8],
+            'sus_scrofa': ['SusScr', 9],
+            'gorilla_gorilla':  ['GorGor', 10],
+            'callithrix_jacchus':  ['CalJac', 11]}
+
 
 def chr2str(chr):
-  if chr in [str(i) for i in range(1,20)] or chr in ['X', 'Y']:
-    return chr
-  else:
-    return 'others'
+    if chr in [str(i) for i in range(1, 20)] or chr in ['X', 'Y']:
+        return chr
+    else:
+        return 'others'
 
 
 def emf2fasta(filename):
-  with open(file) as femf:
-    line = femf.readline()
-    while True:
-      # Reading the header
-      while line[0:3] != 'SEQ':
+    with open(file) as femf:
         line = femf.readline()
+        while True:
+            # Reading the header
+            while line[0:3] != 'SEQ':
+                line = femf.readline()
 
-      header = {}
-      col_considered = []
-      col = 0
-      while line[0:3] == 'SEQ':
-        coords = line.rstrip().split()
-        species = speprop.get(coords[1], ['NA', -1])
-        if species != 'ancestral_species':
-          header[species] = {chrom: coords[2],
-                             start: coords[3],
-                             stop: coords[4],
-                             strand: int(coords[5]),
-                             column: col}
-          col_considered.append(col)
-        col += 1
-        line = femf.readline()
-      if 'mus_musculus' not in header:
-        continue
+            header = {}
+            col_considered = []
+            col = 0
+            while line[0:3] == 'SEQ':
+                coords = line.rstrip().split()
+                species = speprop.get(coords[1], ['NA', -1])
+                if species != 'ancestral_species':
+                    header[species] = {chrom: coords[2],
+                                       start: coords[3],
+                                       stop: coords[4],
+                                       strand: int(coords[5]),
+                                       column: col}
+                    col_considered.append(col)
+                col += 1
+                line = femf.readline()
+            if 'mus_musculus' not in header:
+                continue
 
-      columns = [[] for i in range(col)]
-      # Reading the sequence
-      while line[0:4] != 'DATA':
-        line = femf.readline()
-      while line[0:2] != '//':
-        for i in col_considered:
-          columns[i].append(line[i])
-        line = femf.readline()
+            columns = [[] for i in range(col)]
+            # Reading the sequence
+            while line[0:4] != 'DATA':
+                line = femf.readline()
+            while line[0:2] != '//':
+                for i in col_considered:
+                    columns[i].append(line[i])
+                line = femf.readline()
 
-      # Writing fasta formatted file
-      inforef = header['mus_musculus']
-      folder = 'chr' + inforef[chrom]
-      mkdir(folder)
-      filename = '{0}/{1}-{2}.fa'.format(folder, inforef[start], inforef[stop])
-      with open(filename,'w') as fasta:
-        for i in header:
-          if i == 'MusMus':
-            fasta.write('>{0} {1} {2} {3}\n'.format(i, i[chrom], i[start], i[stop]))
-          else:
-            fasta.write('>{0}\n'.format(i))
-        if i[strand] == -1:
-          columns[i[column]].reverse()
-          seq = ''.join(columns[i[column]])
-          seq = seq.translate(string.maketrans('AaTtCcGg','TtAaGgCc'))
-        else:
-          seq = ''.join(columns[i[column]])
-        fasta.write(seq + '\n')
-         
-
+            # Writing fasta formatted file
+            inforef = header['mus_musculus']
+            folder = 'chr' + inforef[chrom]
+            mkdir(folder)
+            filename = '{0}/{1}-{2}.fa'.format(folder, inforef[start],
+                                               inforef[stop])
+            with open(filename, 'w') as fasta:
+                for i in header:
+                    if i == 'MusMus':
+                        fasta.write('>{0} {1} {2} {3}\n'
+                                    .format(i, i[chrom], i[start], i[stop]))
+                    else:
+                        fasta.write('>{0}\n'.format(i))
+                if i[strand] == -1:
+                    columns[i[column]].reverse()
+                    seq = ''.join(columns[i[column]])
+                    transstring = string.maketrans('AaTtCcGg', 'TtAaGgCc')
+                    seq = seq.translate(transstring)
+                else:
+                    seq = ''.join(columns[i[column]])
+                fasta.write(seq + '\n')
