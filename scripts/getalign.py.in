@@ -31,6 +31,7 @@ import errno
 import bisect
 import urllib2
 import hashlib
+import tarfile
 import gzip
 
 import argparse
@@ -67,26 +68,6 @@ def geturl(url, md5sum):
     if h.hexdigest() != md5sum:
         print "The md5 sum of file {0} is not correct!".format(file_name)
         sys.exit(1)
-
-
-def checkexist(filename, md5sum):
-    try:
-        open(filename)
-        h = hashlib.md5()
-        with open(filename) as file:
-            chunk = " "
-            while chunk:
-                chunk = file.read(32768)
-                h.update(chunk)
-        if h.hexdigest() == md5sum:
-            print 'File {0} is already present.'.format(filename)
-            return True
-        else:
-            print ('File {0} is present but seems to be corrupted. '
-                   'Re-downloading it.').format(filename)
-            return False
-    except IOError as e:
-        return False
 
 
 def mkdir(path):
@@ -129,6 +110,46 @@ def message(messagestr):
     print
 
 
+def checkexist(filename, md5sum):
+    try:
+        h = hashlib.md5()
+        with open(filename) as file:
+            chunk = ' '
+            while chunk:
+                chunk = file.read(32768)
+                h.update(chunk)
+        if h.hexdigest() == md5sum:
+            print 'File {0} is already present.'.format(filename)
+            return True
+        else:
+            print ('File {0} is present but seems to be corrupted. '
+                   'Re-downloading it.').format(filename)
+            return False
+    except IOError as e:
+        return False
+
+
+def check_wuncomp(filename):
+    if not checkexist(filename, hashes[filename]):
+        fcomp = f + '.gz'
+        if not checkexist(fcomp, hashes[funcomp]):
+            return False
+        else:
+            files_present.append(fcomp)
+    else:
+        files_present.append(f)
+    return True
+
+
+class MyFileObj(file, totalsize):
+    def read(self, size):
+        curpos = self.tell()
+        status = ('{0:>15}  [{1:.2%}]   \r'
+                  .format(curpos, float(curpos) / totalsize))
+        print status,
+        return file.read(self, size)
+
+
 # Command line parser
 parser = argparse.ArgumentParser(description='Download genomic alignments.')
 
@@ -137,11 +158,14 @@ helpdl = ('The alignment will only be downloaded and won\'t be adapted to\n'
           'You will have to rerun this script to modify the alignments')
 parser.add_argument('--download-only', action='store_true', help=helpdl)
 
+helpkeep = ('Will keep all the intermediate files (very space consuming).')
+parser.add_argument('--keep-intermediate', action='store_true', help=helpkeep)
+
 parser.add_argument('--species', choices=['droso', 'eutherian'], required=True,
     help='Group of species for the alignments')
 
-helpdest = ('Directory where to download the files. If given, the files will'
-            'be\ndownloaded in the $(pkgdatadir) folder or in the '
+helpdest = ('Directory where to download the files. If not given, the files '
+            'will be\ndownloaded in the $(pkgdatadir) folder or in the '
             'IMOGENE_DATA folder\n'
             'if this environment variable is defined.')
 parser.add_argument('--dest', metavar='directory', help=helpdest)
@@ -152,15 +176,15 @@ args = parser.parse_args()
 sys.path.append("@pythondir@")
 import mapping
 
-try:
-    datapath = os.environ['IMOGENE_DATA']
-except KeyError:
-    datapath = '@pkgdatadir@'
-
 if args.dest:
-    os.chdir(args.dest)
+    datapath = args.dest
 else:
-    os.chdir(datapath)
+    try:
+        datapath = os.environ['IMOGENE_DATA']
+    except KeyError:
+        datapath = '@pkgdatadir@'
+
+os.chdir(datapath)
 
 # import hashes
 hashes = {}
@@ -174,6 +198,8 @@ os.chdir(args.species)
 mkdir('alignments')
 os.chdir("alignments")
 
+# Downloading all the necessary files
+files_present = []
 if args.species == 'eutherian':
     message('Downloading Enrendo Pecan Ortheus alignment files\n'
             'from ENSEMBL...')
@@ -183,21 +209,22 @@ if args.species == 'eutherian':
             nbfile += 1
     ifile = 1
     for f, h in hashes.iteritems():
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz', f):
+        if re.match('Compara.12_eutherian_mammals_EPO.*\.emf', f):
             print "file {0:3} / {1}  ".format(ifile, nbfile),
-            if not checkexist(f, h):
-                funcomp = f.rstrip('.gz')
-                if not checkexist(funcomp, hashes[funcomp]):
-                    geturl('ftp://ftp.ensembl.org/pub/release-63/emf/'
-                           'ensembl-compara/epo_12_eutherian/' + f, h)
+            if not check_wuncomp(f):
+                geturl('ftp://ftp.ensembl.org/pub/release-63/emf/'
+                       'ensembl-compara/epo_12_eutherian/' + fcomp, h)
+                files_present.append(fcomp)
             ifile += 1
 else:
     # Downloading alignment files
+    message('Downloading Mavid Mercator alignment files.')
     alignfn = 'fly_CAF1.1.tar.gz'
     if not checkexist(alignfn, hashes[alignfn]):
         geturl('http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/' +
                alignfn, hashes[alignfn])
-
+    files_present.append(alignfn)
+    
 # Downloading annotation files
 os.chdir('..')
 mkdir("annot")
@@ -205,16 +232,34 @@ os.chdir("annot")
 
 if args.species == 'eutherian':
     refgenefn = 'refGene.txt.gz'
-    if not checkexist(refgenefn, hashes[refgenefn]):
+    if not check_wuncomp(refgenefn):
         message('Getting UCSC refGene annotation file for\nTSS coordinates...')
         geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/' +
                refgenefn, hashes[refgenefn])
+        files_present.append(refgenefn)
 
     musmusc_annotfn = 'Mus_musculus.NCBIM37.64.gtf.gz'
-    if not checkexist(musmusc_annotfn, hashes[musmusc_annotfn]):
+    if not check_wuncomp(musmusc_annotfn):
         message('Getting ENSEMBL gtf annotation file for CDS\ncoordinates...')
         geturl('ftp://ftp.ensembl.org/pub/release-64/gtf/mus_musculus/' +
                musmusc_annotfn, hashes[musmusc_annotfn])
+        files_present.append(musmusc_annotfn)
+else:
+    nbfile = 0
+    for f in hashes:
+        if re.match('dmel-*-r5.38.gff.gz', f):
+            nbfile += 1
+    ifile = 1
+    message('Downloading Flybase annotation files...')
+    basename = 'ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/'
+    for f, h in hashes.iteritems():
+        if re.match('dmel-*-r5.38.gff', f):
+            print "file {0:3} / {1}  ".format(ifile, nbfile),
+            if not check_wuncomp(f):
+                fcomp = f + '.gz'
+                geturl(basename + fcomp, h)
+                files_present.append(fcomp)
+            ifile += 1
 
 if args.download_only:
     print ('Script finished. The files were only downloaded. Please process '
@@ -225,7 +270,6 @@ if args.download_only:
 # Alignment treatment
 os.chdir('../alignments')
 message('Extracting alignment files...')
-print
 
 if args.species == 'eutherian':
     nbfile = 0
@@ -236,19 +280,18 @@ if args.species == 'eutherian':
     for f in hashes:
         if re.match('Compara.12_eutherian_mammals_EPO.*\.gz', f):
             funcomp = f.rstrip('.gz')
-            if not checkexist(funcomp, hashes[funcomp]):
+            if f not in files_present and funcomp not in files_present:
                 print "Uncompressing file {0}...".format(f)
                 gunzip(f)
 
     message('Converting EMF files to fasta...')
-
     try:
         import Cython
         message('Using Cython for emf2fasta conversion...')
         import pyximport
         pyximport.install()
         import emf2fasta
-    except:
+    except ImportError:
         if not query_yes_no('You do not have Cython installed. Do you want to '
                             'continue\nanyway (much slower procedure)?'):
             print 'Aborting.'
@@ -259,6 +302,17 @@ if args.species == 'eutherian':
 
     for file in glob.glob('*.emf'):
         os.remove(file)
+else:
+    total_size = os.path.getsize('fly_CAF1.1.tar.gz')
+    tar = tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz'))
+    tar.extractall()
+    tar.close()
+    for fname in ['DroAna_CAF1.agp', 'DroEre_CAF1.agp', 'DroGri_CAF1.agp',
+                  'DroMoj_CAF1.agp', 'DroPer_CAF1.agp', 'DroPse_CAF1.agp',
+                  'DroSec_CAF1.agp', 'DroVir_CAF1.agp', 'DroWil_CAF1.agp',
+                  'map', 'genomes', 'treefile']:
+        os.rename(fname, 'alignments/' + fname)
+
 
 os.chdir('../annot')
 message('Extracting annotation archive...')
@@ -272,8 +326,8 @@ if args.species == 'eutherian':
     with open('refGene.txt') as fref:
         for line in fref:
             l = line.rstrip().split()
-            ll.append([l[2][3:], int(l[4] if l[3] == '+' else l[5]) + 1, l[3],
-                       l[12]])
+            ll.append([l[2][3:], int(l[4]) + 1 if l[3] == '+' else int(l[5]),
+                       l[3], l[12]])
     defl = sorted(set(ll))
     with open('TSS-coord.dat', 'w') as fout:
         for l in defl:
@@ -299,7 +353,50 @@ if args.species == 'eutherian':
     lines = sorted(set(lines))
     with open('CDS-coord.dat', 'w') as fgtfout:
         for line in lines:
-            fgtfout.write('{0} {1} {2}\n'.format(line[0], line[1], line[3]))
+            fgtfout.write('{0} {1} {2}\n'
+                          .format(line[0], int(line[1]), int(line[3])))
+else:
+    for f in hashes:
+        if re.match('dmel-*.gff', f):
+            if f not in present_files:
+                gunzip(f + '.gz')
+            nbfile += 1
+            with open(f) as gfffile:
+                replines = []
+                cdslines = []
+                tssline = []
+                for line in gfffile:
+                    if 'repeatmasker_dummy\tmatch\t' in line:
+                        linesp = line.rstrip().split()
+                        replines.append([linesp[0], int(linesp[3]),
+                                         int(linesp[4])])
+                    elif 'FlyBase\tCDS\t' in line:
+                        linesp = line.rstrip().split()
+                        cdslines.append([linesp[0], int(linesp[3]),
+                                         int(linesp[4])])
+                    elif 'FlyBase\tmRNA\t' in line:
+                        linesp = line.rstrip().split()
+                        detail = dist(i.split('=') for i in linesp.split(';'))
+                        name = detail['Name']
+                        alias = detail.get('Alias', '---')
+                        pos = int(linesp[3] if linesp[6] == '+' else linesp[4])
+                    tssline.append(linesp[0], pos, linesp[6], name, alias)
+                replines = sorted(set(replines))
+                cdslines = sorted(set(cdslines))
+                tsslines = sorted(set(tranlines))
+            with open('repeat-coord.dat', 'w') as frepeat:
+                for rl in replines:
+                    frepeat.write('{0} {1} {2}\n'.format(rl[0], rl[1], rl[2]))
+            with open('CDS-coord.dat', 'w') as fcds:
+                for cl in cdslines:
+                    fcds.write('{0} {1} {2}\n'.format(cl[0], cl[1], cl[2]))
+            with open('TSS-coord.dat', 'w') as ftss:
+                for tl in tsslines:
+                    ftss.write('{0} {1} {2} {3} {4}\n'
+                               .format(tl[1], tl[2], tl[0], tl[3], tl[4]))
+            with open('genelist.dat', 'w'):
+                for tg in sorted(set([i[3] for i in tsslines])):
+                    glist.write('{0}\n'.format(tg))
 
 def processcoord(coords):
     for i in coords:
