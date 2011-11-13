@@ -132,7 +132,7 @@ def checkexist(filename, md5sum):
 def check_wuncomp(filename):
     if not checkexist(filename, hashes[filename]):
         fcomp = f + '.gz'
-        if not checkexist(fcomp, hashes[funcomp]):
+        if not checkexist(fcomp, hashes[fcomp]):
             return False
         else:
             files_present.append(fcomp)
@@ -141,11 +141,12 @@ def check_wuncomp(filename):
     return True
 
 
-class MyFileObj(file, totalsize):
+tartotalsize = 0;
+class MyFileObj(file):
     def read(self, size):
         curpos = self.tell()
         status = ('{0:>15}  [{1:.2%}]   \r'
-                  .format(curpos, float(curpos) / totalsize))
+                  .format(curpos, float(curpos) / tartotalsize))
         print status,
         return file.read(self, size)
 
@@ -176,15 +177,15 @@ args = parser.parse_args()
 sys.path.append("@pythondir@")
 import mapping
 
-if args.dest:
-    datapath = args.dest
-else:
-    try:
-        datapath = os.environ['IMOGENE_DATA']
-    except KeyError:
-        datapath = '@pkgdatadir@'
+try:
+    datapath = os.environ['IMOGENE_DATA']
+except KeyError:
+    datapath = '@pkgdatadir@'
 
-os.chdir(datapath)
+if args.dest:
+    destpath = args.dest
+else:
+    destpath = datapath
 
 # import hashes
 hashes = {}
@@ -193,6 +194,7 @@ with open(datapath + "/MD5SUM") as hashf:
         elt = i.rstrip().split()
         hashes[elt[1]] = elt[0]
 
+os.chdir(destpath)
 mkdir(args.species)
 os.chdir(args.species)
 mkdir('alignments')
@@ -205,11 +207,11 @@ if args.species == 'eutherian':
             'from ENSEMBL...')
     nbfile = 0
     for f in hashes:
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz', f):
+        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz$', f):
             nbfile += 1
     ifile = 1
     for f, h in hashes.iteritems():
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.emf', f):
+        if re.match('Compara.12_eutherian_mammals_EPO.*\.emf$', f):
             print "file {0:3} / {1}  ".format(ifile, nbfile),
             if not check_wuncomp(f):
                 geturl('ftp://ftp.ensembl.org/pub/release-63/emf/'
@@ -247,13 +249,13 @@ if args.species == 'eutherian':
 else:
     nbfile = 0
     for f in hashes:
-        if re.match('dmel-*-r5.38.gff.gz', f):
+        if re.match('dmel-.*-r5.38.gff.gz$', f):
             nbfile += 1
     ifile = 1
     message('Downloading Flybase annotation files...')
     basename = 'ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/'
     for f, h in hashes.iteritems():
-        if re.match('dmel-*-r5.38.gff', f):
+        if re.match('dmel-.*-r5.38.gff$', f):
             print "file {0:3} / {1}  ".format(ifile, nbfile),
             if not check_wuncomp(f):
                 fcomp = f + '.gz'
@@ -274,11 +276,11 @@ message('Extracting alignment files...')
 if args.species == 'eutherian':
     nbfile = 0
     for f in hashes:
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz', f):
+        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz$', f):
             nbfile += 1
     ifile = 1
     for f in hashes:
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz', f):
+        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz$', f):
             funcomp = f.rstrip('.gz')
             if f not in files_present and funcomp not in files_present:
                 print "Uncompressing file {0}...".format(f)
@@ -303,7 +305,7 @@ if args.species == 'eutherian':
     for file in glob.glob('*.emf'):
         os.remove(file)
 else:
-    total_size = os.path.getsize('fly_CAF1.1.tar.gz')
+    tartotalsize = os.path.getsize('fly_CAF1.1.tar.gz')
     tar = tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz'))
     tar.extractall()
     tar.close()
@@ -357,7 +359,7 @@ if args.species == 'eutherian':
                           .format(line[0], int(line[1]), int(line[3])))
 else:
     for f in hashes:
-        if re.match('dmel-*.gff', f):
+        if re.match('dmel-.*.gff$', f):
             if f not in present_files:
                 gunzip(f + '.gz')
             nbfile += 1
