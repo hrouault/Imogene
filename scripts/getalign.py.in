@@ -269,37 +269,37 @@ if args.species == 'eutherian':
 
     ## Here we add 1 to the start positions (UCSC files are 0-based)
     ll = []
-    with fref as open('refGene.txt'):
+    with open('refGene.txt') as fref:
         for line in fref:
             l = line.rstrip().split()
             ll.append([l[2][3:], int(l[4] if l[3] == '+' else l[5]) + 1, l[3],
                        l[12]])
     defl = sorted(set(ll))
-    with fout as open('TSS-coord.dat', 'w'):
+    with open('TSS-coord.dat', 'w') as fout:
         for l in defl:
             fout.write('{0} {1} {2} {3}\n'.format(l[1], l[2], l[0], l[4]))
 
     message('Genes list creation.')
-    with fcoord as open('TSS-coord.dat'):
+    with open('TSS-coord.dat') as fcoord:
         coords = [i.rstrip().split()[3] for i in fcoord]
-    with glist as open('genelist.dat', 'w'):
+    with open('genelist.dat', 'w') as glist:
         for i in sorted(set(coords)):
-            fout.write('{1}\n'.format(i))
+            glist.write('{1}\n'.format(i))
 
     message('Extracting CDS coordinates archive...')
     gunzip('Mus_musculus.NCBIM37.64.gtf.gz')
 
     message('CDS coordinates extraction.')
-    with fgtf as open('Mus_musculus.NCBIM37.64.gtf'):
+    with open('Mus_musculus.NCBIM37.64.gtf') as fgtf:
         lines = []
         for line in fgtf:
             linesp = line.rstrip().split()
             if linesp[2] == 'CDS':
-                lines.append([linesp[0], int(linesp[3]), int(linesp[4]))
+                lines.append([linesp[0], int(linesp[3]), int(linesp[4])])
     lines = sorted(set(lines))
-    with fgtfout as open('CDS-coord.dat', 'w'):
+    with open('CDS-coord.dat', 'w') as fgtfout:
         for line in lines:
-            fgtfout.write('{0} {1} {2}\n'.format(line[0], line[1], line[3])
+            fgtfout.write('{0} {1} {2}\n'.format(line[0], line[1], line[3]))
 
 def processcoord(coords):
     for i in coords:
