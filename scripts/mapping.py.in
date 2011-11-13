@@ -35,7 +35,7 @@ try:
 except KeyError:
     fnmap = '@pkgdatadir@/mapping.dat'
 
-with fmap as open(fnmap):
+with open(fnmap) as fmap:
     mappings = [i.rstrip().split('\t') for i in fmap]
 for i in mappings:
     i[1] = int(i[1])
