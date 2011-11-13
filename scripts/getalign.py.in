@@ -142,8 +142,8 @@ parser.add_argument('--species', choices=['droso', 'eutherian'], required=True,
 
 helpdest = ('Directory where to download the files. If given, the files will'
             'be\ndownloaded in the $(pkgdatadir) folder or in the '
-            'IMOGENE_DATA folder\n')
-if this environment variable is defined.
+            'IMOGENE_DATA folder\n'
+            'if this environment variable is defined.')
 parser.add_argument('--dest', metavar='directory', help=helpdest)
 
 args = parser.parse_args()
@@ -207,14 +207,14 @@ if args.species == 'eutherian':
     refgenefn = 'refGene.txt.gz'
     if not checkexist(refgenefn, hashes[refgenefn]):
         message('Getting UCSC refGene annotation file for\nTSS coordinates...')
-        geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/'
+        geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/' +
                refgenefn, hashes[refgenefn])
 
     musmusc_annotfn = 'Mus_musculus.NCBIM37.64.gtf.gz'
     if not checkexist(musmusc_annotfn, hashes[musmusc_annotfn]):
         message('Getting ENSEMBL gtf annotation file for CDS\ncoordinates...')
-        geturl('ftp://ftp.ensembl.org/pub/release-64/gtf/mus_musculus/'
-               + musmusc_annotfn, hashes[musmusc_annotfn])
+        geturl('ftp://ftp.ensembl.org/pub/release-64/gtf/mus_musculus/' +
+               musmusc_annotfn, hashes[musmusc_annotfn])
 
 if args.download_only:
     print ('Script finished. The files were only downloaded. Please process '

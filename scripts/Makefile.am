@@ -19,34 +19,34 @@
 # see <http://www.gnu.org/licenses/>.
 
 BUILT_SOURCES = getalign.py mapping.py extractbackground.py weblogo-display.py\
-								emf2fasta.pyx 
+				emf2fasta.pyx 
 
 nodist_python_PYTHON = getalign.py mapping.py extractbackground.py\
-											 weblogo-display.py emf2fasta.pyx 
+					   weblogo-display.py emf2fasta.pyx 
 CLEANFILES = $(python_PYTHON)
 EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
-						 weblogo-display.py.in emf2fasta.pyx.in 
+			 weblogo-display.py.in emf2fasta.pyx.in 
 
 do_subst = sed -e 's,[@]PYTHON[@],$(PYTHON),g'\
-    		       -e 's,[@]pythondir[@],$(pythondir),g'\
+		       -e 's,[@]pythondir[@],$(pythondir),g'\
                -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'
 
 getalign.py: getalign.py.in
-   	$(do_subst) < $< > $@
-   	chmod +x $@
+	$(do_subst) < $< > $@
+	chmod +x $@
 
 mapping.py: mapping.py.in
-  	$(do_subst) < $< > $@
-  	chmod +x $@
+	$(do_subst) < $< > $@
+	chmod +x $@
 
 extractbackground.py: extractbackground.py.in
-  	$(do_subst) < $< > $@
-  	chmod +x $@
+	$(do_subst) < $< > $@
+	chmod +x $@
 
 weblogo-display.py: weblogo-display.py.in
-  	$(do_subst) < $< > $@
-  	chmod +x $@
+	$(do_subst) < $< > $@
+	chmod +x $@
 
 emf2fasta.pyx: emf2fasta.pyx.in
-  	$(do_subst) < $< > $@
-  	chmod +x $@
+	$(do_subst) < $< > $@
+	chmod +x $@
