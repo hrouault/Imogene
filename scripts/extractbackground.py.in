@@ -33,11 +33,30 @@ limittry = nbtoextract * 5
 aligncoords = []
 weights = []
 
-try:
-    os.chdir(os.environ['IMOGENE_DATA'])
-except KeyError:
-    os.chdir('@pkgdatadir@')
+# Command line parser
+parser = argparse.ArgumentParser(description='Create background sequence'
+                                 'coordinates.')
 
+parser.add_argument('--species', choices=['droso', 'eutherian'], required=True,
+    help='Group of species for the alignments')
+
+helpdest = ('Directory where to create the coordinates. If not given, the '
+            'files will be\ndownloaded in the $(pkgdatadir) folder or in the '
+            'IMOGENE_DATA folder\n'
+            'if this environment variable is defined.')
+parser.add_argument('--dest', metavar='directory', help=helpdest)
+
+args = parser.parse_args()
+
+if args.dest:
+    datapath = args.dest
+else:
+    try:
+        datapath = os.environ['IMOGENE_DATA']
+    except KeyError:
+        datapath = '@pkgdatadir@'
+
+os.chdir(datapath)
 mkdir(args.species)
 os.chdir(args.species)
 
