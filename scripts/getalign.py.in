@@ -306,7 +306,14 @@ if args.species == 'eutherian':
         os.remove(file)
 else:
     tartotalsize = os.path.getsize('fly_CAF1.1.tar.gz')
-    tar = tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz'))
+    tdir = './'
+    with tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz', 'r:gz')) as tarf:
+        for n in tarf.names:
+        if not os.path.abspath(os.path.join(tdir, n)).startswith(tdir):
+            print "tarfile contains unsafe filenames!"
+            sys.exit(1)
+    tarf.extractall(path=tdir)
+        
     tar.extractall()
     tar.close()
     for fname in ['DroAna_CAF1.agp', 'DroEre_CAF1.agp', 'DroGri_CAF1.agp',
