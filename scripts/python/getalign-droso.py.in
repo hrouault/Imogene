@@ -1,0 +1,254 @@
+#!@PYTHON@
+# -*- coding: utf-8 -*-
+#    
+# Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+# Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
+# 
+# This file is part of Imogene.
+# 
+# Imogene is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Imogene is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+
+import sys
+import os
+import shutil
+import string
+import glob
+import datetime
+import bisect
+import errno
+
+def mkdir(path):
+   try:
+      os.mkdir(path)
+   except os.error, e:
+      if e.errno != errno.EEXIST:
+         raise
+
+sys.path.append("@pythondir@")
+import mapping
+
+try:
+   os.chdir(os.environ['IMOGENE_DATA'])
+except KeyError:
+   os.chdir('@pkgdatadir@')
+
+mkdir('droso')
+os.chdir('droso')
+print "[",datetime.datetime.now(),"]  Downloading Mavid Mercator alignment files..."
+print 
+
+os.system('wget -c "http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/fly_CAF1.1.tar.gz"')
+
+print "[",datetime.datetime.now(),"]  Extracting alignment files..."
+print
+
+os.system('tar xzf fly_CAF1.1.tar.gz')
+os.system('mv Dro*.agp map genomes treefile alignments')
+#os.remove("fly_CAF1.1.tar.gz")
+
+print "[",datetime.datetime.now(),"]  Downloading Flybase annotation files..."
+print 
+
+
+mkdir("annot")
+os.chdir("annot")
+
+os.system("wget -c ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/dmel-2L-r5.38.gff.gz")
+os.system("wget -c ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/dmel-2R-r5.38.gff.gz")
+os.system("wget -c ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/dmel-3L-r5.38.gff.gz")
+os.system("wget -c ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/dmel-3R-r5.38.gff.gz")
+os.system("wget -c ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/dmel-4-r5.38.gff.gz")
+os.system("wget -c ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/dmel-X-r5.38.gff.gz")
+
+print "[",datetime.datetime.now(),"]  Extracting coordinate files..."
+print
+
+os.system('gunzip -vf *.gff.gz')
+
+print "[",datetime.datetime.now(),"]  Relevant coordinate extraction."
+print 
+
+os.system('awk \'/repeatmasker_dummy\tmatch\t/ {print $1,$4,$5}\' dmel*.gff | uniq > repeat-coord.dat')
+os.system('awk \'/FlyBase\tCDS\t/ {print $1,$4,$5}\' dmel*.gff | uniq > CDS-coord.dat')
+os.system('awk \'/FlyBase\tmRNA\t/ {\
+   if ($7 == "+"){\
+      print $1,$4\
+   } else {\
+      print $1,$5\
+   }\
+}\' dmel*.gff | uniq > TSS-coord.dat')
+
+os.system('awk \'/FlyBase\tmRNA\t/ {\
+      namestart=match($9,"Name=")+5;\
+      name=substr($9,namestart);\
+      namestop=match(name,"[-;]")-1;\
+      name=substr(name,0,namestop);\
+      if ($9~"Alias="){\
+         aliasstart=match($9,"Alias=")+6;\
+         alias=substr($9,aliasstart);\
+         aliasstop=match(alias,"[-,;]")-1;\
+         alias=substr(alias,0,aliasstop);\
+      }\
+      else {\
+         alias="---"\
+      }\
+      if ($7 == "+"){\
+      print alias,$4,$7,$1,name\
+      } else {\
+      print alias,$5,$7,$1,name\
+      }\
+      }\' *.gff | sort -k 5,5 -k 2,2g |\
+                  uniq -f 1 | awk \'{print $2,$3,$4,$5,$1}\' |\
+                  sort -k 3,3 -k 1,1g  > TSS-coord.dat')
+
+print "[",datetime.datetime.now(),"]  Genes list creation."
+print 
+
+os.system('awk \'{print $4}\' TSS-coord.dat | sort -u > genelist.dat')
+   
+
+def processcoord(coords):
+   for i in coords:
+      i[1]=int(i[1])
+      i[2]=int(i[2])
+   coords.sort()
+
+## Open file containing coding sequence coordinates
+fcds=open("CDS-coord.dat")
+cds=[i.rstrip().split(" ") for i in fcds.readlines()]
+processcoord(cds)
+fcds.close()
+
+## Open file containing repeated sequence coordinates
+frepeat=open("repeat-coord.dat")
+repeat=[i.rstrip().split(" ") for i in frepeat.readlines()]
+processcoord(repeat)
+frepeat.close()
+
+os.chdir("..")
+
+print("Relevant coordinates successfully imported.")
+
+## Mask functions
+def maskseq(start,stop,seq,mode):
+   """Mask an aligned sequence (do not take into account gaps)
+   start and stop should be integers with 0 corresponding to the start of the given sequence
+   mode 0 mask with N
+   mode 1 mask by converting the letter to lowercase
+   """
+   curpos=0
+   for i,s in enumerate(seq):
+      if s!='-' and s!='\n':
+         if curpos>=start and curpos<=stop:
+            if mode==0:
+               seq[i]='N'
+            elif mode==1:
+               seq[i]=string.lower(s)
+         curpos+=1
+
+## Record selection functions
+def posrecordleft(coordlist,coord):
+   pos=bisect.bisect_left(coordlist,coord)
+   if pos>0:
+      pos=pos-1
+   return pos
+
+## Iterate over alignment files
+os.chdir("alignments")
+fmap=open("map")
+maps=[i.rstrip().split("\t") for i in fmap.readlines()]
+fmap.close
+
+for i in maps:
+   coordmel=i[1:4]
+   if coordmel[1]!="NA" and coordmel[2]!='NA':
+      coordmel[0]=coordmel[0][3:]
+      coordmel[1]=int(coordmel[1])+1
+      coordmel[2]=int(coordmel[2])
+      r5coord=mapping.r4_map(coordmel)
+      if  r5coord != ["", 0, 0]:
+         os.chdir(i[0])
+         with open("mavid.mfa") as fmavid:
+            with open ("mavid2.mfa","w") as fmavid2:
+               firstline=fmavid.readline()
+               fmavid2.write(firstline.rstrip())
+               fmavid2.write(" "+r5coord[0]+" "+str(r5coord[1])+" "+str(r5coord[2])+"\n")
+               for line in fmavid.readlines():
+                  if line[0]=='>':
+                     fmavid2.write("\n"+line)
+                  else:
+                     fmavid2.write(line.rstrip())
+         shutil.move("mavid2.mfa","mavid.mfa")
+         os.chdir("..")
+      else:
+         shutil.rmtree(i[0])
+   else:
+      shutil.rmtree(i[0])
+
+
+
+for folder in glob.glob('[0-9]*/'):
+   print "Processing folder ",folder
+   os.chdir(folder)
+   with open('mavid.mfa') as fmavid:
+      with open('mavid2.mfa', 'w' ) as fmavid2:
+
+         ## Read coordinates
+         coordline=fmavid.readline()
+         fmavid2.write(coordline)
+         coordline=coordline.rstrip().split(" ")
+         coordstart=[coordline[1],int(coordline[2]),int(coordline[2])]
+         coordstop=[coordline[1],int(coordline[3]),int(coordline[3])]
+         
+         ## Mask sequences
+         seqline=list(fmavid.readline())
+         posstart=posrecordleft(cds,coordstart)
+         posstop=posrecordleft(cds,coordstop)
+         for i in range(posstart,posstop):
+            record=cds[i]
+            if record[0]==coordstart[0]:
+               maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,0)
+         posstart=posrecordleft(repeat,coordstart)
+         posstop=posrecordleft(repeat,coordstop)
+         for i in range(posstart,posstop):
+            record=repeat[i]
+            if record[0]==coordstart[0]:
+               maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,1)
+         fmavid2.write(''.join(seqline))
+         for i in fmavid.readlines():
+            fmavid2.write(i)
+   shutil.move("mavid2.mfa","mavid.mfa")
+   os.chdir("..")
+
+os.chdir('..')
+
+print "[",datetime.datetime.now(),"]  Generate the list of alignments."
+
+lines=[]
+for fmavid in glob.glob('alignments/[0-9]*/mavid.mfa'):
+   with open(fmavid) as mavid:
+      line=mavid.readline().rstrip().split(" ")
+   line.append(fmavid)
+   line[2]=int(line[2])
+   lines.append(line[1:])
+
+lines.sort()
+for i in lines:
+   i[1]=str(i[1])
+with open("align.dat","w") as fout:
+   for li in lines:
+      fout.write("".join(i+" " for i in li))
+      fout.write("\n")
+
+print "[",datetime.datetime.now(),"]  Exit normally."

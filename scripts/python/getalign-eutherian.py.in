@@ -1,0 +1,228 @@
+#!@PYTHON@
+# -*- coding: utf-8 -*-
+#    
+# Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+# Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
+# 
+# This file is part of Imogene.
+# 
+# Imogene is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Imogene is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+
+import sys
+import os
+import shutil
+import string
+import glob
+import datetime
+import bisect
+import errno
+
+def mkdir(path):
+   try:
+      os.mkdir(path)
+   except os.error, e:
+      if e.errno != errno.EEXIST:
+         raise
+
+sys.path.append("@pythondir@")
+import mapping
+
+try:
+   os.chdir(os.environ['IMOGENE_DATA'])
+except KeyError:
+   os.chdir('@pkgdatadir@')
+
+mkdir('eutherian')
+os.chdir('eutherian')
+print "[",datetime.datetime.now(),"]  Downloading Enrendo Pecan Ortheus alignment files from ENSEMBL..."
+print 
+
+mkdir('alignments')
+os.chdir("alignments")
+os.system('wget -c -nd ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian/Compara*')
+
+print "[",datetime.datetime.now(),"]  Extracting alignment files..."
+print
+
+os.system('gunzip -fv *.gz')
+
+print "[",datetime.datetime.now(),"]  Converting EMF files to fasta..."
+print
+
+try:
+   import Cython
+   print "[",datetime.datetime.now(),"]  Using Cython for emf2fasta conversion..."
+   print
+   import pyximport
+   pyximport.install()
+   import emf2fasta
+except:
+   print "[",datetime.datetime.now(),"]  Using Python for emf2fasta conversion..."
+   print
+   execfile("emf2fasta.pyx")
+
+for file in glob.glob('*.emf'):
+   os.remove(file)
+
+os.chdir('..')
+
+mkdir("annot")
+os.chdir("annot")
+
+
+print "[",datetime.datetime.now(),"]  Getting UCSC refGene annotation file for TSS coordinates..."
+print 
+
+os.system('wget -c "http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz"')
+
+print "[",datetime.datetime.now(),"]  Extracting..."
+print
+
+os.system('gunzip -vf refGene.txt.gz')
+
+print "[",datetime.datetime.now(),"]  TSS coordinates extraction."
+print 
+
+## Here we add 1 to the start positions (UCSC files are 0-based)
+os.system('awk \'{\
+   if ($4 == "+"){\
+      print $2,$5+1,$4,substr($3,4),$13\
+   } else {\
+      print $2,$6,$4,substr($3,4),$13\
+   }\
+}\' refGene.txt | sort -k 5,5 -k 2,2g |\
+                  uniq -f 1 | awk \'{print $2,$3,$4,$5,$1}\' |\
+                  sort -k 3,3 -k 1,1g > TSS-coord.dat')
+
+print "[",datetime.datetime.now(),"]  Genes list creation."
+print 
+
+os.system('awk \'{print $4}\' TSS-coord.dat | sort -u > genelist.dat')
+
+
+print "[",datetime.datetime.now(),"]  Getting ENSEMBL gtf annotation file for CDS coordinates..."
+print 
+
+os.system('wget -c "ftp://ftp.ensembl.org//pub/release-64/gtf//mus_musculus/Mus_musculus.NCBIM37.64.gtf.gz"')
+
+print "[",datetime.datetime.now(),"]  Extracting..."
+print
+
+os.system('gunzip -vf Mus_musculus.NCBIM37.64.gtf.gz')
+
+print "[",datetime.datetime.now(),"]  CDS coordinates extraction."
+print 
+
+os.system('awk \'$3=="CDS"{print $1,$4,$5}\' Mus_musculus.NCBIM37.64.gtf |\
+      sort -k 1,1 -k 2,2g | uniq  > CDS-coord.dat')
+
+def processcoord(coords):
+   for i in coords:
+      i[1]=int(i[1])
+      i[2]=int(i[2])
+   coords.sort()
+
+## Open file containing coding sequence coordinates
+fcds=open("CDS-coord.dat")
+cds=[i.rstrip().split(" ") for i in fcds.readlines()]
+processcoord(cds)
+fcds.close()
+
+os.chdir("..")
+
+print "[",datetime.datetime.now(),"]  Relevant coordinates successfully imported."
+print 
+
+## Mask functions
+def maskseq(start,stop,seq,mode):
+   """Mask an aligned sequence (do not take into account gaps)
+   start and stop should be integers with 0 corresponding to the start of the given sequence
+   mode 0 mask with N
+   mode 1 mask by converting the letter to lowercase
+   """
+   curpos=0
+   for i,s in enumerate(seq):
+      if s!='-' and s!='\n':
+         if curpos>=start and curpos<=stop:
+            if mode==0:
+               seq[i]='N'
+            elif mode==1:
+               seq[i]=string.lower(s)
+         curpos+=1
+
+## Record selection functions
+def posrecordleft(coordlist,coord):
+   pos=bisect.bisect_left(coordlist,coord)
+   if pos>0:
+      pos=pos-1
+   return pos
+
+## Iterate over alignment files
+os.chdir("alignments")
+
+print "[",datetime.datetime.now(),"]  Masking CDS..."
+print 
+
+for folder in glob.glob('chr*/'):
+   print "Processing folder ",folder
+   os.chdir(folder)
+   for file in glob.glob('*.fa'):
+      with open(file) as fmavid:
+         with open('foo.fa', 'w' ) as fmavid2:
+
+            ## Read coordinates
+            coordline=fmavid.readline()
+            fmavid2.write(coordline)
+            coordline=coordline.rstrip().split(" ")
+            coordstart=[coordline[1],int(coordline[2]),int(coordline[2])]
+            coordstop=[coordline[1],int(coordline[3]),int(coordline[3])]
+            
+            ## Mask mouse CDS
+            seqline=list(fmavid.readline())
+            posstart=posrecordleft(cds,coordstart)
+            posstop=posrecordleft(cds,coordstop)
+            for i in range(posstart,posstop):
+               record=cds[i]
+               if record[0]==coordstart[0]:
+                  maskseq(record[1]-coordstart[1],record[2]-coordstart[1],seqline,0)
+            fmavid2.write(''.join(seqline))
+            for i in fmavid.readlines():
+               fmavid2.write(i)
+      shutil.move("foo.fa",file)
+   os.chdir("..")
+
+os.chdir('..')
+
+print "[",datetime.datetime.now(),"]  Generate the list of alignments."
+
+lines=[]
+for fmavid in glob.glob('alignments/chr*/*.fa'):
+   if fmavid.split("/")[1]!="chrothers":
+      with open(fmavid) as mavid:
+         line=mavid.readline().rstrip().split(" ")
+      line.append(fmavid)
+      line[2]=int(line[2])
+      lines.append(line[1:])
+
+lines.sort()
+for i in lines:
+   i[1]=str(i[1])
+with open("align.dat","w") as fout:
+   for li in lines:
+      fout.write("".join(i+" " for i in li))
+      fout.write("\n")
+
+
+print "[",datetime.datetime.now(),"]  Exit normally."
+print 
