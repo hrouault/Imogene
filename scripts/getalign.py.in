@@ -134,6 +134,8 @@ def checkexist(filename, md5sum):
 
 
 files_present = []
+
+
 def check_wuncomp(filename):
     if not checkexist(filename, hashes[filename]):
         fcomp = f + '.gz'
@@ -146,7 +148,9 @@ def check_wuncomp(filename):
     return True
 
 
-tartotalsize = 0;
+tartotalsize = 0
+
+
 class MyFileObj(file):
     def read(self, size):
         curpos = self.tell()
@@ -235,7 +239,7 @@ else:
         geturl('http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/' +
                alignfn, hashes[alignfn])
     files_present.append(alignfn)
-    
+
 # Downloading annotation files
 mkdir("annot")
 os.chdir("annot")
@@ -302,7 +306,7 @@ if args.species == 'eutherian':
         import pyximport
         pyximport.install()
         import emf2fasta
-        for emff in glog.glob('*.emf'):
+        for emff in glob.glob('*.emf'):
             emf2fasta.emf2fasta(emff)
     except ImportError:
         if not query_yes_no('You do not have Cython installed. Do you want to '
@@ -312,7 +316,7 @@ if args.species == 'eutherian':
 
         message('Using Python for emf2fasta conversion...')
         execfile('emf2fasta.pyx')
-        for emff in glog.glob('*.emf'):
+        for emff in glob.glob('*.emf'):
             emf2fasta.emf2fasta(emff)
 
     if not args.keep_intermediate:
@@ -330,7 +334,7 @@ else:
                 print 'The tar file contains unsafe filenames. Aborting.'
                 sys.exit(1)
             tarf.extract(n, path=tdir)
-        
+
     for fname in ['DroAna_CAF1.agp', 'DroEre_CAF1.agp', 'DroGri_CAF1.agp',
                   'DroMoj_CAF1.agp', 'DroPer_CAF1.agp', 'DroPse_CAF1.agp',
                   'DroSec_CAF1.agp', 'DroVir_CAF1.agp', 'DroWil_CAF1.agp',
@@ -343,6 +347,8 @@ else:
 os.chdir('annot')
 message('Extracting annotation archive...')
 
+cds[]
+repeat[]
 if args.species == 'eutherian':
     gunzip('refGene.txt.gz')
     message('TSS coordinates extraction.')
@@ -352,8 +358,8 @@ if args.species == 'eutherian':
     with open('refGene.txt') as fref:
         for line in fref:
             l = line.rstrip().split()
-            ll.append([l[2][3:], int(l[4]) + 1 if l[3] == '+' else int(l[5]),
-                       l[3], l[12]])
+            ll.append((l[2][3:], int(l[4]) + 1 if l[3] == '+' else int(l[5]),
+                       l[3], l[12]))
     defl = sorted(set(ll))
     with open('TSS-coord.dat', 'w') as fout:
         for l in defl:
@@ -361,7 +367,7 @@ if args.species == 'eutherian':
 
     message('Genes list creation.')
     with open('TSS-coord.dat') as fcoord:
-        coords = [i.rstrip().split()[3] for i in fcoord]
+        coords = (i.rstrip().split()[3] for i in fcoord)
     with open('genelist.dat', 'w') as glist:
         for i in sorted(set(coords)):
             glist.write('{1}\n'.format(i))
@@ -486,11 +492,11 @@ if args.species == 'eutherian':
                     fmavid2.write(''.join(seqline))
                     for i in fmavid:
                         fmavid2.write(i)
-            shutil.move("foo.fa", file)
-        os.chdir("..")
+            shutil.move('foo.fa', file)
+        os.chdir('..')
 else:
-    with open ('map') as fmap:
-        maps = [i.rstrip().split("\t") for i in fmap]
+    with open('map') as fmap:
+        maps = [i.rstrip().split('\t') for i in fmap]
 
     for i in maps:
         coordmel = i[1:4]
@@ -501,8 +507,8 @@ else:
             r5coord = mapping.r4_map(coordmel)
             if  r5coord != ['', 0, 0]:
                 os.chdir(i[0])
-                with open("mavid.mfa") as fmavid:
-                    with open ("mavid2.mfa","w") as fmavid2:
+                with open('mavid.mfa') as fmavid:
+                    with open('mavid2.mfa', 'w') as fmavid2:
                         firstline = fmavid.readline()
                         fmavid2.write(firstline.rstrip())
                         nfline = (' {0} {1} {2}\n'
@@ -525,33 +531,34 @@ else:
         os.chdir(folder)
         with open('mavid.mfa') as fmavid:
             with open('mavid2.mfa', 'w') as fmavid2:
-               ## Read coordinates
-               coordline = fmavid.readline()
-               fmavid2.write(coordline)
-               coordline = coordline.rstrip().split()
-               coordstart = [coordline[1], int(coordline[2]),
-                             int(coordline[2])]
-               coordstop = [coordline[1], int(coordline[3]), int(coordline[3])]
-  
-               ## Mask sequences
-               seqline = list(fmavid.readline())
-               posstart = posrecordleft(cds, coordstart)
-               posstop = posrecordleft(cds, coordstop)
-               for i in range(posstart, posstop):
-                   record = cds[i]
-                   if record[0] == coordstart[0]:
-                       maskseq(record[1] - coordstart[1],
-                               record[2] - coordstart[1], seqline, 0)
-               posstart = posrecordleft(repeat, coordstart)
-               posstop = posrecordleft(repeat, coordstop)
-               for i in range(posstart, posstop):
-                   record = repeat[i]
-                   if record[0] == coordstart[0]:
-                       maskseq(record[1] - coordstart[1],
-                               record[2] - coordstart[1], seqline, 1)
-               fmavid2.write(''.join(seqline))
-               for i in fmavid:
-                   fmavid2.write(i)
+                ## Read coordinates
+                coordline = fmavid.readline()
+                fmavid2.write(coordline)
+                coordline = coordline.rstrip().split()
+                coordstart = [coordline[1], int(coordline[2]),
+                              int(coordline[2])]
+                coordstop = [coordline[1], int(coordline[3]),
+                             int(coordline[3])]
+
+                ## Mask sequences
+                seqline = list(fmavid.readline())
+                posstart = posrecordleft(cds, coordstart)
+                posstop = posrecordleft(cds, coordstop)
+                for i in range(posstart, posstop):
+                    record = cds[i]
+                    if record[0] == coordstart[0]:
+                        maskseq(record[1] - coordstart[1],
+                                record[2] - coordstart[1], seqline, 0)
+                posstart = posrecordleft(repeat, coordstart)
+                posstop = posrecordleft(repeat, coordstop)
+                for i in range(posstart, posstop):
+                    record = repeat[i]
+                    if record[0] == coordstart[0]:
+                        maskseq(record[1] - coordstart[1],
+                                record[2] - coordstart[1], seqline, 1)
+                fmavid2.write(''.join(seqline))
+                for i in fmavid:
+                    fmavid2.write(i)
         shutil.move('mavid2.mfa', 'mavid.mfa')
         os.chdir('..')
 
