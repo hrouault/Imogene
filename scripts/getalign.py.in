@@ -444,46 +444,122 @@ def posrecordleft(coordlist, coord):
 ## Iterate over alignment files
 message('Masking CDS...')
 os.chdir("alignments")
-for folder in glob.glob('chr*/'):
-    print "Processing folder ", folder
-    os.chdir(folder)
-    for file in glob.glob('*.fa'):
-        with open(file) as fmavid:
-            with open('foo.fa', 'w') as fmavid2:
-                ## Read coordinates
-                coordline = fmavid.readline()
-                fmavid2.write(coordline)
-                coordline = coordline.rstrip().split(" ")
-                coordstart = [coordline[1], int(coordline[2]),
-                              int(coordline[2])]
-                coordstop = [coordline[1], int(coordline[3]),
-                             int(coordline[3])]
+if args.species == 'eutherian':
+    for folder in glob.glob('chr*/'):
+        print "Processing folder ", folder
+        os.chdir(folder)
+        for file in glob.glob('*.fa'):
+            with open(file) as fmavid:
+                with open('foo.fa', 'w') as fmavid2:
+                    ## Read coordinates
+                    coordline = fmavid.readline()
+                    fmavid2.write(coordline)
+                    coordline = coordline.rstrip().split()
+                    coordstart = [coordline[1], int(coordline[2]),
+                                  int(coordline[2])]
+                    coordstop = [coordline[1], int(coordline[3]),
+                                 int(coordline[3])]
 
-                ## Mask mouse CDS
-                seqline = list(fmavid.readline())
-                posstart = posrecordleft(cds, coordstart)
-                posstop = posrecordleft(cds, coordstop)
-                for i in range(posstart, posstop):
-                    record = cds[i]
-                    if record[0] == coordstart[0]:
-                        maskseq(record[1] - coordstart[1],
-                                record[2] - coordstart[1], seqline, 0)
-                fmavid2.write(''.join(seqline))
-                for i in fmavid:
-                    fmavid2.write(i)
-        shutil.move("foo.fa", file)
-    os.chdir("..")
+                    ## Mask mouse CDS
+                    seqline = list(fmavid.readline())
+                    posstart = posrecordleft(cds, coordstart)
+                    posstop = posrecordleft(cds, coordstop)
+                    for i in range(posstart, posstop):
+                        record = cds[i]
+                        if record[0] == coordstart[0]:
+                            maskseq(record[1] - coordstart[1],
+                                    record[2] - coordstart[1], seqline, 0)
+                    fmavid2.write(''.join(seqline))
+                    for i in fmavid:
+                        fmavid2.write(i)
+            shutil.move("foo.fa", file)
+        os.chdir("..")
+else:
+    with open ('map') as fmap:
+        maps = [i.rstrip().split("\t") for i in fmap]
+
+    for i in maps:
+        coordmel = i[1:4]
+        if coordmel[1] != 'NA' and coordmel[2] != 'NA':
+            coordmel[0] = coordmel[0][3:]
+            coordmel[1] = int(coordmel[1]) + 1
+            coordmel[2] = int(coordmel[2])
+            r5coord = mapping.r4_map(coordmel)
+            if  r5coord != ['', 0, 0]:
+                os.chdir(i[0])
+                with open("mavid.mfa") as fmavid:
+                    with open ("mavid2.mfa","w") as fmavid2:
+                        firstline = fmavid.readline()
+                        fmavid2.write(firstline.rstrip())
+                        fmavid2.write(' {0} {1} {2}\n'
+                                      .format(r5coord[0], r5coord[1], r5coord[2])
+                        for line in fmavid:
+                            if line[0] == '>':
+                                fmavid2.write('\n' + line)
+                            else:
+                                fmavid2.write(line.rstrip())
+                                shutil.move('mavid2.mfa', 'mavid.mfa')
+                                os.chdir('..')
+            else:
+                shutil.rmtree(i[0])
+        else:
+            shutil.rmtree(i[0])
+
+    for folder in glob.glob('[0-9]*/'):
+        print 'Processing folder ', folder
+        os.chdir(folder)
+        with open('mavid.mfa') as fmavid:
+            with open('mavid2.mfa', 'w') as fmavid2:
+
+             ## Read coordinates
+             coordline = fmavid.readline()
+             fmavid2.write(coordline)
+             coordline = coordline.rstrip().split()
+             coordstart = [coordline[1], int(coordline[2]), int(coordline[2])]
+             coordstop = [coordline[1], int(coordline[3]), int(coordline[3])]
+
+             ## Mask sequences
+             seqline = list(fmavid.readline())
+             posstart = posrecordleft(cds, coordstart)
+             posstop = posrecordleft(cds, coordstop)
+             for i in range(posstart, posstop):
+                 record = cds[i]
+                 if record[0] == coordstart[0]:
+                     maskseq(record[1] - coordstart[1],
+                             record[2] - coordstart[1], seqline, 0)
+                     posstart = posrecordleft(repeat, coordstart)
+                     posstop = posrecordleft(repeat, coordstop)
+                     for i in range(posstart, posstop):
+                         record = repeat[i]
+                         if record[0] == coordstart[0]:
+                             maskseq(record[1] - coordstart[1],
+                                     record[2] - coordstart[1], seqline, 1)
+                             fmavid2.write(''.join(seqline))
+                             for i in fmavid:
+                                 fmavid2.write(i)
+                                 shutil.move('mavid2.mfa', 'mavid.mfa')
+                                 os.chdir('..')
+
 
 message('Generate the list of alignments.')
 os.chdir('..')
 lines = []
-for fmavid in glob.glob('alignments/chr*/*.fa'):
-    if fmavid.split('/')[1] != "chrothers":
+if args.species == 'eutherian':
+    for fmavid in glob.glob('alignments/chr*/*.fa'):
+        if fmavid.split('/')[1] != "chrothers":
+            with open(fmavid) as mavid:
+                line = mavid.readline().rstrip().split(" ")
+            line.append(fmavid)
+            line[2] = int(line[2])
+            lines.append(line[1:])
+else:
+    for fmavid in glob.glob('alignments/[0-9]*/mavid.mfa'):
         with open(fmavid) as mavid:
             line = mavid.readline().rstrip().split(" ")
-        line.append(fmavid)
-        line[2] = int(line[2])
-        lines.append(line[1:])
+            line.append(fmavid)
+            line[2] = int(line[2])
+            lines.append(line[1:])
+
 
 lines.sort()
 for i in lines:
