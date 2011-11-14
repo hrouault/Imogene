@@ -33,6 +33,7 @@ import urllib2
 import hashlib
 import tarfile
 import gzip
+from contextlib import closing
 
 import argparse
 
@@ -129,6 +130,7 @@ def checkexist(filename, md5sum):
         return False
 
 
+files_present = []
 def check_wuncomp(filename):
     if not checkexist(filename, hashes[filename]):
         fcomp = f + '.gz'
@@ -197,27 +199,28 @@ with open(datapath + "/MD5SUM") as hashf:
 os.chdir(destpath)
 mkdir(args.species)
 os.chdir(args.species)
-mkdir('alignments')
-os.chdir("alignments")
 
 # Downloading all the necessary files
-files_present = []
+startalignname = 'Compara.12_eutherian_mammals_EPO.'
 if args.species == 'eutherian':
+    mkdir('alignments')
+    os.chdir("alignments")
     message('Downloading Enrendo Pecan Ortheus alignment files\n'
             'from ENSEMBL...')
     nbfile = 0
     for f in hashes:
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz$', f):
+        if f.startswith(startalignname) and f.endswith('.gz'):
             nbfile += 1
     ifile = 1
     for f, h in hashes.iteritems():
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.emf$', f):
+        if f.startswith(startalignname) and f.endswith('.emf'):
             print "file {0:3} / {1}  ".format(ifile, nbfile),
             if not check_wuncomp(f):
                 geturl('ftp://ftp.ensembl.org/pub/release-63/emf/'
                        'ensembl-compara/epo_12_eutherian/' + fcomp, h)
                 files_present.append(fcomp)
             ifile += 1
+    os.chdir('..')
 else:
     # Downloading alignment files
     message('Downloading Mavid Mercator alignment files.')
@@ -228,7 +231,6 @@ else:
     files_present.append(alignfn)
     
 # Downloading annotation files
-os.chdir('..')
 mkdir("annot")
 os.chdir("annot")
 
@@ -249,19 +251,20 @@ if args.species == 'eutherian':
 else:
     nbfile = 0
     for f in hashes:
-        if re.match('dmel-.*-r5.38.gff.gz$', f):
+        if f.startswith('dmel-') and f.endswith('-r5.38.gff.gz'):
             nbfile += 1
     ifile = 1
     message('Downloading Flybase annotation files...')
     basename = 'ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/'
     for f, h in hashes.iteritems():
-        if re.match('dmel-.*-r5.38.gff$', f):
+        if f.startswith('dmel-') and f.endswith('-r5.38.gff'):
             print "file {0:3} / {1}  ".format(ifile, nbfile),
             if not check_wuncomp(f):
                 fcomp = f + '.gz'
-                geturl(basename + fcomp, h)
+                geturl(basename + fcomp, hashes[fcomp])
                 files_present.append(fcomp)
             ifile += 1
+os.chdir('..')
 
 if args.download_only:
     print ('Script finished. The files were only downloaded. Please process '
@@ -270,17 +273,17 @@ if args.download_only:
 
 
 # Alignment treatment
-os.chdir('../alignments')
 message('Extracting alignment files...')
 
 if args.species == 'eutherian':
+    os.chdir('alignments')
     nbfile = 0
     for f in hashes:
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz$', f):
+        if f.startswith(startalignname) and f.endswith('.gz'):
             nbfile += 1
     ifile = 1
     for f in hashes:
-        if re.match('Compara.12_eutherian_mammals_EPO.*\.gz$', f):
+        if f.startswith(startalignname) and f.endswith('.gz$'):
             funcomp = f.rstrip('.gz')
             if f not in files_present and funcomp not in files_present:
                 print "Uncompressing file {0}...".format(f)
@@ -304,26 +307,27 @@ if args.species == 'eutherian':
 
     for file in glob.glob('*.emf'):
         os.remove(file)
-else:
-    tartotalsize = os.path.getsize('fly_CAF1.1.tar.gz')
-    tdir = './'
-    with tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz', 'r:gz')) as tarf:
-        for n in tarf.names:
-        if not os.path.abspath(os.path.join(tdir, n)).startswith(tdir):
-            print "tarfile contains unsafe filenames!"
-            sys.exit(1)
-    tarf.extractall(path=tdir)
-        
-    tar.extractall()
-    tar.close()
-    for fname in ['DroAna_CAF1.agp', 'DroEre_CAF1.agp', 'DroGri_CAF1.agp',
-                  'DroMoj_CAF1.agp', 'DroPer_CAF1.agp', 'DroPse_CAF1.agp',
-                  'DroSec_CAF1.agp', 'DroVir_CAF1.agp', 'DroWil_CAF1.agp',
-                  'map', 'genomes', 'treefile']:
-        os.rename(fname, 'alignments/' + fname)
+    os.chdir('..')
+# else:
+#     tartotalsize = os.path.getsize('fly_CAF1.1.tar.gz')
+#     tdir = os.path.abspath('./')
+#     with closing(tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz'),
+#                       mode='r:gz')) as tarf:
+#         for n in tarf:
+#             pathn = os.path.abspath(os.path.join(tdir, n.name))
+#             if not pathn.startswith(tdir):
+#                 print 'The tar file contains unsafe filenames. Aborting.'
+#                 sys.exit(1)
+#             tarf.extract(n, path=tdir)
+#         
+#     for fname in ['DroAna_CAF1.agp', 'DroEre_CAF1.agp', 'DroGri_CAF1.agp',
+#                   'DroMoj_CAF1.agp', 'DroPer_CAF1.agp', 'DroPse_CAF1.agp',
+#                   'DroSec_CAF1.agp', 'DroVir_CAF1.agp', 'DroWil_CAF1.agp',
+#                   'map', 'genomes', 'treefile']:
+#         os.rename(fname, 'alignments/' + fname)
 
 
-os.chdir('../annot')
+os.chdir('annot')
 message('Extracting annotation archive...')
 
 if args.species == 'eutherian':
@@ -359,65 +363,51 @@ if args.species == 'eutherian':
             linesp = line.rstrip().split()
             if linesp[2] == 'CDS':
                 lines.append([linesp[0], int(linesp[3]), int(linesp[4])])
-    lines = sorted(set(lines))
+    cds = sorted(set(lines))
     with open('CDS-coord.dat', 'w') as fgtfout:
-        for line in lines:
+        for line in cds:
             fgtfout.write('{0} {1} {2}\n'
-                          .format(line[0], int(line[1]), int(line[3])))
+                          .format(cds[0], int(cds[1]), int(cds[3])))
 else:
+    replines = []
+    cdslines = []
+    tsslines = []
     for f in hashes:
-        if re.match('dmel-.*.gff$', f):
-            if f not in present_files:
+        if f.startswith('dmel-') and f.endswith('.gff'):
+            if f not in files_present:
                 gunzip(f + '.gz')
             nbfile += 1
             with open(f) as gfffile:
-                replines = []
-                cdslines = []
-                tssline = []
                 for line in gfffile:
                     if 'repeatmasker_dummy\tmatch\t' in line:
-                        linesp = line.rstrip().split()
-                        replines.append([linesp[0], int(linesp[3]),
-                                         int(linesp[4])])
+                        elts = line.rstrip().split()
+                        replines.append((elts[0], int(elts[3]), int(elts[4])))
                     elif 'FlyBase\tCDS\t' in line:
-                        linesp = line.rstrip().split()
-                        cdslines.append([linesp[0], int(linesp[3]),
-                                         int(linesp[4])])
+                        elts = line.rstrip().split()
+                        cdslines.append((elts[0], int(elts[3]), int(elts[4])))
                     elif 'FlyBase\tmRNA\t' in line:
-                        linesp = line.rstrip().split()
-                        detail = dist(i.split('=') for i in linesp.split(';'))
-                        name = detail['Name']
-                        alias = detail.get('Alias', '---')
-                        pos = int(linesp[3] if linesp[6] == '+' else linesp[4])
-                    tssline.append(linesp[0], pos, linesp[6], name, alias)
-                replines = sorted(set(replines))
-                cdslines = sorted(set(cdslines))
-                tsslines = sorted(set(tranlines))
-            with open('repeat-coord.dat', 'w') as frepeat:
-                for rl in replines:
-                    frepeat.write('{0} {1} {2}\n'.format(rl[0], rl[1], rl[2]))
-            with open('CDS-coord.dat', 'w') as fcds:
-                for cl in cdslines:
-                    fcds.write('{0} {1} {2}\n'.format(cl[0], cl[1], cl[2]))
-            with open('TSS-coord.dat', 'w') as ftss:
-                for tl in tsslines:
-                    ftss.write('{0} {1} {2} {3} {4}\n'
-                               .format(tl[1], tl[2], tl[0], tl[3], tl[4]))
-            with open('genelist.dat', 'w'):
-                for tg in sorted(set([i[3] for i in tsslines])):
-                    glist.write('{0}\n'.format(tg))
-
-def processcoord(coords):
-    for i in coords:
-        i[1] = int(i[1])
-        i[2] = int(i[2])
-    coords.sort()
-
-## Open file containing coding sequence coordinates
-fcds = open('CDS-coord.dat')
-cds = [i.rstrip().split(" ") for i in fcds]
-processcoord(cds)
-fcds.close()
+                        elts = line.rstrip().split()
+                        detail = dict(i.split('=') for i in elts[8].split(';'))
+                        fulln = detail['Name']
+                        name = fulln[0:-3] if fulln[-3:-1] == '-R' else fulln
+                        fulla = detail.get('Alias', '---')
+                        alias = fulla[0:-3] if fulla[-3:-1] == '-R' else fulla
+                        pos = int(elts[3] if elts[6] == '+' else elts[4])
+                        tsslines.append((elts[0], pos, elts[6], name, alias))
+    with open('repeat-coord.dat', 'w') as frepeat:
+        for rl in sorted(set(replines)):
+            frepeat.write('{0} {1} {2}\n'.format(rl[0], rl[1], rl[2]))
+    with open('CDS-coord.dat', 'w') as fcds:
+        for cl in sorted(set(cdslines)):
+            fcds.write('{0} {1} {2}\n'.format(cl[0], cl[1], cl[2]))
+    with open('TSS-coord.dat', 'w') as ftss:
+        for tl in sorted(set(tsslines)):
+            ftss.write('{0} {1} {2} {3} {4}\n'
+                       .format(tl[1], tl[2], tl[0], tl[3], tl[4]))
+    with open('genelist.dat', 'w') as glist:
+        for tg in sorted(set([i[3] for i in tsslines])):
+            glist.write('{0}\n'.format(tg))
+    cds = sorted(cds(cdslines))
 
 os.chdir('..')
 
