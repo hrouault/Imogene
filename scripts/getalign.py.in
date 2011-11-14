@@ -83,10 +83,13 @@ def gunzip(filename):
     gzipf = gzip.open(filename, 'rb')
     with open(filename.rstrip('.gz'), 'wb') as fout:
         fout.write(gzipf.read())
-    os.remove(filename)
+    if not args.keep_intermediate:
+        os.remove(filename)
 
 
 def query_yes_no(question):
+    if args.no_interactive:
+        return False
     valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
     prompt = " [y/N] "
     count = 0
@@ -166,6 +169,9 @@ parser.add_argument('--keep-intermediate', action='store_true', help=helpkeep)
 
 parser.add_argument('--species', choices=['droso', 'eutherian'], required=True,
     help='Group of species for the alignments')
+
+helpinteractive = 'All the question get answered with the default answer'
+parser.add_argument('--no-interactive', action='store_true')
 
 helpdest = ('Directory where to download the files. If not given, the files '
             'will be\ndownloaded in the $(pkgdatadir) folder or in the '
@@ -296,17 +302,22 @@ if args.species == 'eutherian':
         import pyximport
         pyximport.install()
         import emf2fasta
+        for emff in glog.glob('*.emf'):
+            emf2fasta.emf2fasta(emff)
     except ImportError:
         if not query_yes_no('You do not have Cython installed. Do you want to '
                             'continue\nanyway (much slower procedure)?'):
             print 'Aborting.'
             sys.exit(1)
 
-    message('Using Python for emf2fasta conversion...')
-    execfile('emf2fasta.pyx')
+        message('Using Python for emf2fasta conversion...')
+        execfile('emf2fasta.pyx')
+        for emff in glog.glob('*.emf'):
+            emf2fasta.emf2fasta(emff)
 
-    for file in glob.glob('*.emf'):
-        os.remove(file)
+    if not args.keep_intermediate:
+        for file in glob.glob('*.emf'):
+            os.remove(file)
     os.chdir('..')
 # else:
 #     tartotalsize = os.path.getsize('fly_CAF1.1.tar.gz')
@@ -325,6 +336,8 @@ if args.species == 'eutherian':
 #                   'DroSec_CAF1.agp', 'DroVir_CAF1.agp', 'DroWil_CAF1.agp',
 #                   'map', 'genomes', 'treefile']:
 #         os.rename(fname, 'alignments/' + fname)
+#     if not args.keep_intermediate:
+#         os.remove('fly_CAF1.1.tar.gz')
 
 
 os.chdir('annot')
@@ -407,7 +420,8 @@ else:
     with open('genelist.dat', 'w') as glist:
         for tg in sorted(set([i[3] for i in tsslines])):
             glist.write('{0}\n'.format(tg))
-    cds = sorted(cds(cdslines))
+    cds = sorted(set(cdslines))
+    repeat = sorted(set(replines))
 
 os.chdir('..')
 
@@ -491,15 +505,16 @@ else:
                     with open ("mavid2.mfa","w") as fmavid2:
                         firstline = fmavid.readline()
                         fmavid2.write(firstline.rstrip())
-                        fmavid2.write(' {0} {1} {2}\n'
-                                      .format(r5coord[0], r5coord[1], r5coord[2])
+                        nfline = (' {0} {1} {2}\n'
+                                  .format(r5coord[0], r5coord[1], r5coord[2]))
+                        fmavid2.write(nfline)
                         for line in fmavid:
                             if line[0] == '>':
                                 fmavid2.write('\n' + line)
                             else:
                                 fmavid2.write(line.rstrip())
-                                shutil.move('mavid2.mfa', 'mavid.mfa')
-                                os.chdir('..')
+                shutil.move('mavid2.mfa', 'mavid.mfa')
+                os.chdir('..')
             else:
                 shutil.rmtree(i[0])
         else:
@@ -510,35 +525,35 @@ else:
         os.chdir(folder)
         with open('mavid.mfa') as fmavid:
             with open('mavid2.mfa', 'w') as fmavid2:
-
-             ## Read coordinates
-             coordline = fmavid.readline()
-             fmavid2.write(coordline)
-             coordline = coordline.rstrip().split()
-             coordstart = [coordline[1], int(coordline[2]), int(coordline[2])]
-             coordstop = [coordline[1], int(coordline[3]), int(coordline[3])]
-
-             ## Mask sequences
-             seqline = list(fmavid.readline())
-             posstart = posrecordleft(cds, coordstart)
-             posstop = posrecordleft(cds, coordstop)
-             for i in range(posstart, posstop):
-                 record = cds[i]
-                 if record[0] == coordstart[0]:
-                     maskseq(record[1] - coordstart[1],
-                             record[2] - coordstart[1], seqline, 0)
-                     posstart = posrecordleft(repeat, coordstart)
-                     posstop = posrecordleft(repeat, coordstop)
-                     for i in range(posstart, posstop):
-                         record = repeat[i]
-                         if record[0] == coordstart[0]:
-                             maskseq(record[1] - coordstart[1],
-                                     record[2] - coordstart[1], seqline, 1)
-                             fmavid2.write(''.join(seqline))
-                             for i in fmavid:
-                                 fmavid2.write(i)
-                                 shutil.move('mavid2.mfa', 'mavid.mfa')
-                                 os.chdir('..')
+               ## Read coordinates
+               coordline = fmavid.readline()
+               fmavid2.write(coordline)
+               coordline = coordline.rstrip().split()
+               coordstart = [coordline[1], int(coordline[2]),
+                             int(coordline[2])]
+               coordstop = [coordline[1], int(coordline[3]), int(coordline[3])]
+  
+               ## Mask sequences
+               seqline = list(fmavid.readline())
+               posstart = posrecordleft(cds, coordstart)
+               posstop = posrecordleft(cds, coordstop)
+               for i in range(posstart, posstop):
+                   record = cds[i]
+                   if record[0] == coordstart[0]:
+                       maskseq(record[1] - coordstart[1],
+                               record[2] - coordstart[1], seqline, 0)
+               posstart = posrecordleft(repeat, coordstart)
+               posstop = posrecordleft(repeat, coordstop)
+               for i in range(posstart, posstop):
+                   record = repeat[i]
+                   if record[0] == coordstart[0]:
+                       maskseq(record[1] - coordstart[1],
+                               record[2] - coordstart[1], seqline, 1)
+               fmavid2.write(''.join(seqline))
+               for i in fmavid:
+                   fmavid2.write(i)
+        shutil.move('mavid2.mfa', 'mavid.mfa')
+        os.chdir('..')
 
 
 message('Generate the list of alignments.')
@@ -556,9 +571,9 @@ else:
     for fmavid in glob.glob('alignments/[0-9]*/mavid.mfa'):
         with open(fmavid) as mavid:
             line = mavid.readline().rstrip().split(" ")
-            line.append(fmavid)
-            line[2] = int(line[2])
-            lines.append(line[1:])
+        line.append(fmavid)
+        line[2] = int(line[2])
+        lines.append(line[1:])
 
 
 lines.sort()
