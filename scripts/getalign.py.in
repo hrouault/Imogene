@@ -319,25 +319,25 @@ if args.species == 'eutherian':
         for file in glob.glob('*.emf'):
             os.remove(file)
     os.chdir('..')
-# else:
-#     tartotalsize = os.path.getsize('fly_CAF1.1.tar.gz')
-#     tdir = os.path.abspath('./')
-#     with closing(tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz'),
-#                       mode='r:gz')) as tarf:
-#         for n in tarf:
-#             pathn = os.path.abspath(os.path.join(tdir, n.name))
-#             if not pathn.startswith(tdir):
-#                 print 'The tar file contains unsafe filenames. Aborting.'
-#                 sys.exit(1)
-#             tarf.extract(n, path=tdir)
-#         
-#     for fname in ['DroAna_CAF1.agp', 'DroEre_CAF1.agp', 'DroGri_CAF1.agp',
-#                   'DroMoj_CAF1.agp', 'DroPer_CAF1.agp', 'DroPse_CAF1.agp',
-#                   'DroSec_CAF1.agp', 'DroVir_CAF1.agp', 'DroWil_CAF1.agp',
-#                   'map', 'genomes', 'treefile']:
-#         os.rename(fname, 'alignments/' + fname)
-#     if not args.keep_intermediate:
-#         os.remove('fly_CAF1.1.tar.gz')
+else:
+    tartotalsize = os.path.getsize('fly_CAF1.1.tar.gz')
+    tdir = os.path.abspath('./')
+    with closing(tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz'),
+                      mode='r:gz')) as tarf:
+        for n in tarf:
+            pathn = os.path.abspath(os.path.join(tdir, n.name))
+            if not pathn.startswith(tdir):
+                print 'The tar file contains unsafe filenames. Aborting.'
+                sys.exit(1)
+            tarf.extract(n, path=tdir)
+        
+    for fname in ['DroAna_CAF1.agp', 'DroEre_CAF1.agp', 'DroGri_CAF1.agp',
+                  'DroMoj_CAF1.agp', 'DroPer_CAF1.agp', 'DroPse_CAF1.agp',
+                  'DroSec_CAF1.agp', 'DroVir_CAF1.agp', 'DroWil_CAF1.agp',
+                  'map', 'genomes', 'treefile']:
+        os.rename(fname, 'alignments/' + fname)
+    if not args.keep_intermediate:
+        os.remove('fly_CAF1.1.tar.gz')
 
 
 os.chdir('annot')
