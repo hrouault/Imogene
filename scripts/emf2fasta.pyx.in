@@ -58,25 +58,31 @@ def chr2str(chr):
 
 
 def emf2fasta(filename):
-    with open(file) as femf:
+    with open(filename) as femf:
         line = femf.readline()
         while True:
             # Reading the header
+            eof = False
             while line[0:3] != 'SEQ':
+                if line == '':
+                    eof = True
+                    break
                 line = femf.readline()
+            if eof:
+                break
 
             header = {}
             col_considered = []
             col = 0
             while line[0:3] == 'SEQ':
                 coords = line.rstrip().split()
-                species = speprop.get(coords[1], ['NA', -1])
-                if species != 'ancestral_species':
-                    header[species] = {chrom: coords[2],
-                                       start: coords[3],
-                                       stop: coords[4],
-                                       strand: int(coords[5]),
-                                       column: col}
+                species = spe2prop.get(coords[1], ['NA', -1])[0]
+                if coords[1] != 'ancestral_species':
+                    header[coords[1]] = {'chrom': coords[2],
+                                         'start': int(coords[3]),
+                                         'stop': int(coords[4]),
+                                         'strand': int(coords[5]),
+                                         'column': col}
                     col_considered.append(col)
                 col += 1
                 line = femf.readline()
@@ -87,6 +93,7 @@ def emf2fasta(filename):
             # Reading the sequence
             while line[0:4] != 'DATA':
                 line = femf.readline()
+            line = femf.readline()
             while line[0:2] != '//':
                 for i in col_considered:
                     columns[i].append(line[i])
@@ -94,22 +101,23 @@ def emf2fasta(filename):
 
             # Writing fasta formatted file
             inforef = header['mus_musculus']
-            folder = 'chr' + inforef[chrom]
+            folder = 'chr' + inforef['chrom']
             mkdir(folder)
-            filename = '{0}/{1}-{2}.fa'.format(folder, inforef[start],
-                                               inforef[stop])
-            with open(filename, 'w') as fasta:
-                for i in header:
-                    if i == 'MusMus':
+            fout = '{0}/{1}-{2}.fa'.format(folder, inforef['start'],
+                                           inforef['stop'])
+            with open(fout, 'w') as fasta:
+                for i, p in header.iteritems():
+                    if i == 'mus_musculus':
                         fasta.write('>{0} {1} {2} {3}\n'
-                                    .format(i, i[chrom], i[start], i[stop]))
+                                    .format(spe2prop[i][0], p['chrom'],
+                                            p['start'], p['stop']))
                     else:
                         fasta.write('>{0}\n'.format(i))
-                if i[strand] == -1:
-                    columns[i[column]].reverse()
-                    seq = ''.join(columns[i[column]])
-                    transstring = string.maketrans('AaTtCcGg', 'TtAaGgCc')
-                    seq = seq.translate(transstring)
-                else:
-                    seq = ''.join(columns[i[column]])
-                fasta.write(seq + '\n')
+                    if p['strand'] == -1:
+                        columns[p['column']].reverse()
+                        seq = ''.join(columns[p['column']])
+                        transstring = string.maketrans('AaTtCcGg', 'TtAaGgCc')
+                        seq = seq.translate(transstring)
+                    else:
+                        seq = ''.join(columns[p['column']])
+                    fasta.write(seq + '\n')
