@@ -45,7 +45,7 @@ dispweblogo(vmot & mots)
     for (ivmot ivm = mots.begin(); ivm != mots.end(); ivm++) {
         if (ivm->check) {
             stringstream ss;
-            ss << "python " << PYTHON_PATH"/weblogo-display.py ";
+            ss << "weblogo-display.py ";
             ss << "Motif";
             ss << index << " ";
             ss << concc << " ";
