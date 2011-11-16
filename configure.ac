@@ -53,6 +53,7 @@ AC_CHECK_LIB([gsl],[gsl_blas_dgemm],,[AC_MSG_ERROR([libgsl required.])])
 
 # Checks for header files.
 AC_CHECK_HEADERS([gsl/gsl_rng.h],[],[AC_MSG_ERROR([gsl headers required.])])
+AC_CHECK_HEADERS([Python.h],[],[AC_MSG_ERROR([Python headers required.])])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
