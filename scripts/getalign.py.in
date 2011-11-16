@@ -301,21 +301,8 @@ if args.species == 'eutherian':
 
     message('Converting EMF files to fasta...')
     try:
-        import Cython
         message('Using Cython for emf2fasta conversion...')
-        import pyximport
-        pyximport.install()
         import emf2fasta
-        for emff in glob.glob('*.emf'):
-            emf2fasta.emf2fasta(emff)
-    except ImportError:
-        if not query_yes_no('You do not have Cython installed. Do you want to '
-                            'continue\nanyway (much slower procedure)?'):
-            print 'Aborting.'
-            sys.exit(1)
-
-        message('Using Python for emf2fasta conversion...')
-        execfile('emf2fasta.pyx')
         for emff in glob.glob('*.emf'):
             emf2fasta.emf2fasta(emff)
 
