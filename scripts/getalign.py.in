@@ -87,28 +87,6 @@ def gunzip(filename):
         os.remove(filename)
 
 
-def query_yes_no(question):
-    if args.no_interactive:
-        return False
-    valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
-    prompt = " [y/N] "
-    count = 0
-    while True:
-        sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
-        if choice == '':
-            return False
-        elif choice in valid:
-            return valid[choice]
-        else:
-            sys.stdout.write('Please respond with \'yes\' or \'no\' '
-                '(or \'y\' or \'n\').\n')
-        count += 1
-        if count > 5:
-            print 'I do no understand your answer. Aborting.'
-            sys.exit(1)
-
-
 def message(messagestr):
     print ('[{0}]  {1}').format(datetime.datetime.now(), messagestr)
     print
@@ -173,9 +151,6 @@ parser.add_argument('--keep-intermediate', action='store_true', help=helpkeep)
 
 parser.add_argument('--species', choices=['droso', 'eutherian'], required=True,
     help='Group of species for the alignments')
-
-helpinteractive = 'All the question get answered with the default answer'
-parser.add_argument('--no-interactive', action='store_true')
 
 helpdest = ('Directory where to download the files. If not given, the files '
             'will be\ndownloaded in the $(pkgdatadir) folder or in the '
@@ -368,7 +343,7 @@ if args.species == 'eutherian':
         for line in fgtf:
             linesp = line.rstrip().split()
             if linesp[2] == 'CDS':
-                lines.append([linesp[0], int(linesp[3]), int(linesp[4])])
+                lines.append((linesp[0], int(linesp[3]), int(linesp[4])))
     cds = sorted(set(lines))
     with open('CDS-coord.dat', 'w') as fgtfout:
         for line in cds:
