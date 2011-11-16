@@ -22,7 +22,7 @@ bin_SCRIPTS = getalign mapping extractbackground weblogo-display
 
 CLEANFILES = $(bin_SCRIPTS)
 EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
-			 weblogo-display.py.in
+			 weblogo-display.py.in emf2fasta.pyx
 
 do_subst = sed -e 's,[@]PYTHON[@],$(PYTHON),g'\
 		       -e 's,[@]pythondir[@],$(pythondir),g'\
