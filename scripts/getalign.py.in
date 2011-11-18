@@ -64,6 +64,8 @@ def geturl(url, md5sum):
         status = ('{0:>15}  [{1:.2%}]   \r'
                   .format(file_size_dl, float(file_size_dl) / file_size))
         print status,
+        sys.stdout.flush()
+
 
     f.close()
     if h.hexdigest() != md5sum:
@@ -101,7 +103,9 @@ def checkexist(filename, md5sum):
                 chunk = file.read(32768)
                 h.update(chunk)
         if h.hexdigest() == md5sum:
-            print 'File {0} is already present.'.format(filename)
+            print ('File {0} is already present.                    \r'
+                   .format(filename)), 
+            sys.stdout.flush()
             return True
         else:
             print ('File {0} is present but seems to be corrupted. '
@@ -116,13 +120,13 @@ files_present = []
 
 def check_wuncomp(filename):
     if not checkexist(filename, hashes[filename]):
-        fcomp = f + '.gz'
+        fcomp = filename + '.gz'
         if not checkexist(fcomp, hashes[fcomp]):
             return False
         else:
             files_present.append(fcomp)
     else:
-        files_present.append(f)
+        files_present.append(filename)
     return True
 
 
@@ -132,9 +136,10 @@ tartotalsize = 0
 class MyFileObj(file):
     def read(self, size):
         curpos = self.tell()
-        status = ('{0:>15}  [{1:.2%}]   \r'
+        status = ('{0:>15}  [{1:.2%}]                          \r'
                   .format(curpos, float(curpos) / tartotalsize))
         print status,
+        sys.stdout.flush()
         return file.read(self, size)
 
 
@@ -201,8 +206,10 @@ if args.species == 'eutherian':
         if f.startswith(startalignname) and f.endswith('.emf'):
             print "file {0:3} / {1}  ".format(ifile, nbfile),
             if not check_wuncomp(f):
+                fcomp = f + '.gz'
                 geturl('ftp://ftp.ensembl.org/pub/release-63/emf/'
-                       'ensembl-compara/epo_12_eutherian/' + fcomp, h)
+                       'ensembl-compara/epo_12_eutherian/' + fcomp,
+                       hashes[fcomp])
                 files_present.append(fcomp)
             ifile += 1
     os.chdir('..')
@@ -220,19 +227,21 @@ mkdir("annot")
 os.chdir("annot")
 
 if args.species == 'eutherian':
-    refgenefn = 'refGene.txt.gz'
+    refgenefn = 'refGene.txt'
     if not check_wuncomp(refgenefn):
         message('Getting UCSC refGene annotation file for\nTSS coordinates...')
+        refgenecomp = refgenefn + '.gz'
         geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/' +
-               refgenefn, hashes[refgenefn])
-        files_present.append(refgenefn)
+               refgenecomp, hashes[refgenecomp])
+        files_present.append(refgenecomp)
 
-    musmusc_annotfn = 'Mus_musculus.NCBIM37.64.gtf.gz'
+    musmusc_annotfn = 'Mus_musculus.NCBIM37.64.gtf'
     if not check_wuncomp(musmusc_annotfn):
+        musmusccomp = musmusc_annotfn + '.gz'
         message('Getting ENSEMBL gtf annotation file for CDS\ncoordinates...')
         geturl('ftp://ftp.ensembl.org/pub/release-64/gtf/mus_musculus/' +
-               musmusc_annotfn, hashes[musmusc_annotfn])
-        files_present.append(musmusc_annotfn)
+               musmusccomp, hashes[musmusccomp])
+        files_present.append(musmusccomp)
 else:
     nbfile = 0
     for f in hashes:
@@ -268,18 +277,19 @@ if args.species == 'eutherian':
             nbfile += 1
     ifile = 1
     for f in hashes:
-        if f.startswith(startalignname) and f.endswith('.gz$'):
+        if f.startswith(startalignname) and f.endswith('.gz'):
             funcomp = f.rstrip('.gz')
-            if f not in files_present and funcomp not in files_present:
-                print "Uncompressing file {0}...".format(f)
+            if funcomp not in files_present:
+                print ('Uncompressing file {0:>55} {1}/{2}...            \r'
+                       .format(f, ifile, nbfile)),
+                sys.stdout.flush()
                 gunzip(f)
+        ifile += 1
 
     message('Converting EMF files to fasta...')
-    try:
-        message('Using Cython for emf2fasta conversion...')
-        import emf2fasta
-        for emff in glob.glob('*.emf'):
-            emf2fasta.emf2fasta(emff)
+    import emf2fasta
+    for emff in glob.glob('*.emf'):
+        emf2fasta.emf2fasta(emff)
 
     if not args.keep_intermediate:
         for file in glob.glob('*.emf'):
@@ -309,8 +319,8 @@ else:
 os.chdir('annot')
 message('Extracting annotation archive...')
 
-cds[]
-repeat[]
+cds = []
+repeat = []
 if args.species == 'eutherian':
     gunzip('refGene.txt.gz')
     message('TSS coordinates extraction.')
@@ -325,14 +335,14 @@ if args.species == 'eutherian':
     defl = sorted(set(ll))
     with open('TSS-coord.dat', 'w') as fout:
         for l in defl:
-            fout.write('{0} {1} {2} {3}\n'.format(l[1], l[2], l[0], l[4]))
+            fout.write('{0} {1} {2} {3}\n'.format(l[1], l[2], l[0], l[3]))
 
     message('Genes list creation.')
     with open('TSS-coord.dat') as fcoord:
-        coords = (i.rstrip().split()[3] for i in fcoord)
+        coords = tuple([i.rstrip().split()[3] for i in fcoord])
     with open('genelist.dat', 'w') as glist:
         for i in sorted(set(coords)):
-            glist.write('{1}\n'.format(i))
+            glist.write('{0}\n'.format(i))
 
     message('Extracting CDS coordinates archive...')
     gunzip('Mus_musculus.NCBIM37.64.gtf.gz')
@@ -348,7 +358,7 @@ if args.species == 'eutherian':
     with open('CDS-coord.dat', 'w') as fgtfout:
         for line in cds:
             fgtfout.write('{0} {1} {2}\n'
-                          .format(cds[0], int(cds[1]), int(cds[3])))
+                          .format(cds[0], cds[1], cds[3]))
 else:
     replines = []
     cdslines = []
@@ -427,8 +437,11 @@ def posrecordleft(coordlist, coord):
 message('Masking CDS...')
 os.chdir("alignments")
 if args.species == 'eutherian':
-    for folder in glob.glob('chr*/'):
-        print "Processing folder ", folder
+    reps = glob.glob('chr*/')
+    for i, folder in enumerate(reps):
+        print ('Processing folder {0:<10} {1}/{2}          \r'
+               .format(folder, i, len(reps))),
+        sys.stdout.flush()
         os.chdir(folder)
         for file in glob.glob('*.fa'):
             with open(file) as fmavid:
@@ -472,7 +485,7 @@ else:
                 with open('mavid.mfa') as fmavid:
                     with open('mavid2.mfa', 'w') as fmavid2:
                         firstline = fmavid.readline()
-                        fmavid2.write(firstline.rstrip())
+                        fmavid2.write(firstline.rstrip().split()[0])
                         nfline = (' {0} {1} {2}\n'
                                   .format(r5coord[0], r5coord[1], r5coord[2]))
                         fmavid2.write(nfline)
@@ -484,12 +497,17 @@ else:
                 shutil.move('mavid2.mfa', 'mavid.mfa')
                 os.chdir('..')
             else:
-                shutil.rmtree(i[0])
+                if os.path.exists(i[0]):
+                    shutil.rmtree(i[0])
         else:
-            shutil.rmtree(i[0])
+            if os.path.exists(i[0]):
+                shutil.rmtree(i[0])
 
-    for folder in glob.glob('[0-9]*/'):
-        print 'Processing folder ', folder
+    reps = glob.glob('[0-9]*/')
+    for i, folder in enumerate(reps):
+        print ('Processing folder {0:>10} {1}/{2}           \r'
+               .format(folder, i, len(reps))),
+        sys.stdout.flush()
         os.chdir(folder)
         with open('mavid.mfa') as fmavid:
             with open('mavid2.mfa', 'w') as fmavid2:
