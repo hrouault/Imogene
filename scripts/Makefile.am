@@ -24,7 +24,7 @@ CLEANFILES = $(bin_SCRIPTS)
 EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
 			 weblogo-display.py.in emf2fasta.pyx
 
-do_subst = sed -e 's,[@]PYTHON[@],$(PYTHON),g'\
+do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g'\
 		       -e 's,[@]pythondir[@],$(pythondir),g'\
                -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'
 
@@ -45,7 +45,7 @@ weblogo-display: weblogo-display.py.in
 	chmod +x $@
 
 emf2fasta.c: emf2fasta.pyx
-	python setup.py build_ext --inplace
+	$(PYTHON) $(srcdir)/setup.py build_ext --inplace
 
 pyexec_LTLIBRARIES = emf2fasta.la
 emf2fasta_la_SOURCES = emf2fasta.c

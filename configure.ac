@@ -41,6 +41,8 @@ AM_PATH_PYTHON([2.5],,[AC_MSG_ERROR([no python version >=2.5 detected])])
 AC_PROG_CXX
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_LIBTOOL
+AC_PROG_SED
 
 # Checks for libraries.
 AC_CHECK_LIB([m],[cos],,[AC_MSG_ERROR([math functions required.])])
