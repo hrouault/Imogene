@@ -358,7 +358,7 @@ if args.species == 'eutherian':
     with open('CDS-coord.dat', 'w') as fgtfout:
         for line in cds:
             fgtfout.write('{0} {1} {2}\n'
-                          .format(cds[0], cds[1], cds[3]))
+                          .format(line[0], line[1], line[3]))
 else:
     replines = []
     cdslines = []
