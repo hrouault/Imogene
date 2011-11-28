@@ -18,7 +18,8 @@
 # along with Imogene; see the file COPYING  If not,
 # see <http://www.gnu.org/licenses/>.
 
-bin_SCRIPTS = getalign mapping extractbackground weblogo-display
+bin_SCRIPTS = getalign extractbackground weblogo-display
+python_PYTHON = mapping.py
 
 CLEANFILES = $(bin_SCRIPTS)
 EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
@@ -32,9 +33,8 @@ getalign: getalign.py.in
 	$(do_subst) < $< > $@
 	chmod +x $@
 
-mapping: mapping.py.in
+mapping.py: mapping.py.in
 	$(do_subst) < $< > $@
-	chmod +x $@
 
 extractbackground: extractbackground.py.in
 	$(do_subst) < $< > $@
@@ -50,3 +50,4 @@ emf2fasta.c: emf2fasta.pyx
 pyexec_LTLIBRARIES = emf2fasta.la
 emf2fasta_la_SOURCES = emf2fasta.c
 emf2fasta_la_LDFLAGS = -avoid-version -module
+emf2fasta_la_CPPFLAGS = -I$(PYTHON_INCLUDE_DIR)
