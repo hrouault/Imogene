@@ -105,14 +105,18 @@ def emf2fasta(filename):
             mkdir(folder)
             fout = '{0}/{1}-{2}.fa'.format(folder, inforef['start'],
                                            inforef['stop'])
+            
+            sorted_species = sorted(header, key=lambda spe: spe2prop[spe][1])
+            
             with open(fout, 'w') as fasta:
-                for i, p in header.iteritems():
+                for i in sorted_species:
+                    p = header[i]
                     if i == 'mus_musculus':
                         fasta.write('>{0} {1} {2} {3}\n'
                                     .format(spe2prop[i][0], p['chrom'],
                                             p['start'], p['stop']))
                     else:
-                        fasta.write('>{0}\n'.format(i))
+                        fasta.write('>{0}\n'.format(spe2prop[i][0]))
                     if p['strand'] == -1:
                         columns[p['column']].reverse()
                         seq = ''.join(columns[p['column']])
