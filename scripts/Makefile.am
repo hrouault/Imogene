@@ -44,6 +44,9 @@ weblogo-display: weblogo-display.py.in
 	$(do_subst) < $< > $@
 	chmod +x $@
 
+emf2fasta.pyx: emf2fasta.pyx.in
+	$(do_subst) < $< > $@
+
 emf2fasta.c: emf2fasta.pyx
 	$(PYTHON) $(srcdir)/setup.py build_ext --inplace
 
