@@ -82,9 +82,12 @@ def mkdir(path):
 
 
 def gunzip(filename):
-    gzipf = gzip.open(filename, 'rb')
-    with open(filename.rstrip('.gz'), 'wb') as fout:
-        fout.write(gzipf.read())
+    with closing(gzip.open(filename, 'rb')) as gzipf:
+        with open(filename.rstrip('.gz'), 'wb') as fout:
+            chunk = ' '
+            while chunk:
+                chunk = gzipf.read(32768)
+                fout.write(chunk)
     if not args.keep_intermediate:
         os.remove(filename)
 
@@ -284,7 +287,7 @@ if args.species == 'eutherian':
                        .format(f, ifile, nbfile)),
                 sys.stdout.flush()
                 gunzip(f)
-        ifile += 1
+            ifile += 1
 
     message('Converting EMF files to fasta...')
     import emf2fasta
