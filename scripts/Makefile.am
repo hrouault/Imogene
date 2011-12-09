@@ -23,7 +23,7 @@ python_PYTHON = mapping.py
 
 CLEANFILES = $(bin_SCRIPTS)
 EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
-			 weblogo-display.py.in emf2fasta.pyx
+			 weblogo-display.py.in emf2fasta.pyx.in emf2fasta.pyx
 
 do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g'\
 		       -e 's,[@]pythondir[@],$(pythondir),g'\
