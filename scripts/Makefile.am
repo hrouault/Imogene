@@ -19,7 +19,7 @@
 # see <http://www.gnu.org/licenses/>.
 
 bin_SCRIPTS = getalign extractbackground weblogo-display
-python_PYTHON = mapping.py
+nodist_python_PYTHON = mapping.py
 
 CLEANFILES = $(bin_SCRIPTS)
 EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
