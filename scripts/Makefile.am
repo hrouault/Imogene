@@ -49,6 +49,10 @@ emf2fasta.pyx: emf2fasta.pyx.in
 
 emf2fasta.c: emf2fasta.pyx
 	$(PYTHON) $(srcdir)/setup.py build_ext --inplace
+	$(SED) -i -e '/#include "Python.h"/ s,Python,python$(PYTHON_VERSION)/Python,' $@
+	$(SED) -i -e '/#include "compile.h"/ s,compile,python$(PYTHON_VERSION)/compile,' $@
+	$(SED) -i -e '/#include "frameobject.h"/ s,frameobject,python$(PYTHON_VERSION)/frameobject,' $@
+	$(SED) -i -e '/#include "traceback.h"/ s,traceback,python$(PYTHON_VERSION)/traceback,' $@
 
 pyexec_LTLIBRARIES = emf2fasta.la
 emf2fasta_la_SOURCES = emf2fasta.c
