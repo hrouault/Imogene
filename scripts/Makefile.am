@@ -23,7 +23,8 @@ nodist_python_PYTHON = mapping.py
 
 CLEANFILES = $(bin_SCRIPTS)
 EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
-			 weblogo-display.py.in emf2fasta.pyx.in emf2fasta.pyx
+			 weblogo-display.py.in emf2fasta.pyx.in emf2fasta.pyx\
+			 emf2fasta.c.in
 
 do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g'\
 		       -e 's,[@]pythondir[@],$(pythondir),g'\
@@ -47,14 +48,17 @@ weblogo-display: weblogo-display.py.in
 emf2fasta.pyx: emf2fasta.pyx.in
 	$(do_subst) < $< > $@
 
-emf2fasta.c: emf2fasta.pyx
+emf2fasta.c.in: emf2fasta.pyx
 	$(PYTHON) $(srcdir)/setup.py build_ext --inplace
-	$(SED) -i -e '/#include "Python.h"/ s,Python,python$(PYTHON_VERSION)/Python,' $@
-	$(SED) -i -e '/#include "compile.h"/ s,compile,python$(PYTHON_VERSION)/compile,' $@
-	$(SED) -i -e '/#include "frameobject.h"/ s,frameobject,python$(PYTHON_VERSION)/frameobject,' $@
-	$(SED) -i -e '/#include "traceback.h"/ s,traceback,python$(PYTHON_VERSION)/traceback,' $@
+	mv emf2fasta.c $@
+
+emf2fasta.c: emf2fasta.c.in
+	$(SED) -e '/#include "Python.h"/ s,Python,python$(PYTHON_VERSION)/Python,'\
+		-e '/#include "compile.h"/ s,compile,python$(PYTHON_VERSION)/compile,'\
+		-e '/#include "frameobject.h"/ s,frameobject,python$(PYTHON_VERSION)/frameobject,'\
+		-e '/#include "traceback.h"/ s,traceback,python$(PYTHON_VERSION)/traceback,' $< > $@
 
 pyexec_LTLIBRARIES = emf2fasta.la
-emf2fasta_la_SOURCES = emf2fasta.c
+nodist_emf2fasta_la_SOURCES = emf2fasta.c
 emf2fasta_la_LDFLAGS = -avoid-version -module
 emf2fasta_la_CPPFLAGS = -I$(PYTHON_INCLUDE_DIR)
