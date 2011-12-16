@@ -15,7 +15,10 @@
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+# along with Imogene; see the file COPYING  If not, see
+# <http://www.gnu.org/licenses/>.
+
+ACLOCAL_AMFLAGS = -I m4
 
 if MOBYLE_OPT
 MOBYLE_DIR = mobyle

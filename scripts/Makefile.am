@@ -15,41 +15,50 @@
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+# along with Imogene; see the file COPYING  If not,
+# see <http://www.gnu.org/licenses/>.
 
-BUILT_SOURCES = getalign-droso.py getalign-eutherian.py mapping.py emf2fasta.pyx extractbackground-droso.py extractbackground-eutherian.py weblogo-display.py
+bin_SCRIPTS = getalign extractbackground weblogo-display
+nodist_python_PYTHON = mapping.py
 
-nodist_python_PYTHON = getalign-droso.py getalign-eutherian.py mapping.py emf2fasta.pyx extractbackground-droso.py extractbackground-eutherian.py weblogo-display.py
-CLEANFILES = $(python_PYTHON)
-EXTRA_DIST = getalign-droso.py.in getalign-eutherian.py.in mapping.py.in emf2fasta.pyx.in extractbackground-droso.py.in extractbackground-eutherian.py.in weblogo-display.py.in
+CLEANFILES = $(bin_SCRIPTS)
+EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
+			 weblogo-display.py.in emf2fasta.pyx.in emf2fasta.pyx\
+			 emf2fasta.c.in
 
-do_subst = sed -e 's,[@]PYTHON[@],$(PYTHON),g' -e 's,[@]pythondir[@],$(pythondir),g' -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'
+do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g'\
+		       -e 's,[@]pythondir[@],$(pythondir),g'\
+               -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'
 
-getalign-droso.py: getalign-droso.py.in
-	$(do_subst) < $(srcdir)/getalign-droso.py.in > getalign-droso.py
-	chmod +x getalign-droso.py
-
-getalign-eutherian.py: getalign-eutherian.py.in
-	$(do_subst) < $(srcdir)/getalign-eutherian.py.in > getalign-eutherian.py
-	chmod +x getalign-eutherian.py
-
-emf2fasta.pyx: emf2fasta.pyx.in
-	$(do_subst) < $(srcdir)/emf2fasta.pyx.in > emf2fasta.pyx
-
-do_substmap = sed -e 's,[@]pkgdatadir[@],$(pkgdatadir),g' 
+getalign: getalign.py.in
+	$(do_subst) < $< > $@
+	chmod +x $@
 
 mapping.py: mapping.py.in
-	$(do_substmap) < $(srcdir)/mapping.py.in > mapping.py
-	chmod +x mapping.py
+	$(do_subst) < $< > $@
 
-weblogo-display.py: weblogo-display.py.in
-	$(do_substmap) < $(srcdir)/weblogo-display.py.in > weblogo-display.py
-	chmod +x weblogo-display.py
+extractbackground: extractbackground.py.in
+	$(do_subst) < $< > $@
+	chmod +x $@
 
-extractbackground-droso.py: extractbackground-droso.py.in
-	$(do_subst) < $(srcdir)/extractbackground-droso.py.in > extractbackground-droso.py
-	chmod +x extractbackground-droso.py
+weblogo-display: weblogo-display.py.in
+	$(do_subst) < $< > $@
+	chmod +x $@
 
-extractbackground-eutherian.py: extractbackground-eutherian.py.in
-	$(do_subst) < $(srcdir)/extractbackground-eutherian.py.in > extractbackground-eutherian.py
-	chmod +x extractbackground-eutherian.py
+emf2fasta.pyx: emf2fasta.pyx.in
+	$(do_subst) < $< > $@
+
+emf2fasta.c.in: emf2fasta.pyx
+	$(PYTHON) $(srcdir)/setup.py build_ext --inplace
+	mv emf2fasta.c $@
+
+emf2fasta.c: emf2fasta.c.in
+	$(SED) -e '/#include "Python.h"/ s,Python,python$(PYTHON_VERSION)/Python,'\
+		-e '/#include "compile.h"/ s,compile,python$(PYTHON_VERSION)/compile,'\
+		-e '/#include "frameobject.h"/ s,frameobject,python$(PYTHON_VERSION)/frameobject,'\
+		-e '/#include "traceback.h"/ s,traceback,python$(PYTHON_VERSION)/traceback,' $< > $@
+
+pyexec_LTLIBRARIES = emf2fasta.la
+nodist_emf2fasta_la_SOURCES = emf2fasta.c
+emf2fasta_la_LDFLAGS = -avoid-version -module
+emf2fasta_la_CPPFLAGS = -I$(PYTHON_INCLUDE_DIR)

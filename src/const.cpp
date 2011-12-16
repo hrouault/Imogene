@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
@@ -32,36 +32,36 @@
 
 using namespace std;
 
-const unsigned int nbiter=3;
-const unsigned int distwidth=20; // max number of instances for background motif distribution
+const unsigned int nbiter = 3;
+const unsigned int distwidth = 20; // max number of instances for background motif distribution
 
-unsigned int width=10;
+unsigned int width = 10;
 
 //const unsigned int distwidth=20;
-unsigned int neighbext=20;
+unsigned int neighbext = 20;
 
-double scorethr1=13;
-double scorethr2=13;
-double scorethr=11.5;
-double scorethrcons=11.5;
+double scorethr1 = 13;
+double scorethr2 = 13;
+double scorethr = 11.5;
+double scorethrcons = 11.5;
 
-double conca,conct,concc,concg;
+double conca, conct, concc, concg;
 int evolutionary_model;
 string species;
 unsigned int nbspecies;
 
-unsigned int scanwidth=1000;
-unsigned int scanstep=50;
+unsigned int scanwidth = 1000;
+unsigned int scanstep = 50;
 
-unsigned int annotextent=10000;
+unsigned int annotextent = 10000;
 
-unsigned int nbmots_for_score=5;
+unsigned int nbmots_for_score = 5;
 
-double alpha=0.176; // beta exponent for A,T
+double alpha = 0.176; // beta exponent for A,T
 double beta; // beta exponent for C,G
 
 unsigned int nbchrom;
 
-unsigned int extraction_cutoff=20; 
+unsigned int extraction_cutoff = 20;
 
-bool progress=false;
+bool progress = false;

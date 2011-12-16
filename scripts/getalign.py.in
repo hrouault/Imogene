@@ -1,0 +1,577 @@
+#!@PYTHON@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+# Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
+#
+# This file is part of Imogene.
+#
+# Imogene is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Imogene is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Imogene; see the file COPYING  If not, see
+# <http://www.gnu.org/licenses/>.
+
+import sys
+import os
+import shutil
+import string
+import glob
+import re
+import datetime
+import errno
+import bisect
+import urllib2
+import hashlib
+import tarfile
+import gzip
+from contextlib import closing
+
+import argparse
+
+
+def geturl(url, md5sum):
+    """Retrieve a file from url and check for correct md5sum"""
+    file_name = url.split('/')[-1]
+    u = urllib2.urlopen(url)
+    f = open(file_name, 'wb')
+    meta = u.info()
+    file_size = int(meta.getheaders("Content-Length")[0])
+    print "Downloading: {0} Bytes: {1}".format(file_name, file_size)
+
+    file_size_dl = 0
+    block_sz = 8192
+
+    h = hashlib.md5()
+
+    while True:
+        buffer = u.read(block_sz)
+        if not buffer:
+            break
+
+        h.update(buffer)
+
+        file_size_dl += len(buffer)
+        f.write(buffer)
+        status = ('{0:>15}  [{1:.2%}]   \r'
+                  .format(file_size_dl, float(file_size_dl) / file_size))
+        print status,
+        sys.stdout.flush()
+
+
+    f.close()
+    if h.hexdigest() != md5sum:
+        print "The md5 sum of file {0} is not correct!".format(file_name)
+        sys.exit(1)
+
+
+def mkdir(path):
+    try:
+        os.mkdir(path)
+    except os.error, e:
+        if e.errno != errno.EEXIST:
+            raise
+
+
+def gunzip(filename):
+    with closing(gzip.open(filename, 'rb')) as gzipf:
+        with open(filename.rstrip('.gz'), 'wb') as fout:
+            chunk = ' '
+            while chunk:
+                chunk = gzipf.read(32768)
+                fout.write(chunk)
+    if not args.keep_intermediate:
+        os.remove(filename)
+
+
+def message(messagestr):
+    print ('[{0}]  {1}').format(datetime.datetime.now(), messagestr)
+    print
+
+
+def checkexist(filename, md5sum):
+    try:
+        h = hashlib.md5()
+        with open(filename) as file:
+            chunk = ' '
+            while chunk:
+                chunk = file.read(32768)
+                h.update(chunk)
+        if h.hexdigest() == md5sum:
+            print ('File {0} is already present.                    \r'
+                   .format(filename)), 
+            sys.stdout.flush()
+            return True
+        else:
+            print ('File {0} is present but seems to be corrupted. '
+                   'Re-downloading it.').format(filename)
+            return False
+    except IOError as e:
+        return False
+
+
+files_present = []
+
+
+def check_wuncomp(filename):
+    if not checkexist(filename, hashes[filename]):
+        fcomp = filename + '.gz'
+        if not checkexist(fcomp, hashes[fcomp]):
+            return False
+        else:
+            files_present.append(fcomp)
+    else:
+        files_present.append(filename)
+    return True
+
+
+tartotalsize = 0
+
+
+class MyFileObj(file):
+    def read(self, size):
+        curpos = self.tell()
+        status = ('{0:>15}  [{1:.2%}]                          \r'
+                  .format(curpos, float(curpos) / tartotalsize))
+        print status,
+        sys.stdout.flush()
+        return file.read(self, size)
+
+
+# Command line parser
+parser = argparse.ArgumentParser(description='Download genomic alignments.')
+
+helpdl = ('The alignment will only be downloaded and won\'t be adapted to\n'
+          'needs of imogene!\n'
+          'You will have to rerun this script to modify the alignments')
+parser.add_argument('--download-only', action='store_true', help=helpdl)
+
+helpkeep = ('Will keep all the intermediate files (very space consuming).')
+parser.add_argument('--keep-intermediate', action='store_true', help=helpkeep)
+
+parser.add_argument('--species', choices=['droso', 'eutherian'], required=True,
+    help='Group of species for the alignments')
+
+helpdest = ('Directory where to download the files. If not given, the files '
+            'will be\ndownloaded in the $(pkgdatadir) folder or in the '
+            'IMOGENE_DATA folder\n'
+            'if this environment variable is defined.')
+parser.add_argument('--dest', metavar='directory', help=helpdest)
+
+args = parser.parse_args()
+
+
+sys.path.append("@pythondir@")
+import mapping
+
+try:
+    datapath = os.environ['IMOGENE_DATA']
+except KeyError:
+    datapath = '@pkgdatadir@'
+
+if args.dest:
+    destpath = args.dest
+else:
+    destpath = datapath
+
+# import hashes
+hashes = {}
+with open(datapath + "/MD5SUM") as hashf:
+    for i in hashf:
+        elt = i.rstrip().split()
+        hashes[elt[1]] = elt[0]
+
+os.chdir(destpath)
+mkdir(args.species)
+os.chdir(args.species)
+
+# Downloading all the necessary files
+startalignname = 'Compara.12_eutherian_mammals_EPO.'
+if args.species == 'eutherian':
+    mkdir('alignments')
+    os.chdir("alignments")
+    message('Downloading Enrendo Pecan Ortheus alignment files\n'
+            'from ENSEMBL...')
+    nbfile = 0
+    for f in hashes:
+        if f.startswith(startalignname) and f.endswith('.gz'):
+            nbfile += 1
+    ifile = 1
+    for f, h in hashes.iteritems():
+        if f.startswith(startalignname) and f.endswith('.emf'):
+            print "file {0:3} / {1}  ".format(ifile, nbfile),
+            if not check_wuncomp(f):
+                fcomp = f + '.gz'
+                geturl('ftp://ftp.ensembl.org/pub/release-63/emf/'
+                       'ensembl-compara/epo_12_eutherian/' + fcomp,
+                       hashes[fcomp])
+                files_present.append(fcomp)
+            ifile += 1
+    os.chdir('..')
+else:
+    # Downloading alignment files
+    message('Downloading Mavid Mercator alignment files.')
+    alignfn = 'fly_CAF1.1.tar.gz'
+    if not checkexist(alignfn, hashes[alignfn]):
+        geturl('http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/' +
+               alignfn, hashes[alignfn])
+    files_present.append(alignfn)
+
+# Downloading annotation files
+mkdir("annot")
+os.chdir("annot")
+
+if args.species == 'eutherian':
+    refgenefn = 'refGene.txt'
+    if not check_wuncomp(refgenefn):
+        message('Getting UCSC refGene annotation file for\nTSS coordinates...')
+        refgenecomp = refgenefn + '.gz'
+        geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/' +
+               refgenecomp, hashes[refgenecomp])
+        files_present.append(refgenecomp)
+
+    musmusc_annotfn = 'Mus_musculus.NCBIM37.64.gtf'
+    if not check_wuncomp(musmusc_annotfn):
+        musmusccomp = musmusc_annotfn + '.gz'
+        message('Getting ENSEMBL gtf annotation file for CDS\ncoordinates...')
+        geturl('ftp://ftp.ensembl.org/pub/release-64/gtf/mus_musculus/' +
+               musmusccomp, hashes[musmusccomp])
+        files_present.append(musmusccomp)
+else:
+    nbfile = 0
+    for f in hashes:
+        if f.startswith('dmel-') and f.endswith('-r5.38.gff.gz'):
+            nbfile += 1
+    ifile = 1
+    message('Downloading Flybase annotation files...')
+    basename = 'ftp://ftp.flybase.net/releases/FB2011_06/dmel_r5.38/gff/'
+    for f, h in hashes.iteritems():
+        if f.startswith('dmel-') and f.endswith('-r5.38.gff'):
+            print "file {0:3} / {1}  ".format(ifile, nbfile),
+            if not check_wuncomp(f):
+                fcomp = f + '.gz'
+                geturl(basename + fcomp, hashes[fcomp])
+                files_present.append(fcomp)
+            ifile += 1
+os.chdir('..')
+
+if args.download_only:
+    print ('Script finished. The files were only downloaded. Please process '
+           'them further.')
+    sys.exit(0)
+
+
+# Alignment treatment
+message('Extracting alignment files...')
+
+if args.species == 'eutherian':
+    os.chdir('alignments')
+    nbfile = 0
+    for f in hashes:
+        if f.startswith(startalignname) and f.endswith('.gz'):
+            nbfile += 1
+    ifile = 1
+    for f in hashes:
+        if f.startswith(startalignname) and f.endswith('.gz'):
+            funcomp = f.rstrip('.gz')
+            if funcomp not in files_present:
+                print ('Uncompressing file {0:>55} {1}/{2}...            \r'
+                       .format(f, ifile, nbfile)),
+                sys.stdout.flush()
+                gunzip(f)
+            ifile += 1
+
+    message('Converting EMF files to fasta...')
+    import emf2fasta
+    for emff in glob.glob('*.emf'):
+        emf2fasta.emf2fasta(emff)
+
+    if not args.keep_intermediate:
+        for file in glob.glob('*.emf'):
+            os.remove(file)
+    os.chdir('..')
+else:
+    tartotalsize = os.path.getsize('fly_CAF1.1.tar.gz')
+    tdir = os.path.abspath('./')
+    with closing(tarfile.open(fileobj=MyFileObj('fly_CAF1.1.tar.gz'),
+                      mode='r:gz')) as tarf:
+        for n in tarf:
+            pathn = os.path.abspath(os.path.join(tdir, n.name))
+            if not pathn.startswith(tdir):
+                print 'The tar file contains unsafe filenames. Aborting.'
+                sys.exit(1)
+            tarf.extract(n, path=tdir)
+
+    for fname in ['DroAna_CAF1.agp', 'DroEre_CAF1.agp', 'DroGri_CAF1.agp',
+                  'DroMoj_CAF1.agp', 'DroPer_CAF1.agp', 'DroPse_CAF1.agp',
+                  'DroSec_CAF1.agp', 'DroVir_CAF1.agp', 'DroWil_CAF1.agp',
+                  'map', 'genomes', 'treefile']:
+        os.rename(fname, 'alignments/' + fname)
+    if not args.keep_intermediate:
+        os.remove('fly_CAF1.1.tar.gz')
+
+
+os.chdir('annot')
+message('Extracting annotation archive...')
+
+cds = []
+repeat = []
+if args.species == 'eutherian':
+    gunzip('refGene.txt.gz')
+    message('TSS coordinates extraction.')
+
+    ## Here we add 1 to the start positions (UCSC files are 0-based)
+    ll = []
+    with open('refGene.txt') as fref:
+        for line in fref:
+            l = line.rstrip().split()
+            ll.append((l[2][3:], int(l[4]) + 1 if l[3] == '+' else int(l[5]),
+                       l[3], l[12]))
+    defl = sorted(set(ll))
+    with open('TSS-coord.dat', 'w') as fout:
+        for l in defl:
+            fout.write('{0} {1} {2} {3}\n'.format(l[1], l[2], l[0], l[3]))
+
+    message('Genes list creation.')
+    with open('TSS-coord.dat') as fcoord:
+        coords = tuple([i.rstrip().split()[3] for i in fcoord])
+    with open('genelist.dat', 'w') as glist:
+        for i in sorted(set(coords)):
+            glist.write('{0}\n'.format(i))
+
+    message('Extracting CDS coordinates archive...')
+    gunzip('Mus_musculus.NCBIM37.64.gtf.gz')
+
+    message('CDS coordinates extraction.')
+    with open('Mus_musculus.NCBIM37.64.gtf') as fgtf:
+        lines = []
+        for line in fgtf:
+            linesp = line.rstrip().split()
+            if linesp[2] == 'CDS':
+                lines.append((linesp[0], int(linesp[3]), int(linesp[4])))
+    cds = sorted(set(lines))
+    with open('CDS-coord.dat', 'w') as fgtfout:
+        for line in cds:
+            fgtfout.write('{0} {1} {2}\n'
+                          .format(line[0], line[1], line[2]))
+else:
+    replines = []
+    cdslines = []
+    tsslines = []
+    for f in hashes:
+        if f.startswith('dmel-') and f.endswith('.gff'):
+            if f not in files_present:
+                gunzip(f + '.gz')
+            nbfile += 1
+            with open(f) as gfffile:
+                for line in gfffile:
+                    if 'repeatmasker_dummy\tmatch\t' in line:
+                        elts = line.rstrip().split()
+                        replines.append((elts[0], int(elts[3]), int(elts[4])))
+                    elif 'FlyBase\tCDS\t' in line:
+                        elts = line.rstrip().split()
+                        cdslines.append((elts[0], int(elts[3]), int(elts[4])))
+                    elif 'FlyBase\tmRNA\t' in line:
+                        elts = line.rstrip().split()
+                        detail = dict(i.split('=') for i in elts[8].split(';'))
+                        fulln = detail['Name']
+                        name = fulln[0:-3] if fulln[-3:-1] == '-R' else fulln
+                        fulla = detail.get('Alias', '---')
+                        alias = fulla[0:-3] if fulla[-3:-1] == '-R' else fulla
+                        pos = int(elts[3] if elts[6] == '+' else elts[4])
+                        tsslines.append((elts[0], pos, elts[6], name, alias))
+    with open('repeat-coord.dat', 'w') as frepeat:
+        for rl in sorted(set(replines)):
+            frepeat.write('{0} {1} {2}\n'.format(rl[0], rl[1], rl[2]))
+    with open('CDS-coord.dat', 'w') as fcds:
+        for cl in sorted(set(cdslines)):
+            fcds.write('{0} {1} {2}\n'.format(cl[0], cl[1], cl[2]))
+    with open('TSS-coord.dat', 'w') as ftss:
+        for tl in sorted(set(tsslines)):
+            ftss.write('{0} {1} {2} {3} {4}\n'
+                       .format(tl[1], tl[2], tl[0], tl[3], tl[4]))
+    with open('genelist.dat', 'w') as glist:
+        for tg in sorted(set([i[3] for i in tsslines])):
+            glist.write('{0}\n'.format(tg))
+    cds = sorted(set(cdslines))
+    repeat = sorted(set(replines))
+
+os.chdir('..')
+
+message('Relevant coordinates successfully imported.')
+
+
+def maskseq(start, stop, seq, mode):
+    """Mask an aligned sequence (do not take into account gaps)
+
+    start and stop should be integers with 0 corresponding to the start of
+    the given sequence
+    mode 0 mask with N
+    mode 1 mask by converting the letter to lowercase
+    """
+    curpos = 0
+    for i, s in enumerate(seq):
+        if s != '-' and s != '\n':
+            if curpos >= start and curpos <= stop:
+                if mode == 0:
+                    seq[i] = 'N'
+                elif mode == 1:
+                    seq[i] = string.lower(s)
+            curpos += 1
+
+
+def posrecordleft(coordlist, coord):
+    """Record selection function"""
+    pos = bisect.bisect_left(coordlist, coord)
+    if pos > 0:
+        pos = pos - 1
+    return pos
+
+
+## Iterate over alignment files
+message('Masking CDS...')
+os.chdir("alignments")
+if args.species == 'eutherian':
+    reps = glob.glob('chr*/')
+    for i, folder in enumerate(reps):
+        print ('Processing folder {0:<10} {1}/{2}          \r'
+               .format(folder, i, len(reps))),
+        sys.stdout.flush()
+        os.chdir(folder)
+        for file in glob.glob('*.fa'):
+            with open(file) as fmavid:
+                with open('foo.fa', 'w') as fmavid2:
+                    ## Read coordinates
+                    coordline = fmavid.readline()
+                    fmavid2.write(coordline)
+                    coordline = coordline.rstrip().split()
+                    coordstart = [coordline[1], int(coordline[2]),
+                                  int(coordline[2])]
+                    coordstop = [coordline[1], int(coordline[3]),
+                                 int(coordline[3])]
+
+                    ## Mask mouse CDS
+                    seqline = list(fmavid.readline())
+                    posstart = posrecordleft(cds, coordstart)
+                    posstop = posrecordleft(cds, coordstop)
+                    for i in range(posstart, posstop):
+                        record = cds[i]
+                        if record[0] == coordstart[0]:
+                            maskseq(record[1] - coordstart[1],
+                                    record[2] - coordstart[1], seqline, 0)
+                    fmavid2.write(''.join(seqline))
+                    for i in fmavid:
+                        fmavid2.write(i)
+            shutil.move('foo.fa', file)
+        os.chdir('..')
+else:
+    with open('map') as fmap:
+        maps = [i.rstrip().split('\t') for i in fmap]
+
+    for i in maps:
+        coordmel = i[1:4]
+        if coordmel[1] != 'NA' and coordmel[2] != 'NA':
+            coordmel[0] = coordmel[0][3:]
+            coordmel[1] = int(coordmel[1]) + 1
+            coordmel[2] = int(coordmel[2])
+            r5coord = mapping.r4_map(coordmel)
+            if  r5coord != ['', 0, 0]:
+                os.chdir(i[0])
+                with open('mavid.mfa') as fmavid:
+                    with open('mavid2.mfa', 'w') as fmavid2:
+                        firstline = fmavid.readline()
+                        fmavid2.write(firstline.rstrip().split()[0])
+                        nfline = (' {0} {1} {2}\n'
+                                  .format(r5coord[0], r5coord[1], r5coord[2]))
+                        fmavid2.write(nfline)
+                        for line in fmavid:
+                            if line[0] == '>':
+                                fmavid2.write('\n' + line)
+                            else:
+                                fmavid2.write(line.rstrip())
+                shutil.move('mavid2.mfa', 'mavid.mfa')
+                os.chdir('..')
+            else:
+                if os.path.exists(i[0]):
+                    shutil.rmtree(i[0])
+        else:
+            if os.path.exists(i[0]):
+                shutil.rmtree(i[0])
+
+    reps = glob.glob('[0-9]*/')
+    for i, folder in enumerate(reps):
+        print ('Processing folder {0:>10} {1}/{2}           \r'
+               .format(folder, i, len(reps))),
+        sys.stdout.flush()
+        os.chdir(folder)
+        with open('mavid.mfa') as fmavid:
+            with open('mavid2.mfa', 'w') as fmavid2:
+                ## Read coordinates
+                coordline = fmavid.readline()
+                fmavid2.write(coordline)
+                coordline = coordline.rstrip().split()
+                coordstart = [coordline[1], int(coordline[2]),
+                              int(coordline[2])]
+                coordstop = [coordline[1], int(coordline[3]),
+                             int(coordline[3])]
+
+                ## Mask sequences
+                seqline = list(fmavid.readline())
+                posstart = posrecordleft(cds, coordstart)
+                posstop = posrecordleft(cds, coordstop)
+                for i in range(posstart, posstop):
+                    record = cds[i]
+                    if record[0] == coordstart[0]:
+                        maskseq(record[1] - coordstart[1],
+                                record[2] - coordstart[1], seqline, 0)
+                posstart = posrecordleft(repeat, coordstart)
+                posstop = posrecordleft(repeat, coordstop)
+                for i in range(posstart, posstop):
+                    record = repeat[i]
+                    if record[0] == coordstart[0]:
+                        maskseq(record[1] - coordstart[1],
+                                record[2] - coordstart[1], seqline, 1)
+                fmavid2.write(''.join(seqline))
+                for i in fmavid:
+                    fmavid2.write(i)
+        shutil.move('mavid2.mfa', 'mavid.mfa')
+        os.chdir('..')
+
+
+message('Generate the list of alignments.')
+os.chdir('..')
+lines = []
+if args.species == 'eutherian':
+    for fmavid in glob.glob('alignments/chr*/*.fa'):
+        if fmavid.split('/')[1] != "chrothers":
+            with open(fmavid) as mavid:
+                line = mavid.readline().rstrip().split(" ")
+            line.append(fmavid)
+            line[2] = int(line[2])
+            lines.append(line[1:])
+else:
+    for fmavid in glob.glob('alignments/[0-9]*/mavid.mfa'):
+        with open(fmavid) as mavid:
+            line = mavid.readline().rstrip().split(" ")
+        line.append(fmavid)
+        line[2] = int(line[2])
+        lines.append(line[1:])
+
+
+lines.sort()
+for i in lines:
+    i[1] = str(i[1])
+with open('align.dat', 'w') as fout:
+    for li in lines:
+        fout.write(''.join(i + ' ' for i in li))
+        fout.write('\n')
+
+print 'The script ran successfully.'
