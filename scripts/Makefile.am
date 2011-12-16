@@ -61,4 +61,3 @@ emf2fasta.c: emf2fasta.c.in
 pyexec_LTLIBRARIES = emf2fasta.la
 nodist_emf2fasta_la_SOURCES = emf2fasta.c
 emf2fasta_la_LDFLAGS = -avoid-version -module
-emf2fasta_la_CPPFLAGS = -I$(PYTHON_INCLUDE_DIR)
