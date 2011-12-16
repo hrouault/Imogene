@@ -24,6 +24,10 @@ AC_PREREQ([2.61])
 #AC_INIT(Imogene, 1.0, [Hervé Rouault rouault@lps.ens.fr Marc Santolini marc.santolini@lps.ens.fr])
 AC_INIT(Imogene, m4_esyscmd([tools/git-version-gen .tarball-version]), [rouault@lps.ens.fr marc.santolini@lps.ens.fr])
 AM_INIT_AUTOMAKE()
+
+LT_PREREQ([2.2])
+LT_INIT([dlopen])
+
 AC_CONFIG_SRCDIR([src/imogene.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -37,7 +41,8 @@ AM_PATH_PYTHON([2.5],,[AC_MSG_ERROR([no python version >=2.5 detected])])
 AC_PROG_CXX
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_PROG_RANLIB
+AC_PROG_LIBTOOL
+AC_PROG_SED
 
 # Checks for libraries.
 AC_CHECK_LIB([m],[cos],,[AC_MSG_ERROR([math functions required.])])
@@ -50,6 +55,8 @@ AC_CHECK_LIB([gsl],[gsl_blas_dgemm],,[AC_MSG_ERROR([libgsl required.])])
 
 # Checks for header files.
 AC_CHECK_HEADERS([gsl/gsl_rng.h],[],[AC_MSG_ERROR([gsl headers required.])])
+AC_CHECK_HEADERS([python$PYTHON_VERSION/Python.h],[],[AC_MSG_ERROR([Python headers required.])])
+AC_SUBST(PYTHON_INCLUDE_DIR)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL

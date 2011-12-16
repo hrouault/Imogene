@@ -21,14 +21,13 @@
 xmldir = $(pkgdatadir)/xml
 
 nodist_xml_DATA = imogene.xml imogene_env.xml
+CLEANFILES = $(nodist_xml_DATA)                                                     
+EXTRA_DIST = imogene.xml.in imogene_env.xml.in help.md
 
-do_subst = sed -e 's,[@]PYTHON[@],$(PYTHON),g' -e 's,[@]pythondir[@],$(pythondir),g' -e 's,[@]bindir[@],$(bindir),g' -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g' -e 's,[@]PACKAGE[@],$(PACKAGE),g'
+do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g' -e 's,[@]pythondir[@],$(pythondir),g' -e 's,[@]bindir[@],$(bindir),g' -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g' -e 's,[@]PACKAGE[@],$(PACKAGE),g'
 
 imogene.xml: imogene.xml.in
 	$(do_subst) < $(srcdir)/imogene.xml.in > imogene.xml
 
 imogene_env.xml: imogene_env.xml.in
 	$(do_subst) < $(srcdir)/imogene_env.xml.in > imogene_env.xml
-
-EXTRA_DIST =  help.md
-

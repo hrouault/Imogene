@@ -1,87 +1,91 @@
 #!@PYTHON@
 # -*- coding: utf-8 -*-
-#    
+#
 # Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
 # Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
-# 
+#
 # This file is part of Imogene.
-# 
+#
 # Imogene is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # Imogene is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
-# along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
+# along with Imogene; see the file COPYING  If not, see
+# <http://www.gnu.org/licenses/>.
 
-""" This module is a python adaptation of the mapping.sql file provided with the release 5
-of the Drosophila melanogaster genome.
-See the website 'http://www.fruitfly.org/sequence/release5genomic.shtml' for further information
+"""
+This module is a python adaptation of the mapping.sql file provided with
+the release 5 of the Drosophila melanogaster genome.  See the website
+'http://www.fruitfly.org/sequence/release5genomic.shtml' for further
+information
 """
 
 import os
 
-try:
-   fmap=open(os.environ['IMOGENE_DATA']+'/mapping.dat')
-except KeyError:
-   fmap=open('@pkgdatadir@/mapping.dat')
 
-mappings=[i.rstrip().split("\t") for i in fmap.readlines()]
-fmap.close()
+try:
+    fnmap = os.environ['IMOGENE_DATA'] + '/mapping.dat'
+except KeyError:
+    fnmap = '@pkgdatadir@/mapping.dat'
+
+with open(fnmap) as fmap:
+    mappings = [i.rstrip().split('\t') for i in fmap]
 for i in mappings:
-   i[1]=int(i[1])
-   i[2]=int(i[2])
-   i[3]=int(i[3])
+    i[1] = int(i[1])
+    i[2] = int(i[2])
+    i[3] = int(i[3])
+
 
 def r4_map(coordr4):
-   """Function that returns a release 5 coordinate from a release 4 coordinate.
-   This function is '1' based.
+    """Function that returns a r5 coordinate from a r4 coordinate.
 
-   This returns ["",0,0] for any unmappable base. 
-   """
-   res=[coordr4[0],0,0]
-   for i in mappings:
-      check1=0
-      check2=0
-      if i[0]==coordr4[0]:
-         if i[1]<=coordr4[1] and i[1]+i[3]>coordr4[1]:
-            res[1]=i[2]+coordr4[1]-i[1]
-            check1=1
-         if i[1]<=coordr4[2] and i[1]+i[3]>coordr4[2]:
-            res[2]=i[2]+coordr4[2]-i[1]
-            check2=1
-         if check1 and check2:
-            break
-   if not check1 or not check2 or res[2]-res[1]!=coordr4[2]-coordr4[1]:
-      return ["",0,0]
-   return res
+    This function is '1' based.
+    This returns ['',0,0] for any unmappable base.
+    """
+    res = [coordr4[0], 0, 0]
+    for i in mappings:
+        check1 = 0
+        check2 = 0
+        if i[0] == coordr4[0]:
+            if i[1] <= coordr4[1] and i[1] + i[3] > coordr4[1]:
+                res[1] = i[2] + coordr4[1] - i[1]
+                check1 = 1
+                if i[1] <= coordr4[2] and i[1] + i[3] > coordr4[2]:
+                    res[2] = i[2] + coordr4[2] - i[1]
+                    check2 = 1
+                    if check1 and check2:
+                        break
+    if not check1 or not check2 or res[2] - res[1] != coordr4[2] - coordr4[1]:
+        return ['', 0, 0]
+    return res
+
 
 def r5_map(coordr5):
-   """Function that returns a release 4 coordinate from a release 5 coordinate.
+    """Function that returns a r4 coordinate from a r5 coordinate.
 
-   This function is '1' based.
-
-   This returns ["",0,0] for any unmappable base. 
-   """
-   res=[coordr5[0],0,0]
-   for i in mappings:
-      check1=0
-      check2=0
-      if i[0]==coordr5[0]:
-         if i[2]<=coordr5[1] and i[2]+i[3]>coordr5[1]:
-            res[1]=i[1]+coordr5[1]-i[2]
-            check1=1
-         if i[2]<=coordr5[2] and i[2]+i[3]>coordr5[2]:
-            res[2]=i[1]+coordr5[2]-i[2]
-            check2=1
-         if check1 and check2:
-            break
-   if not check1 or not check2 or res[2]-res[1]!=coordr5[2]-coordr5[1]:
-      return ["",0,0]
-   return res
-   
+    This function is '1' based.
+    This returns ['',0,0] for any unmappable base.
+    """
+    res = [coordr5[0], 0, 0]
+    for i in mappings:
+        check1 = 0
+        check2 = 0
+        if i[0] == coordr5[0]:
+            if i[2] <= coordr5[1] and i[2] + i[3] > coordr5[1]:
+                res[1] = i[1] + coordr5[1] - i[2]
+                check1 = 1
+                if i[2] <= coordr5[2] and i[2] + i[3] > coordr5[2]:
+                    res[2] = i[1] + coordr5[2] - i[2]
+                    check2 = 1
+                    if check1 and check2:
+                        break
+    if not check1 or not check2 or res[2] - res[1] != coordr5[2] - coordr5[1]:
+        return ['', 0, 0]
+    return res

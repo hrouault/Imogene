@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
@@ -36,7 +36,7 @@ extern unsigned int neighbext; // extent of conserved motifs search
 
 extern string species; // droso or eutherian
 extern int evolutionary_model; // 1 (felsen) or 2 (halpern)
-extern unsigned int nbspecies; 
+extern unsigned int nbspecies;
 
 extern double scorethr1; // for distinfo use
 extern double scorethr2; //main threshold for scangen
@@ -60,7 +60,7 @@ extern unsigned int annotextent; // extent of gene search for CRMs annotation
 extern unsigned int nbmots_for_score;
 
 // sequences that are too short are considered as irrelevant in the sequence extraction process
-extern unsigned int extraction_cutoff; 
+extern unsigned int extraction_cutoff;
 
 // Show progress on the command line
 extern bool progress;

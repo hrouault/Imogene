@@ -1,4 +1,4 @@
-/*    
+/*
  * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
@@ -45,24 +45,24 @@ typedef vvint::const_iterator civvint;
 typedef vd::const_iterator civd;
 typedef vvd::const_iterator civvd;
 
-ostream& operator <<(ostream &os,const vvd &matrice);
-ostream& operator <<(ostream &os,const vint &bs);
-ostream& operator <<(ostream &os,const vvint &vbs);
-ostream& operator <<(ostream &os,const vd &vect);
+ostream & operator <<(ostream & os, const vvd & matrice);
+ostream & operator <<(ostream & os, const vint & bs);
+ostream & operator <<(ostream & os, const vvint & vbs);
+ostream & operator <<(ostream & os, const vd & vect);
 
 typedef vstring::iterator ivstring;
 typedef istream_iterator<string> iisstring;
 
-vd operator+(const vd & vec1,const vd & vec2);
-vvd operator +(const vvd & mat1,const vvd & mat2);
-vd operator -(const vd & col1,const vd & col2);
-vvd operator -(const vvd & mat1,const vvd & mat2);
+vd operator+(const vd & vec1, const vd & vec2);
+vvd operator +(const vvd & mat1, const vvd & mat2);
+vd operator -(const vd & col1, const vd & col2);
+vvd operator -(const vvd & mat1, const vvd & mat2);
 vd abs(const vd & col1);
 vvd abs(const vvd & mat1);
 double sum(const vd & col1);
 double sum(const vvd & mat1);
-istream& operator >>(istream &is,vvd &matrice);
-istream& operator >>(istream &is,int * distmot);
+istream & operator >>(istream & is, vvd & matrice);
+istream & operator >>(istream & is, int * distmot);
 int min(int n1, int n2);
 
 #endif // Vectortypes_H
