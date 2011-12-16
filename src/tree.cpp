@@ -357,128 +357,55 @@ instant_rates(const gsl_vector * w, gsl_matrix * rates)
     double fat = proba_fixation_rel(w3 / w0);
     double fac = proba_fixation_rel(pa * w1 / pc / w0);
     double fag = proba_fixation_rel(pa * w2 / pc / w0);
+    
     double fta = proba_fixation_rel(w0 / w3);
     double ftc = proba_fixation_rel(pa * w1 / pc / w3);
     double ftg = proba_fixation_rel(pa * w2 / pc / w3);
+    
     double fca = proba_fixation_rel(pc * w0 / pa / w1);
     double fct = proba_fixation_rel(pc * w3 / pa / w1);
     double fcg = proba_fixation_rel(w2 / w1);
+    
     double fga = proba_fixation_rel(pc * w0 / pa / w2);
     double fgt = proba_fixation_rel(pc * w3 / pa / w2);
     double fgc = proba_fixation_rel(w1 / w2);
+    
     double prefact = 1.0 / (4 * kappa * pa * pc + 0.5);
+    
     gsl_matrix_set(m1, 0, 0, -(pa * fat + pc * fac + pc * kappa * fag));
     gsl_matrix_set(m1, 0, 1, pa * fca);
     gsl_matrix_set(m1, 0, 2, pa * kappa * fga);
     gsl_matrix_set(m1, 0, 3, pa * fta);
-    gsl_matrix_set(m1, 1, 0, pa * fat);
-    gsl_matrix_set(m1, 1, 1, pa * kappa * fct);
-    gsl_matrix_set(m1, 1, 2, pa * fgt);
-    gsl_matrix_set(m1, 1, 3, -(pa * fta + pc * kappa * ftc + pc * ftg));
-    gsl_matrix_set(m1, 2, 0, pc * fac);
-    gsl_matrix_set(m1, 2, 1, -(pa * fca + pa * kappa * fct + pc * fcg));
-    gsl_matrix_set(m1, 2, 2, pc * fgc);
-    gsl_matrix_set(m1, 2, 3, pc * kappa * ftc);
-    gsl_matrix_set(m1, 3, 0, pc * kappa * fag);
-    gsl_matrix_set(m1, 3, 1, pc * fcg);
-    gsl_matrix_set(m1, 3, 2, -(pa * kappa * fga + pa * fgt + pc * fgc));
-    gsl_matrix_set(m1, 3, 3, pc * ftg);
+    
+    gsl_matrix_set(m1, 1, 0, pc * fac);
+    gsl_matrix_set(m1, 1, 1, -(pa * fca + pa * kappa * fct + pc * fcg));
+    gsl_matrix_set(m1, 1, 2, pc * fgc);
+    gsl_matrix_set(m1, 1, 3, pc * kappa * ftc);
+    
+    gsl_matrix_set(m1, 2, 0, pc * kappa * fag);
+    gsl_matrix_set(m1, 2, 1, pc * fcg);
+    gsl_matrix_set(m1, 2, 2, -(pa * kappa * fga + pa * fgt + pc * fgc));
+    gsl_matrix_set(m1, 2, 3, pc * ftg);
+    
+    gsl_matrix_set(m1, 3, 0, pa * fat);
+    gsl_matrix_set(m1, 3, 1, pa * kappa * fct);
+    gsl_matrix_set(m1, 3, 2, pa * fgt);
+    gsl_matrix_set(m1, 3, 3, -(pa * fta + pc * kappa * ftc + pc * ftg));
+    
     gsl_matrix_scale(m1, prefact * integr_step);
+    
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 0.5, m1, m1, 0.0, m2);
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1 / 3.0, m1, m2, 0.0, m3);
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1 / 4.0, m1, m3, 0.0, m4);
+    
     gsl_matrix_memcpy(rates, id);
     gsl_matrix_add(rates, m1);
     gsl_matrix_add(rates, m2);
     gsl_matrix_add(rates, m3);
     gsl_matrix_add(rates, m4);
+    
     return 0;
 }
-
-int
-transi(double d, gsl_matrix * rates, gsl_matrix * transitions)
-{
-    const gsl_odeiv_step_type * T
-        = gsl_odeiv_step_rk8pd;
-    gsl_odeiv_step * s
-        = gsl_odeiv_step_alloc(T, 4);
-    gsl_odeiv_control * c
-        = gsl_odeiv_control_y_new(1e-3, 0.0);
-    gsl_odeiv_evolve * e
-        = gsl_odeiv_evolve_alloc(4);
-    gsl_odeiv_system sys = {func, jac, 4, rates};
-    double t = 0.0;
-    double h = 1e-2;
-    double betat = d / 2.0 / (pa * pa + pc * pc + 8.0 * pa * pc);
-    double p[4] = { 1.0, 0.0 , 0.0, 0.0};
-    while (t < betat) {
-        int status = gsl_odeiv_evolve_apply(e, c, s,
-                                            &sys,
-                                            &t, betat,
-                                            &h, p);
-        if (status != GSL_SUCCESS)
-            break;
-    }
-    gsl_matrix_set(transitions, 0, 0, p[0]);
-    gsl_matrix_set(transitions, 1, 0, p[1]);
-    gsl_matrix_set(transitions, 2, 0, p[2]);
-    gsl_matrix_set(transitions, 3, 0, p[3]);
-    p[0] = 0;
-    p[1] = 1;
-    p[2] = 0;
-    p[3] = 0;
-    t = 0;
-    while (t < betat) {
-        int status = gsl_odeiv_evolve_apply(e, c, s,
-                                            &sys,
-                                            &t, betat,
-                                            &h, p);
-        if (status != GSL_SUCCESS)
-            break;
-    }
-    gsl_matrix_set(transitions, 0, 1, p[0]);
-    gsl_matrix_set(transitions, 1, 1, p[1]);
-    gsl_matrix_set(transitions, 2, 1, p[2]);
-    gsl_matrix_set(transitions, 3, 1, p[3]);
-    p[0] = 0;
-    p[1] = 0;
-    p[2] = 1;
-    p[3] = 0;
-    t = 0;
-    while (t < betat) {
-        int status = gsl_odeiv_evolve_apply(e, c, s,
-                                            &sys,
-                                            &t, betat,
-                                            &h, p);
-        if (status != GSL_SUCCESS)
-            break;
-    }
-    gsl_matrix_set(transitions, 0, 2, p[0]);
-    gsl_matrix_set(transitions, 1, 2, p[1]);
-    gsl_matrix_set(transitions, 2, 2, p[2]);
-    gsl_matrix_set(transitions, 3, 2, p[3]);
-    p[0] = 0;
-    p[1] = 0;
-    p[2] = 0;
-    p[3] = 1;
-    t = 0;
-    while (t < betat) {
-        int status = gsl_odeiv_evolve_apply(e, c, s,
-                                            &sys,
-                                            &t, betat,
-                                            &h, p);
-        if (status != GSL_SUCCESS)
-            break;
-    }
-    gsl_matrix_set(transitions, 0, 3, p[0]);
-    gsl_matrix_set(transitions, 1, 3, p[1]);
-    gsl_matrix_set(transitions, 2, 3, p[2]);
-    gsl_matrix_set(transitions, 3, 3, p[3]);
-    gsl_odeiv_evolve_free(e);
-    gsl_odeiv_control_free(c);
-    gsl_odeiv_step_free(s);
-    return 0;
-}		/* -----  end of function transi  ----- */
 
 int
 func(double t, const double y[], double f[],
@@ -679,50 +606,6 @@ loglikely(const gsl_vector * w, void * params)
                 }
             }
         } else if (species == "eutherian") {
-            //         for (unsigned int i=1;i<254;i++){
-            //            gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
-            //            pmattemp=pij;
-            //            pij=pijp;
-            //            pijp=pmattemp;
-            //            //      gsl_matrix_memcpy(pij,pijp);
-            //            //      good approx, for integr_step=0.001
-            //            if (i==5){
-            //               gsl_matrix_memcpy(vtransi[15],pij);
-            //            } else if (i==7){
-            //               gsl_matrix_memcpy(vtransi[2],pij);
-            //            } else if (i==8){
-            //               gsl_matrix_memcpy(vtransi[3],pij);
-            //            } else if (i==10){
-            //               gsl_matrix_memcpy(vtransi[5],pij);
-            //            } else if (i==12){
-            //               gsl_matrix_memcpy(vtransi[7],pij);
-            //            } else if (i==22){
-            //               gsl_matrix_memcpy(vtransi[4],pij);
-            //            } else if (i==23){
-            //               gsl_matrix_memcpy(vtransi[16],pij);
-            //            } else if (i==35){
-            //               gsl_matrix_memcpy(vtransi[17],pij);
-            //            } else if (i==59){
-            //               gsl_matrix_memcpy(vtransi[6],pij);
-            //            } else if (i==77){
-            //               gsl_matrix_memcpy(vtransi[0],pij);
-            //            } else if (i==80){
-            //               gsl_matrix_memcpy(vtransi[10],pij);
-            //               gsl_matrix_memcpy(vtransi[11],pij);
-            //               gsl_matrix_memcpy(vtransi[13],pij);
-            //            } else if (i==82){
-            //               gsl_matrix_memcpy(vtransi[1],pij);
-            //            } else if (i==107){
-            //               gsl_matrix_memcpy(vtransi[9],pij);
-            //            } else if (i==110){
-            //               gsl_matrix_memcpy(vtransi[14],pij);
-            //            } else if (i==148){
-            //               gsl_matrix_memcpy(vtransi[12],pij);
-            //            } else if (i==253){
-            //               gsl_matrix_memcpy(vtransi[8],pij);
-            //            }
-            //            }
-            // approx, integr_step=0.01
             for (unsigned int i = 1; i < 28; i++) {
                 gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, instrates, pij, 0.0, pijp);
                 pmattemp = pij;
@@ -850,50 +733,6 @@ likelyhood(vd x, void * params)
                 }
             }
         } else if (species == "eutherian") {
-            //         for (unsigned int i=1;i<254;i++){
-            //            gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1.0,instrates,pij,0.0,pijp);
-            //            pmattemp=pij;
-            //            pij=pijp;
-            //            pijp=pmattemp;
-            //            //      gsl_matrix_memcpy(pij,pijp);
-            //            //      good approx, for integr_step=0.001
-            //            if (i==5){
-            //               gsl_matrix_memcpy(vtransi[15],pij);
-            //            } else if (i==7){
-            //               gsl_matrix_memcpy(vtransi[2],pij);
-            //            } else if (i==8){
-            //               gsl_matrix_memcpy(vtransi[3],pij);
-            //            } else if (i==10){
-            //               gsl_matrix_memcpy(vtransi[5],pij);
-            //            } else if (i==12){
-            //               gsl_matrix_memcpy(vtransi[7],pij);
-            //            } else if (i==22){
-            //               gsl_matrix_memcpy(vtransi[4],pij);
-            //            } else if (i==23){
-            //               gsl_matrix_memcpy(vtransi[16],pij);
-            //            } else if (i==35){
-            //               gsl_matrix_memcpy(vtransi[17],pij);
-            //            } else if (i==59){
-            //               gsl_matrix_memcpy(vtransi[6],pij);
-            //            } else if (i==77){
-            //               gsl_matrix_memcpy(vtransi[0],pij);
-            //            } else if (i==80){
-            //               gsl_matrix_memcpy(vtransi[10],pij);
-            //               gsl_matrix_memcpy(vtransi[11],pij);
-            //               gsl_matrix_memcpy(vtransi[13],pij);
-            //            } else if (i==82){
-            //               gsl_matrix_memcpy(vtransi[1],pij);
-            //            } else if (i==107){
-            //               gsl_matrix_memcpy(vtransi[9],pij);
-            //            } else if (i==110){
-            //               gsl_matrix_memcpy(vtransi[14],pij);
-            //            } else if (i==148){
-            //               gsl_matrix_memcpy(vtransi[12],pij);
-            //            } else if (i==253){
-            //               gsl_matrix_memcpy(vtransi[8],pij);
-            //            }
-            //            }
-            // approx, integr_step=0.01
             for (unsigned int i = 1; i < 26; i++) {
                 gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, instrates, pij, 0.0, pijp);
                 pmattemp = pij;
