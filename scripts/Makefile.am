@@ -49,7 +49,7 @@ emf2fasta.pyx: emf2fasta.pyx.in
 	$(do_subst) < $< > $@
 
 emf2fasta.c.in: emf2fasta.pyx
-	$(PYTHON) $(srcdir)/setup.py build_ext --inplace
+	$(PYTHON) $(srcdir)/setup.py build_ext --force --inplace
 	mv emf2fasta.c $@
 
 emf2fasta.c: emf2fasta.c.in
