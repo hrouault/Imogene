@@ -69,6 +69,45 @@ dispweblogo(vmot & mots)
 }
 
 void
+dispjaspar(vmot & mots)
+{
+    unsigned int index = 1;
+    for (ivmot ivm = mots.begin(); ivm != mots.end(); ivm++) {
+        if (ivm->check) {
+            cout << "Motif";
+            cout << index << endl;
+
+            stringstream lineA;
+            stringstream lineC;
+            stringstream lineG;
+            stringstream lineT;
+            lineA << "A [";
+            lineC << "C [";
+            lineG << "G [";
+            lineT << "T [";
+
+            for (ivvd ivv = ivm->matfreq.begin(); ivv != ivm->matfreq.end(); ivv++) {
+                string sep2 = "";
+                lineA << (int)((*ivv)[0] * 100) << " ";
+                lineC << (int)((*ivv)[1] * 100) << " ";
+                lineG << (int)((*ivv)[2] * 100) << " ";
+                lineT << (int)((*ivv)[3] * 100) << " ";
+            }
+            lineA << "]\n";
+            lineC << "]\n";
+            lineG << "]\n";
+            lineT << "]\n";
+
+            cout << lineA.str();
+            cout << lineC.str();
+            cout << lineG.str();
+            cout << lineT.str();
+            index++;
+        }
+    }
+}
+
+void
 texify(string & str)
 {
     size_t found = str.find("_");
@@ -933,6 +972,9 @@ cmd_display(int argc, char ** argv)
         } else if (display_args.tex_align_given) {
             cout << "Creating fasta/tex files... " << endl;
             disptexwgaps(align, mots);
+        } else if (display_args.jaspar_given) {
+            cout << "Outputting matrices... " << endl;
+            dispjaspar(mots);
         } else if (display_args.logos_given) {
             cout << "Creating logos... " << endl;
             dispweblogo(mots);

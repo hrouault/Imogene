@@ -51,6 +51,10 @@ modeoption "tex-align" - "Output is tex formatted. Display the entire alignment.
 modeoption  "svg" -  "Training set multiple alignment with instances, svg formatted." 
             mode="genmot" optional
 
+modeoption  "jaspar" -  "Motif matrix for searching the jaspar database" 
+            mode="genmot" optional
+
+
 modeoption  "logos" -  "Motif logos." 
             mode="genmot" optional
 
@@ -65,4 +69,3 @@ defmode "scangen"
 
 modeoption "enhancers" e "file containing a list of enhancer definitions"
             string typestr="str" mode="scangen" required
-
