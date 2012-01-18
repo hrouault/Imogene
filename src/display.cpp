@@ -39,6 +39,33 @@ using namespace std;
 display_args_info display_args;
 
 void
+dispscoreseq(vseq & seqs, vmot & mots)
+{
+    string filename;
+    filename = "scores.txt";
+    ofstream outf(filename.c_str());
+    if (outf.fail()) {
+        cerr << "Cannot open file for txt recording: " << strerror(errno) << endl;
+        exit(EXIT_FAILURE);
+    }
+    for (ivseq ivs = seqs.begin(); ivs != seqs.end(); ivs++) {
+        //cout << "Scanning " << ivs->name << endl;
+        outf << ivs->name << "\t";
+        vd scores(nbmots_for_score,0.);
+        for (ivvinstseq ivv = ivs->instancescons.begin(); ivv != ivs->instancescons.end(); ivv++) {
+            int ind = (*ivv)[0].motindex;
+            scores[ind] += log(mots[ind].lambdatrain / mots[ind].lambdaback);
+        }
+        
+        for (ivd iv = scores.begin(); iv != scores.end()-1; iv++){
+            outf << *iv << "\t";
+        }
+        outf << *(scores.end()-1) << endl;
+    }
+    outf.close();
+}
+
+void
 dispweblogo(vmot & mots)
 {
     unsigned int index = 1;
@@ -913,7 +940,7 @@ cmd_display(int argc, char ** argv)
         if (nbmots_for_score < mots.size()) mots.erase(mots.begin() + nbmots_for_score, mots.end());
         for (ivmot iv = mots.begin(); iv != mots.end(); iv++) {
             // use same score on all species for detection
-            iv->motscorethrcons = iv->motscorethr2;
+            // iv->motscorethrcons = iv->motscorethr2;
             // avoid problems with _ and # characters for latex
             texify(iv->name);
         }
@@ -940,6 +967,8 @@ cmd_display(int argc, char ** argv)
             for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
                 scanseqforsvg(*ivs, mots);
             }
+        } else if (display_args.score_given) {
+            dispscoreseq(align,mots);
         } else {
             cout << "No output mode was given. Exiting." << endl;
         }

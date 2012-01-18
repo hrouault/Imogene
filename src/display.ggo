@@ -28,7 +28,7 @@ modeoption "motifs" m "file containing a list of motif definitions"
             string typestr="str" mode="genmot" required
 
 modeoption  "threshold" t "Threshold used for motif scanning"
-            double typestr="double" default="9" mode="genmot" optional
+            double typestr="double" default="12" mode="genmot" optional
 
 modeoption "species" s "Species used for motifs generation."
             string typestr="str" mode="genmot" required
@@ -58,6 +58,9 @@ modeoption  "pdf" -  "Motif logo in pdf format."
             mode="genmot" optional
 
 modeoption  "png" -  "Motif logo in png format (default)" 
+            mode="genmot" optional
+
+modeoption  "score" -  "Display motifs poissonian scores on aligned sequences in a txt file." 
             mode="genmot" optional
 
 section "Display the output of imogene scangen"
