@@ -119,6 +119,7 @@ class Motif
         void matinitforscanmots(Sequence & seq);
         void compprec();
         void compprec_MCMC();
+        void compprec_inde();
         void pvaluecomp();
         void updatebacksites(Sequence & seq);
         void display(ostream & streamfile);
@@ -197,6 +198,7 @@ ostream & operator <<(ostream & os, const vcombi & vcomb);
 
 vd colmean(unsigned int pos, Motif * mot);
 vd colopti(unsigned int pos, Motif * mot);
+vd colinde(unsigned int pos, Motif * mot);
 double likelyhood(vd x, void * params);
 double loglikelyhood(vd x, void * params);
 double loglikely(const gsl_vector * v, void * params);

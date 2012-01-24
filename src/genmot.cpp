@@ -139,7 +139,15 @@ seqanalysis(Sequence & currseq, vmot & genmots)
                 if (nb > 2) currmot.matinit(scorethr2);
                 else currmot.matinit(scorethr);
                 if (currmot.nbcons < 1) break;
-                currmot.compprec();
+                
+                if (!strcmp(genmot_args.method_arg, "max")) {
+                   currmot.compprec();
+                } else if (!strcmp(genmot_args.method_arg, "mean")) {
+                   currmot.compprec_MCMC();
+                } else if (!strcmp(genmot_args.method_arg, "inde")) {
+                   currmot.compprec_inde();
+                }
+
                 max = distcv(currmot.matprec, pmat);
                 pmat = currmot.matprec;
                 iter++;

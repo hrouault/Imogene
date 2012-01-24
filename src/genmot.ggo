@@ -41,3 +41,7 @@ option "species" s "Species selected"
 
 option "progress" - "Show progression while running" optional
 
+option "method" - "Method used for PWM optimization"
+            string typestr="str" optional default="max"
+            values="max","mean","inde"
+
