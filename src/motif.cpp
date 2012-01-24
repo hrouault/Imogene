@@ -748,6 +748,20 @@ Motif::compprec_MCMC()
     matprec = matmean;
     matprecrevcomp = reversecomp(matprec);
 }
+   
+   void
+Motif::compprec_inde()
+{
+   vd col;
+   vvd matinde;
+
+   for (unsigned int i=0;i<motwidth;i++){
+      col=colinde(i,this);
+      matinde.push_back(col);
+   }
+   matprec=matinde;
+   matprecrevcomp=reversecomp(matprec);
+}
 
 vvd
 mattofreq(vvd & mat)
@@ -782,12 +796,18 @@ colopti(unsigned int pos, Motif * mot)
     gsl_multimin_function minex_func;
     /* Starting point */
     x = gsl_vector_alloc(3);
-    gsl_vector_set(x, 0, .25);
-    gsl_vector_set(x, 1, .25);
-    gsl_vector_set(x, 2, .25);
+   vd winde = colinde(pos, mot);
+   winde[0] = conca * exp(winde[0]);
+   winde[1] = concc * exp(winde[1]);
+   winde[2] = concg * exp(winde[2]);
+   winde[3] = conct * exp(winde[3]);
+   gsl_vector_set (x, 0, winde[0]);
+   gsl_vector_set (x, 1, winde[1]);
+   gsl_vector_set (x, 2, winde[2]);
     /* Set initial step sizes to 0.05 */
     ss = gsl_vector_alloc(3);
-    gsl_vector_set_all(ss, 0.1);
+    double winf = *min_element(winde.begin(), winde.end()) / 2;
+    gsl_vector_set_all (ss, winf);
     /* Initialize method and iterate */
     minex_func.n = 3;
     minex_func.f = &loglikely;
@@ -804,7 +824,7 @@ colopti(unsigned int pos, Motif * mot)
         if (status)
             break;
         size = gsl_multimin_fminimizer_size(s);
-        status = gsl_multimin_test_size(size, 1e-4);
+        status = gsl_multimin_test_size(size, 1e-5);
         if (status == GSL_SUCCESS) {
             //printf ("converged to minimum at\n");
         }
@@ -830,138 +850,175 @@ colopti(unsigned int pos, Motif * mot)
     return res;
 }
 
-vd
-colmean(unsigned int pos, Motif * mot)
+   vd
+colinde(unsigned int pos,Motif * mot)
 {
-    double al(alpha), be;
-    if (al < 0.05) al = 0.1;
-    be = concc / conca * al;
-    //   clock_t start,finish;
-    //   double dif;
-    //   start=clock();
-    unsigned int Ndir(0);
-    //cout << mot->seqs.size() << endl;
-    for (ivma ivm = mot->seqs.begin(); ivm != mot->seqs.end(); ivm++) {
-        Ndir += accumulate(ivm->matches.begin(), ivm->matches.end(), 0) / 2;
-    }
-    //cout << "Ndir=" << Ndir << endl;
-    //unsigned int nsample(20);
-    unsigned int nsample(10);
-    //cout << "nsample=" << nsample << endl;
-    //unsigned int nmean(100);
-    //cout << "nmean=" << nmean << endl;
-    double dkl = 1.;
-    double dcutoff(1e-4);
-    //cout << "dcutoff=" << dcutoff << endl;
-    // INIT
-    vd winit(4, 0.);
-    winit[0] = conca * exp(mot->matprec[pos][0]);
-    winit[1] = concc * exp(mot->matprec[pos][1]);
-    winit[2] = concg * exp(mot->matprec[pos][2]);
-    winit[3] = conct * exp(mot->matprec[pos][3]);
-    double sum = winit[0] + winit[1] + winit[2] + winit[3];
-    winit[0] /= sum;
-    winit[1] /= sum;
-    winit[2] /= sum;
-    winit[3] /= sum;
-    double fprev, fafter;
-    void * par[2] = {(void *)mot, &pos};
-    vd wprev(4, 0.), wafter(4, 0.), wmean(4, 0.), wmeanforstat(4, 0.);
-    // Starting point
-    double alpinit[4] = {al + Ndir * winit[0], al + Ndir * winit[1], be + Ndir * winit[2], be + Ndir * winit[3]};
-    double thetainit[] = {0., 0., 0., 0.};
-    gsl_ran_dirichlet(gslran, 4, alpinit, thetainit);
-    wprev[0] = thetainit[0];
-    wprev[1] = thetainit[1];
-    wprev[2] = thetainit[2];
-    wprev[3] = 1 - thetainit[0] - thetainit[1] - thetainit[2];
-    fprev = loglikelyhood(wprev, par);
-    // =========
-    // MAIN LOOP
-    // =========
-    // counter counts accepted trials
-    unsigned int counter(1), iterok(1), iter(0);
-    double logalph, prob; // for Metropolis Hastings
-    // BURN-IN
-    unsigned int bicount(0), bicutoff(nsample);
-    //while (counter<=nmean) {
-    while (dkl >= dcutoff) {
-        double alp[4] = {al + Ndir * wprev[0], al + Ndir * wprev[1], be + Ndir * wprev[2], be + Ndir * wprev[3]};
-        double theta[] = {0., 0., 0., 0.};
-        gsl_ran_dirichlet(gslran, 4, alp, theta);
-        wafter[0] = theta[0];
-        wafter[1] = theta[1];
-        wafter[2] = theta[2];
-        wafter[3] = 1 - theta[0] - theta[1] - theta[2];
-        // check if new probabilities are consistent, else reject
-        int wtest(0);
-        for (int i = 0; i < 4; i++) if (wafter[i] < 0 || wafter[i] > 1) wtest = 1;
-        if (wtest) continue;
-        fafter = loglikelyhood(wafter, par);
-        // Metropolis-Hastings
-        // Move to new position with probability alpha, else reject
-        double theta2[] = {wprev[0], wprev[1], wprev[2], wprev[3]};
-        double alp2[4] = {al + Ndir * wafter[0], al + Ndir * wafter[1], be + Ndir * wafter[2], be + Ndir * wafter[3]};
-        logalph = min(0., fafter + log(gsl_ran_dirichlet_pdf(4, alp2, theta2)) - (fprev + log(gsl_ran_dirichlet_pdf(4, alp, theta))));
-        prob = gsl_rng_uniform(gslran);
-        if (log(prob) <= logalph) {
-            wprev = wafter;
-            fprev = fafter;
-            if (bicount < bicutoff) {
-                bicount++;
-                continue;
-            }
-            if (iterok % nsample == 0) {
-                vd wprevmean = wmeanforstat;
-                for (unsigned int ib = 0; ib < 4; ib++) {
-                    //wmeanforstat[ib]+=wafter[ib]/nmean;
-                    wmeanforstat[ib] = (counter - 1.) / counter * wprevmean[ib] + wafter[ib] / counter;
-                }
-                if (wmeanforstat[0] <= 0 || wmeanforstat[1] <= 0 || wmeanforstat[2] <= 0 || wmeanforstat[3] <= 0) {
-                    for (unsigned int i = 0; i < 4; i++) {
-                        if (wmeanforstat[i] < 0) cout << "Warning in colmean, pos=" << pos << ", base=" <<
-                                                          inttostring(i) << ", wmeanforstat=" << wmeanforstat[i] << endl;
-                    }
-                    wmeanforstat = wprevmean;
-                    iter++;
-                    continue;
-                }
-                dkl = 0.;
-                for (int ib = 0; ib < 4; ib++) {
-                    dkl += wmeanforstat[ib] * log(wmeanforstat[ib] / wprevmean[ib]) / log(2);
-                }
-                counter++;
-            }
-            for (unsigned int ib = 0; ib < 4; ib++) wmean[ib] = (iterok - 1.) / iterok * wmean[ib] + wafter[ib] / iterok;
-            iterok++;
-        }
-        iter++;
-    }
-    //      finish=clock();
-    //      dif = 1000*(double)(finish - start) / CLOCKS_PER_SEC;
-    //   printf ("---> time(colmean): %.1f milliseconds.\n", dif );
-    //   cout << "iter=" << iter << " ";
-    //   cout << "iterOK=" << iterok << " ";
-    //   cout << "counter=" << counter << endl;
-    // HERE WE AVOID A PRECISION PROBLEM FOR w=0
-    // VALUES ARE FLUCTUATING AND CAN BE NEGATIVE
-    for (unsigned int i = 0; i < 4; i++) {
-        if (wmean[i] < 0) cout << "Warning in colmean, pos=" << pos << ", base=" <<
-                                   inttostring(i) << ", wmean=" << wmean[i] << endl;
-    }
-    sum = 0;
-    for (unsigned int i = 0; i < 4; i++) {
-        wmean[i] = fabs(wmean[i]);
-        sum += wmean[i];
-    }
-    for (unsigned int i = 0; i < 4; i++) wmean[i] /= sum;
-    vd res;
-    res.push_back(log(wmean[0] / conca));
-    res.push_back(log(wmean[1] / concc));
-    res.push_back(log(wmean[2] / concg));
-    res.push_back(log(wmean[3] / conct));
-    return res;
+
+   vint Nb(4,0); // A,C,G,T
+   int Ntot=0;
+   for (ivma ivm = mot->seqs.begin(); ivm != mot->seqs.end(); ivm++){
+      for (ivvint ivv=ivm->alignseq.begin();ivv!=ivm->alignseq.end();ivv++){
+         int base = ivv->at(pos);
+         if (base<4){
+            Nb[base]++;
+            Ntot++;
+         }
+      }
+   }
+
+   vd wmeaninde(4,0.);
+   double pseud[4]={alpha,beta,beta,alpha};
+   for (int b=0;b<4;b++){
+      wmeaninde[b] = (Nb[b]+pseud[b])/(Ntot+2*(alpha+beta));
+   }
+
+   vd res(4,0.);
+   res[0] = log(wmeaninde[0] / conca);
+   res[1] = log(wmeaninde[1] / concc);
+   res[2] = log(wmeaninde[2] / concg);
+   res[3] = log(wmeaninde[3] / conct);
+   return res;
 }
+   
+   vd
+colmean(unsigned int pos,Motif * mot)
+{
+
+   double al(alpha),be;
+//   if (al<0.05) al=0.1;
+   be=concc/conca*al;
+   unsigned int Ndir(0);
+   //cout << mot->seqs.size() << endl;
+   vint Nb(5,0); // A,C,G,T,N
+   int Ntot=0;
+   for (ivma ivm = mot->seqs.begin(); ivm != mot->seqs.end(); ivm++){
+   //   Ndir+=accumulate(ivm->matches.begin(),ivm->matches.end(),0)/2; 
+      for (ivvint ivv = ivm->alignseq.begin(); ivv != ivm->alignseq.end(); ivv++){
+         Nb[ivv->at(pos)]++;
+         Ntot++;
+      }
+   }
+   Ndir=mot->seqs.size()*nbspecies/2;
+   //cout << "Ndir=" << Ndir << endl;
+   
+   // Mean and variance of the independent species model
+   vd wmeaninde(4,0.);
+   vd wvarinde(4,0.);
+   double pseud[4]={alpha,beta,beta,alpha};
+   for (int b=0;b<4;b++){
+      wmeaninde[b] = (Nb[b]+pseud[b])/(Ntot+2*(alpha+beta));
+      wvarinde[b] = wmeaninde[b] * ((Nb[b] + pseud[b] + 1) / 
+            (Ntot + 1 + 2 * (alpha + beta)) - wmeaninde[b]);
+   }
+
+   // INIT
+   vd winit(4,0.);
+   winit[0]=conca*exp(mot->matprec[pos][0]);
+   winit[1]=concc*exp(mot->matprec[pos][1]);
+   winit[2]=concg*exp(mot->matprec[pos][2]);
+   winit[3]=conct*exp(mot->matprec[pos][3]);
+   double sum=winit[0]+winit[1]+winit[2]+winit[3];
+   winit[0]/=sum;
+   winit[1]/=sum;
+   winit[2]/=sum;
+   winit[3]/=sum;
+   
+   double f,ftrial;
+   void * par[2]={(void *)mot,&pos};
+
+   vd dum(4,0.);
+   vd w(4,0.),wtrial(4,0.);
+   vvd ws,wmeans; // means taken every nsample
+   vd wtotmean(4,0.); // overall mean
+
+   // Starting point
+   w=winit;
+   f=loglikelyhood(w,par);
+   
+   // =========
+   // MAIN LOOP
+   // =========
+
+   double logalph,prob; // for Metropolis Hastings
+   int nsample=30;
+   int nburnin=nsample;
+   int count=0;
+   int countsample=0;
+   int ncv=10;
+
+   while(count < 10000){ 
+   
+      double alp[4]={al+Ndir*w[0],be+Ndir*w[1],be+Ndir*w[2],al+Ndir*w[3]};
+      double theta[]={0.,0.,0.,0.};
+      // check if new probabilities are consistent, else reject
+      int wtest(1);
+      while (wtest){
+         gsl_ran_dirichlet(gslran,4,alp,theta);
+         wtrial[0]=theta[0];
+         wtrial[1]=theta[1];
+         wtrial[2]=theta[2];
+         wtrial[3]=theta[3];
+         sum=wtrial[0]+wtrial[1]+wtrial[2]+wtrial[3];
+         wtrial[0]/=sum;
+         wtrial[1]/=sum;
+         wtrial[2]/=sum;
+         wtrial[3]/=sum;
+
+         for (int i=0;i<4;i++) if (wtrial[i]<0 || wtrial[i]>1) wtest=1;
+         else wtest=0;
+      }
+
+      ftrial=loglikelyhood(wtrial,par);
+
+      // Metropolis-Hastings
+      // Move to new position with probability alpha, else reject
+      double theta2[]={w[0],w[1],w[2],w[3]};
+      double alp2[4]={al+Ndir*wtrial[0],be+Ndir*wtrial[1],be+Ndir*wtrial[2],al+Ndir*wtrial[3]};
+      logalph=min(0.,ftrial+log(gsl_ran_dirichlet_pdf(4,alp2,theta2))-(f+log(gsl_ran_dirichlet_pdf(4,alp,theta))));
+      prob=gsl_rng_uniform (gslran);
+
+      if (log(prob) <= logalph){
+         w=wtrial;
+         f=ftrial;
+      }
+
+      if (count%nsample==0){
+         vd wm(4,0.);
+         for (int b=0;b<4;b++){
+            if (countsample==0) wm[b]=w[b];
+            else wm[b]=(countsample*wmeans[countsample-1][b]+w[b])/(countsample+1);
+         }
+         wmeans.push_back(wm);
+
+         int hascv=1;
+         if (countsample >= ncv){
+            for (int j=countsample-ncv;j<countsample;j++){
+               for (int b=0;b<4;b++){
+                  if (abs(wmeans[j][b]-wmeans[countsample][b]) > 1.96*sqrt(wvarinde[b]/(countsample+1))) hascv=0;
+               }
+               if (hascv==0) break;
+            }
+            if (hascv==1) break;
+         }
+         countsample++;
+      }
+         
+      for (int b=0;b<4;b++){
+         if (count==0) wtotmean[b]=w[b];
+         else wtotmean[b]=(count*wtotmean[b]+w[b])/(count+1);
+      }
+      count++;
+
+   }
+
+   vd res(4,0.);
+   res[0]=log(wtotmean[0]/conca);
+   res[1]=log(wtotmean[1]/conca);
+   res[2]=log(wtotmean[2]/concc);
+   res[3]=log(wtotmean[3]/concc);
+   return res;
+}
+
 
 void
 Motalign::print()
