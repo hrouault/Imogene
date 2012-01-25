@@ -463,6 +463,7 @@ compmotsthr(vmot & mots)
     return;
 }
 
+
 // sets check flags on/off to filter identical motifs in a p-value sorted motifs list
 // // *** BEWARE, hidden is a cutoff on vmot size
 void
@@ -470,9 +471,9 @@ compmotsdist(vmot & mots)
 {
     if (mots.size() == 0) return;
     fback.push_back(conca);
-    fback.push_back(conct);
     fback.push_back(concc);
     fback.push_back(concg);
+    fback.push_back(conct);
     unsigned int counter = 2;
     unsigned int countertrue = 1;
     ivmot ivstop = mots.end() - 1;
@@ -497,7 +498,7 @@ compmotsdist(vmot & mots)
         }
         if (ivm->check == true) countertrue++;
         if (countertrue >= 20) { // *** CUTOFF TO AVOID LONG COMPUTATION
-            cout << "More than 20 motifs where found. Stopping clustering." << endl;
+            cout << "\nMore than 20 motifs where found. Stopping clustering." << endl;
             ivstop = ivm;
             break;
         }
@@ -508,6 +509,33 @@ compmotsdist(vmot & mots)
 }
 
 distinfo_args_info distinfo_args;
+
+double
+compdistance(Motif & mot1, Motif & mot2)
+{
+    //   cout << "conca: " << conca << endl;
+    conct = conca;
+    concg = concc;
+    vmot mots;
+    mots.push_back(mot1);
+    mots.push_back(mot2);
+    compmotsthr(mots);
+    mot1 = mots[0];
+    mot2 = mots[1];
+    
+    fback.clear();
+    fback.push_back(conca);
+    fback.push_back(concc);
+    fback.push_back(concg);
+    fback.push_back(conct);
+    double distance = 0;
+    if (sum(abs(mot1.matprec - mot2.matprec)) > 1e-3 && sum(abs(mot1.matprec - mot2.matprecrevcomp)) > 1e-3) {
+       distance = distmot(mot1, mot2);
+    }
+    else distance = 0;
+
+    return distance;
+}
 
 void
 distinfo(const char * motfile)
