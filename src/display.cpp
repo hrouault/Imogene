@@ -924,8 +924,8 @@ display_args_init()
         conct = conca;
         concg = concc;
         scorethr2 = display_args.threshold_arg * log(2);
-        //scorethr=scorethr2-1;
-        //scorethrcons=scorethr2-1;
+        scorethr = scorethr2 * (1 - 2. / width);
+        scorethrcons = scorethr2 * (1 - 1. / width);
         nbmots_for_score = display_args.nbmots_arg;
     }
 }
@@ -968,7 +968,7 @@ cmd_display(int argc, char ** argv)
         display_datapath = imo_display_datapath;
     }
     if (display_args.genmot_mode_counter) {
-        cout << "Thresholds: thr2=" << scorethr2 / log(2) << " thr=" << scorethr / log(2) << " thrcons=" << scorethrcons / log(2) << endl;
+        cout << "Thresholds: thr2=" << scorethr2 / log(2) << " thrcons=" << scorethrcons / log(2) << endl;
         cout << "Loading alignments " << endl;
         vseq align;
         align = loadseqs(display_args.align_arg);

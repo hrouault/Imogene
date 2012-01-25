@@ -49,6 +49,9 @@ class Motalign
 
 typedef vector<Motalign> vma;
 typedef vma::iterator ivma;
+typedef vma::const_iterator icvma;
+
+bool operator ==(const vma & seqs1, const vma & seqs2);
 
 class Instance
 {

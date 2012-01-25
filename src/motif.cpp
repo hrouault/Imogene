@@ -50,7 +50,7 @@ using namespace std;
 
 Motif::Motif()
 {
-    // *** only way to do if we want to define distwith in the cpp
+    // *** only way to do if we want to define distwidth in the cpp
     distmot = new int[distwidth];
     for (unsigned int i = 0; i < distwidth; i++) {
         distmot[i] = 0;
@@ -230,7 +230,7 @@ Motif::pvaluecomp()
 {
     // Density of conserved binding sites in the background
     lambdaback = nbconsback / (double)tottest;
-    cout << nbconsback << " " << tottest << " " << lambdaback << endl;
+    //cout << nbconsback << " " << tottest << " " << lambdaback << endl;
     // Chi2 calculation
     calcscorepoiss();
     vseq::iterator iseq;
@@ -328,6 +328,23 @@ Instance::Instance(int chr, int pos, int sen, int moti, double sco, string s)
     sens = sen;
     score = sco;
     site = s;
+}
+
+bool operator ==(const vma & seqs1, const vma & seqs2)
+{
+    
+    if (seqs1.size() != seqs2.size()) return 0;
+
+    int i = 0;
+    int isdiff = 0;
+    for (icvma ivm = seqs1.begin(); ivm != seqs1.end(); ivm++){
+      if (ivm->alignseq[0] != seqs2[i].alignseq[0]){
+         isdiff = 1; 
+         break;
+      }
+      i++;
+    }
+    return !isdiff;
 }
 
 ostream & operator <<(ostream & os, const Instance & inst)
@@ -994,7 +1011,8 @@ colmean(unsigned int pos,Motif * mot)
          if (countsample >= ncv){
             for (int j=countsample-ncv;j<countsample;j++){
                for (int b=0;b<4;b++){
-                  if (abs(wmeans[j][b]-wmeans[countsample][b]) > 1.96*sqrt(wvarinde[b]/(countsample+1))) hascv=0;
+                  //if (abs(wmeans[j][b]-wmeans[countsample][b]) > 1.96*sqrt(wvarinde[b]/(countsample+1))) hascv=0;
+                  if (abs(wmeans[j][b]-wmeans[countsample][b]) > sqrt(wvarinde[b]/(countsample+1))) hascv=0;
                }
                if (hascv==0) break;
             }
@@ -1013,9 +1031,9 @@ colmean(unsigned int pos,Motif * mot)
 
    vd res(4,0.);
    res[0]=log(wtotmean[0]/conca);
-   res[1]=log(wtotmean[1]/conca);
+   res[1]=log(wtotmean[1]/concc);
    res[2]=log(wtotmean[2]/concc);
-   res[3]=log(wtotmean[3]/concc);
+   res[3]=log(wtotmean[3]/conca);
    return res;
 }
 

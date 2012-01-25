@@ -123,19 +123,17 @@ seqanalysis(Sequence & currseq, vmot & genmots)
         vint bs(istr, istr + width);
         if (compN(bs) > 0) continue;
         Motif currmot;
+        vma pseqs;
         currmot.bsinit = vinttostring(bs);
         currmot.pos = i;
         motiftomat(bs, currmot);
         currmot.matricerevcomp = reversecomp(currmot.matrice);
         currmot.matprec = currmot.matrice;
         currmot.matprecrevcomp = currmot.matricerevcomp;
-        vvd pmat = currmot.matprec;
-        unsigned int nbconv = 0;
-        // *** TODO better convergence check
+        pseqs = currmot.seqs;
         for (unsigned int nb = 1; nb <= nbiter; nb++) {
-            double max = 0.01;
             int iter = 0;
-            while (max > 0) {
+            while (iter < 20) {
                 if (nb > 2) currmot.matinit(scorethr2);
                 else currmot.matinit(scorethr);
                 if (currmot.nbcons < 1) break;
@@ -148,15 +146,13 @@ seqanalysis(Sequence & currseq, vmot & genmots)
                    currmot.compprec_inde();
                 }
 
-                max = distcv(currmot.matprec, pmat);
-                pmat = currmot.matprec;
+                if (pseqs == currmot.seqs) break;
+                pseqs = currmot.seqs;
+                
                 iter++;
-                if (iter == 20) break;
-                nbconv++;
             }
             if (nb == 1) {
                 currmot.corrprec();
-                pmat = currmot.matprec;
                 currmot.matprecrevcomp = reversecomp(currmot.matprec);
             }
         }
