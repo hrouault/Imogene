@@ -33,6 +33,9 @@ option   "neighbext" x  "Extent of the motif search within an alignment"
 option  "align"   a  "Folder containing the fasta formatted (.fa) files of enhancer alignments."
             string   typestr="str"  required
 
+option  "background"   b  "Folder containing the fasta formatted (.fa) files of background enhancers alignments. Per default, uses 10,000 intergenic sequences of 2kb."
+            string   typestr="str"  optional
+
 option   "evolutionary-model" e  "Evolutionary model used for motif generation (1=felsen, 2=halpern)"
             int  typestr="int" default="1" optional
 

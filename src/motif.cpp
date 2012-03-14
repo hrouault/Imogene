@@ -234,11 +234,12 @@ Motif::pvaluecomp()
     // Chi2 calculation
     calcscorepoiss();
     vseq::iterator iseq;
-    pvalue = 0.0;
     int nbbtrain = 0;
+    pvalue = 0.0;
     for (iseq = regints.begin(); iseq != regints.end(); iseq++) {
         int consseq = nbmatchcons(*iseq);
-        pvalue += log(gsl_ran_poisson_pdf(consseq, lambdaback * (*iseq).nbtb));
+        if (lambdaback == 0) pvalue = -100.;
+        else pvalue += log(gsl_ran_poisson_pdf(consseq, lambdaback * (*iseq).nbtb));
         nbbtrain += (*iseq).nbtb;
     }
     // Density of conserved binding sites in the training set
