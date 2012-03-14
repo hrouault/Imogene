@@ -220,10 +220,10 @@ cmd_genmot(int argc, char ** argv)
     //   printpriorsandthrs(); *** to be written
     cout << "alpha=" << alpha << endl;
     cout << "Loading background file names..." << endl;
-    if (species == "droso"){
-        regtests = loadfilenames((genmot_datapath + "/droso/background").c_str());
-    } else if (species == "eutherian"){
-        regtests = loadfilenames((genmot_datapath + "/eutherian/background").c_str());
+    if (genmot_args.background_given){
+        regtests = loadfilenames(genmot_args.background_arg);
+    } else {
+        regtests = loadfilenames((genmot_datapath + "/" + species + "/background").c_str());
     }
     cout << "Background set size : " << regtests.size() << endl;
     cout << "Loading training set..." << endl;
