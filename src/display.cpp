@@ -972,6 +972,9 @@ cmd_display(int argc, char ** argv)
         cout << "Loading alignments " << endl;
         vseq align;
         align = loadseqs(display_args.align_arg);
+        for (ivseq iv = align.begin(); iv != align.end(); iv++) {
+            texify(iv->name);
+        }
         cout << "Nb sequences to scan: " << align.size() << endl;
         cout << "Loading Motifs" << endl;
         vmot mots;
@@ -985,11 +988,18 @@ cmd_display(int argc, char ** argv)
         }
         cout << "Loaded " << mots.size() << " motifs." << endl;
         cout << "Scanning sequences for instances..." << endl;
-        scanseqsforinstancesnmask(align, mots);
+        if (display_args.score_given){
+            for (ivmot iv=mots.begin(); iv!=mots.end();iv++)
+               iv->motscorethrcons = scorethr2 - 1.0;
+            scanseqsforinstances(align, mots);
+        }
+        else scanseqsforinstancesnmask(align, mots);
+        
         cout << "Defining conserved instances..." << endl;
         for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
             ivs->instances2instancescons();
         }
+        
         if (display_args.tex_ref_given) {
             cout << "Creating tex file for reference species... " << endl;
             disptex(align, mots);
