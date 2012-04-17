@@ -99,41 +99,46 @@ extractfromcoord(const char * coordfile)
             retcode = mkdir((extract_datapath + "/eutherian/background").c_str() , S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
             basename << extract_datapath + "/eutherian/background/";
         }
+        // We want to avoid to overwrite them
+        if (retcode) {
+           cerr << "Cannot create directory: " << strerror(errno) << endl;
+           exit(EXIT_FAILURE);
+        }
     } else {
-        retcode = mkdir("align", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-        basename << "align/";
-    }
-    if (retcode) {
-        cerr << "Cannot create directory: " << strerror(errno) << endl;
-        exit(EXIT_FAILURE);
+       retcode = mkdir("align", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+       basename << "align/";
+       if (retcode  && errno != EEXIST) {
+          cerr << "Cannot create directory: " << strerror(errno) << endl;
+          exit(EXIT_FAILURE);
+       }
     }
     // SEQUENCE EXTRACTION
     cout << "Extraction start" << endl;
     cout << "Writing sequences in align/..." << endl;
     for (ivcoord ivc = coords.begin(); ivc != coords.end(); ivc++) {
-        Sequence seqtoimport = coordtoseq(*ivc);
-        if (seqtoimport.species[0] && seqtoimport.nbtb > 0)  {
-            cout << seqtoimport.name << endl;
-            seq2fasta(seqtoimport, basename.str());
-        }
-        //      cout << chromfromint(ivc->chrom) << endl;
-        //      cout << ivc->start << endl;
-        //      cout << ivc->stop << endl;
-        //      cout << seqtoimport.seqs[0] << endl;
+       Sequence seqtoimport = coordtoseq(*ivc);
+       if (seqtoimport.species[0] && seqtoimport.nbtb > 0)  {
+          cout << seqtoimport.name << endl;
+          seq2fasta(seqtoimport, basename.str());
+       }
+       //      cout << chromfromint(ivc->chrom) << endl;
+       //      cout << ivc->start << endl;
+       //      cout << ivc->stop << endl;
+       //      cout << seqtoimport.seqs[0] << endl;
     }
     cout << "Extraction stop" << endl;
 }
 
-void
+   void
 extract_args_init()
 {
-    if (!strcmp(extract_args.species_arg, "droso")) {
-        species = "droso";
-        nbspecies = 12;
-    } else if (!strcmp(extract_args.species_arg, "eutherian")) {
-        species = "eutherian";
-        nbspecies = 12;
-    }
+   if (!strcmp(extract_args.species_arg, "droso")) {
+      species = "droso";
+      nbspecies = 12;
+   } else if (!strcmp(extract_args.species_arg, "eutherian")) {
+      species = "eutherian";
+      nbspecies = 12;
+   }
 }
 
 string extract_datapath;
@@ -144,19 +149,19 @@ string extract_datapath;
  *  Description:  Alignment extraction
  * =====================================================================================
  */
-int
+   int
 cmd_extract(int argc, char ** argv)
 {
-    if (extract_cmdline_parser(argc, argv, & extract_args) != 0)
-        exit(EXIT_FAILURE);
-    extract_args_init();
-    const char * imo_extract_datapath = getenv("IMOGENE_DATA");
-    if (imo_extract_datapath == NULL) {
-        extract_datapath = DATA_PATH;
-    } else {
-        extract_datapath = imo_extract_datapath;
-    }
-    sequence_datapath = extract_datapath;
-    extractfromcoord(extract_args.input_arg);
-    return EXIT_SUCCESS;
+   if (extract_cmdline_parser(argc, argv, & extract_args) != 0)
+      exit(EXIT_FAILURE);
+   extract_args_init();
+   const char * imo_extract_datapath = getenv("IMOGENE_DATA");
+   if (imo_extract_datapath == NULL) {
+      extract_datapath = DATA_PATH;
+   } else {
+      extract_datapath = imo_extract_datapath;
+   }
+   sequence_datapath = extract_datapath;
+   extractfromcoord(extract_args.input_arg);
+   return EXIT_SUCCESS;
 }		/* -----  end of function extract  ----- */
