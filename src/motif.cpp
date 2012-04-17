@@ -1200,6 +1200,72 @@ loadmots(const char * filename, vmot & mots)
     }
 }		/* -----  end of function loadmots  ----- */
 
+void
+loadmotsATCG(const char * filename, vmot & mots)
+{
+    if (!filename) {
+        cerr << "Please give a motifs file. Exiting..." << endl;
+        exit(EXIT_FAILURE);
+    }
+    ifstream fmotifs;
+    fmotifs.open(filename);
+    if (fmotifs.fail()) {
+        cerr << "Cannot open motif file: " << strerror(errno) << endl;
+        exit(EXIT_FAILURE);
+    }
+    string dum;
+    fmotifs >> dum;
+    unsigned int i(0);//!!to comply withh cpp convention
+    while (! fmotifs.eof()) {
+        Motif mot1;
+        mot1.index = i;
+        stringstream name;
+        name << "Mot_";
+        name << i + 1;
+        name >> mot1.name;
+        mot1.bsinit = dum;
+        width = mot1.bsinit.size();
+        mot1.motwidth = mot1.bsinit.size();
+        fmotifs >> mot1.pvalue;
+        fmotifs >> mot1.scorepoiss;
+        fmotifs >> mot1.nbtot;
+        fmotifs >> mot1.nbcons;
+        fmotifs >> mot1.lambdatrain;
+        fmotifs >> mot1.lambdaback;
+        vd dumd(4, 0.0);
+        vvd dummat(mot1.motwidth, dumd);
+        mot1.matprec = dummat;
+        fmotifs >> mot1.matprec;
+         for (unsigned int col=0;col<mot1.motwidth;col++){
+            dummat[col][0]=mot1.matprec[col][0];
+            dummat[col][1]=mot1.matprec[col][2];
+            dummat[col][2]=mot1.matprec[col][3];
+            dummat[col][3]=mot1.matprec[col][1];
+         }
+        for (ivvd ivmat = mot1.matprec.begin(); ivmat != mot1.matprec.end(); ivmat++) {
+            for (ivd ivrow = ivmat->begin(); ivrow != ivmat->end(); ivrow++) {
+                if (*ivrow < -6.5) *ivrow = -6.5;
+            }
+        }
+        mot1.matfreq = mattofreq(mot1.matprec);
+        mot1.matprecrevcomp = reversecomp(mot1.matprec);
+        fmotifs >> mot1.distmot;
+        fmotifs >> dum;
+        mot1.motscorethr2 = scorethr2;
+        mot1.motscorethr = scorethr2 * (1 - 2.0 / mot1.motwidth);
+        mot1.motscorethrcons = scorethr2 * (1 - 1.0 / mot1.motwidth);
+        mots.push_back(mot1);
+        i++;
+    }
+    fmotifs.close();
+    if (i == 0) { //No motifs
+        cerr << "No motifs" << endl;
+        exit(EXIT_FAILURE);
+    } else if (i < nbmots_for_score - 1) {
+        nbmots_for_score = i;
+        //cout << "Changed nbmots_for_score to value " << i << endl;
+    }
+}		/* -----  end of function loadmots  ----- */
 
 void
 GroupInstance::compscore(vmot & lmots, unsigned int nbmots_score)
