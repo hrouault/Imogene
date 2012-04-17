@@ -80,7 +80,7 @@ unsigned int noemax;
 // P(t)=M(t)*P(0)
 // where M is exp(R*t), with R the rate matrix
 vvd
-instant_rates_halpern(vd & w, double dist)
+transition_halpern(vd & w, double dist)
 {
     gsl_matrix * rates = gsl_matrix_calloc(4, 4);
     pa = conca;
@@ -93,35 +93,45 @@ instant_rates_halpern(vd & w, double dist)
         cerr << "Problem in instant_rates_halpern" << endl;
         exit(EXIT_FAILURE);
     }
+
     double fat = proba_fixation_rel(w3 / w0);
     double fac = proba_fixation_rel(pa * w1 / pc / w0);
     double fag = proba_fixation_rel(pa * w2 / pc / w0);
+    
     double fta = proba_fixation_rel(w0 / w3);
     double ftc = proba_fixation_rel(pa * w1 / pc / w3);
     double ftg = proba_fixation_rel(pa * w2 / pc / w3);
+    
     double fca = proba_fixation_rel(pc * w0 / pa / w1);
     double fct = proba_fixation_rel(pc * w3 / pa / w1);
     double fcg = proba_fixation_rel(w2 / w1);
+    
     double fga = proba_fixation_rel(pc * w0 / pa / w2);
     double fgt = proba_fixation_rel(pc * w3 / pa / w2);
     double fgc = proba_fixation_rel(w1 / w2);
+    
     double prefact = 1.0 / (4 * kappa * pa * pc + 0.5);
+    
     gsl_matrix_set(m1, 0, 0, -(pa * fat + pc * fac + pc * kappa * fag));
     gsl_matrix_set(m1, 0, 1, pa * fca);
     gsl_matrix_set(m1, 0, 2, pa * kappa * fga);
     gsl_matrix_set(m1, 0, 3, pa * fta);
-    gsl_matrix_set(m1, 1, 0, pa * fat);
-    gsl_matrix_set(m1, 1, 1, pa * kappa * fct);
-    gsl_matrix_set(m1, 1, 2, pa * fgt);
-    gsl_matrix_set(m1, 1, 3, -(pa * fta + pc * kappa * ftc + pc * ftg));
-    gsl_matrix_set(m1, 2, 0, pc * fac);
-    gsl_matrix_set(m1, 2, 1, -(pa * fca + pa * kappa * fct + pc * fcg));
-    gsl_matrix_set(m1, 2, 2, pc * fgc);
-    gsl_matrix_set(m1, 2, 3, pc * kappa * ftc);
-    gsl_matrix_set(m1, 3, 0, pc * kappa * fag);
-    gsl_matrix_set(m1, 3, 1, pc * fcg);
-    gsl_matrix_set(m1, 3, 2, -(pa * kappa * fga + pa * fgt + pc * fgc));
-    gsl_matrix_set(m1, 3, 3, pc * ftg);
+    
+    gsl_matrix_set(m1, 1, 0, pc * fac);
+    gsl_matrix_set(m1, 1, 1, -(pa * fca + pa * kappa * fct + pc * fcg));
+    gsl_matrix_set(m1, 1, 2, pc * fgc);
+    gsl_matrix_set(m1, 1, 3, pc * kappa * ftc);
+    
+    gsl_matrix_set(m1, 2, 0, pc * kappa * fag);
+    gsl_matrix_set(m1, 2, 1, pc * fcg);
+    gsl_matrix_set(m1, 2, 2, -(pa * kappa * fga + pa * fgt + pc * fgc));
+    gsl_matrix_set(m1, 2, 3, pc * ftg);
+    
+    gsl_matrix_set(m1, 3, 0, pa * fat);
+    gsl_matrix_set(m1, 3, 1, pa * kappa * fct);
+    gsl_matrix_set(m1, 3, 2, pa * fgt);
+    gsl_matrix_set(m1, 3, 3, -(pa * fta + pc * kappa * ftc + pc * ftg));
+
     gsl_matrix_scale(m1, prefact * dist);
     // *** This is the exponentiation step
     gsl_linalg_exponential_ss(m1, rates, 1e-3);
@@ -149,7 +159,7 @@ instant_rates_halpern(vd & w, double dist)
 }
 
 vvd
-instant_rates_felsen(vd & w, double dist)
+transition_felsen(vd & w, double dist)
 {
     vd dum(4, 0.);
     vvd M(4, dum);
@@ -169,7 +179,7 @@ vd
 evolvedist_felsen_backwards(vd & probs, vd & freqs, double dist)
 {
     vd pf(4, 0.);
-    vvd M = instant_rates_felsen(freqs, dist);
+    vvd M = transition_felsen(freqs, dist);
     double sum = 0;
     for (unsigned int row = 0; row < 4; row++) {
         for (unsigned int k = 0; k < 4; k++) {
@@ -184,10 +194,11 @@ evolvedist_felsen_backwards(vd & probs, vd & freqs, double dist)
 }
 
 vd
-evolvedist_halpern(vd probs, vd freqs, double dist)
+evolvedist_halpern(vd & probs, vd & freqs, double dist)
 {
     vd pf(4, 0.);
-    vvd M = instant_rates_halpern(freqs, dist);
+    vvd M = transition_halpern(freqs, dist);
+
     for (unsigned int row = 0; row < 4; row++) {
         for (unsigned int k = 0; k < 4; k++) {
             pf[row] += M[k][row] * probs[k];
@@ -200,7 +211,7 @@ vd
 evolvedist_felsen(vd & probs, vd & freqs, double dist)
 {
     vd pf(4, 0.);
-    vvd M = instant_rates_felsen(freqs, dist);
+    vvd M = transition_felsen(freqs, dist);
     for (unsigned int row = 0; row < 4; row++) {
         for (unsigned int k = 0; k < 4; k++) {
             pf[row] += M[k][row] * probs[k];
@@ -239,13 +250,37 @@ inittreedist()
         noemax = 22;
     } else if (species == "eutherian") {
         // Arbre de ensembl epo 12 eutharian
+        //
+         // (
+         // (
+         // (
+         // (
+         // (
+         // (
+         // (
+         // Pan_troglodytes:0.0067,
+         // Homo_sapiens:0.0067):0.0022,
+         // Gorilla_gorilla:0.0088):0.0097,
+         // Pongo_abelii:0.0183):0.0143,
+         // Macaca_mulatta:0.0375):0.0220,
+         // Callithrix_jacchus:0.0661):0.0891,
+         // (
+         // Mus_musculus:0.0845,
+         // Rattus_norvegicus:0.0916):0.2720):0.0206,
+         // (
+         // (
+         // Equus_caballus:0.1094,
+         // Canis_familiaris:0.1523):0.0107,
+         // (
+         // Sus_scrofa:0.0790,
+         // Bos_taurus:0.1689):0.0202):0.0329);
         treedist.push_back(noeud(0, 1, 12, 0.0845, 0.0916)); // 12: mus and rat
         treedist.push_back(noeud(2, 3, 13, 0.0067, 0.0067)); // 13: pan and hom
         treedist.push_back(noeud(13, 4, 14, 0.0022, 0.0088)); // 14: 13 and gor
         treedist.push_back(noeud(14, 5, 15, 0.0097, 0.0183)); // 15: 14 and pon
         treedist.push_back(noeud(15, 6, 16, 0.0143, 0.0375)); // 16: 15 and mac
         treedist.push_back(noeud(16, 7, 17, 0.0220, 0.0661)); // 17: 16 and cal
-        treedist.push_back(noeud(8, 15, 16, 0.1477, 0.0796)); // 16 can and 15
+//        treedist.push_back(noeud(8, 15, 16, 0.1477, 0.0796)); // 16 can and 15 !!!!!! OLD TREE
         treedist.push_back(noeud(12, 17, 18, 0.2720, 0.0891)); // 18: 12 and 17
         treedist.push_back(noeud(8, 9, 19, 0.1094, 0.1523)); // 19: equ and can
         treedist.push_back(noeud(10, 11, 20, 0.0790, 0.1689)); // 20: sus and bos
