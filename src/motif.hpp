@@ -224,7 +224,7 @@ void displaymat(vvd & mat);
 
 void scanseqforinstances(Sequence & seq, vmot & mots);
 void scanseqsforinstances(vseq & align, Motif & mot);
-void scanseqsforinstances(vseq & align, Motif & mot);
+void scanseqsforinstances(vseq & align, vmot & mots);
 void scanseqforinstancesnmask(Sequence & seq, vmot & mots);
 void scanseqsforinstancesnmask(vseq & align, vmot & mots);
 void scanseqforconsinstances(Sequence & seq, vmot & mots);
