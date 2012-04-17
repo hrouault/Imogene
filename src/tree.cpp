@@ -134,6 +134,8 @@ transition_halpern(vd & w, double dist)
 
     gsl_matrix_scale(m1, prefact * dist);
     // *** This is the exponentiation step
+    // Use with caution :
+    // http://lists.gnu.org/archive/html/help-gsl/2008-08/msg00004.html 
     gsl_linalg_exponential_ss(m1, rates, 1e-3);
     //Matrice d'évolution Runge Kutta 4
     // Mat(RG4) = Id + h*M + h^2/2*M^2 + h^3/6*M^3 + h^4/24*M^4
