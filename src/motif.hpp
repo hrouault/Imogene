@@ -206,6 +206,7 @@ double likelyhood(vd x, void * params);
 double loglikelyhood(vd x, void * params);
 double loglikely(const gsl_vector * v, void * params);
 void loadmots(const char * filename, vmot & mots);
+void loadmotsATCG(const char * filename, vmot & mots);
 
 void displayhist(vginst & vgi, ostream & ostr);
 void displayhist_set(vginst & vgi, vstring geneset, ostream & ostr);

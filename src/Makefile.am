@@ -20,7 +20,7 @@
 #
 ## Process this file with automake to produce Makefile.in
 
-dist_noinst_DATA = display.ggo distinfo.ggo extract.ggo genmot.ggo scangen.ggo
+dist_noinst_DATA = display.ggo distinfo.ggo extract.ggo genmot.ggo scangen.ggo test.ggo
 
 display_cmdline.c: display.ggo
 	  gengetopt --input=$< --func-name=display_cmdline_parser\
@@ -42,6 +42,10 @@ scangen_cmdline.c: scangen.ggo
 	  gengetopt --input=$< --func-name=scangen_cmdline_parser\
    	--arg-struct-name=scangen_args_info --file-name=scangen_cmdline
 
+test_cmdline.c: test.ggo
+	  gengetopt --input=$< --func-name=test_cmdline_parser\
+   	--arg-struct-name=test_args_info --file-name=test_cmdline
+
 bin_PROGRAMS = imogene
 
 imogene_SOURCES = distinfo_cmdline.c distinfo_cmdline.h\
@@ -49,6 +53,7 @@ imogene_SOURCES = distinfo_cmdline.c distinfo_cmdline.h\
 				  display_cmdline.c display_cmdline.h\
 				  genmot_cmdline.c genmot_cmdline.h\
 				  scangen_cmdline.c scangen_cmdline.h\
+				  test_cmdline.c test_cmdline.h\
 				  imogene.hpp imogene.cpp\
 				  extract.cpp extract.hpp\
 				  genmot.cpp genmot.hpp\
@@ -61,5 +66,6 @@ imogene_SOURCES = distinfo_cmdline.c distinfo_cmdline.h\
 				  vectortypes.cpp vectortypes.hpp\
 				  const.cpp const.hpp\
 				  distinfo.cpp distinfo.hpp\
-				  display.cpp display.hpp
+				  display.cpp display.hpp\
+				  test.cpp test.hpp
 imogene_CPPFLAGS = -DDATA_PATH='"${pkgdatadir}"' -DPYTHON_PATH='"${pythondir}"'
