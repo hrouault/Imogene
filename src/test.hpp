@@ -25,5 +25,6 @@
 int cmd_test(int argc, char ** argv);
 
 extern string genmot_datapath;
+extern unsigned int numhamm;
 
 #endif // Test_H

@@ -120,6 +120,7 @@ class Motif
         Motif();
         void matinit(double scth);
         void matinitforscanmots(Sequence & seq);
+        void matinithamming(double scth,unsigned int numhamm);
         void compprec();
         void compprec_MCMC();
         void compprec_inde();
@@ -137,6 +138,7 @@ class Motif
         int statemot(Sequence & seq, int pos, int num, double & scoremot);
         int nbmatchnmaskforsvg(Sequence & seq, unsigned int moti);
         void setscorethr2meaninfo();
+        void cutflanking();
 };
 
 typedef vector<Motif> vmot;
@@ -218,7 +220,7 @@ void countfreq(vvd & mat);
 void countbases(Motif & mot, Sequence & bds);
 void getmatrices(ifstream & file, Motif & mot);
 
-Motif comprefmot(Motif & mot);
+Motif comprefmot(Motif & motinit, unsigned int numspe);
 vvd mattofreq(vvd & mat);
 void  matfreqdisp(vvd & matrice);
 void displaymat(vvd & mat);
@@ -229,6 +231,8 @@ void scanseqsforinstances(vseq & align, vmot & mots);
 void scanseqforinstancesnmask(Sequence & seq, vmot & mots);
 void scanseqsforinstancesnmask(vseq & align, vmot & mots);
 void scanseqforconsinstances(Sequence & seq, vmot & mots);
+   
+Motalign mahamming(unsigned int pos, Sequence & seq, Motif & mot,int sens,unsigned int numhamm);
 
 
 #endif // Motif_H

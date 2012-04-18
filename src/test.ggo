@@ -48,3 +48,5 @@ option "method" - "Method used for PWM optimization"
             string typestr="str" optional default="max"
             values="max","mean","inde"
 
+option "numhamm" -  "Hamming distance defining conserved sites" 
+            int typestr="int" default="2" optional

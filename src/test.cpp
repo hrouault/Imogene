@@ -42,13 +42,14 @@ using namespace std;
 #include "genmot.hpp"
 
 test_args_info test_args;
+unsigned int numhamm;
 
    void
 evolvesite(Motif & mot)
 {
 
    //number of sites for evolution stat:
-   unsigned int numforstat(100);
+   unsigned int numforstat(50);
 
    ofstream outf("evol_site.dat");
 
@@ -103,6 +104,7 @@ evolvesite(Motif & mot)
          initscore=scoref(ivm->alignseq[0],mot.matprec);
 
          vint site(ivm->alignseq[0]);
+         vint initsite(site);
 
          // Initialize evolution matrix to Id
          vvd pm(vdum);
@@ -142,7 +144,8 @@ evolvesite(Motif & mot)
 
          outf << numtospecies(n) << " ";
          outf << "Data" << " ";
-         outf << scoref(ivm->alignseq[n],mot.matprec)-initscore << endl;
+         outf << scoref(ivm->alignseq[n],mot.matprec)-initscore << " ";
+         outf << scorefhamming(ivm->alignseq[n],initsite) << endl;
 
 
          // draw numforstat sites for evolved sites scores computation
@@ -153,7 +156,8 @@ evolvesite(Motif & mot)
 
             // HALPERN
             vint tempsite(dumsite);
-            while (scoref(tempsite,mot.matprec)<mot.motscorethr2){
+            //while (scoref(tempsite,mot.matprec)<mot.motscorethrcons){
+            while (scorefhamming(tempsite,initsite)>numhamm){
                for (unsigned int j=0;j<mot.motwidth;j++){
                   double pdist[4]={Pdisp_h[j][0],Pdisp_h[j][1],Pdisp_h[j][2],Pdisp_h[j][3]};
                   gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
@@ -165,7 +169,8 @@ evolvesite(Motif & mot)
             }
             outf << numtospecies(n) << " ";
             outf << "Halpern" << " ";
-            outf << scoref(site,mot.matprec)-initscore << endl;
+            outf << scoref(site,mot.matprec)-initscore << " ";
+            outf << scorefhamming(site,initsite) << endl;
 
 //            if (ks==1)
 //            cout << vinttostring(ivm->alignseq[n]) << " " << vinttostring(site) << " (Halpern)" << endl;
@@ -174,7 +179,8 @@ evolvesite(Motif & mot)
 
             // FELSEN
             tempsite=dumsite;
-            while (scoref(tempsite,mot.matprec)<mot.motscorethr2){
+            //while (scoref(tempsite,mot.matprec)<mot.motscorethrcons){
+            while (scorefhamming(tempsite,initsite) > numhamm){
                for (unsigned int j=0;j<mot.motwidth;j++){
                   double pdist[4]={Pdisp_f[j][0],Pdisp_f[j][1],Pdisp_f[j][2],Pdisp_f[j][3]};
                   gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
@@ -186,7 +192,8 @@ evolvesite(Motif & mot)
             }
             outf << numtospecies(n) << " ";
             outf << "Felsen" << " ";
-            outf << scoref(site,mot.matprec)-initscore << endl;
+            outf << scoref(site,mot.matprec)-initscore << " ";
+            outf << scorefhamming(site,initsite) << endl;
             
 //            if (ks==1)
 //            cout << vinttostring(ivm->alignseq[n]) << " " << vinttostring(site) << " (Felsen)" << endl;
@@ -219,6 +226,7 @@ test_args_init()
    scorethr = scorethr2 * (1 - 2.0 / width);
    scorethrcons = scorethr2 * (1 - 1.0 / width);
    evolutionary_model = test_args.evolutionary_model_arg;
+   numhamm = test_args.numhamm_arg;
    if (test_args.progress_given) progress = true;
 }
 
@@ -262,8 +270,28 @@ cmd_test(int argc, char ** argv)
 
    Motif mot;
    mot = mots[0];
+   
+   // deleting unessential flanking bases
+   mot.cutflanking();
+   
+   // display
+   ofstream motmeldb("motifs.txt");
+   mot.display(motmeldb);
+   motmeldb.close();
+   vmot logomots;
+   logomots.push_back(mot);
+   dispweblogo(logomots);
+   
    mot.setscorethr2meaninfo();
-   mot.matinit(mot.motscorethr2);
+   mot.matinithamming(mot.motscorethr2, numhamm);
+   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
+      ivm->print();
+   }
+   
+
+   // refining motif on ref sequences
+   Motif motref;
+   motref = comprefmot(mot, 0);
 
    evolvesite(mot);
 

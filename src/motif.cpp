@@ -114,8 +114,78 @@ Motif::matinitforscanmots(Sequence & seq)
     }
 }
 
+Motif comprefmot(Motif & motinit, unsigned int numspe)
+{
+   Motif mot;
+   mot = motinit;
+   vd dum(4,0.0);
+   mot.matrice = vvd(mot.motwidth,dum);
+   
+   for (ivma ivm = mot.seqs.begin(); ivm != mot.seqs.end(); ivm++){
+      int j=0;
+      vint site = ivm->alignseq[numspe];
+      for (ivint i = site.begin(); i != site.end(); i++){
+         mot.matrice[j][*i] += 1;
+         j++;
+      }
+   }
+   
+   countfreq(mot.matrice);
+   mot.matfreq=mot.matrice;
+   
+   freqtolog(mot.matrice);
+   mot.matprec = mot.matrice;
+   mot.matprecrevcomp = reversecomp(mot.matprec);
+   
+   //Consensus sequence
+   mot.bsinit="";
+   for (int i=0;i<width;i++){
+      string letter="A";
+      double max(mot.matprec[i][0]);
+      if (mot.matprec[i][1]>max) letter="C";
+      else if (mot.matprec[i][2]>max) letter="G";
+      else if (mot.matprec[i][3]>max) letter="T";
+      mot.bsinit.append(letter);
+   }
 
-void
+   return mot;
+}
+
+   void
+Motif::cutflanking()
+{
+
+   double cutoff = 0.7;
+   vvd newmatfreq = matfreq;
+   for (int j = 0; j < motwidth; j++) {
+      double meaninfo(0);
+      for (int i = 0; i < 4; i++) {
+         meaninfo += matfreq[j][i] * matprec[j][i];
+      }
+      if (meaninfo < cutoff) newmatfreq.erase(newmatfreq.begin());
+      else break;
+   }
+   for (int j = motwidth - 1; j >= 0; j--) {
+      double meaninfo(0);
+      for (int i = 0; i < 4; i++) {
+         meaninfo += matfreq[j][i] * matprec[j][i];
+      }
+      if (meaninfo < cutoff) newmatfreq.erase(newmatfreq.end());
+      else break;
+   }
+
+   matfreq = newmatfreq;
+   vvd mat = matfreq;
+   freqtolog(mat);
+   matprec = mat;
+   matprecrevcomp = reversecomp(mat);
+   motwidth = matprec.size();
+   width = motwidth;
+
+   return;
+}
+
+   void
 freqtolog(vvd & mat)
 {
     int j = 0;
@@ -192,6 +262,9 @@ Motif::setscorethr2meaninfo()
     motscorethr2 = min(0.95 * maxinfo, meaninfo);
     motscorethr = motscorethr2 * (1 - 2. / motwidth);
     motscorethrcons = motscorethr2 * (1 - 1. / motwidth);
+    scorethr2 = motscorethr2;
+    scorethrcons = motscorethrcons;
+    scorethr = motscorethr;
 }
 
 
@@ -706,6 +779,58 @@ Motif::matinit(double scth)
     nbcons = seqs.size();
 }
 
+void
+Motif::matinithamming(double scth,unsigned int numhamm)
+{
+    nbtot = 0;
+    seqs.clear();
+    for (ivseq iseq = regints.begin(); iseq != regints.end(); iseq++) {
+        (*iseq).nbtot = 0;
+        (*iseq).nbcons = 0;
+    }
+    for (ivseq iseq = regints.begin(); iseq != regints.end(); iseq++) {
+        Sequence & seq = *iseq;
+        unsigned int len = seq.iseqs[0].size();
+        unsigned int i = 0;
+        for (vint::const_iterator istr = seq.iseqs[0].begin(); istr != seq.iseqs[0].end() - motwidth + 1; istr++) {
+            if (scoref(istr, matprec) > scth) {
+                vint::const_iterator endci = seq.iseqs[0].end() - motwidth + 1;
+                unsigned int sh = shift(istr, matprec, endci, motwidth);
+                Motalign ma = mahamming(i + sh, seq, *this, 1, numhamm);
+                (*iseq).nbtot++;
+                nbtot++;
+                if (ma.iscons()) {
+                    iseq->nbcons++;
+                    seqs.push_back(ma);
+                    if (i + sh < len - 2 * motwidth) {
+                        istr += motwidth - 1 + sh;
+                        i += motwidth - 1 + sh;
+                    } else
+                        break;
+                }
+            } else if (scoref(istr, matprecrevcomp) > scth) {
+                vint::const_iterator endci = seq.iseqs[0].end() - motwidth + 1;
+                unsigned int sh = shift(istr, matprecrevcomp, endci, motwidth);
+                Motalign ma = mahamming(i + sh, seq, *this, -1, numhamm);
+                (*iseq).nbtot++;
+                nbtot++;
+                if (ma.iscons()) {
+                    iseq->nbcons++;
+                    seqs.push_back(ma);
+                    if (i + sh < len - 2 * motwidth) {
+                        istr += motwidth - 1 + sh;
+                        i += motwidth - 1 + sh;
+                    } else
+                        break;
+                }
+            }
+            i++;
+            if (istr > seq.iseqs[0].end() - motwidth) break;
+        }
+    }
+    nbcons = seqs.size();
+}
+
 bool
 Motalign::iscons()
 {
@@ -1138,6 +1263,72 @@ Motalign::Motalign(unsigned int pos, Sequence & seq, Motif & mot, int sens)
     //   cout << "\n";
 }
 
+   Motalign
+mahamming(unsigned int pos, Sequence & seq, Motif & mot,int sens,unsigned int numhamm)
+{
+   Motalign ma;
+   unsigned int motwidth=mot.motwidth;
+   ma.seq_start=seq.iseqs[0].begin();
+   ma.seq_stop=seq.iseqs[0].end();
+   civvint imap=seq.imaps.begin()+1;
+   int seqnum=1;
+   ma.matches=vint(nbspecies,0);
+   vint seqdum=vint(motwidth,4);
+   ivint posdum;
+   ma.matchespos.push_back(seq.iseqs[0].begin()+pos);
+   vint seqmel=vint(seq.iseqs[0].begin()+pos,seq.iseqs[0].begin()+pos+motwidth);
+   if (sens==1){
+      ma.alignseq.push_back(seqmel);
+      ma.strand=1;
+   } else {
+      ma.alignseq.push_back(reversecomp(seqmel));
+      ma.strand=-1;
+   }
+   ma.matches[0]=1;
+   for (ivvint is=seq.iseqs.begin()+1;is!=seq.iseqs.end();is++){
+      if (seq.species[seqnum]){
+         int truepos=(*imap)[seq.imapsinv[0][pos]];
+         int start=(int)truepos-neighbext;
+         if (start<0) start=0;
+         unsigned int stop=truepos+neighbext;
+         if (stop>(*is).size()-motwidth) stop=(*is).size()-motwidth;
+         int hasmatch=0;
+         for (unsigned int i=start;i<stop;i++){
+            civint startsite=(*is).begin()+i;
+            vint seqstart=vint(startsite,startsite+motwidth);
+            if (scorefhamming(seqmel,seqstart)<=numhamm){
+               vint::const_iterator endci=(*is).end()-motwidth+1;
+               unsigned int sh=shifthamming((*is).begin()+start,seqmel,endci,2*neighbext);
+               vint seqt=vint((*is).begin()+start+sh,(*is).begin()+start+sh+motwidth);
+               if (sens==1){
+                  ma.alignseq.push_back(seqt);
+               } else if (sens==-1){
+                  ma.alignseq.push_back(reversecomp(seqt));
+               }
+               ma.matchespos.push_back((*is).begin()+start+sh);
+               hasmatch=1;
+               break;
+            }
+         }
+         if (hasmatch){
+            ma.matches[seqnum]=1;
+         } else {
+            ma.alignseq.push_back(seqdum);
+            ma.matchespos.push_back(posdum);
+            ma.matches[seqnum]=0;
+         }
+      }
+      else {
+         ma.alignseq.push_back(seqdum);
+         ma.matchespos.push_back(posdum);
+         ma.matches[seqnum]=0;
+      }
+      seqnum++;
+      imap++;
+   }
+   //   cout << "\n";
+   return ma;
+}
 
 void
 loadmots(const char * filename, vmot & mots)
