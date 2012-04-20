@@ -49,7 +49,7 @@ evolvesite(Motif & mot)
 {
 
    //number of sites for evolution stat:
-   unsigned int numforstat(50);
+   unsigned int numforstat(200);
 
    ofstream outf("evol_site.dat");
 
@@ -156,8 +156,8 @@ evolvesite(Motif & mot)
 
             // HALPERN
             vint tempsite(dumsite);
-            //while (scoref(tempsite,mot.matprec)<mot.motscorethrcons){
-            while (scorefhamming(tempsite,initsite)>numhamm){
+            //while (scorefhamming(tempsite,initsite)>numhamm){
+            while (scoref(tempsite,mot.matprec)<mot.motscorethrcons){
                for (unsigned int j=0;j<mot.motwidth;j++){
                   double pdist[4]={Pdisp_h[j][0],Pdisp_h[j][1],Pdisp_h[j][2],Pdisp_h[j][3]};
                   gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
@@ -179,8 +179,8 @@ evolvesite(Motif & mot)
 
             // FELSEN
             tempsite=dumsite;
-            //while (scoref(tempsite,mot.matprec)<mot.motscorethrcons){
-            while (scorefhamming(tempsite,initsite) > numhamm){
+            //while (scorefhamming(tempsite,initsite) > numhamm){
+            while (scoref(tempsite,mot.matprec)<mot.motscorethrcons){
                for (unsigned int j=0;j<mot.motwidth;j++){
                   double pdist[4]={Pdisp_f[j][0],Pdisp_f[j][1],Pdisp_f[j][2],Pdisp_f[j][3]};
                   gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
@@ -202,8 +202,306 @@ evolvesite(Motif & mot)
          //         getchar();
       }
    }
+   
+   outf.close();
+   outf.open("evol_site_models.dat");
+   
+
+   for (double d = 0;d < 2; d += 0.05){
+      for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
+
+         initscore=scoref(ivm->alignseq[0],mot.matprec);
+
+         vint site(ivm->alignseq[0]);
+         vint initsite(site);
+
+         // Initialize evolution matrix to Id
+         vvd pm(vdum);
+         pm[0][0]=1.;
+         pm[1][1]=1.;
+         pm[2][2]=1.;
+         pm[3][3]=1.;
+
+         // initial probability from ref site
+         vvd Pdisp_f(wdum);
+         vvd Pdisp_h(wdum);
+         vvd Initprob(wdum);
+         for (unsigned int i=0;i<mot.motwidth;i++) 
+            Initprob[i][ivm->alignseq[0][i]]=1;
+         Pdisp_f=Initprob;
+         Pdisp_h=Initprob;
+
+         // HALPERN
+         for (unsigned int i=0;i<mot.motwidth;i++){
+            Pdisp_h[i]=evolvedist_halpern(Initprob[i],mot.matfreq[i],d);
+         }
+
+         // FELSEN
+         for (unsigned int i=0;i<mot.motwidth;i++){
+            Pdisp_f[i]=evolvedist_felsen(Initprob[i],mot.matfreq[i],d);
+         }
+//         cout << "Felsen, distance=" << distances[n] << endl;
+//         displaymat(Pdisp_f);
+//         cout << "Halpern, distance=" << distances[n] << endl;
+//         displaymat(Pdisp_h);
+
+
+         // SCORES COMPUTATION
+         //
+
+         // draw numforstat sites for evolved sites scores computation
+         //cout << "data " << vinttostring(ivm->alignseq[n]) << endl;
+         for (unsigned int ks=0;ks<numforstat;ks++){
+
+            vint dumsite(mot.motwidth,4);
+
+            // HALPERN
+            vint tempsite(dumsite);
+            //while (scorefhamming(tempsite,initsite)>numhamm){
+            while (scoref(tempsite,mot.matprec)<mot.motscorethrcons){
+               for (unsigned int j=0;j<mot.motwidth;j++){
+                  double pdist[4]={Pdisp_h[j][0],Pdisp_h[j][1],Pdisp_h[j][2],Pdisp_h[j][3]};
+                  gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
+                  unsigned int base=gsl_ran_discrete (gslran,gsldist);
+                  gsl_ran_discrete_free (gsldist);
+                  site[j]=base;
+               }
+               tempsite=site;
+            }
+            outf << d << " ";
+            outf << "Halpern" << " ";
+            outf << scoref(site,mot.matprec)-initscore << " ";
+            outf << scorefhamming(site,initsite) << endl;
+
+//            if (ks==1)
+//            cout << vinttostring(ivm->alignseq[n]) << " " << vinttostring(site) << " (Halpern)" << endl;
+
+            //cout << "halpern " << vinttostring(site) << endl;
+
+            // FELSEN
+            tempsite=dumsite;
+            //while (scorefhamming(tempsite,initsite) > numhamm){
+            while (scoref(tempsite,mot.matprec)<mot.motscorethrcons){
+               for (unsigned int j=0;j<mot.motwidth;j++){
+                  double pdist[4]={Pdisp_f[j][0],Pdisp_f[j][1],Pdisp_f[j][2],Pdisp_f[j][3]};
+                  gsl_ran_discrete_t * gsldist=gsl_ran_discrete_preproc (4,pdist);
+                  unsigned int base=gsl_ran_discrete (gslran,gsldist);
+                  gsl_ran_discrete_free (gsldist);
+                  site[j]=base;
+               }
+               tempsite=site;
+            }
+            outf << d << " ";
+            outf << "Felsen" << " ";
+            outf << scoref(site,mot.matprec)-initscore << " ";
+            outf << scorefhamming(site,initsite) << endl;
+            
+//            if (ks==1)
+//            cout << vinttostring(ivm->alignseq[n]) << " " << vinttostring(site) << " (Felsen)" << endl;
+
+         }
+         //         getchar();
+      }
+   }
 
    outf.close();
+}
+
+void
+evolvecv(Motif & mot)
+{
+      
+   ofstream outf;
+   outf.open("evol_cv.dat");
+
+   Motif refmot = mot;
+
+   unsigned int nshuffle=test_args.nshuffle_arg;
+   unsigned int nshufflecons=nshuffle;
+   int iter(0);
+   int logiter(0);
+
+
+   // TEST FELSEN CONVERGENCE
+   cout << "Testing Felsen convergence..." << endl;
+   evolutionary_model=1;
+   inittreedist();
+   for (unsigned int k=0;k<nshufflecons;k++){
+      // RANDOM SHUFFLING
+      random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+      vma tmpseqs;
+      logiter=0;
+
+      for (int i=0;i<refmot.seqs.size();i++){
+         tmpseqs.push_back(refmot.seqs[i]);
+
+         int numinst=tmpseqs.size(); 
+         iter=(int)pow(10,0.1*logiter);
+         if (numinst<iter) continue;
+         logiter++;
+
+         cout << "# of sites for Felsen: " <<   tmpseqs.size() <<  " (iter=" << k+1 << "/" << nshufflecons << ")" << endl;
+         mot.seqs=tmpseqs;
+         // MAXIMUM LIKELIHOOD
+         mot.compprec();
+         mot.matfreq=mattofreq(mot.matprec);
+         double distkl=0.;
+         for (int pos=0;pos<mot.motwidth;pos++){
+            for (int ib=0;ib<4;ib++){
+               distkl+=mot.matfreq[pos][ib]*log(mot.matfreq[pos][ib]/refmot.matfreq[pos][ib]);
+            }
+         }
+         outf << "Felsen_colopti " << numinst << " " << distkl << endl;
+
+      }
+   }
+   
+   // TEST HALPERN CONVERGENCE
+   cout << "Testing Halpern convergence..." << endl;
+   evolutionary_model=2;
+   inittreedist();
+   for (unsigned int k=0;k<nshufflecons;k++){
+
+      // RANDOM SHUFFLING
+      random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+      vma tmpseqs;
+      logiter=0;
+
+      for (int i=0;i<refmot.seqs.size();i++){
+         tmpseqs.push_back(refmot.seqs[i]);
+
+         int numinst=tmpseqs.size(); 
+         iter=(int)pow(10,0.1*logiter);
+         if (numinst<iter) continue;
+         logiter++;
+
+         cout << "# of sites for Halpern: " <<   tmpseqs.size() <<  " (iter=" << k+1 << "/" << nshufflecons << ")" << endl;
+         mot.seqs=tmpseqs;
+         // MAXIMUM LIKELIHOOD
+         mot.compprec();
+         mot.matfreq=mattofreq(mot.matprec);
+         double distkl=0.;
+         for (int pos=0;pos<mot.motwidth;pos++){
+            for (int ib=0;ib<4;ib++){
+               distkl+=mot.matfreq[pos][ib]*log(mot.matfreq[pos][ib]/refmot.matfreq[pos][ib]);
+            }
+         }
+         outf << "Halpern_colopti " << numinst << " " << distkl << endl;
+      }
+   }
+   
+   // TEST CONVERGENCE ON CONSERVED SITES ON EACH SPECIES
+   cout << "Testing conserved sites convergence on each species..." << endl;
+   for (unsigned int n=0;n<nbspecies;n++)
+   {
+      for (unsigned int k=0;k<nshuffle;k++){
+         // RANDOM SHUFFLING
+         random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+         mot.seqs.clear();
+         logiter=0;
+         for (int i=0;i<refmot.seqs.size();i++){
+            if (refmot.seqs[i].matches[n]){
+               mot.seqs.push_back(refmot.seqs[i]);
+               int numinst=mot.seqs.size(); 
+               iter=(int)pow(10,0.1*logiter);
+               if (numinst<iter) continue;
+               logiter++;
+
+               cout << "# of sites for ConsRef: " <<   mot.seqs.size() << 
+                  " (species=" << n+1 << "/" << nbspecies << ", iter=" << k+1 << "/" << nshuffle << ")" << endl;
+               mot = comprefmot(mot, n);
+               double distkl=0.;
+               for (int pos=0;pos<mot.motwidth;pos++){
+                  for (int ib=0;ib<4;ib++){
+                     distkl+=mot.matfreq[pos][ib]*log(mot.matfreq[pos][ib]/refmot.matfreq[pos][ib]);
+                  }
+               }
+               outf << "ConsRef_" << numtospecies(n) << " " << numinst << " " << distkl << endl;
+            }
+         }
+      }
+   }
+   
+   // TEST CONVERGENCE ON ~Neffx REF CONSERVED SITES
+   cout << "Testing Neff x conserved sites convergence on ref species..." << endl;
+   unsigned int Neff;
+   if (species=="droso") Neff=4;
+   else if (species=="eutherian") Neff=2;
+   int n = 0;
+   for (unsigned int k=0;k<nshufflecons;k++){
+      // RANDOM SHUFFLING
+      random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+      mot.seqs.clear();
+      logiter=0;
+      for (int i=0;i<refmot.seqs.size();i++){
+         if (refmot.seqs[i].matches[n]){
+            for (unsigned int nsite=0;nsite<Neff;nsite++){
+               mot.seqs.push_back(refmot.seqs[i]);
+            }
+            int numinst=mot.seqs.size() / Neff; 
+            iter=(int)pow(10,0.1*logiter);
+            if (numinst<iter) continue;
+            logiter++;
+
+            cout << "# of sites for Control: " <<   mot.seqs.size() / Neff << "x" << Neff <<
+               ", iter=" << k+1 << "/" << nshufflecons << ")" << endl;
+            mot = comprefmot(mot, n);
+            double distkl=0.;
+            for (int pos=0;pos<mot.motwidth;pos++){
+               for (int ib=0;ib<4;ib++){
+                  distkl+=mot.matfreq[pos][ib]*log(mot.matfreq[pos][ib]/refmot.matfreq[pos][ib]);
+               }
+            }
+            outf << "Control " << numinst << " " << distkl << endl;
+         }
+      }
+   }
+
+   outf.close();
+
+
+   return;
+}
+
+   void
+refinemotif(Motif & mot, vseq & align)
+{
+   mot.setscorethr2meaninfo();
+   //mot.matinithamming(mot.motscorethr2, numhamm);
+   mot.matinit(mot.motscorethr2);
+
+   // refining motif on ref sequences
+   scorethr2 = mot.motscorethr2;
+   width = mot.motwidth;
+   if (test_args.nops_given){
+      alpha = 1e-2;
+      beta = concc / conca * alpha;
+   } else {
+      compalpha();
+   }
+   mot = comprefmot(mot, 0);
+
+   // deleting unessential flanking bases
+   mot.cutflanking();
+   
+   mot.setscorethr2meaninfo();
+   mot.matinit(mot.motscorethr2);
+   scorethr2 = mot.motscorethr2;
+   width = mot.motwidth;
+   if (test_args.nops_given){
+      alpha = 1e-2;
+      beta = concc / conca * alpha;
+   } else {
+      compalpha();
+   }
+   mot = comprefmot(mot, 0);
+
+   //mot.matinithamming(mot.motscorethr2, numhamm);
+   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
+      ivm->print();
+   }
+
+   return;
 }
 
    void
@@ -266,34 +564,32 @@ cmd_test(int argc, char ** argv)
       exit(EXIT_FAILURE);
    }
    
-   compalpha();
-
    Motif mot;
-   mot = mots[0];
+   vmot logomots;
    
-   // deleting unessential flanking bases
-   mot.cutflanking();
+   mot = mots[0];
+   logomots.push_back(mot);
+   
+   refinemotif(mot, regints);
+   logomots.push_back(mot);
    
    // display
    ofstream motmeldb("motifs.txt");
    mot.display(motmeldb);
    motmeldb.close();
-   vmot logomots;
-   logomots.push_back(mot);
    dispweblogo(logomots);
-   
-   mot.setscorethr2meaninfo();
-   mot.matinithamming(mot.motscorethr2, numhamm);
-   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
-      ivm->print();
+
+
+   if (test_args.evolve_site_given)
+   {
+      cout << "Testing site conservation..." << endl;
+      evolvesite(mot);
    }
-   
-
-   // refining motif on ref sequences
-   Motif motref;
-   motref = comprefmot(mot, 0);
-
-   evolvesite(mot);
+   else if (test_args.evolve_cv_given)
+   {
+      cout << "Testing convergence..." << endl;
+      evolvecv(mot);
+   }
 
    gsl_rng_free(gslran);
    test_cmdline_parser_free(&test_args);

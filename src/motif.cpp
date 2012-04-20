@@ -139,7 +139,7 @@ Motif comprefmot(Motif & motinit, unsigned int numspe)
    
    //Consensus sequence
    mot.bsinit="";
-   for (int i=0;i<width;i++){
+   for (int i=0;i<mot.motwidth;i++){
       string letter="A";
       double max(mot.matprec[i][0]);
       if (mot.matprec[i][1]>max) letter="C";
@@ -217,7 +217,7 @@ countfreq(vvd & mat)
         }
         int i(0);
         for (ivd line = (*col).begin(); line != (*col).end(); line++) {
-            if (i == 0 || i == 1) {
+            if (i == 0 || i == 3) {
                 (*line) = ((*line) + alpha) / (ntot + 2 * alpha + 2 * beta);
             } else {
                 (*line) = ((*line) + beta) / (ntot + 2 * alpha + 2 * beta);
@@ -870,7 +870,7 @@ Motif::compprec()
 {
     vd col;
     vvd matopti;
-    for (unsigned int i = 0; i < width; i++) {
+    for (unsigned int i = 0; i < motwidth; i++) {
         col = colopti(i, this);
         matopti.push_back(col);
     }

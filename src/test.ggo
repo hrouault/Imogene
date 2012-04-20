@@ -20,6 +20,7 @@
 purpose  "Run some tests."
 args "--unamed-opts=<motifs>"
 
+
 option "motifs" m "file containing a list of motif definitions (ACGT convention)"
             string typestr="str" default="motifs.txt" optional
 
@@ -34,13 +35,13 @@ option   "threshold" t "Threshold used for motif scanning"
             double typestr="double" default="9" optional
 
 option  "align"   a  "Folder containing the fasta formatted (.fa) files of enhancer alignments."
-            string   typestr="str"  optional
+            string   typestr="str"  required
 
 option   "evolutionary-model" e  "Evolutionary model used for motif generation (1=felsen, 2=halpern)"
             int  typestr="int" default="1" optional values="1","2"
 
 option "species" s "Species selected" 
-            string typestr="str" optional values="droso","eutherian"
+            string typestr="str" required values="droso","eutherian"
 
 option "progress" - "Show progression while running" optional
 
@@ -50,3 +51,18 @@ option "method" - "Method used for PWM optimization"
 
 option "numhamm" -  "Hamming distance defining conserved sites" 
             int typestr="int" default="2" optional
+
+defmode "evolve-site" modedesc="Given ChIPseq data and a PWM, returns site evolution on orthologous species as given by the data and as expected by the evolutionary models."
+
+modeoption "evolve-site" -  "Triggers evolve-site mode" mode="evolve-site" required
+
+defmode "evolve-cv" modedesc="Given ChIPseq data and a PWM, returns the KL divergence to reference PWM using N TFBSs with or without their orthologous sequences."
+
+modeoption "evolve-cv" -  "Triggers evolve-cv mode" mode="evolve-cv" required
+
+modeoption "nshuffle" - "Number of shuffling for bootstrapping procedure"
+            int typestr="int" default="5" optional mode="evolve-cv"
+
+modeoption "nops" - "No pseudocount"
+            optional mode="evolve-cv"
+
