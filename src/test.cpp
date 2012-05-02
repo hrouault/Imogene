@@ -91,9 +91,6 @@ evolvesite(Motif & mot)
    vvd wdum(mot.motwidth,dum);
 
    double initscore;
-//   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
-//      ivm->print();
-//   }
 
    for (unsigned int n=1;n<nbspecies;n++){
       cout << numtospecies(n) << endl;
@@ -390,6 +387,38 @@ evolvecv(Motif & mot)
       }
    }
    
+   // TEST INDEPENDENT SPECIES CONVERGENCE
+   cout << "Testing Indenpendent species convergence..." << endl;
+   for (unsigned int k=0;k<nshufflecons;k++){
+      // RANDOM SHUFFLING
+      random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+      vma tmpseqs;
+      logiter=0;
+
+      for (int i=0;i<refmot.seqs.size();i++){
+         tmpseqs.push_back(refmot.seqs[i]);
+
+         int numinst=tmpseqs.size(); 
+         iter=(int)pow(10,0.1*logiter);
+         if (numinst<iter) continue;
+         logiter++;
+
+         cout << "# of sites for Independent species: " <<   tmpseqs.size() <<  " (iter=" << k+1 << "/" << nshufflecons << ")" << endl;
+         mot.seqs=tmpseqs;
+         mot.compprec_inde();
+         mot.matfreq=mattofreq(mot.matprec);
+               
+         double distkl=0.;
+         for (int pos=0;pos<mot.motwidth;pos++){
+            for (int ib=0;ib<4;ib++){
+               distkl+=mot.matfreq[pos][ib]*log(mot.matfreq[pos][ib]/refmot.matfreq[pos][ib]);
+            }
+         }
+         outf << "Inde " << numinst << " " << distkl << endl;
+
+      }
+   }
+   
    // TEST CONVERGENCE ON CONSERVED SITES ON EACH SPECIES
    cout << "Testing conserved sites convergence on each species..." << endl;
    for (unsigned int n=0;n<nbspecies;n++)
@@ -463,6 +492,250 @@ evolvecv(Motif & mot)
    return;
 }
 
+void
+evolvecvcrossval(Motif & mot)
+{
+      
+   ofstream outf;
+   outf.open("evol_cv.dat");
+
+   Motif refmot = mot;
+
+   unsigned int nshuffle=test_args.nshuffle_arg;
+   unsigned int nshufflecons=nshuffle;
+   unsigned int Nhalf = floor(refmot.seqs.size() / 2);
+   unsigned int N = refmot.seqs.size();
+   int iter(0);
+   int logiter(0);
+
+
+   // TEST FELSEN CONVERGENCE
+   cout << "Testing Felsen convergence..." << endl;
+   evolutionary_model=1;
+   inittreedist();
+   for (unsigned int k=0;k<nshufflecons;k++){
+      // RANDOM SHUFFLING
+      random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+      vma trainseqs, testseqs;
+      vvd trainmat, testmat;
+      logiter=0;
+      
+      for (int i = Nhalf; i < N; i++){
+         testseqs.push_back(refmot.seqs[i]);
+         mot.seqs=testseqs;
+         mot = comprefmot(mot, 0);
+         testmat = mattofreq(mot.matprec);
+      }
+
+      for (int i = 0; i < Nhalf; i++){
+         trainseqs.push_back(refmot.seqs[i]);
+
+         int numinst=trainseqs.size(); 
+         iter=(int)pow(10,0.1*logiter);
+         if (numinst<iter) continue;
+         logiter++;
+
+         cout << "# of sites for Felsen: " <<   trainseqs.size() <<  " (iter=" << k+1 << "/" << nshufflecons << ")" << endl;
+         // MAXIMUM LIKELIHOOD
+         mot.seqs=trainseqs;
+         mot.compprec();
+         trainmat = mattofreq(mot.matprec);
+               
+         double distkl=0.;
+         for (int pos=0;pos<mot.motwidth;pos++){
+            for (int ib=0;ib<4;ib++){
+               distkl += trainmat[pos][ib]*log(trainmat[pos][ib] / testmat[pos][ib]);
+            }
+         }
+         outf << "Felsen_colopti " << numinst << " " << distkl << endl;
+
+      }
+   }
+   
+   // TEST HALPERN CONVERGENCE
+   cout << "Testing Halpern convergence..." << endl;
+   inittreedist();
+   for (unsigned int k=0;k<nshufflecons;k++){
+      // RANDOM SHUFFLING
+      random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+      vma trainseqs, testseqs;
+      vvd trainmat, testmat;
+      logiter=0;
+      
+      for (int i = Nhalf; i < N; i++){
+         testseqs.push_back(refmot.seqs[i]);
+         mot.seqs=testseqs;
+         mot = comprefmot(mot, 0);
+         testmat = mattofreq(mot.matprec);
+      }
+
+      for (int i = 0; i < Nhalf; i++){
+         trainseqs.push_back(refmot.seqs[i]);
+
+         int numinst=trainseqs.size(); 
+         iter=(int)pow(10,0.1*logiter);
+         if (numinst<iter) continue;
+         logiter++;
+
+         cout << "# of sites for Halpern: " <<   trainseqs.size() <<  " (iter=" << k+1 << "/" << nshufflecons << ")" << endl;
+         // MAXIMUM LIKELIHOOD
+         mot.seqs=trainseqs;
+         mot.compprec();
+         trainmat = mattofreq(mot.matprec);
+               
+         double distkl=0.;
+         for (int pos=0;pos<mot.motwidth;pos++){
+            for (int ib=0;ib<4;ib++){
+               distkl += trainmat[pos][ib]*log(trainmat[pos][ib] / testmat[pos][ib]);
+            }
+         }
+         outf << "Halpern_colopti " << numinst << " " << distkl << endl;
+
+      }
+   }
+   
+   // TEST INDEPENDENT SPECIES CONVERGENCE
+   cout << "Testing Indenpendent species convergence..." << endl;
+   for (unsigned int k=0;k<nshufflecons;k++){
+      // RANDOM SHUFFLING
+      random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+      vma trainseqs, testseqs;
+      vvd trainmat, testmat;
+      logiter=0;
+
+      for (int i = Nhalf; i < N; i++){
+         testseqs.push_back(refmot.seqs[i]);
+         mot.seqs=testseqs;
+         mot = comprefmot(mot, 0);
+         testmat = mattofreq(mot.matprec);
+      }
+
+      for (int i = 0; i < Nhalf; i++){
+         trainseqs.push_back(refmot.seqs[i]);
+
+         int numinst=trainseqs.size(); 
+         iter=(int)pow(10,0.1*logiter);
+         if (numinst<iter) continue;
+         logiter++;
+
+         cout << "# of sites for Independent species: " <<   trainseqs.size() <<  " (iter=" << k+1 << "/" << nshufflecons << ")" << endl;
+         
+         mot.seqs=trainseqs;
+         mot.compprec_inde();
+         trainmat = mattofreq(mot.matprec);
+               
+         double distkl=0.;
+         for (int pos=0;pos<mot.motwidth;pos++){
+            for (int ib=0;ib<4;ib++){
+               distkl += trainmat[pos][ib]*log(trainmat[pos][ib] / testmat[pos][ib]);
+            }
+         }
+         outf << "Inde " << numinst << " " << distkl << endl;
+
+      }
+   }
+   
+   
+   // TEST CONVERGENCE ON CONSERVED SITES ON EACH SPECIES
+   cout << "Testing conserved sites convergence on each species..." << endl;
+   for (unsigned int n=0;n<nbspecies;n++)
+   {
+      for (unsigned int k=0;k<nshuffle;k++){
+         // RANDOM SHUFFLING
+         random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+         vma trainseqs, testseqs;
+         vvd trainmat, testmat;
+         
+         logiter=0;
+         for (int i = Nhalf; i < N; i++){
+            testseqs.push_back(refmot.seqs[i]);
+            mot.seqs=testseqs;
+            mot = comprefmot(mot, 0);
+            testmat = mattofreq(mot.matprec);
+         }
+
+         for (int i = 0; i < Nhalf; i++){
+            if (refmot.seqs[i].matches[n]){
+               trainseqs.push_back(refmot.seqs[i]);
+               
+               int numinst=trainseqs.size(); 
+               iter=(int)pow(10,0.1*logiter);
+               if (numinst<iter) continue;
+               logiter++;
+
+               cout << "# of sites for ConsRef: " <<   trainseqs.size() << 
+                  " (species=" << n+1 << "/" << nbspecies << ", iter=" << k+1 << "/" << nshuffle << ")" << endl;
+         
+               mot.seqs=trainseqs;
+               mot = comprefmot(mot, n);
+               trainmat = mattofreq(mot.matprec);
+               
+               double distkl=0.;
+               for (int pos=0;pos<mot.motwidth;pos++){
+                  for (int ib=0;ib<4;ib++){
+                     distkl += trainmat[pos][ib]*log(trainmat[pos][ib] / testmat[pos][ib]);
+                  }
+               }
+               outf << "ConsRef_" << numtospecies(n) << " " << numinst << " " << distkl << endl;
+            }
+         }
+      }
+   }
+   
+   // TEST CONVERGENCE ON ~Neffx REF CONSERVED SITES
+   cout << "Testing Neff x conserved sites convergence on ref species..." << endl;
+   unsigned int Neff;
+   if (species=="droso") Neff=4;
+   else if (species=="eutherian") Neff=2;
+   int n = 0;
+   for (unsigned int k=0;k<nshufflecons;k++){
+      // RANDOM SHUFFLING
+      random_shuffle(refmot.seqs.begin(),refmot.seqs.end());
+      vma trainseqs, testseqs;
+      vvd trainmat, testmat;
+      
+      logiter=0;
+      for (int i = Nhalf; i < N; i++){
+         testseqs.push_back(refmot.seqs[i]);
+         mot.seqs=testseqs;
+         mot = comprefmot(mot, 0);
+         testmat = mattofreq(mot.matprec);
+      }
+
+      for (int i = 0; i < Nhalf; i++){
+         if (refmot.seqs[i].matches[n]){
+            for (unsigned int nsite=0;nsite<Neff;nsite++){
+               trainseqs.push_back(refmot.seqs[i]);
+            }
+            
+            int numinst = trainseqs.size() / Neff; 
+            iter=(int)pow(10,0.1*logiter);
+            if (numinst<iter) continue;
+            logiter++;
+
+            cout << "# of sites for Control: " <<   trainseqs.size() / Neff << "x" << Neff <<
+               ", iter=" << k+1 << "/" << nshufflecons << ")" << endl;
+            mot.seqs=trainseqs;
+            mot = comprefmot(mot, n);
+            trainmat = mattofreq(mot.matprec);
+            
+            double distkl=0.;
+            for (int pos=0;pos<mot.motwidth;pos++){
+               for (int ib=0;ib<4;ib++){
+                  distkl += trainmat[pos][ib]*log(trainmat[pos][ib] / testmat[pos][ib]);
+               }
+            }
+            outf << "Control " << numinst << " " << distkl << endl;
+         }
+      }
+   }
+
+   outf.close();
+
+
+   return;
+}
+
    void
 refinemotif(Motif & mot, vseq & align)
 {
@@ -497,9 +770,6 @@ refinemotif(Motif & mot, vseq & align)
    mot = comprefmot(mot, 0);
 
    //mot.matinithamming(mot.motscorethr2, numhamm);
-   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
-      ivm->print();
-   }
 
    return;
 }
@@ -579,6 +849,19 @@ cmd_test(int argc, char ** argv)
    motmeldb.close();
    dispweblogo(logomots);
 
+   cout << "Output conserved sites..." << endl;
+   ofstream sites("sites.txt");
+   for (ivma ivm=mot.seqs.begin();ivm!=mot.seqs.end();ivm++){
+       int i = 0;
+       for (ivint imat = ivm->matches.begin(); imat != ivm->matches.end(); imat++) {
+           if (*imat) {
+               sites << vinttostring(ivm->alignseq[i]) << "\n";
+           }
+           i++;
+       }
+      sites << "\n";
+   }
+   sites.close();
 
    if (test_args.evolve_site_given)
    {
@@ -588,7 +871,8 @@ cmd_test(int argc, char ** argv)
    else if (test_args.evolve_cv_given)
    {
       cout << "Testing convergence..." << endl;
-      evolvecv(mot);
+      if (test_args.crossval_given) evolvecvcrossval(mot);
+      else evolvecv(mot);
    }
 
    gsl_rng_free(gslran);

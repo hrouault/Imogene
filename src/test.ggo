@@ -60,6 +60,9 @@ defmode "evolve-cv" modedesc="Given ChIPseq data and a PWM, returns the KL diver
 
 modeoption "evolve-cv" -  "Triggers evolve-cv mode" mode="evolve-cv" required
 
+modeoption "crossval" -  "Use a cross-validation framework" 
+            mode="evolve-cv" optional
+
 modeoption "nshuffle" - "Number of shuffling for bootstrapping procedure"
             int typestr="int" default="5" optional mode="evolve-cv"
 
