@@ -138,6 +138,7 @@ class Motif
         int statemot(Sequence & seq, int pos, int num, double & scoremot);
         int nbmatchnmaskforsvg(Sequence & seq, unsigned int moti);
         void setscorethr2meaninfo();
+        void setscorethr2lowinfo();
         void cutflanking();
 };
 

@@ -52,6 +52,9 @@ option "method" - "Method used for PWM optimization"
 option "numhamm" -  "Hamming distance defining conserved sites" 
             int typestr="int" default="2" optional
 
+option "cutflanking" -  "Cut uninformative (<1 bit) flanking bp." 
+          optional
+
 defmode "evolve-site" modedesc="Given ChIPseq data and a PWM, returns site evolution on orthologous species as given by the data and as expected by the evolutionary models."
 
 modeoption "evolve-site" -  "Triggers evolve-site mode" mode="evolve-site" required

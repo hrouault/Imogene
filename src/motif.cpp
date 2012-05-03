@@ -267,6 +267,35 @@ Motif::setscorethr2meaninfo()
     scorethr = motscorethr;
 }
 
+void
+Motif::setscorethr2lowinfo()
+{
+    double maxinfo(0);
+    double meaninfo(0);
+    double varinfo(0);
+    int j(0);
+    for (ivvd ivv = matprec.begin(); ivv != matprec.end(); ivv++) {
+        int i(0);
+        double maxcol(-10);
+        for (ivd iv = ivv->begin(); iv != ivv->end(); iv++) {
+            if (*iv > maxcol) maxcol = *iv;
+            meaninfo += matfreq[j][i] * (*iv);
+            varinfo += matfreq[j][i] * pow((*iv),2);
+            i++;
+        }
+        j++;
+        maxinfo += maxcol;
+    }
+    varinfo -= pow(meaninfo,2);
+    double std = sqrt(varinfo);
+    motscorethr2 = min(0.95 * maxinfo, meaninfo - 2 * std);
+    motscorethr = motscorethr2 * (1 - 2. / motwidth);
+    motscorethrcons = motscorethr2 * (1 - 1. / motwidth);
+    scorethr2 = motscorethr2;
+    scorethrcons = motscorethrcons;
+    scorethr = motscorethr;
+}
+
 
 GroupInstance::GroupInstance()
 {

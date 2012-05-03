@@ -739,8 +739,11 @@ evolvecvcrossval(Motif & mot)
    void
 refinemotif(Motif & mot, vseq & align)
 {
-   mot.setscorethr2meaninfo();
-   //mot.matinithamming(mot.motscorethr2, numhamm);
+   if (!test_args.threshold_given){
+      mot.setscorethr2lowinfo();
+      //mot.setscorethr2meaninfo();
+      //mot.matinithamming(mot.motscorethr2, numhamm);
+   }
    mot.matinit(mot.motscorethr2);
 
    // refining motif on ref sequences
@@ -754,21 +757,26 @@ refinemotif(Motif & mot, vseq & align)
    }
    mot = comprefmot(mot, 0);
 
-   // deleting unessential flanking bases
-   mot.cutflanking();
-   
-   mot.setscorethr2meaninfo();
-   mot.matinit(mot.motscorethr2);
-   scorethr2 = mot.motscorethr2;
-   width = mot.motwidth;
-   if (test_args.nops_given){
-      alpha = 1e-2;
-      beta = concc / conca * alpha;
-   } else {
-      compalpha();
+   if (test_args.cutflanking_given){
+      // deleting unessential flanking bases
+      mot.cutflanking();
+      
+      if (!test_args.threshold_given){
+         mot.setscorethr2lowinfo();
+         //mot.setscorethr2meaninfo();
+         //mot.matinithamming(mot.motscorethr2, numhamm);
+      }
+      mot.matinit(mot.motscorethr2);
+      scorethr2 = mot.motscorethr2;
+      width = mot.motwidth;
+      if (test_args.nops_given){
+         alpha = 1e-2;
+         beta = concc / conca * alpha;
+      } else {
+         compalpha();
+      }
+      mot = comprefmot(mot, 0);
    }
-   mot = comprefmot(mot, 0);
-
    //mot.matinithamming(mot.motscorethr2, numhamm);
 
    return;
@@ -841,6 +849,7 @@ cmd_test(int argc, char ** argv)
    logomots.push_back(mot);
    
    refinemotif(mot, regints);
+   cout << "Refined motif threshold: " << mot.motscorethr2 << endl;
    logomots.push_back(mot);
    
    // display
