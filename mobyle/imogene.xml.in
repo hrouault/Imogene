@@ -304,6 +304,7 @@
                     <comment>
                         <text lang="en">list of sequence coordinates in the BED4 format:</text>
                         <text lang="en">sequence_name chromosome_arm start_pos stop_pos</text>
+                        <text lang="en">For drosophilae, coordinates should correspond to the release 5 assembly.</text>
                     </comment>
                     <example>chrX 10000 11000 seq_name1
                         chr2L 20000 23000 seq_name2
