@@ -24,7 +24,10 @@ nodist_xml_DATA = imogene.xml imogene_env.xml
 CLEANFILES = $(nodist_xml_DATA)                                                     
 EXTRA_DIST = imogene.xml.in imogene_env.xml.in help.md
 
-do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g' -e 's,[@]pythondir[@],$(pythondir),g' -e 's,[@]bindir[@],$(bindir),g' -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g' -e 's,[@]PACKAGE[@],$(PACKAGE),g'
+do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g' -e 's,[@]pythondir[@],$(pythondir),g' -e 's,[@]bindir[@],$(bindir),g' -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' -e 's,[@]PACKAGE_NAME[@],imogene,g' -e 's,[@]PACKAGE[@],$(PACKAGE),g'
+# The substitution of @PACKAGE_NAME@ into imogene (and not into the value of
+# $PACKAGE_NAME is a workaround to ensure that the filename has the same value 
+# as the "name" xml variable
 
 imogene.xml: imogene.xml.in
 	$(do_subst) < $(srcdir)/imogene.xml.in > imogene.xml
