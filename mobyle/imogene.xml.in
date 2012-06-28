@@ -26,7 +26,7 @@
             <doclink>http://hrouault.github.com/Imogene</doclink>
             <comment>
                 <div xmlns="http://www.w3.org/1999/xhtml">
-                    <em> Imogene</em> aims at two main purposes:
+                    <em> Imogene</em> has two main purposes:
                     <ul>
                         <li>it detects statistically overrepresented motifs,
                             considering closely related genomes, in a set of
@@ -34,8 +34,9 @@
                             selected for their biological relationships,
                             ie cis-regulatory role.
                         </li>
-                        <li>it predicts novel cis-regulatory sequences based
-                            on user-selected motifs at the whole genome scale.
+                        <li>it predicts novel cis-regulatory sequences
+                           containing conserved binding sites for user-selected
+                           motifs on the genome-wide scale.
                         </li>
                     </ul>
                     <p>Currently, <em>Imogene</em> supports two genome sets:
@@ -85,8 +86,8 @@
                 </velem>
                 <velem>
                     <value>scangen</value>
-                    <label>scangen: Find instances of a list of motifs in the
-                        genome</label>
+                    <label>scangen: Find clusters of motifs in the
+                       genome</label>
                 </velem>
             </vlist>
             <comment>
@@ -147,8 +148,10 @@
                                     <em>Nature</em>, 450(7167):203-218,
                                     Nov 2007.)</li>
                                 <li><strong>Eutherian</strong>: genomes from
-                                    the ensembl project (<a href="http://www.ensembl.org/">http://www.ensembl.org/</a>,
-                                    folder epo_12_eutherian)</li>
+                                   the ensembl project, that can be downloaded
+                                   from <a
+                                      href="ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian">ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian</a>,
+                                   .</li>
                             </ul>
                         </div>
                     </comment>
@@ -167,15 +170,16 @@
                     </vdef>
                     <comment>
                         <div xmlns="http://www.w3.org/1999/xhtml">
-                            Motifs represent the affinity of transcription
-                            factors for binding sites (BS). Indicate here the
-                            <em>width</em> of BSs in number of nucleotides.
-                            Values between 8 and 12 have given good results.
-                            Note that motifs of larger width can model motifs
-                            of lower width when flanking bases have the
-                            frequencies of background (non-specific non-coding
-                            sequences). Large motifs are however more difficult
-                            to infer when containing many degenerate bases.
+                            A motif represent the affinity of a transcription
+                            factor for its binding sites (BS). Indicate here the
+                            <em>width</em> of the BSs in number of nucleotides.
+                            Typical values range between 8 and 12 nts.  Note
+                            that motifs of larger width can represent motifs of
+                            lower width with non-specific flanking bases.
+                            However, due to the usually weak number of
+                            observations from which motifs are inferred, large
+                            motifs are more prone to contain artificially specific
+                            nucleotides that result from small sampling noise.
                         </div>
                     </comment>
                 </parameter>
@@ -198,8 +202,8 @@
                             motif. As an order of magnitude, a threshold equal
                             to 10 corresponds approximatively to one binding
                             site every 1000 bases on average in the whole
-                            genome. Common values, that give reasonable results
-                            are comprised between 10 and 15.
+                            genome. Common values that give reasonable results
+                            are comprised between 10 and 15 bits.
                         </div>
                     </comment>
                 </parameter>
@@ -224,13 +228,13 @@
                                 sequences.</p>
 
                             <p>Considering the first base of a binding site in
-                                a reference species, an alignment will make it
-                                correspond to a position <em>p</em> in an
-                                homologous genomes. The algorithm will then
-                                search for binding sites in this homologous
-                                species at positions <em>(p-s,p+w+s)</em>,
-                                where <em>s</em> is the shift indicated here
-                                and <em>w</em> is the width of the motif.</p>
+                               a reference species, it will be aligned to a
+                               position <em>p</em> in an homologous genome. The
+                               algorithm will then search for binding sites in
+                               this homologous species at positions
+                               <em>(p-s,p+w+s)</em>, where <em>s</em> is the
+                               shift indicated here and <em>w</em> is the width
+                               of the motif.</p>
                         </div>
                     </comment>
                 </parameter>
@@ -273,21 +277,20 @@
                     <comment>
                         <div xmlns="http://www.w3.org/1999/xhtml">
                             <p><em>Imogene</em> makes use of the evolution of
-                                binding sites to infer motifs. In order to
-                                function, <em>Imogene</em> consider the
-                                mutation rate of bases under selection thanks
-                                to an evolutionary model.</p>
+                               binding sites to infer motifs. In order to
+                               function, <em>Imogene</em> considers the
+                               mutation rate of bases under selection by using
+                               an evolutionary model.</p>
 
                             <p>Two models are currently supported by
                                 <em>Imogene</em> (see refs at the end of the
-                                page for a detailed description):
-                                <ul><li>Felsentein: this model is more
-                                        approximative but runs faster</li>
-                                    <li>Halpern-Bruno: this model is better
-                                        justified theoretically and better
-                                        predicts the speed of evolution of the
-                                        motifs but takes more time to
-                                        run.</li></ul></p>
+                                page for a detailed description): <ul>
+                                   <li>Felsentein: this model is less realistic
+                                      but runs faster</li> <li>Halpern-Bruno:
+                                      this model has stronger theoretical
+                                      ground and better predicts the speed of
+                                      evolution of the BSs but takes more time
+                                      to run.</li> </ul></p>
                         </div>
                     </comment>
                 </parameter>
@@ -303,12 +306,14 @@
                     </type>
                     <comment>
                         <text lang="en">list of sequence coordinates in the BED4 format:</text>
-                        <text lang="en">sequence_name chromosome_arm start_pos stop_pos</text>
-                        <text lang="en">For drosophilae, coordinates should correspond to the release 5 assembly.</text>
+                        <text lang="en">chrN start stop name</text>
+                        <text lang="en">Coordinates should correspond to the release 5 assembly for Drosophila Melanogaster and to the mm9 assembly for Mus Musculus.</text>
                     </comment>
-                    <example>chrX 10000 11000 seq_name1
-                        chr2L 20000 23000 seq_name2
-                        chr3L 30000 35000 seq_name3</example>
+                    <example>
+chrX 10000 11000 seq_name1
+chr2L 20000 23000 seq_name2
+chr3L 30000 35000 seq_name3
+</example>
                 </parameter>
 
                 <parameter ishidden="1">
@@ -441,7 +446,8 @@
 
                 <parameter ismandatory="1">
                     <name>nbmots</name>
-                    <prompt lang="en">Number of motifs to consider at maximum</prompt>
+                    <prompt lang="en">Number of motifs to consider, beginning
+                       with the top motif. </prompt>
                     <type>
                         <datatype>
                             <class>Integer</class>
@@ -452,12 +458,13 @@
                     </vdef>
                     <comment>
                         <div xmlns="http://www.w3.org/1999/xhtml">
-                            <p>Enhancer are predicted on the basis of the
-                                presence of binding sites corresponding to
-                                chosen motifs. You can directly input a list of
-                                motifs generated by the <em>genmot</em> mode
-                                and limit the number of considered motifs to
-                                the top first <em>n</em>, where <em>n</em> is
+                            <p>Enhancers are predicted on the basis of the
+                                presence of conserved binding sites
+                                corresponding to chosen motifs. You can
+                                directly input a list of motifs generated by
+                                the <em>genmot</em> mode and limit the number
+                                of considered motifs to the top first
+                                <em>n</em>, where <em>n</em> is
                                 the number indicated here.</p>
                         </div>
                     </comment>
