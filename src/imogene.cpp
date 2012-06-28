@@ -40,6 +40,7 @@ using namespace std;
 #include "display.hpp"
 #include "extract.hpp"
 #include "genmot.hpp"
+#include "test.hpp"
 #include "help.hpp"
 #include "scangen.hpp"
 
@@ -95,6 +96,7 @@ static struct cmd_struct commands[] = {
     { "display", cmd_display, "Displays motifs on sequences." },
     { "extract", cmd_extract, "Extracts alignments from coordinates." },
     { "genmot", cmd_genmot, "generate motifs" },
+    { "test", cmd_test, "Run tests" },
     { "help", cmd_help, "Help message" },
     { "scangen", cmd_scangen, "infere CRMs" },
     { "version", cmd_version, "Print Imogene version" }

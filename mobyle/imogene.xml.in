@@ -26,7 +26,11 @@
             <doclink>http://hrouault.github.com/Imogene</doclink>
             <comment>
                 <div xmlns="http://www.w3.org/1999/xhtml">
+<<<<<<< HEAD
                     <em> Imogene</em> has two main purposes:
+=======
+                    <em> Imogene</em> aims at two main purposes:
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
                     <ul>
                         <li>it detects statistically overrepresented motifs,
                             considering closely related genomes, in a set of
@@ -34,9 +38,14 @@
                             selected for their biological relationships,
                             ie cis-regulatory role.
                         </li>
+<<<<<<< HEAD
                         <li>it predicts novel cis-regulatory sequences
                            containing conserved binding sites for user-selected
                            motifs on the genome-wide scale.
+=======
+                        <li>it predicts novel cis-regulatory sequences based
+                            on user-selected motifs at the whole genome scale.
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
                         </li>
                     </ul>
                     <p>Currently, <em>Imogene</em> supports two genome sets:
@@ -86,8 +95,13 @@
                 </velem>
                 <velem>
                     <value>scangen</value>
+<<<<<<< HEAD
                     <label>scangen: Find clusters of motifs in the
                        genome</label>
+=======
+                    <label>scangen: Find instances of a list of motifs in the
+                        genome</label>
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
                 </velem>
             </vlist>
             <comment>
@@ -148,10 +162,15 @@
                                     <em>Nature</em>, 450(7167):203-218,
                                     Nov 2007.)</li>
                                 <li><strong>Eutherian</strong>: genomes from
+<<<<<<< HEAD
                                    the ensembl project, that can be downloaded
                                    from <a
                                       href="ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian">ftp://ftp.ensembl.org/pub/release-63/emf/ensembl-compara/epo_12_eutherian</a>,
                                    .</li>
+=======
+                                    the ensembl project (<a href="http://www.ensembl.org/">http://www.ensembl.org/</a>,
+                                    folder epo_12_eutherian)</li>
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
                             </ul>
                         </div>
                     </comment>
@@ -170,6 +189,7 @@
                     </vdef>
                     <comment>
                         <div xmlns="http://www.w3.org/1999/xhtml">
+<<<<<<< HEAD
                             A motif represent the affinity of a transcription
                             factor for its binding sites (BS). Indicate here the
                             <em>width</em> of the BSs in number of nucleotides.
@@ -180,6 +200,17 @@
                             observations from which motifs are inferred, large
                             motifs are more prone to contain artificially specific
                             nucleotides that result from small sampling noise.
+=======
+                            Motifs represent the affinity of transcription
+                            factors for binding sites (BS). Indicate here the
+                            <em>width</em> of BSs in number of nucleotides.
+                            Values between 8 and 12 have given good results.
+                            Note that motifs of larger width can model motifs
+                            of lower width when flanking bases have the
+                            frequencies of background (non-specific non-coding
+                            sequences). Large motifs are however more difficult
+                            to infer when containing many degenerate bases.
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
                         </div>
                     </comment>
                 </parameter>
@@ -202,8 +233,13 @@
                             motif. As an order of magnitude, a threshold equal
                             to 10 corresponds approximatively to one binding
                             site every 1000 bases on average in the whole
+<<<<<<< HEAD
                             genome. Common values that give reasonable results
                             are comprised between 10 and 15 bits.
+=======
+                            genome. Common values, that give reasonable results
+                            are comprised between 10 and 15.
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
                         </div>
                     </comment>
                 </parameter>
@@ -226,6 +262,7 @@
                                 alignments, <em>Imogene</em> allows for local
                                 shifts of the binding sites in homologous
                                 sequences.</p>
+<<<<<<< HEAD
 
                             <p>Considering the first base of a binding site in
                                a reference species, it will be aligned to a
@@ -386,6 +423,227 @@ chr3L 30000 35000 seq_name3
                             <p>Predicted motifs in text file format. This file
                                 can be used as input for the <em>scangen</em>
                                 mode</p>
+=======
+
+                            <p>Considering the first base of a binding site in
+                                a reference species, an alignment will make it
+                                correspond to a position <em>p</em> in an
+                                homologous genomes. The algorithm will then
+                                search for binding sites in this homologous
+                                species at positions <em>(p-s,p+w+s)</em>,
+                                where <em>s</em> is the shift indicated here
+                                and <em>w</em> is the width of the motif.</p>
+                        </div>
+                    </comment>
+                </parameter>
+
+            </parameters>
+        </paragraph>
+
+        <paragraph>
+            <name>genmot</name>
+            <prompt lang="en">Genmot options</prompt>
+            <precond>
+                <code proglang="perl">$model == 'genmot'</code>
+                <code proglang="python">model == 'genmot'</code>
+            </precond>
+            <argpos>2</argpos>
+            <parameters>
+
+                <parameter ismandatory="1">
+                    <name>evolutionary</name>
+                    <prompt lang="en">Evolutionary model used for motif
+                        generation</prompt>
+                    <type>
+                        <datatype>
+                            <class>Choice</class>
+                        </datatype>
+                    </type>
+                    <vdef>
+                        <value>1</value>
+                    </vdef>
+                    <vlist>
+                        <velem>
+                            <value>1</value>
+                            <label>Felsenstein model</label>
+                        </velem>
+                        <velem>
+                            <value>2</value>
+                            <label>Halpern-Bruno model</label>
+                        </velem>
+                    </vlist>
+                    <comment>
+                        <div xmlns="http://www.w3.org/1999/xhtml">
+                            <p><em>Imogene</em> makes use of the evolution of
+                                binding sites to infer motifs. In order to
+                                function, <em>Imogene</em> consider the
+                                mutation rate of bases under selection thanks
+                                to an evolutionary model.</p>
+
+                            <p>Two models are currently supported by
+                                <em>Imogene</em> (see refs at the end of the
+                                page for a detailed description):
+                                <ul><li>Felsentein: this model is more
+                                        approximative but runs faster</li>
+                                    <li>Halpern-Bruno: this model is better
+                                        justified theoretically and better
+                                        predicts the speed of evolution of the
+                                        motifs but takes more time to
+                                        run.</li></ul></p>
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
+                        </div>
+                    </comment>
+                </parameter>
+
+<<<<<<< HEAD
+                <parameter isout="1">
+                    <name>genmotoutput</name>
+                    <prompt>General output</prompt>
+                    <type>
+                        <datatype>
+                            <class>GenmotReport</class>
+                            <superclass>Report</superclass>
+                        </datatype>
+                        <dataFormat>HTML</dataFormat>
+                    </type>
+                    <filenames>
+                        <code proglang="python">"results_genmot.html"</code>
+                    </filenames>
+                    <comment>
+                        <div xmlns="http://www.w3.org/1999/xhtml">
+                            <p>Predicted motifs in pretty printed format
+                                (xhtml). This page contain motif logos.</p>
+                        </div>
+                    </comment>
+                </parameter> 
+
+            </parameters>
+        </paragraph>
+
+
+        <paragraph>
+            <name>scangen</name>
+            <prompt lang="en">Scangen options</prompt>
+            <precond>
+                <code proglang="perl">$model == 'scangen'</code>
+                <code proglang="python">model == 'scangen'</code>
+            </precond>
+            <argpos>2</argpos>
+            <parameters>
+
+                <parameter ismandatory="1">
+                    <name>crmwidth</name>
+                    <prompt lang="en">Width of selected enhancers</prompt>
+                    <type>
+                        <datatype>
+                            <class>Integer</class>
+                        </datatype>
+                    </type>
+                    <vdef>
+                        <value>1000</value>
+                    </vdef>
+                    <comment>
+                        <div xmlns="http://www.w3.org/1999/xhtml">
+                            <p>Width of the predicted enhancers in number of
+                                nucleotides (nt).</p>
+                        </div>
+                    </comment>
+                </parameter>
+
+                <parameter ismandatory="1">
+                    <name>nbmots</name>
+                    <prompt lang="en">Number of motifs to consider, beginning
+                       with the top motif. </prompt>
+=======
+                <parameter ismandatory="1">
+                    <name>coord_file</name>
+                    <prompt lang="en">File of enhancer coordinates</prompt>
+                    <type>
+                        <datatype>
+                            <class>Coordinates</class>
+                            <superclass>AbstractText</superclass>
+                        </datatype>
+                    </type>
+                    <comment>
+                        <text lang="en">list of sequence coordinates in the BED4 format:</text>
+                        <text lang="en">sequence_name chromosome_arm start_pos stop_pos</text>
+                        <text lang="en">For drosophilae, coordinates should correspond to the release 5 assembly.</text>
+                    </comment>
+                    <example>chrX 10000 11000 seq_name1
+                        chr2L 20000 23000 seq_name2
+                        chr3L 30000 35000 seq_name3</example>
+                </parameter>
+
+                <parameter ishidden="1">
+                    <name>cmd_1</name>
+                    <type>
+                        <datatype>
+                            <class>String</class>
+                        </datatype>
+                    </type>
+                    <format>
+                        <code proglang="python">"imogene extract -s " + species + " -i " + coord_file +" &amp;&amp; "</code>
+                    </format>
+                    <argpos>1</argpos>
+                </parameter>
+
+                <parameter ishidden="1">
+                    <name>cmd_2</name>
+                    <type>
+                        <datatype>
+                            <class>String</class>
+                        </datatype>
+                    </type>
+                    <format>
+                        <code proglang="python">" imogene genmot -s " + species + " -w " + str(width) + " -t " + str(threshold) + " -x " + str(extent) + " -e " + str(evolutionary) + " -a align &amp;&amp;" </code>
+                    </format>
+                    <argpos>2</argpos>
+                </parameter>
+
+                <parameter ishidden="1">
+                    <name>cmd_3</name>
+                    <type>
+                        <datatype>
+                            <class>String</class>
+                        </datatype>
+                    </type>
+                    <format>
+                        <code proglang="python">" imogene display -t "+ str(threshold) +" -s " + species +" -m motifs.txt -a align --logos --pdf --png &amp;&amp;"</code>
+                    </format>
+                    <argpos>3</argpos>
+                </parameter>
+
+                <parameter ishidden="1">
+                    <name>cmd_4</name>
+                    <type>
+                        <datatype>
+                            <class>String</class>
+                        </datatype>
+                    </type>
+                    <format>
+                        <code proglang="python">" imogene display -t "+ str(threshold) +" -s " + species +" -m motifs.txt -a align --html-ref"</code>
+                    </format>
+                    <argpos>4</argpos>
+                </parameter>
+
+                <parameter isout="1">
+                    <name>motifs</name>
+                    <prompt>Motif file</prompt>
+                    <type>
+                        <datatype>
+                            <class>ScangenMotifDefinition</class>
+                            <superclass>AbstractText</superclass>
+                        </datatype>
+                    </type>
+                    <filenames>
+                        <code proglang="perl">"motifs.txt"</code>
+                        <code proglang="python">"motifs.txt"</code>
+                    </filenames>
+                    <comment>
+                        <div xmlns="http://www.w3.org/1999/xhtml">
+                            <p>Predicted motifs in text file format. This file
+                                can be used as input for the <em>scangen</em>
+                                mode</p>
                         </div>
                     </comment>
                 </parameter>
@@ -446,8 +704,8 @@ chr3L 30000 35000 seq_name3
 
                 <parameter ismandatory="1">
                     <name>nbmots</name>
-                    <prompt lang="en">Number of motifs to consider, beginning
-                       with the top motif. </prompt>
+                    <prompt lang="en">Number of motifs to consider at maximum</prompt>
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
                     <type>
                         <datatype>
                             <class>Integer</class>
@@ -458,6 +716,7 @@ chr3L 30000 35000 seq_name3
                     </vdef>
                     <comment>
                         <div xmlns="http://www.w3.org/1999/xhtml">
+<<<<<<< HEAD
                             <p>Enhancers are predicted on the basis of the
                                 presence of conserved binding sites
                                 corresponding to chosen motifs. You can
@@ -465,6 +724,14 @@ chr3L 30000 35000 seq_name3
                                 the <em>genmot</em> mode and limit the number
                                 of considered motifs to the top first
                                 <em>n</em>, where <em>n</em> is
+=======
+                            <p>Enhancer are predicted on the basis of the
+                                presence of binding sites corresponding to
+                                chosen motifs. You can directly input a list of
+                                motifs generated by the <em>genmot</em> mode
+                                and limit the number of considered motifs to
+                                the top first <em>n</em>, where <em>n</em> is
+>>>>>>> 29667a7999a0f6a72dc9684b8f1e18df7c5a2463
                                 the number indicated here.</p>
                         </div>
                     </comment>

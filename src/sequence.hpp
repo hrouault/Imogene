@@ -146,8 +146,10 @@ vvd reversecomp(vvd & matrice);
 int compN(vint & bs);
 
 double scoref(vint::const_iterator & iseq, vvd & matrice);
+double scorefhamming(vint site1, vint site2);
 double scoref(vint site, vvd & matrice);
 unsigned int shift(vint::const_iterator iseq, vvd & matrice, vint::const_iterator & seq_end, unsigned int extent);
+unsigned int shifthamming(vint::const_iterator iseq, vint seqmel, vint::const_iterator &seq_end, unsigned int extent);
 
 string chromfromint(int chr);
 int intfromchrom(string chrname);

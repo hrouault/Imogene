@@ -60,4 +60,7 @@ double proba_fixation_rel(double ratio);
 
 int instant_rates(const gsl_vector * w, gsl_matrix * rates);
 
+vd evolvedist_felsen(vd & probs, vd & freqs, double dist);
+vd evolvedist_halpern(vd & probs, vd & freqs, double dist);
+
 #endif // Matcons_H

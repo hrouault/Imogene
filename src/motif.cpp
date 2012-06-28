@@ -114,8 +114,78 @@ Motif::matinitforscanmots(Sequence & seq)
     }
 }
 
+Motif comprefmot(Motif & motinit, unsigned int numspe)
+{
+   Motif mot;
+   mot = motinit;
+   vd dum(4,0.0);
+   mot.matrice = vvd(mot.motwidth,dum);
+   
+   for (ivma ivm = mot.seqs.begin(); ivm != mot.seqs.end(); ivm++){
+      int j=0;
+      vint site = ivm->alignseq[numspe];
+      for (ivint i = site.begin(); i != site.end(); i++){
+         mot.matrice[j][*i] += 1;
+         j++;
+      }
+   }
+   
+   countfreq(mot.matrice);
+   mot.matfreq=mot.matrice;
+   
+   freqtolog(mot.matrice);
+   mot.matprec = mot.matrice;
+   mot.matprecrevcomp = reversecomp(mot.matprec);
+   
+   //Consensus sequence
+   mot.bsinit="";
+   for (int i=0;i<mot.motwidth;i++){
+      string letter="A";
+      double max(mot.matprec[i][0]);
+      if (mot.matprec[i][1]>max) letter="C";
+      else if (mot.matprec[i][2]>max) letter="G";
+      else if (mot.matprec[i][3]>max) letter="T";
+      mot.bsinit.append(letter);
+   }
 
-void
+   return mot;
+}
+
+   void
+Motif::cutflanking()
+{
+
+   double cutoff = 0.7;
+   vvd newmatfreq = matfreq;
+   for (int j = 0; j < motwidth; j++) {
+      double meaninfo(0);
+      for (int i = 0; i < 4; i++) {
+         meaninfo += matfreq[j][i] * matprec[j][i];
+      }
+      if (meaninfo < cutoff) newmatfreq.erase(newmatfreq.begin());
+      else break;
+   }
+   for (int j = motwidth - 1; j >= 0; j--) {
+      double meaninfo(0);
+      for (int i = 0; i < 4; i++) {
+         meaninfo += matfreq[j][i] * matprec[j][i];
+      }
+      if (meaninfo < cutoff) newmatfreq.erase(newmatfreq.end());
+      else break;
+   }
+
+   matfreq = newmatfreq;
+   vvd mat = matfreq;
+   freqtolog(mat);
+   matprec = mat;
+   matprecrevcomp = reversecomp(mat);
+   motwidth = matprec.size();
+   width = motwidth;
+
+   return;
+}
+
+   void
 freqtolog(vvd & mat)
 {
     int j = 0;
@@ -147,7 +217,7 @@ countfreq(vvd & mat)
         }
         int i(0);
         for (ivd line = (*col).begin(); line != (*col).end(); line++) {
-            if (i == 0 || i == 1) {
+            if (i == 0 || i == 3) {
                 (*line) = ((*line) + alpha) / (ntot + 2 * alpha + 2 * beta);
             } else {
                 (*line) = ((*line) + beta) / (ntot + 2 * alpha + 2 * beta);
@@ -192,6 +262,38 @@ Motif::setscorethr2meaninfo()
     motscorethr2 = min(0.95 * maxinfo, meaninfo);
     motscorethr = motscorethr2 * (1 - 2. / motwidth);
     motscorethrcons = motscorethr2 * (1 - 1. / motwidth);
+    scorethr2 = motscorethr2;
+    scorethrcons = motscorethrcons;
+    scorethr = motscorethr;
+}
+
+void
+Motif::setscorethr2lowinfo()
+{
+    double maxinfo(0);
+    double meaninfo(0);
+    double varinfo(0);
+    int j(0);
+    for (ivvd ivv = matprec.begin(); ivv != matprec.end(); ivv++) {
+        int i(0);
+        double maxcol(-10);
+        for (ivd iv = ivv->begin(); iv != ivv->end(); iv++) {
+            if (*iv > maxcol) maxcol = *iv;
+            meaninfo += matfreq[j][i] * (*iv);
+            varinfo += matfreq[j][i] * pow((*iv),2);
+            i++;
+        }
+        j++;
+        maxinfo += maxcol;
+    }
+    varinfo -= pow(meaninfo,2);
+    double std = sqrt(varinfo);
+    motscorethr2 = min(0.95 * maxinfo, meaninfo - 2 * std);
+    motscorethr = motscorethr2 * (1 - 2. / motwidth);
+    motscorethrcons = motscorethr2 * (1 - 1. / motwidth);
+    scorethr2 = motscorethr2;
+    scorethrcons = motscorethrcons;
+    scorethr = motscorethr;
 }
 
 
@@ -667,40 +769,92 @@ Motif::matinit(double scth)
         Sequence & seq = *iseq;
         unsigned int len = seq.iseqs[0].size();
         unsigned int i = 0;
-        for (vint::const_iterator istr = seq.iseqs[0].begin(); istr != seq.iseqs[0].end() - width + 1; istr++) {
+        for (vint::const_iterator istr = seq.iseqs[0].begin(); istr != seq.iseqs[0].end() - motwidth + 1; istr++) {
             if (scoref(istr, matprec) > scth) {
-                vint::const_iterator endci = seq.iseqs[0].end() - width + 1;
-                unsigned int sh = shift(istr, matprec, endci, width);
+                vint::const_iterator endci = seq.iseqs[0].end() - motwidth + 1;
+                unsigned int sh = shift(istr, matprec, endci, motwidth);
                 Motalign ma(i + sh, seq, *this, 1);
                 (*iseq).nbtot++;
                 nbtot++;
                 if (ma.iscons()) {
                     iseq->nbcons++;
                     seqs.push_back(ma);
-                    if (i + sh < len - 2 * width) {
-                        istr += width - 1 + sh;
-                        i += width - 1 + sh;
+                    if (i + sh < len - 2 * motwidth) {
+                        istr += motwidth - 1 + sh;
+                        i += motwidth - 1 + sh;
                     } else
                         break;
                 }
             } else if (scoref(istr, matprecrevcomp) > scth) {
-                vint::const_iterator endci = seq.iseqs[0].end() - width + 1;
-                unsigned int sh = shift(istr, matprecrevcomp, endci, width);
+                vint::const_iterator endci = seq.iseqs[0].end() - motwidth + 1;
+                unsigned int sh = shift(istr, matprecrevcomp, endci, motwidth);
                 Motalign ma(i + sh, seq, *this, -1);
                 (*iseq).nbtot++;
                 nbtot++;
                 if (ma.iscons()) {
                     iseq->nbcons++;
                     seqs.push_back(ma);
-                    if (i + sh < len - 2 * width) {
-                        istr += width - 1 + sh;
-                        i += width - 1 + sh;
+                    if (i + sh < len - 2 * motwidth) {
+                        istr += motwidth - 1 + sh;
+                        i += motwidth - 1 + sh;
                     } else
                         break;
                 }
             }
             i++;
-            if (istr > seq.iseqs[0].end() - width) break;
+            if (istr > seq.iseqs[0].end() - motwidth) break;
+        }
+    }
+    nbcons = seqs.size();
+}
+
+void
+Motif::matinithamming(double scth,unsigned int numhamm)
+{
+    nbtot = 0;
+    seqs.clear();
+    for (ivseq iseq = regints.begin(); iseq != regints.end(); iseq++) {
+        (*iseq).nbtot = 0;
+        (*iseq).nbcons = 0;
+    }
+    for (ivseq iseq = regints.begin(); iseq != regints.end(); iseq++) {
+        Sequence & seq = *iseq;
+        unsigned int len = seq.iseqs[0].size();
+        unsigned int i = 0;
+        for (vint::const_iterator istr = seq.iseqs[0].begin(); istr != seq.iseqs[0].end() - motwidth + 1; istr++) {
+            if (scoref(istr, matprec) > scth) {
+                vint::const_iterator endci = seq.iseqs[0].end() - motwidth + 1;
+                unsigned int sh = shift(istr, matprec, endci, motwidth);
+                Motalign ma = mahamming(i + sh, seq, *this, 1, numhamm);
+                (*iseq).nbtot++;
+                nbtot++;
+                if (ma.iscons()) {
+                    iseq->nbcons++;
+                    seqs.push_back(ma);
+                    if (i + sh < len - 2 * motwidth) {
+                        istr += motwidth - 1 + sh;
+                        i += motwidth - 1 + sh;
+                    } else
+                        break;
+                }
+            } else if (scoref(istr, matprecrevcomp) > scth) {
+                vint::const_iterator endci = seq.iseqs[0].end() - motwidth + 1;
+                unsigned int sh = shift(istr, matprecrevcomp, endci, motwidth);
+                Motalign ma = mahamming(i + sh, seq, *this, -1, numhamm);
+                (*iseq).nbtot++;
+                nbtot++;
+                if (ma.iscons()) {
+                    iseq->nbcons++;
+                    seqs.push_back(ma);
+                    if (i + sh < len - 2 * motwidth) {
+                        istr += motwidth - 1 + sh;
+                        i += motwidth - 1 + sh;
+                    } else
+                        break;
+                }
+            }
+            i++;
+            if (istr > seq.iseqs[0].end() - motwidth) break;
         }
     }
     nbcons = seqs.size();
@@ -745,7 +899,7 @@ Motif::compprec()
 {
     vd col;
     vvd matopti;
-    for (unsigned int i = 0; i < width; i++) {
+    for (unsigned int i = 0; i < motwidth; i++) {
         col = colopti(i, this);
         matopti.push_back(col);
     }
@@ -1138,6 +1292,72 @@ Motalign::Motalign(unsigned int pos, Sequence & seq, Motif & mot, int sens)
     //   cout << "\n";
 }
 
+   Motalign
+mahamming(unsigned int pos, Sequence & seq, Motif & mot,int sens,unsigned int numhamm)
+{
+   Motalign ma;
+   unsigned int motwidth=mot.motwidth;
+   ma.seq_start=seq.iseqs[0].begin();
+   ma.seq_stop=seq.iseqs[0].end();
+   civvint imap=seq.imaps.begin()+1;
+   int seqnum=1;
+   ma.matches=vint(nbspecies,0);
+   vint seqdum=vint(motwidth,4);
+   ivint posdum;
+   ma.matchespos.push_back(seq.iseqs[0].begin()+pos);
+   vint seqmel=vint(seq.iseqs[0].begin()+pos,seq.iseqs[0].begin()+pos+motwidth);
+   if (sens==1){
+      ma.alignseq.push_back(seqmel);
+      ma.strand=1;
+   } else {
+      ma.alignseq.push_back(reversecomp(seqmel));
+      ma.strand=-1;
+   }
+   ma.matches[0]=1;
+   for (ivvint is=seq.iseqs.begin()+1;is!=seq.iseqs.end();is++){
+      if (seq.species[seqnum]){
+         int truepos=(*imap)[seq.imapsinv[0][pos]];
+         int start=(int)truepos-neighbext;
+         if (start<0) start=0;
+         unsigned int stop=truepos+neighbext;
+         if (stop>(*is).size()-motwidth) stop=(*is).size()-motwidth;
+         int hasmatch=0;
+         for (unsigned int i=start;i<stop;i++){
+            civint startsite=(*is).begin()+i;
+            vint seqstart=vint(startsite,startsite+motwidth);
+            if (scorefhamming(seqmel,seqstart)<=numhamm){
+               vint::const_iterator endci=(*is).end()-motwidth+1;
+               unsigned int sh=shifthamming((*is).begin()+start,seqmel,endci,2*neighbext);
+               vint seqt=vint((*is).begin()+start+sh,(*is).begin()+start+sh+motwidth);
+               if (sens==1){
+                  ma.alignseq.push_back(seqt);
+               } else if (sens==-1){
+                  ma.alignseq.push_back(reversecomp(seqt));
+               }
+               ma.matchespos.push_back((*is).begin()+start+sh);
+               hasmatch=1;
+               break;
+            }
+         }
+         if (hasmatch){
+            ma.matches[seqnum]=1;
+         } else {
+            ma.alignseq.push_back(seqdum);
+            ma.matchespos.push_back(posdum);
+            ma.matches[seqnum]=0;
+         }
+      }
+      else {
+         ma.alignseq.push_back(seqdum);
+         ma.matchespos.push_back(posdum);
+         ma.matches[seqnum]=0;
+      }
+      seqnum++;
+      imap++;
+   }
+   //   cout << "\n";
+   return ma;
+}
 
 void
 loadmots(const char * filename, vmot & mots)
@@ -1200,106 +1420,173 @@ loadmots(const char * filename, vmot & mots)
     }
 }		/* -----  end of function loadmots  ----- */
 
-
 void
+loadmotsATCG(const char * filename, vmot & mots)
+{
+    if (!filename) {
+        cerr << "Please give a motifs file. Exiting..." << endl;
+        exit(EXIT_FAILURE);
+    }
+    ifstream fmotifs;
+    fmotifs.open(filename);
+    if (fmotifs.fail()) {
+        cerr << "Cannot open motif file: " << strerror(errno) << endl;
+        exit(EXIT_FAILURE);
+    }
+    string dum;
+    fmotifs >> dum;
+    unsigned int i(0);//!!to comply withh cpp convention
+    while (! fmotifs.eof()) {
+        Motif mot1;
+        mot1.index = i;
+        stringstream name;
+        name << "Mot_";
+        name << i + 1;
+        name >> mot1.name;
+        mot1.bsinit = dum;
+        width = mot1.bsinit.size();
+        mot1.motwidth = mot1.bsinit.size();
+        fmotifs >> mot1.pvalue;
+        fmotifs >> mot1.scorepoiss;
+        fmotifs >> mot1.nbtot;
+        fmotifs >> mot1.nbcons;
+        fmotifs >> mot1.lambdatrain;
+        fmotifs >> mot1.lambdaback;
+        vd dumd(4, 0.0);
+        vvd dummat(mot1.motwidth, dumd);
+        mot1.matprec = dummat;
+        fmotifs >> mot1.matprec;
+        for (unsigned int col=0;col<mot1.motwidth;col++){
+           dummat[col][0]=mot1.matprec[col][0];
+           dummat[col][1]=mot1.matprec[col][2];
+           dummat[col][2]=mot1.matprec[col][3];
+           dummat[col][3]=mot1.matprec[col][1];
+        }
+        mot1.matprec=dummat;
+        for (ivvd ivmat = mot1.matprec.begin(); ivmat != mot1.matprec.end(); ivmat++) {
+           for (ivd ivrow = ivmat->begin(); ivrow != ivmat->end(); ivrow++) {
+              if (*ivrow < -6.5) *ivrow = -6.5;
+           }
+        }
+        mot1.matfreq = mattofreq(mot1.matprec);
+        mot1.matprecrevcomp = reversecomp(mot1.matprec);
+        fmotifs >> mot1.distmot;
+        fmotifs >> dum;
+        mot1.motscorethr2 = scorethr2;
+        mot1.motscorethr = scorethr2 * (1 - 2.0 / mot1.motwidth);
+        mot1.motscorethrcons = scorethr2 * (1 - 1.0 / mot1.motwidth);
+        mots.push_back(mot1);
+        i++;
+    }
+    fmotifs.close();
+    if (i == 0) { //No motifs
+       cerr << "No motifs" << endl;
+       exit(EXIT_FAILURE);
+    } else if (i < nbmots_for_score - 1) {
+       nbmots_for_score = i;
+       //cout << "Changed nbmots_for_score to value " << i << endl;
+    }
+}		/* -----  end of function loadmots  ----- */
+
+   void
 GroupInstance::compscore(vmot & lmots, unsigned int nbmots_score)
 {
-    score = 0;
-    unsigned int imot = 0;
-    for (ivmot ivm = lmots.begin(); ivm != lmots.begin() + nbmots_score; ivm++) {
-        score += nbmots[imot] * log((*ivm).lambdatrain / (*ivm).lambdaback);
-        imot++;
-    }
+   score = 0;
+   unsigned int imot = 0;
+   for (ivmot ivm = lmots.begin(); ivm != lmots.begin() + nbmots_score; ivm++) {
+      score += nbmots[imot] * log((*ivm).lambdatrain / (*ivm).lambdaback);
+      imot++;
+   }
 }
 
 
-int
+   int
 GroupInstance::distance(const GroupInstance & gi)
 {
-    if (chrom != gi.chrom) return 10000000;
-    else return abs(start - gi.start);
+   if (chrom != gi.chrom) return 10000000;
+   else return abs(start - gi.start);
 }
 
-void
+   void
 GroupInstance::isdiscarded()
 {
-    if (besttss.gene == "") discarded = 1;
-    //   for (ivTSS ivt=TSSs.begin();ivt!=TSSs.end();ivt++){
-    //      if ((*ivt).gene=="phyl" ||
-    //            (*ivt).gene=="spdo" ||
-    //            (*ivt).gene=="vvl" ||
-    //            (*ivt).gene=="neur" ||
-    //            (*ivt).gene=="chn" ||
-    //            (*ivt).gene=="PFE" ||
-    //            (*ivt).gene=="CG32150" ||
-    //            (*ivt).gene=="mira" ||
-    //            (*ivt).gene=="CG9363" ||
-    //            (*ivt).gene=="cpo" ||
-    //            (*ivt).gene=="sens" ||
-    //            (*ivt).gene=="CG32392" ||
-    //            (*ivt).gene=="sv" ||
-    //            (*ivt).gene=="insv") {
-    //         discarded=1;
-    //         break;
-    //      }
-    //   }
+   if (besttss.gene == "") discarded = 1;
+   //   for (ivTSS ivt=TSSs.begin();ivt!=TSSs.end();ivt++){
+   //      if ((*ivt).gene=="phyl" ||
+   //            (*ivt).gene=="spdo" ||
+   //            (*ivt).gene=="vvl" ||
+   //            (*ivt).gene=="neur" ||
+   //            (*ivt).gene=="chn" ||
+   //            (*ivt).gene=="PFE" ||
+   //            (*ivt).gene=="CG32150" ||
+   //            (*ivt).gene=="mira" ||
+   //            (*ivt).gene=="CG9363" ||
+   //            (*ivt).gene=="cpo" ||
+   //            (*ivt).gene=="sens" ||
+   //            (*ivt).gene=="CG32392" ||
+   //            (*ivt).gene=="sv" ||
+   //            (*ivt).gene=="insv") {
+   //         discarded=1;
+   //         break;
+   //      }
+   //   }
 }
 
-void
+   void
 displayhist(vginst & vgi, ostream & ostr)
 {
-    ostr << "Pos\tName\n";
-    unsigned int pos = 1;
-    for (ivginst ivg = vgi.begin(); ivg != vgi.end(); ivg++) {
-        if (!(*ivg).discarded) {
-            if ((*ivg).goodpheno) {
-                ostr << pos << "\t" << (*ivg).besttss.gene << "\n";
-            }
-            //if ((*ivg).besttss.gene.substr(0,2)!="CG"){
-            pos++;
-            //}
-        }
-    }
+   ostr << "Pos\tName\n";
+   unsigned int pos = 1;
+   for (ivginst ivg = vgi.begin(); ivg != vgi.end(); ivg++) {
+      if (!(*ivg).discarded) {
+         if ((*ivg).goodpheno) {
+            ostr << pos << "\t" << (*ivg).besttss.gene << "\n";
+         }
+         //if ((*ivg).besttss.gene.substr(0,2)!="CG"){
+         pos++;
+         //}
+      }
+   }
 }
 
-void
+   void
 displayhist_set(vginst & vgi, vstring geneset, ostream & ostr)
 {
-    ostr << "Score\tName\n";
-    for (ivstring ivs = geneset.begin(); ivs != geneset.end(); ivs++) {
-        double scoregene = 0;
-        for (ivginst ivg = vgi.begin(); ivg != vgi.end(); ivg++) {
-            if ((*ivg).besttss.gene == *ivs) {
-                if ((*ivg).score > scoregene) {
-                    scoregene = (*ivg).score;
-                }
+   ostr << "Score\tName\n";
+   for (ivstring ivs = geneset.begin(); ivs != geneset.end(); ivs++) {
+      double scoregene = 0;
+      for (ivginst ivg = vgi.begin(); ivg != vgi.end(); ivg++) {
+         if ((*ivg).besttss.gene == *ivs) {
+            if ((*ivg).score > scoregene) {
+               scoregene = (*ivg).score;
             }
-        }
-        ostr << scoregene << "\t" << *ivs << "\n";
-    }
+         }
+      }
+      ostr << scoregene << "\t" << *ivs << "\n";
+   }
 }
 
 double ic;
 
-double
+   double
 funcroot(double x, void * params)
 {
-    double f = 2 * conca * (gsl_sf_psi(x + 1) - gsl_sf_psi(x / conca + 1) - log(conca)) + 2 * concc * (gsl_sf_psi(concc * x / conca + 1) - gsl_sf_psi(x / conca + 1) - log(concc)) - ic;
-    return f;
+   double f = 2 * conca * (gsl_sf_psi(x + 1) - gsl_sf_psi(x / conca + 1) - log(conca)) + 2 * concc * (gsl_sf_psi(concc * x / conca + 1) - gsl_sf_psi(x / conca + 1) - log(concc)) - ic;
+   return f;
 }
 
-double
+   double
 funcroot_deriv(double x, void * params)
 {
-    double df = 2 * conca * (gsl_sf_psi_1(x + 1) - gsl_sf_psi_1(x / conca + 1) / conca) + 2 * concc * (gsl_sf_psi_1(concc * x / conca + 1) * concc / conca - gsl_sf_psi_1(x / conca + 1) / conca);
-    return df;
+   double df = 2 * conca * (gsl_sf_psi_1(x + 1) - gsl_sf_psi_1(x / conca + 1) / conca) + 2 * concc * (gsl_sf_psi_1(concc * x / conca + 1) * concc / conca - gsl_sf_psi_1(x / conca + 1) / conca);
+   return df;
 }
 
-void
+   void
 funcroot_fdf(double x, void * params, double * y, double * dy)
 {
-    *y = funcroot(x, NULL);
-    *dy = funcroot_deriv(x, NULL);
+   *y = funcroot(x, NULL);
+   *dy = funcroot_deriv(x, NULL);
 }
 
 
@@ -1309,137 +1596,137 @@ funcroot_fdf(double x, void * params, double * y, double * dy)
  *  Description:  Compute the base priors
  * =====================================================================================
  */
-int
+   int
 compalpha()
 {
-    int status;
-    int iter = 0, max_iter = 100;
-    const gsl_root_fdfsolver_type * T;
-    gsl_root_fdfsolver * s;
-    double x0, x = 0.1;
-    gsl_function_fdf FDF;
-    ic = scorethr2 / width;
-    FDF.f = &funcroot;
-    FDF.df = &funcroot_deriv;
-    FDF.fdf = &funcroot_fdf;
-    FDF.params = NULL;
-    T = gsl_root_fdfsolver_newton;
-    s = gsl_root_fdfsolver_alloc(T);
-    gsl_root_fdfsolver_set(s, &FDF, x);
-    do {
-        iter++;
-        status = gsl_root_fdfsolver_iterate(s);
-        x0 = x;
-        x = gsl_root_fdfsolver_root(s);
-        status = gsl_root_test_delta(x, x0, 0, 1e-3);
-    } while (status == GSL_CONTINUE && iter < max_iter);
-    alpha = x;
-    beta = concc / conca * alpha;
-    gsl_root_fdfsolver_free(s);
-    return status;
+   int status;
+   int iter = 0, max_iter = 100;
+   const gsl_root_fdfsolver_type * T;
+   gsl_root_fdfsolver * s;
+   double x0, x = 0.1;
+   gsl_function_fdf FDF;
+   ic = scorethr2 / width;
+   FDF.f = &funcroot;
+   FDF.df = &funcroot_deriv;
+   FDF.fdf = &funcroot_fdf;
+   FDF.params = NULL;
+   T = gsl_root_fdfsolver_newton;
+   s = gsl_root_fdfsolver_alloc(T);
+   gsl_root_fdfsolver_set(s, &FDF, x);
+   do {
+      iter++;
+      status = gsl_root_fdfsolver_iterate(s);
+      x0 = x;
+      x = gsl_root_fdfsolver_root(s);
+      status = gsl_root_test_delta(x, x0, 0, 1e-3);
+   } while (status == GSL_CONTINUE && iter < max_iter);
+   alpha = x;
+   beta = concc / conca * alpha;
+   gsl_root_fdfsolver_free(s);
+   return status;
 }
 
-void
+   void
 displaymat(vvd & mat)
 {
-    cout.precision(4);
-    for (int i = 0; i < 4; i++) {
-        for (unsigned int j = 0; j < mat.size(); j++) {
-            cout << mat[j][i] << "\t";
-        }
-        cout << "\n";
-    }
-    cout << "\n";
-    cout.precision(6);
-    return;
+   cout.precision(4);
+   for (int i = 0; i < 4; i++) {
+      for (unsigned int j = 0; j < mat.size(); j++) {
+         cout << mat[j][i] << "\t";
+      }
+      cout << "\n";
+   }
+   cout << "\n";
+   cout.precision(6);
+   return;
 }
 
-void
+   void
 matfreqdisp(vvd & matrice)
 {
-    vd dum(4, 0.0);
-    vvd mat(width, dum);
-    int j = 0;
-    for (vvd::iterator imat = matrice.begin(); imat != matrice.end(); imat++) {
-        vd & col = *imat;
-        double col0 = 0.3 * exp(col[0]); //A
-        double col2 = 0.2 * exp(col[2]); //C
-        double col3 = 0.2 * exp(col[3]); //G
-        double col1 = 0.3 * exp(col[1]); //T
-        //convert in A/C/G/T format.
-        mat[j][0] = col0; //floor(100*col0);//A
-        mat[j][1] = col1; //floor(100*col2);//T
-        mat[j][2] = col2; //floor(100*col3);//C
-        mat[j][3] = col3; //floor(100*col1);//G
-        j++;
-    }
-    cout << "A ";
-    for (vvd::const_iterator imat = mat.begin(); imat != mat.end(); imat++) {
-        cout << (*imat)[0] << " ";
-    }
-    cout << "\nT ";
-    for (vvd::const_iterator imat = mat.begin(); imat != mat.end(); imat++) {
-        cout << (*imat)[1] << " ";
-    }
-    cout << "\nC ";
-    for (vvd::const_iterator imat = mat.begin(); imat != mat.end(); imat++) {
-        cout << (*imat)[2] << " ";
-    }
-    cout << "\nG ";
-    for (vvd::const_iterator imat = mat.begin(); imat != mat.end(); imat++) {
-        cout << (*imat)[3] << " ";
-    }
-    cout << "\n";
-    return;
+   vd dum(4, 0.0);
+   vvd mat(width, dum);
+   int j = 0;
+   for (vvd::iterator imat = matrice.begin(); imat != matrice.end(); imat++) {
+      vd & col = *imat;
+      double col0 = 0.3 * exp(col[0]); //A
+      double col2 = 0.2 * exp(col[2]); //C
+      double col3 = 0.2 * exp(col[3]); //G
+      double col1 = 0.3 * exp(col[1]); //T
+      //convert in A/C/G/T format.
+      mat[j][0] = col0; //floor(100*col0);//A
+      mat[j][1] = col1; //floor(100*col2);//T
+      mat[j][2] = col2; //floor(100*col3);//C
+      mat[j][3] = col3; //floor(100*col1);//G
+      j++;
+   }
+   cout << "A ";
+   for (vvd::const_iterator imat = mat.begin(); imat != mat.end(); imat++) {
+      cout << (*imat)[0] << " ";
+   }
+   cout << "\nT ";
+   for (vvd::const_iterator imat = mat.begin(); imat != mat.end(); imat++) {
+      cout << (*imat)[1] << " ";
+   }
+   cout << "\nC ";
+   for (vvd::const_iterator imat = mat.begin(); imat != mat.end(); imat++) {
+      cout << (*imat)[2] << " ";
+   }
+   cout << "\nG ";
+   for (vvd::const_iterator imat = mat.begin(); imat != mat.end(); imat++) {
+      cout << (*imat)[3] << " ";
+   }
+   cout << "\n";
+   return;
 }
 
-void
+   void
 scanseqforinstances(Sequence & seq, vmot & mots)
 {
-    seq.instances.clear();
-    for (ivmot im = mots.begin(); im != min(mots.end(), mots.begin() + nbmots_for_score); im++) {
-        im->findinstances(seq);
-    }
-    return;
+   seq.instances.clear();
+   for (ivmot im = mots.begin(); im != min(mots.end(), mots.begin() + nbmots_for_score); im++) {
+      im->findinstances(seq);
+   }
+   return;
 }
 
-void
+   void
 scanseqsforinstances(vseq & align, vmot & mots)
 {
-    for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
-        scanseqforinstances(*ivs, mots);
-    }
-    return;
+   for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
+      scanseqforinstances(*ivs, mots);
+   }
+   return;
 }
 
-void
+   void
 scanseqsforinstances(vseq & align, Motif & mot)
 {
-    vmot mots;
-    mots.push_back(mot);
-    for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
-        scanseqforinstances(*ivs, mots);
-    }
-    return;
+   vmot mots;
+   mots.push_back(mot);
+   for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
+      scanseqforinstances(*ivs, mots);
+   }
+   return;
 }
 
-void
+   void
 scanseqforinstancesnmask(Sequence & seq, vmot & mots)
 {
-    // We mask a tmp sequence
-    Sequence seqtomask = seq;
-    for (ivmot im = mots.begin(); im != min(mots.end(), mots.begin() + nbmots_for_score); im++) {
-        im->findinstancesnmask(seqtomask);
-    }
-    seq.instances = seqtomask.instances;
+   // We mask a tmp sequence
+   Sequence seqtomask = seq;
+   for (ivmot im = mots.begin(); im != min(mots.end(), mots.begin() + nbmots_for_score); im++) {
+      im->findinstancesnmask(seqtomask);
+   }
+   seq.instances = seqtomask.instances;
 }
 
-void
+   void
 scanseqsforinstancesnmask(vseq & align, vmot & mots)
 {
-    for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
-        scanseqforinstancesnmask(*ivs, mots);
-    }
+   for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
+      scanseqforinstancesnmask(*ivs, mots);
+   }
 }
 
 
