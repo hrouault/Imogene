@@ -238,17 +238,17 @@ inittreedist()
     pc = concc;
     treedist.clear();
     if (species == "droso") {
-        treedist.push_back(noeud(1, 2, 12, 0.017, 0.021)); // 12
-        treedist.push_back(noeud(0, 12, 13, 0.0518, 0.028)); // 13
-        treedist.push_back(noeud(3, 4, 14, 0.0885, 0.0780)); // 14
-        treedist.push_back(noeud(13, 14, 15, 0.0623, 0.0308)); // 15
-        treedist.push_back(noeud(5, 15, 16, 0.82, 0.58)); // 16
-        treedist.push_back(noeud(6, 7, 17, 0.0056, 0.0140)); // 17
-        treedist.push_back(noeud(16, 17, 18, 0.11, 0.4876)); // 18
-        treedist.push_back(noeud(9, 10, 19, 0.3118, 0.358)); // 19
-        treedist.push_back(noeud(11, 19, 20, 0.3598, 0.056)); // 20
-        treedist.push_back(noeud(8, 18, 21, 0.6513, 0.078)); // 21
-        treedist.push_back(noeud(20, 21, 22, 0.2092, 0.0150)); // 22
+        treedist.push_back(noeud(1,2,12,0.02,0.03)); // 12                           
+        treedist.push_back(noeud(0,12,13,0.07,0.03)); // 13                        
+        treedist.push_back(noeud(3,4,14,0.11,0.10)); // 14                         
+        treedist.push_back(noeud(13,14,15,0.07,0.04)); // 15                       
+        treedist.push_back(noeud(5,15,16,0.82,0.58)); // 16                        
+        treedist.push_back(noeud(6,7,17,0.01,0.02)); // 17                         
+        treedist.push_back(noeud(16,17,18,0.35,0.68)); // 18                       
+        treedist.push_back(noeud(9,10,19,0.35,0.49)); // 19                        
+        treedist.push_back(noeud(11,19,20,0.46,0.10)); // 20                       
+        treedist.push_back(noeud(8,20,21,1.16,0.42)); // 21                        
+        treedist.push_back(noeud(18,21,22,0.14,0.15)); // 22 
         noemax = 22;
     } else if (species == "eutherian") {
         // Arbre de ensembl epo 12 eutharian
