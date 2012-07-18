@@ -68,7 +68,7 @@ def geturl(url, md5sum):
 
 
     f.close()
-    if h.hexdigest() != md5sum:
+    if md5sum != '' and h.hexdigest() != md5sum:
         print "The md5 sum of file {0} is not correct!".format(file_name)
         sys.exit(1)
 
@@ -235,7 +235,7 @@ if args.species == 'eutherian':
         message('Getting UCSC refGene annotation file for\nTSS coordinates...')
         refgenecomp = refgenefn + '.gz'
         geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/' +
-               refgenecomp, hashes[refgenecomp])
+               refgenecomp, '')
         files_present.append(refgenecomp)
 
     musmusc_annotfn = 'Mus_musculus.NCBIM37.64.gtf'
