@@ -52,14 +52,6 @@ C++ and make
 conversion
 @end itemize
 
-For compiling mobyle related files:
-
-@itemize
-@item python markdown2
-@end itemize
-
-you will then need to indicate that you want to create mobyle files with the @command{--enable-mobyle} option if the @command{configure} script.
-
 If you use a development version, you will need some additional tools:
 @itemize
 @item GNU Automake: @uref{http://www.gnu.org/software/autoconf}
@@ -69,12 +61,26 @@ If you use a development version, you will need some additional tools:
 @end itemize
 Many standard Unix systems include packages for these tools.  
 
-In fact many files included in the distribution version have been generated automatically and are thus not included in the development version.
+In fact many files included in the distribution version have been generated
+automatically and are thus not included in the development version.
 
-@section Quick install
 
-The first step is to invoke the usual commands to install a package (once you have extracted to tarball)@footnote{Note that if you use the development version from github, you have first to generate the configure script using @command{./autogen.sh}}:
+@section Installation
+
+@subsection Quick procedure for distribution versions
+
+These instructions apply to the distribution versions only. More detailed
+instructions can be found in the file @file{INSTALL} available in the tarball
+file imogene-version.tar.gz.
+
+Start by unzipping the tarball:
 @example 
+tar xvzf imogene-version.tar.gz
+cd imogene-version
+@end example
+
+Invoke then the usual commands to install a package:
+@example
 mkdir build
 cd build
 ../configure --prefix="install/full/path"
@@ -82,7 +88,44 @@ make
 make install
 @end example
 
+@emph{Imogene} provides description files for the @emph{Mobyle} interface. You
+can install it by appending @command{--enable-mobyle} to the configure command:
+@example
+../configure --prefix="install/full/path" --enable-mobyle
+@end example
+
+For compiling mobyle related files:
+
+you will then need to indicate that you want to create mobyle files with the
+@command{--enable-mobyle} option if the @command{configure} script.
+
+@emph{Imogene} is now installed but cannot be used yet. You will need to
+download the genomic alignment files (see next sections).
+
+@subsection Development version
+
+Note that if you use the development version from github, you have to first
+automatically generate files that are normally provided within the tarball:
+@example
+git clone http://github.com/hrouault/Imogene.git
+cd Imogene
+./autogen.sh
+@end example
+
+The instructions are then identical to the distribution version:
+@example
+mkdir build
+cd build
+../configure --prefix="install/full/path"
+make
+make install
+@end example
+
+
 @section Alignment files download
+
+@emph{Imogene} provides a helper script to download the necessary genomic alignment files. This script is present in 
+
 
 To download the genomes, you have to execute the proper python script:
 @command{python $PREFIX/lib/python-yourversion/site-packages/getalign-@{droso,eutherian@}.py}
@@ -108,4 +151,8 @@ You have to execute the command @command{python $PREFIX/lib/python-yourversion/s
 
 @subsection Download the alignements corresponding to the background coordinates
 
-You have to execute the command @command{imogene extract -i coordinate_file -s species --background}. If you want for instance, download the alignment for the drosophila background with the coordinates provided with the package, you would type @command{imogene extract -i $(prefix)/share/imogene/background-droso-coords.dat -s droso --background}.
+You have to execute the command @command{imogene extract -i coordinate_file -s
+species --background}. If you want for instance, download the alignment for the
+drosophila background with the coordinates provided with the package, you would
+type @command{imogene extract -i
+$(prefix)/share/imogene/background-droso-coords.dat -s droso --background}.

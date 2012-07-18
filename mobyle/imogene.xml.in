@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- This file has been adapted for the needs of imogene by                      -->
-<!-- Hervé Rouault <rouault@lps.ens.fr                                           -->
+<!-- Hervé Rouault <rouault@lps.ens.fr>                                          -->
 <!--                                                                             -->
 <!--                                                                             -->
 <!-- XML Authors: Corinne Maufrais                                               -->
@@ -22,8 +22,7 @@
                 modules underlying gene coregulation using statistics and
                 phylogeny. Proc. Natl. Acad. Sci. U.S.A., 107:14615-14620,
                 Aug 2010.</reference>
-            <doclink>http://hrouault.github.com/Imogene#Mobyle</doclink>
-            <doclink>http://hrouault.github.com/Imogene</doclink>
+            <doclink>https://github.com/hrouault/Imogene</doclink>
             <comment>
                 <div xmlns="http://www.w3.org/1999/xhtml">
                     <em> Imogene</em> aims at two main purposes:
@@ -46,6 +45,7 @@
                         <em>github</em>: <a href="https://github.com/hrouault/Imogene">https://github.com/hrouault/Imogene</a>.
                         It contains the main source code, as well as a
                         documentation and local installation instructions.
+                        An online manual can also be found <a href="http://hrouault.github.com/Imogene">here</a>.
                         Any trouble concerning its installation or bugs should
                         be addressed on <em>github</em>.</p>
 
@@ -189,7 +189,7 @@
                         </datatype>
                     </type>
                     <vdef>
-                        <value>13.0</value>
+                        <value>10.0</value>
                     </vdef>
                     <comment>
                         <div xmlns="http://www.w3.org/1999/xhtml">
@@ -306,7 +306,21 @@
                         <text lang="en">sequence_name chromosome_arm start_pos stop_pos</text>
                         <text lang="en">For drosophilae, coordinates should correspond to the release 5 assembly.</text>
                     </comment>
-                    <example>chrX 10000 11000 seq_name1\nchr2L 20000 23000 seq_name2\nchr3L 30000 35000 seq_name3</example>
+                    <example>chr1    6719314    6720399   ST18(intragenic)
+chr1  167864366  167866439   POU2F1(intragenic)
+chr1  179080168  179081586   AKT3(intragenic)
+chr3   16776170   16778776   YTHDF3-BHLHB5
+chr4   98961102   98962673   APG4C-FOXD3
+chr4   99040833   99042291   APG4C-FOXD3
+chr4   99240573   99241457   ATG4C-FOXD3
+chr6  137772070  137773298   DERA(intragenic)
+chr7   37729672   37730763   ZNF536-ZNF537
+chr9   71823775   71824538   TCF12(intragenic)
+chr11  25256346   25257683   FANCL-BCL11A
+chr11  44469978   44471372   EBF1(intragenic)
+chr12  47121350   47122759   STXBP6-NOVA1
+chr13  73170587   73173631   IRX4-IRX2
+chrX   57972482   57973750   LOC347487-SOX3</example>
                 </parameter>
 
                 <parameter ishidden="1">
@@ -481,7 +495,7 @@
                             <p>Enhancers are predicted on the basis of the
                                 presence of binding sites corresponding to
                                 chosen motifs. You must input an ordered list of
-                                motifs generated either by yourself or by the <em>genmot</em> mode. The number of considered motifs will be the top <em>n</em>, where <em>n</em> is the integer indicated here.
+                                motifs generated either by yourself or by the <em>genmot</em> mode. The number of considered motifs will be the top <em>n</em>, where <em>n</em> is the integer indicated here.</p>
                         </div>
                     </comment>
                 </parameter>

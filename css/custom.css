@@ -13,49 +13,53 @@ h3 {
 pre, code, tt {font:1.3em monospace;line-height:1.5;}
 
 .mot1 {
-   color: #E0401C;
-   background: #471209;
+   color: #E57272;
+   background: #FAE3E3;
    font-weight:bold;
 }
 
 .mot2 {
-   color: #E5B051;
-   background: #E2D5C0;
+   color: #99995B;
+   background: #EAEADB;
    font-weight:bold;
 }
 
 .mot3 {
-   color: #272F30;
-   background: #A8CACC;
+   color: #E5E55B;
+   background: #F9F9DA;
    font-weight:bold;
 }
 
 .mot4 {
-   color: #F7EDB7;
-   background: #F4CF31;
+   color: #5B6B99;
+   background: #DBDFEA;
    font-weight:bold;
 }
 
 .mot5 {
-   color: #9E2B20;
-   background: ;
+   color: #5B7EE5;
+   background: #DAE2F9;
    font-weight:bold;
 }
 
 table tr:nth-child(even) td.mot1 {
-  background: #730046;
+  background: #E57272;
 }
 
 td.mot2 {
-   background: #BFBB11;
+   background: #99995B;
 }
 
 table tr:nth-child(even) td.mot3 {
-  background: #FFC200;
+  background: #E5E55B;
 }
 
 td.mot4 {
-   background: #E88801;
+   background: #5B6B99;
+}
+
+table tr:nth-child(even) td.mot5 {
+  background: #5B7EE5;
 }
 
 .conserved {

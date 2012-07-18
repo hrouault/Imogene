@@ -34,4 +34,4 @@ display.help: $(top_builddir)/src/imogene
 AM_MAKEINFOHTMLFLAGS = --no-split
 
 info_TEXINFOS = imogene.texi
-imogene_TEXINFOS = fdl.texi extract.texi extract.help distinfo.texi distinfo.help genmot.texi genmot.help install.texi display.texi display.help test.texi
+imogene_TEXINFOS = fdl.texi extract.texi extract.help distinfo.texi distinfo.help genmot.texi genmot.help install.texi display.texi display.help test.texi mobyle.texi imogene-mob.png
