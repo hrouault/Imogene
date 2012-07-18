@@ -231,12 +231,11 @@ os.chdir("annot")
 
 if args.species == 'eutherian':
     refgenefn = 'refGene.txt'
-    if not check_wuncomp(refgenefn):
-        message('Getting UCSC refGene annotation file for\nTSS coordinates...')
-        refgenecomp = refgenefn + '.gz'
-        geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/' +
-               refgenecomp, '')
-        files_present.append(refgenecomp)
+    message('Getting UCSC refGene annotation file for\nTSS coordinates...')
+    refgenecomp = refgenefn + '.gz'
+    geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/' +
+           refgenecomp, '')
+    files_present.append(refgenecomp)
 
     musmusc_annotfn = 'Mus_musculus.NCBIM37.64.gtf'
     if not check_wuncomp(musmusc_annotfn):
