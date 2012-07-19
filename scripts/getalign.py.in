@@ -289,6 +289,7 @@ if args.species == 'eutherian':
             ifile += 1
 
     message('Converting EMF files to fasta...')
+    sys.path.append("@pythonexecdir@")
     import emf2fasta
     for emff in glob.glob('*.emf'):
         emf2fasta.emf2fasta(emff)
