@@ -29,7 +29,7 @@ EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
 do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g'\
 		       -e 's,[@]pythondir[@],$(pythondir),g'\
                -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'\
-               -e 's,[@]pkgexecdir[@],$(pkgexecdir),g'
+               -e 's,[@]pyexecdir[@],$(pyexecdir),g'
 
 getalign: getalign.py.in
 	$(do_subst) < $< > $@
