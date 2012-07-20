@@ -100,26 +100,28 @@ def message(messagestr):
 def checkexist(filename, md5sum):
     try:
         h = hashlib.md5()
-        if filename[-4:] != ".emf":
-            with open(filename) as file:
-                chunk = ' '
-                while chunk:
-                    chunk = file.read(32768)
-                    h.update(chunk)
-            if h.hexdigest() == md5sum:
-                print ('File {0} is already present.                    \r'
-                       .format(filename)), 
-                sys.stdout.flush()
-                return True
-            else:
-                print ('File {0} is present but seems to be corrupted. '
-                       'Re-downloading it.').format(filename)
-                return False
-        else:
+# Uncomment when alignments are already downloaded and you don't want to waste
+# your time (uncomment also the else directive, and indent to following block)
+#        if filename[-4:] != ".emf":
+        with open(filename) as file:
+            chunk = ' '
+            while chunk:
+                chunk = file.read(32768)
+                h.update(chunk)
+        if h.hexdigest() == md5sum:
             print ('File {0} is already present.                    \r'
                    .format(filename)), 
             sys.stdout.flush()
             return True
+        else:
+            print ('File {0} is present but seems to be corrupted. '
+                   'Re-downloading it.').format(filename)
+            return False
+#        else:
+#            print ('File {0} is already present.                    \r'
+#                   .format(filename)), 
+#            sys.stdout.flush()
+#            return True
     except IOError as e:
         return False
 
