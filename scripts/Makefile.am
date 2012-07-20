@@ -18,7 +18,7 @@
 # along with Imogene; see the file COPYING  If not,
 # see <http://www.gnu.org/licenses/>.
 
-bin_SCRIPTS = getalign extractbackground weblogo-display
+bin_SCRIPTS = getalign extract-bgrnd-coord weblogo-display
 nodist_python_PYTHON = mapping.py
 
 CLEANFILES = $(bin_SCRIPTS)
@@ -38,7 +38,7 @@ getalign: getalign.py.in
 mapping.py: mapping.py.in
 	$(do_subst) < $< > $@
 
-extractbackground: extractbackground.py.in
+extract-bgrnd-coord: extract-bgrnd-coord.py.in
 	$(do_subst) < $< > $@
 	chmod +x $@
 
