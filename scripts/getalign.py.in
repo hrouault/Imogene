@@ -100,6 +100,9 @@ def message(messagestr):
 def checkexist(filename, md5sum):
     try:
         h = hashlib.md5()
+# Uncomment when alignments are already downloaded and you don't want to waste
+# your time (uncomment also the else directive, and indent to following block)
+#        if filename[-4:] != ".emf":
         with open(filename) as file:
             chunk = ' '
             while chunk:
@@ -114,6 +117,11 @@ def checkexist(filename, md5sum):
             print ('File {0} is present but seems to be corrupted. '
                    'Re-downloading it.').format(filename)
             return False
+#        else:
+#            print ('File {0} is already present.                    \r'
+#                   .format(filename)), 
+#            sys.stdout.flush()
+#            return True
     except IOError as e:
         return False
 
@@ -289,7 +297,7 @@ if args.species == 'eutherian':
             ifile += 1
 
     message('Converting EMF files to fasta...')
-    sys.path.append("@pythonexecdir@")
+    sys.path.append("@pyexecdir@")
     import emf2fasta
     for emff in glob.glob('*.emf'):
         emf2fasta.emf2fasta(emff)
