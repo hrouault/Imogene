@@ -68,7 +68,7 @@ def geturl(url, md5sum):
 
 
     f.close()
-    if md5sum != '' and h.hexdigest() != md5sum:
+    if h.hexdigest() != md5sum:
         print "The md5 sum of file {0} is not correct!".format(file_name)
         sys.exit(1)
 
@@ -233,8 +233,8 @@ if args.species == 'eutherian':
     refgenefn = 'refGene.txt'
     message('Getting UCSC refGene annotation file for\nTSS coordinates...')
     refgenecomp = refgenefn + '.gz'
-    geturl('http://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/' +
-           refgenecomp, '')
+    geturl('https://github.com/downloads/hrouault/Imogene/' +
+           refgenecomp, hashes[refgenecomp])
     files_present.append(refgenecomp)
 
     musmusc_annotfn = 'Mus_musculus.NCBIM37.64.gtf'
@@ -325,7 +325,8 @@ message('Extracting annotation archive...')
 cds = []
 repeat = []
 if args.species == 'eutherian':
-    gunzip('refGene.txt.gz')
+    if 'refGene.txt' not in files_present:
+        gunzip('refGene.txt.gz')
     message('TSS coordinates extraction.')
 
     ## Here we add 1 to the start positions (UCSC files are 0-based)
@@ -348,7 +349,8 @@ if args.species == 'eutherian':
             glist.write('{0}\n'.format(i))
 
     message('Extracting CDS coordinates archive...')
-    gunzip('Mus_musculus.NCBIM37.64.gtf.gz')
+    if 'Mus_musculus.NCBIM37.64.gtf' not in files_present:
+        gunzip('Mus_musculus.NCBIM37.64.gtf.gz')
 
     message('CDS coordinates extraction.')
     with open('Mus_musculus.NCBIM37.64.gtf') as fgtf:
