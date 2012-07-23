@@ -18,7 +18,7 @@
 # along with Imogene; see the file COPYING  If not,
 # see <http://www.gnu.org/licenses/>.
 
-bin_SCRIPTS = getalign extractbackground weblogo-display
+bin_SCRIPTS = getalign extract-bgrnd-coord weblogo-display
 nodist_python_PYTHON = mapping.py
 
 CLEANFILES = $(bin_SCRIPTS)
@@ -29,7 +29,7 @@ EXTRA_DIST = getalign.py.in mapping.py.in extractbackground.py.in\
 do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g'\
 		       -e 's,[@]pythondir[@],$(pythondir),g'\
                -e 's,[@]pkgdatadir[@],$(pkgdatadir),g'\
-               -e 's,[@]pkgexecdir[@],$(pkgexecdir),g'
+               -e 's,[@]pyexecdir[@],$(pyexecdir),g'
 
 getalign: getalign.py.in
 	$(do_subst) < $< > $@
@@ -38,7 +38,7 @@ getalign: getalign.py.in
 mapping.py: mapping.py.in
 	$(do_subst) < $< > $@
 
-extractbackground: extractbackground.py.in
+extract-bgrnd-coord: extract-bgrnd-coord.py.in
 	$(do_subst) < $< > $@
 	chmod +x $@
 
