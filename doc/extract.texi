@@ -28,13 +28,14 @@ This is the output of @code{imogene extract --help}:
 @include extract.help
 @end smallexample
 
-You mainly need to provide a coordinate file in the form of:
+You mainly need to provide a coordinate file in the BED4 format:
 
 @smallexample
-enhancer1 2L 2345  3456
-enhancer2 2R 4567  5678
+chr2L 2345  3456 enhancer1 
+chr2R 4567  5678 enhancer2
 @end smallexample
 
+The coordinates should use the release 5 (or dm3) system for @emph{Drosophila Melanogaster} and the mm9 system for @emph{Mus Musculus}.
 You can find example files in the folder @file{example} of the tarball. You can then try:
 @smallexample
 imogene extract --input example/enhancer-coords.dat
