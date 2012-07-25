@@ -128,7 +128,7 @@ make install
 
 
 To download the genomes, you have to execute the proper python script:
-@command{python $PREFIX/lib/python-yourversion/site-packages/getalign-@{droso,eutherian@}.py}
+@command{python $PREFIX/bin/getalign}
 
 
 @section Background sequences generation
@@ -147,12 +147,12 @@ This step generates coordinates for background sequences. Note that background
 coordinates are already provided by the package so that this step is completely
 optional.
 
-You have to execute the command @command{python $PREFIX/lib/python-yourversion/site-packages/extractbackground-@{droso,eutherian@}.py > your-background-coords.dat}. 
+You have to execute the command @command{python $PREFIX/bin/extract-bgrnd-coord > your-background-coords.bed}. 
 
 @subsection Download the alignements corresponding to the background coordinates
 
 You have to execute the command @command{imogene extract -i coordinate_file -s
-species --background}. If you want for instance, download the alignment for the
-drosophila background with the coordinates provided with the package, you would
+species --background}. If you want for instance to download the alignment for the
+drosophila background with the coordinates provided with the package, you should
 type @command{imogene extract -i
-$(prefix)/share/imogene/background-droso-coords.dat -s droso --background}.
+$PREFIX/share/imogene/background-droso-coords.dat -s droso --background}.
