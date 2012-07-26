@@ -304,12 +304,12 @@ check_freq_matrix(const double * w_full)
 }
 
 int
-transition_rates_halpern(const double * w_full, double * rates)
+transition_rates_halpern(double * rates)
 {
-    double w0 = w_full[0];
-    double w1 = w_full[1];
-    double w2 = w_full[2];
-    double w3 = w_full[3];
+    double w0 = w[0];
+    double w1 = w[1];
+    double w2 = w[2];
+    double w3 = w[3];
 
     double fat = proba_fixation_rel(w3 / w0);
     double fac = proba_fixation_rel(pa * w1 / pc / w0);
@@ -363,7 +363,7 @@ printmat(double * m)
 }
 
 int
-update_transi_halpern(double * w_full)
+update_transi_halpern()
 {
     // The linalg calculus consists in:
     // construct V = L^-1 T L with L_ij = sqrt(pi_i) delta_ij
@@ -377,7 +377,7 @@ update_transi_halpern(double * w_full)
 
     int n = 4;
 
-    transition_rates_halpern(w_full, rates);
+    transition_rates_halpern(rates);
 
     double * l = new double[n];
     double * lm1 = new double[n];
@@ -385,7 +385,7 @@ update_transi_halpern(double * w_full)
 
     // Build l
     for (unsigned int i = 0 ; i < n ; i++){
-        l[i] = sqrt(w_full[i]);
+        l[i] = sqrt(w[i]);
         lm1[i] = 1 / l[i];
     }
 
@@ -616,6 +616,9 @@ loglikelyhood(void * params)
     void ** par = (void **) params;
     Motif & mot = *((Motif *)(par[0]));
     const unsigned int pos = *((const unsigned int *)(par[1]));
+
+    /* update the transition rates in the tree */
+    update_transi_halpern();
 
     double logli = 0;
     for (ivma ima = mot.seqs.begin(); ima != mot.seqs.end(); ima++) {
