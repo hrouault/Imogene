@@ -202,9 +202,7 @@ ostream & operator <<(ostream & os, const vcombi & vcomb);
 vd colmean(unsigned int pos, Motif * mot);
 vd colopti(unsigned int pos, Motif * mot);
 vd colinde(unsigned int pos, Motif * mot);
-double likelyhood(vd x, void * params);
-double loglikelyhood(vd x, void * params);
-double loglikely(const gsl_vector * v, void * params);
+
 void loadmots(const char * filename, vmot & mots);
 void loadmotsATCG(const char * filename, vmot & mots);
 

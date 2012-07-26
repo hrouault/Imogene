@@ -77,7 +77,7 @@ double pc;
 
 const double kappa = 2.0;
 
-double * w;
+double w[4];
 double rates[4 * 4];
 
 double fat, fac, fag, fta, ftc, ftg, fca, fct, fcg, fga, fgt, fgc;
@@ -635,12 +635,12 @@ initw(const double * w_pack){
 double
 posterior_priormax(const gsl_vector * w_pack, void * params)
 {
-    double logli = loglikelyhood(params);
     double w_pack2[3]; 
     for (unsigned int i = 0 ; i < 3 ; i++){
         w_pack2[i] = gsl_vector_get(w_pack, i);
     }
     initw(w_pack2);
+    double logli = loglikelyhood(params);
     logli += alpha * (log(w[0]) + log(w[3])) + beta * (log(w[1]) + log(w[2]));
     return -logli;
 }
@@ -648,12 +648,12 @@ posterior_priormax(const gsl_vector * w_pack, void * params)
 double
 posterior_priormean(vd w_pack, void * params)
 {
-    double logli = loglikelyhood(params);
     double w_pack2[3]; 
     for (unsigned int i = 0 ; i < 3 ; i++){
         w_pack2[i] = w_pack[i];
     }
     initw(w_pack2);
+    double logli = loglikelyhood(params);
     logli += alpha * (log(w[0]) + log(w[3])) + beta * (log(w[1]) + log(w[2]));
     return -logli;
 }
