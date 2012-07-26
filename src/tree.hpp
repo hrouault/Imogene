@@ -35,8 +35,18 @@ class noeud
         int esp1;
         int esp2;
         int noe;
+
+        // Proximity between 2 nodes (used for Felsenstein)
         double prox1;
         double prox2;
+
+        // Distances on the tree (used for Halpern-Bruno)
+        double dist1;
+        double dist2;
+
+        // Transition rate matrices
+        double * transi1;
+        double * transi2;
 
         noeud(int e1, int e2, int n, double p1, double p2);
 };
@@ -54,13 +64,16 @@ void inittreedist();
 int speciestonum(string name);//species2num
 string numtospecies(int num);//num2species
 
-int func(double t, const double y[], double f[], void * params);
-int jac(double t, const double y[], double * dfdy, double dfdt[], void * params);
 double proba_fixation_rel(double ratio);
 
-int instant_rates(const gsl_vector * w, gsl_matrix * rates);
 
 vd evolvedist_felsen(vd & probs, vd & freqs, double dist);
 vd evolvedist_halpern(vd & probs, vd & freqs, double dist);
+
+double posterior_priormax(const gsl_vector * w, void * params);
+
+double posterior_priormean(const gsl_vector * w, void * params);
+
+double loglikelyhood(const gsl_vector * w, void * params);
 
 #endif // Matcons_H

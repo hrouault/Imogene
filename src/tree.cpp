@@ -32,27 +32,40 @@ extern "C" {
     /* Tridiagonal reduction of a packed symmetric matrix, real single
      * precision
      */
-    int ssptrd_(char *uplo, int *n, float *ap, float *d__, float *e,
-                float *tau, int *info);
+    int dsptrd_(char *uplo, int *n, double *ap, double *d__, double *e,
+                double *tau, int *info);
 
     /* Multiplication of matrix after reduction, real single precision
      */
-    int sopmtr_(char *side, char *uplo, char *trans, int *m, int *n, float *ap,
-                float *tau, float *c__, int *ldc, float *work, int *info);
+    int dopmtr_(char *side, char *uplo, char *trans, int *m, int *n, double *ap,
+                double *tau, double *c__, int *ldc, double *work, int *info);
 
     /* Eigenvalue decomposition of a tridiagonal matrix
      */
-    int sstegr_(char *jobz, char *range, int *n, float *d__, float *e,
-                float *vl, float *vu, int *il, int *iu, float *abstol, 
-	            int *m, float *w, float *z__, int *ldz, int *isuppz,
-                float * work, int *lwork, int *iwork, int *liwork, int *info);
+    int dstegr_(char *jobz, char *range, int *n, double *d__, double *e,
+                double *vl, double *vu, int *il, int *iu, double *abstol, 
+	            int *m, double *eigs, double *z__, int *ldz, int *isuppz,
+                double * work, int *lwork, int *iwork, int *liwork, int *info);
+
+    /* transform vector into another vector
+     */
+    int daxpy_(int *n, double *da, double *dx, int *incx, double *dy, int *incy);
+
+    /* dot product
+     */
+    double ddot_(int *n, double *dx, int *incx, double *dy, int *incy);
+ 
+    /* Multiply a matrix by a vector
+     */
+    int dgemv_(char *trans, int *m, int *n, double * alpha, double *a,
+               int *lda, double *x, int *incx, double *beta, double *y,
+               int *incy);
 
     /* Multiply two matrices
      */
-
-    void sgemm_(const char *transa, const char *transb, int *l, int *n, int *m,
-               float *alpha, const void *a, int *lda, void *b, int *ldb,
-               float *beta, void *c, int *ldc);
+    int dgemm_(const char *transa, const char *transb, int *l, int *n, int *m,
+               double *alpha, const void *a, int *lda, void *b, int *ldb,
+               double *beta, void *c, int *ldc);
 }
 
 using namespace std;
@@ -64,7 +77,9 @@ double pc;
 
 const double kappa = 2.0;
 
-const double integr_step = 0.01; //0.01;//=0.001; //!! 0.001 instead of 0.01
+double * w;
+double rates[4 * 4];
+
 double fat, fac, fag, fta, ftc, ftg, fca, fct, fcg, fga, fgt, fgc;
 
 noeud::noeud(int e1, int e2, int n, double p1, double p2)
@@ -77,17 +92,15 @@ noeud::noeud(int e1, int e2, int n, double p1, double p2)
         dist2 = p2;
         prox1 = p1;
         prox2 = p2;
-        transi1 = new float[4 * 4];
-        transi2 = new float[4 * 4];
+        transi1 = new double[4 * 4];
+        transi2 = new double[4 * 4];
     } else if (evolutionary_model == 1) {
         double correction = 0.5 + 4.0 * conca * concc;
-        //double correction=1.0;
         prox1 = exp(-p1 / correction);
         prox2 = exp(-p2 / correction);
     }
 }
 
-vpgslmat vtransi;
 gsl_matrix * instrates;
 gsl_vector * pnoe1out;
 gsl_vector * pnoe2out;
@@ -103,7 +116,7 @@ gsl_vector * proba2;
 unsigned int noemax;
 
 vvd
-transition_felsen(vd & w, double dist)
+transition_felsen(double dist)
 {
     vd dum(4, 0.);
     vvd M(4, dum);
@@ -123,7 +136,7 @@ vd
 evolvedist_felsen_backwards(vd & probs, vd & freqs, double dist)
 {
     vd pf(4, 0.);
-    vvd M = transition_felsen(freqs, dist);
+    vvd M = transition_felsen(dist);
     double sum = 0;
     for (unsigned int row = 0; row < 4; row++) {
         for (unsigned int k = 0; k < 4; k++) {
@@ -138,12 +151,12 @@ evolvedist_felsen_backwards(vd & probs, vd & freqs, double dist)
 }
 
 vd
-evolvedist(vd probs, vd freqs, double dist)
+evolvedist(vd probs, double dist)
 {
     vd pf(4, 0.);
     vvd M;
     if (evolutionary_model == 1){
-        M = transition_felsen(freqs,dist);
+        M = transition_felsen(dist);
     } else {
         // !!! To be changed to use the new exponentiation
         //M = transition_halpern(freqs,dist);
@@ -215,26 +228,7 @@ inittreedist()
         treedist.push_back(noeud(18, 21, 22, 0.0206, 0.0329)); // 22: 18 and 21
         noemax = 22;
     }
-    vtransi.clear();
-    if (evolutionary_model == 2) {
-        for (unsigned int i = 0; i < noemax + 1; i++) {
-            gsl_matrix * m = gsl_matrix_alloc(4, 4);
-            vtransi.push_back(m);
-        }
-        instrates = gsl_matrix_calloc(4, 4);
-        pnoe1out = gsl_vector_calloc(4);
-        pnoe2out = gsl_vector_calloc(4);
-        id = gsl_matrix_calloc(4, 4);
-        for (unsigned int i = 0; i < 4; i++) {
-            gsl_matrix_set(id, i, i, 1);
-        }
-        m1 = gsl_matrix_calloc(4, 4);
-        m2 = gsl_matrix_calloc(4, 4);
-        m3 = gsl_matrix_calloc(4, 4);
-        m4 = gsl_matrix_calloc(4, 4);
-        pij = gsl_matrix_calloc(4, 4);
-        pijp = gsl_matrix_calloc(4, 4);
-    } else if (evolutionary_model == 1) {
+    if (evolutionary_model == 1) {
         proba2 = gsl_vector_alloc(4);
     }
 }
@@ -307,25 +301,21 @@ string numtospecies(int num)
 }
 
 int
-check_freq_matrix(const gsl_vector * w)
+check_freq_matrix(const double * w_full)
 {
-    double w0 = gsl_vector_get(w, 0);
-    double w1 = gsl_vector_get(w, 1);
-    double w2 = gsl_vector_get(w, 2);
-    double w3 = 1 - w0 - w1 - w2;
-    if (w0 < 0 || w1 < 0 || w2 < 0 || w3 < 0) {
+    if (w_full[0] < 0 || w_full[1] < 0 || w_full[2] < 0 || w_full[3] < 0) {
         return -1;
     }
     return 0;
 }
 
 int
-transition_rates_halpern(const float * w, float * rates)
+transition_rates_halpern(const double * w_full, double * rates)
 {
-    float w0 = w[0];
-    float w1 = w[1];
-    float w2 = w[2];
-    float w3 = w[3];
+    double w0 = w_full[0];
+    double w1 = w_full[1];
+    double w2 = w_full[2];
+    double w3 = w_full[3];
 
     double fat = proba_fixation_rel(w3 / w0);
     double fac = proba_fixation_rel(pa * w1 / pc / w0);
@@ -367,7 +357,7 @@ transition_rates_halpern(const float * w, float * rates)
 }
 
 int
-printmat(float * m)
+printmat(double * m)
 {
     for (unsigned int i = 0 ; i < 4 ; i++){
         for (unsigned int j = 0 ; j < 4 ; j++){
@@ -379,9 +369,8 @@ printmat(float * m)
 }
 
 int
-update_transi_halpern(float * w_pack)
+update_transi_halpern(double * w_full)
 {
-    inittreedist();
     // The linalg calculus consists in:
     // construct V = L^-1 T L with L_ij = sqrt(pi_i) delta_ij
     // (V is symmetric)
@@ -394,22 +383,15 @@ update_transi_halpern(float * w_pack)
 
     int n = 4;
 
-    float * rates = new float[n * n];
-    float * w = new float[n];
-    w[0] = w_pack[0];
-    w[1] = w_pack[1];
-    w[2] = w_pack[2];
-    w[3] = 1.0 - w[0] - w[1] - w[2];
+    transition_rates_halpern(w_full, rates);
 
-    transition_rates_halpern(w, rates);
-
-    float * l = new float[n];
-    float * lm1 = new float[n];
-    float * v = new float[n * (n + 1) / 2];
+    double * l = new double[n];
+    double * lm1 = new double[n];
+    double * v = new double[n * (n + 1) / 2];
 
     // Build l
     for (unsigned int i = 0 ; i < n ; i++){
-        l[i] = sqrt(w[i]);
+        l[i] = sqrt(w_full[i]);
         lm1[i] = 1 / l[i];
     }
 
@@ -430,40 +412,40 @@ update_transi_halpern(float * w_pack)
 
     // Diagonalize V
     char uplo = 'L'; // the upper part is stored but fortran conventions are columnwise
-    float d[n];
-    float e[n];
-    float tau[n - 1];
+    double d[n];
+    double e[n];
+    double tau[n - 1];
     int info;
 
-    ssptrd_(&uplo, &n, v, d, e, tau, &info);
+    dsptrd_(&uplo, &n, v, d, e, tau, &info);
 
     char job = 'V'; // Compute eigenvalues AND eigenvectors
     char range = 'A'; // Compute all the eigenvalues
 
-    float abstol = 1e-4;
+    double abstol = 1e-4;
 
     int m;
-    float eigs[n];
+    double eigs[n];
     int ldz = n;
-    float z[ldz * n];
+    double z[ldz * n];
 
     int isuppz[2 * n];
 
     int lwork = 128; // Hard coded but sufficiently large 
-    float work[lwork];
+    double work[lwork];
     int liwork = 128;
     int iwork[liwork];
 
-    sstegr_(&job, &range, &n, d, e, NULL, NULL, NULL, NULL, &abstol, &m, eigs,
+    dstegr_(&job, &range, &n, d, e, NULL, NULL, NULL, NULL, &abstol, &m, eigs,
             z, &ldz, isuppz, work, &lwork, iwork, &liwork, &info);
 
     // Compute Lq and qm1lm1
-    float * lq = new float [n * n];
-    float * qm1lm1 = new float [n * n];
+    double lq[n * n];
+    double qm1lm1[n * n];
 
 
-    float * zcop = new float[n * n];
-    float * zt = new float[n * n];
+    double zcop[n * n];
+    double zt[n * n];
     for (unsigned int i = 0 ; i < n * n ; i++){
         zcop[i] = z[i];
     }
@@ -474,12 +456,12 @@ update_transi_halpern(float * w_pack)
     }
     char side = 'L';
     char trans = 'N';
-    float * work2 = new float[n];
-    sopmtr_(&side, &uplo, &trans, &n, &n, v, tau, zcop, &n, work2, &info);
+    double work2[n];
+    dopmtr_(&side, &uplo, &trans, &n, &n, v, tau, zcop, &n, work2, &info);
 
     side = 'R';
     trans = 'T';
-    sopmtr_(&side, &uplo, &trans, &n, &n, v, tau, zt, &n, work2, &info);
+    dopmtr_(&side, &uplo, &trans, &n, &n, v, tau, zt, &n, work2, &info);
 
     // We now have to compute LQ and Q^-1L^-1
     for (unsigned int i = 0 ; i < n ; i++){
@@ -489,14 +471,14 @@ update_transi_halpern(float * w_pack)
         }
     }
 
-    float * expd1 = new float[4];
-    float * expd2 = new float[4];
+    double expd1[4];
+    double expd2[4];
 
-    float * dum1 = new float[4 * 4];
-    float * dum2 = new float[4 * 4];
+    double dum1[4 * 4];
+    double dum2[4 * 4];
     for (ivnoe iv = treedist.begin(); iv != treedist.end(); iv++) {
         for (unsigned int i = 0 ; i < 3 ; i++){
-            float dist = iv->dist1;
+            double dist = iv->dist1;
             expd1[i] = exp(dist * eigs[i]);
 
             dist = iv->dist2;
@@ -512,26 +494,13 @@ update_transi_halpern(float * w_pack)
             }
         }
         char trans = 'T';
-        float alpha = 1.0;
-        float beta = 0.0;
-        sgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum1, &n,
+        double alpha = 1.0;
+        double beta = 0.0;
+        dgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum1, &n,
                &beta, iv -> transi1, &n );
-        sgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum2, &n,
+        dgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum2, &n,
                &beta, iv -> transi2, &n );
     }
-
-    return EXIT_SUCCESS;
-}
-
-int
-test_expon()
-{
-    cout << " Testing exponentiation" << endl;
-    float w[] = {0.2, 0.3, 0.0001};
-
-    update_transi_halpern(w);
-
-    printmat(treedist[5].transi1);
 
     return EXIT_SUCCESS;
 }
@@ -544,153 +513,146 @@ proba_fixation_rel(double ratio)
 }
 
 void
-initprobatree(const unsigned int pos, Motalign & ma, gsl_matrix * probatree)
+initprobatree(const unsigned int pos, Motalign & ma, double * probastree)
 {
     for (unsigned int i = 0; i < nbspecies; i++) {
+        double * node = &probastree[i * 4];
         if (ma.matches[i]) {
-            gsl_matrix_set(probatree, 0, i, 0);
-            gsl_matrix_set(probatree, 1, i, 0);
-            gsl_matrix_set(probatree, 2, i, 0);
-            gsl_matrix_set(probatree, 3, i, 0);
-            gsl_matrix_set(probatree, ma.alignseq[i][pos], i, 1);
+            for (unsigned int j = 0 ; j < 4 ; j++){
+                node[j] = 0;
+            }
+            node[ma.alignseq[i][pos]] = 1;
         } else {
-            gsl_matrix_set(probatree, 0, i, -1);
+            node[0] = -1;
         }
     }
 }
 
-
 double
-loglikely_column(const unsigned int pos, Motalign & ma, vpgslmat & vtrans, const gsl_vector * w)
+loglikely_column(const unsigned int pos, Motalign & ma)
 {
-    gsl_matrix * probatree = gsl_matrix_alloc(4, noemax + 1);
-    gsl_vector * wfull = gsl_vector_alloc(4);
-    initprobatree(pos, ma, probatree);
-    gsl_vector_set(wfull, 0, gsl_vector_get(w, 0));
-    gsl_vector_set(wfull, 1, gsl_vector_get(w, 1));
-    gsl_vector_set(wfull, 2, gsl_vector_get(w, 2));
-    gsl_vector_set(wfull, 3, 1 - gsl_vector_get(w, 0) - gsl_vector_get(w, 1) - gsl_vector_get(w, 2));
+    // Probablitity vector for each node of the tree
+    double probastree[4 * (noemax + 1)];
+
+    initprobatree(pos, ma, probastree);
+
+    int inc = 1;
+    int n = 4;
+
+    double dum[4];
+
     for (ivnoe iv = treedist.begin(); iv != treedist.end(); iv++) {
         int n1 = iv->esp1;
         int n2 = iv->esp2;
+        double * sourc1 = &probastree[n1 * 4];
+        double * sourc2 = &probastree[n2 * 4];
+        double * targ = &probastree[iv -> noe * 4];
+
         if (evolutionary_model == 2) {
-            if (gsl_matrix_get(probatree, 0, n1) < -0.5 && gsl_matrix_get(probatree, 0, n2) < -0.5) {
-                gsl_matrix_set(probatree, 0, iv->noe, -1.0);
-            } else if (gsl_matrix_get(probatree, 0, n2) < -0.5) {
-                gsl_vector_view pnoe1 = gsl_matrix_column(probatree, (*iv).esp1);
-                gsl_vector_view pnoe = gsl_matrix_column(probatree, (*iv).noe);
-                gsl_blas_dgemv(CblasTrans, 1.0, vtrans[2 * ((*iv).noe - nbspecies)], &pnoe1.vector, 0.0, &pnoe.vector);
-            } else if (gsl_matrix_get(probatree, 0, n1) < -0.5) {
-                gsl_vector_view pnoe2 = gsl_matrix_column(probatree, (*iv).esp2);
-                gsl_vector_view pnoe = gsl_matrix_column(probatree, (*iv).noe);
-                gsl_blas_dgemv(CblasTrans, 1.0, vtrans[2 * ((*iv).noe - nbspecies) + 1], &pnoe2.vector, 0.0, &pnoe.vector);
+            char trans = 'N'; // backward should impose the transpose but
+                              // fortran convention add another transpose
+            double alpha = 1.0;
+            double beta = 0.0;
+
+            if (*sourc1 < -0.5 && *sourc2 < -0.5){
+                *targ = -1.0;
+            } else if (*sourc2 < -0.5){
+                dgemv_(&trans, &n, &n, &alpha, iv -> transi1, &n, sourc1, &inc,
+                       &beta, targ, &inc);
+            } else if (*sourc1 < -0.5){
+                dgemv_(&trans, &n, &n, &alpha, iv -> transi2, &n, sourc2, &inc,
+                       &beta, targ, &inc);
             } else {
-                gsl_vector_view pnoe1 = gsl_matrix_column(probatree, (*iv).esp1);
-                gsl_vector_view pnoe2 = gsl_matrix_column(probatree, (*iv).esp2);
-                gsl_vector_view pnoe = gsl_matrix_column(probatree, (*iv).noe);
-                gsl_blas_dgemv(CblasTrans, 1.0, vtrans[2 * ((*iv).noe - nbspecies)], &pnoe1.vector, 0.0, pnoe1out);
-                gsl_blas_dgemv(CblasTrans, 1.0, vtrans[2 * ((*iv).noe - nbspecies) + 1], &pnoe2.vector, 0.0, pnoe2out);
-                gsl_vector_memcpy(&pnoe.vector, pnoe1out);
-                gsl_vector_mul(&pnoe.vector, pnoe2out);
+                dgemv_(&trans, &n, &n, &alpha, iv -> transi1, &n, sourc1, &inc,
+                       &beta, targ, &inc);
+                dgemv_(&trans, &n, &n, &alpha, iv -> transi2, &n, sourc2, &inc,
+                       &beta, dum, &inc);
+                for (unsigned int i = 0 ; i < 4 ; i++){
+                    targ[i] *= dum[i];
+                }
             }
+
         } else if (evolutionary_model == 1) {
             double prox1 = iv->prox1;
             double prox2 = iv->prox2;
-            if (gsl_matrix_get(probatree, 0, n1) < -0.5 && gsl_matrix_get(probatree, 0, n2) < -0.5) {
-                gsl_matrix_set(probatree, 0, iv->noe, -1.0);
-            } else if (gsl_matrix_get(probatree, 0, n2) < -0.5) {
-                gsl_vector_view pnoe1 = gsl_matrix_column(probatree, (*iv).esp1);
-                gsl_vector_view pnoe = gsl_matrix_column(probatree, (*iv).noe);
-                double sum;
-                gsl_blas_ddot(wfull, &pnoe1.vector, &sum);
-                sum *= (1 - prox1);
-                gsl_vector_set_all(&pnoe.vector, sum);
-                gsl_blas_daxpy(prox1, &pnoe1.vector, &pnoe.vector);
-            } else if (gsl_matrix_get(probatree, 0, n1) < -0.5) {
-                gsl_vector_view pnoe2 = gsl_matrix_column(probatree, (*iv).esp2);
-                gsl_vector_view pnoe = gsl_matrix_column(probatree, (*iv).noe);
-                double sum;
-                gsl_blas_ddot(wfull, &pnoe2.vector, &sum);
-                sum *= (1 - prox2);
-                gsl_vector_set_all(&pnoe.vector, sum);
-                gsl_blas_daxpy(prox2, &pnoe2.vector, &pnoe.vector);
+            double sum;
+            if (*sourc1 < -0.5 && *sourc2 < -0.5) {
+                *targ = -1.0;
+            } else if (*sourc2 < -0.5) {
+                sum = (1 - prox1) * ddot_(&n, w, &inc, sourc1, &inc);
+                for (unsigned int i = 0 ; i < 4 ; i++){
+                    targ[i] = sum;
+                }
+                daxpy_(&n, &prox1, sourc1, &inc, targ, &inc);
+            } else if (*sourc1 < -0.5) {
+                sum = (1 - prox2) * ddot_(&n, w, &inc, sourc2, &inc);
+                for (unsigned int i = 0 ; i < 4 ; i++){
+                    targ[i] = sum;
+                }
+                daxpy_(&n, &prox2, sourc2, &inc, targ, &inc);
             } else {
-                gsl_vector_view pnoe1 = gsl_matrix_column(probatree, iv->esp1);
-                gsl_vector_view pnoe2 = gsl_matrix_column(probatree, iv->esp2);
-                gsl_vector_view pnoe = gsl_matrix_column(probatree, iv->noe);
-                double sum1, sum2;
-                gsl_blas_ddot(wfull, &pnoe1.vector, &sum1);
-                sum1 *= (1 - prox1);
-                gsl_blas_ddot(wfull, &pnoe2.vector, &sum2);
-                sum2 *= (1 - prox2);
-                gsl_vector_set_all(&pnoe.vector, sum1);
-                gsl_vector_set_all(proba2, sum2);
-                gsl_blas_daxpy(prox1, &pnoe1.vector, &pnoe.vector);
-                gsl_blas_daxpy(prox2, &pnoe2.vector, proba2);
-                gsl_vector_mul(&pnoe.vector, proba2);
+                sum = (1 - prox1) * ddot_(&n, w, &inc, sourc1, &inc);
+                for (unsigned int i = 0 ; i < 4 ; i++){
+                    targ[i] = sum;
+                }
+                daxpy_(&n, &prox1, sourc1, &inc, targ, &inc);
+                sum = (1 - prox2) * ddot_(&n, w, &inc, sourc2, &inc);
+                for (unsigned int i = 0 ; i < 4 ; i++){
+                    dum[i] = sum;
+                }
+                daxpy_(&n, &prox2, sourc2, &inc, dum, &inc);
+                for (unsigned int i = 0 ; i < 4 ; i++){
+                    targ[i] *= dum[i];
+                }
             }
         }
     }
-    if (gsl_matrix_get(probatree, 0, noemax) < -0.5) cout << "error!!!\n";
-    double w0 = gsl_vector_get(w, 0);
-    double w1 = gsl_vector_get(w, 1);
-    double w2 = gsl_vector_get(w, 2);
-    double w3 = 1 - w0 - w1 - w2;
-    //   cout << log(w0*gsl_matrix_get(probatree,0,noemax)+
-    //         w1*gsl_matrix_get(probatree,1,noemax)+
-    //         w2*gsl_matrix_get(probatree,2,noemax)+
-    //         w3*gsl_matrix_get(probatree,3,noemax)) << endl;
-    double res = log(w0 * gsl_matrix_get(probatree, 0, noemax) +
-                     w1 * gsl_matrix_get(probatree, 1, noemax) +
-                     w2 * gsl_matrix_get(probatree, 2, noemax) +
-                     w3 * gsl_matrix_get(probatree, 3, noemax));
-    gsl_matrix_free(probatree);
-    gsl_vector_free(wfull);
+    if (probastree[4 * noemax] < -0.5) cout << "error!!!\n";
+
+    double * lnode = &probastree[4 * noemax];
+    double res = log(w[0] * lnode[0] + w[1] * lnode[1] + w[2] * lnode[2] +
+                     w[3] * lnode[3]);
+
     return res;
 }
 
 double
-loglikely(const gsl_vector * w, void * params)
+loglikelyhood(void * params)
 {
     void ** par = (void **) params;
     Motif & mot = *((Motif *)(par[0]));
     const unsigned int pos = *((const unsigned int *)(par[1]));
-    gsl_matrix * pmattemp;
 
     double logli = 0;
     for (ivma ima = mot.seqs.begin(); ima != mot.seqs.end(); ima++) {
-        logli += loglikely_column(pos, *ima, vtransi, w);
+        logli += loglikely_column(pos, *ima);
     }
-    double w0 = gsl_vector_get(w, 0);
-    double w1 = gsl_vector_get(w, 1);
-    double w2 = gsl_vector_get(w, 2);
-    double w3 = 1 - w0 - w1 - w2;
-    logli += alpha * (log(w0) + log(w3)) + beta * (log(w1) + log(w2));
-    // logli+=(alpha-1.)*(log(w0)+log(w1))+(beta-1.)*(log(w2)+log(w3));
+    return logli;
+}
+
+int
+initw(const double * w_pack){
+    w[0] = w_pack[0];
+    w[1] = w_pack[1];
+    w[2] = w_pack[2];
+    w[3] = 1.0 - w[0] - w[1] - w[2];
+}
+
+double
+posterior_priormax(const gsl_vector * w_pack, void * params)
+{
+    double logli = loglikelyhood(params);
+    initw(w_pack);
+    logli += alpha * (log(w[0]) + log(w[3])) + beta * (log(w[1]) + log(w[2]));
     return -logli;
 }
 
 double
-loglikelyhood(vd x, void * params)
+posterior_priormean(const double * w_pack, void * params)
 {
-    gsl_vector * w;
-    w = gsl_vector_alloc(3);
-    gsl_vector_set(w, 0, x[0]);
-    gsl_vector_set(w, 1, x[1]);
-    gsl_vector_set(w, 2, x[2]);
-    void ** par = (void **) params;
-    Motif & mot = *((Motif *)(par[0]));
-    const unsigned int pos = *((const unsigned int *)(par[1]));
-    gsl_matrix * pmattemp;
-
-    double logli = 0;
-    for (ivma ima = mot.seqs.begin(); ima != mot.seqs.end(); ima++) {
-        logli += loglikely_column(pos, *ima, vtransi, w);
-    }
-    double w0 = gsl_vector_get(w, 0);
-    double w1 = gsl_vector_get(w, 1);
-    double w2 = gsl_vector_get(w, 2);
-    double w3 = 1 - w0 - w1 - w2;
-    logli += (alpha - 1.) * (log(w0) + log(w3)) + (beta - 1.) * (log(w1) + log(w2));
-    return logli;
+    double logli = loglikelyhood(params);
+    initw(w_pack);
+    logli += alpha * (log(w[0]) + log(w[3])) + beta * (log(w[1]) + log(w[2]));
+    return -logli;
 }
+
