@@ -33,6 +33,7 @@ AC_CONFIG_SRCDIR([src/imogene.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/ax_blas.m4])
+m4_include([m4/ax_lapack.m4])
 
 
 # Check for python
@@ -50,6 +51,8 @@ AC_CHECK_LIB([m],[cos],,[AC_MSG_ERROR([math functions required.])])
 ##AX_BLAS( [ AC_MSG_NOTICE( [ blas libs variable : x$BLAS_LIBS BLAS_LIBS ] ) ], )
 AX_BLAS(LIBS="$BLAS_LIBS $LIBS $FLIBS", AC_CHECK_LIB([gslcblas],
         [cblas_dgemm], , AC_MSG_ERROR([blas library required.])))
+
+AX_LAPACK(LIBS="$LAPACK_LIBS $LIBS", AC_MSG_ERROR([lapack library required.]))
 
 #AX_BLAS([],[AC_MSG_ERROR([blas library required.])])
 AC_CHECK_LIB([gsl],[gsl_blas_dgemm],,[AC_MSG_ERROR([libgsl required.])])
