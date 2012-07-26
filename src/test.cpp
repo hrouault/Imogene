@@ -122,12 +122,14 @@ evolvesite(Motif & mot)
 
          // HALPERN
          for (unsigned int i=0;i<mot.motwidth;i++){
-            Pdisp_h[i]=evolvedist_halpern(Initprob[i],mot.matfreq[i],distances[n]);
+// !!!! To be restored
+//            Pdisp_h[i]=evolvedist_halpern(Initprob[i],mot.matfreq[i],distances[n]);
          }
 
          // FELSEN
          for (unsigned int i=0;i<mot.motwidth;i++){
-            Pdisp_f[i]=evolvedist_felsen(Initprob[i],mot.matfreq[i],distances[n]);
+// !!!! To be restored
+//            Pdisp_f[i]=evolvedist_felsen(Initprob[i],mot.matfreq[i],distances[n]);
          }
 //         cout << "Felsen, distance=" << distances[n] << endl;
 //         displaymat(Pdisp_f);

@@ -58,6 +58,7 @@ emf2fasta.c: emf2fasta.c.in
 		-e '/#include "compile.h"/ s,compile,python$(PYTHON_VERSION)/compile,'\
 		-e '/#include "frameobject.h"/ s,frameobject,python$(PYTHON_VERSION)/frameobject,'\
 		-e '/#include "traceback.h"/ s,traceback,python$(PYTHON_VERSION)/traceback,' $< > $@
+		-e '/#include "structmember.h"/ s,structmember,python$(PYTHON_VERSION)/structmember,' $< > $@
 
 pyexec_LTLIBRARIES = emf2fasta.la
 nodist_emf2fasta_la_SOURCES = emf2fasta.c

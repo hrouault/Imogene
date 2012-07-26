@@ -985,7 +985,7 @@ colmean(unsigned int pos,Motif * mot)
          else wtest=0;
       }
 
-      ftrial=loglikelyhood(wtrial,par);
+      ftrial=posterior_priormean(wtrial,par);
 
       // Metropolis-Hastings
       // Move to new position with probability alpha, else reject

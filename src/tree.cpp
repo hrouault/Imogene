@@ -105,12 +105,6 @@ gsl_matrix * instrates;
 gsl_vector * pnoe1out;
 gsl_vector * pnoe2out;
 gsl_matrix * id;
-gsl_matrix * m1;
-gsl_matrix * m2;
-gsl_matrix * m3;
-gsl_matrix * m4;
-gsl_matrix * pij;
-gsl_matrix * pijp;
 
 gsl_vector * proba2;
 unsigned int noemax;
@@ -642,16 +636,24 @@ double
 posterior_priormax(const gsl_vector * w_pack, void * params)
 {
     double logli = loglikelyhood(params);
-    initw(w_pack);
+    double w_pack2[3]; 
+    for (unsigned int i = 0 ; i < 3 ; i++){
+        w_pack2[i] = gsl_vector_get(w_pack, i);
+    }
+    initw(w_pack2);
     logli += alpha * (log(w[0]) + log(w[3])) + beta * (log(w[1]) + log(w[2]));
     return -logli;
 }
 
 double
-posterior_priormean(const double * w_pack, void * params)
+posterior_priormean(vd w_pack, void * params)
 {
     double logli = loglikelyhood(params);
-    initw(w_pack);
+    double w_pack2[3]; 
+    for (unsigned int i = 0 ; i < 3 ; i++){
+        w_pack2[i] = w_pack[i];
+    }
+    initw(w_pack2);
     logli += alpha * (log(w[0]) + log(w[3])) + beta * (log(w[1]) + log(w[2]));
     return -logli;
 }
