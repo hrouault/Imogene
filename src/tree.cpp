@@ -490,6 +490,11 @@ update_transi_halpern()
         char trans = 'T';
         double alpha = 1.0;
         double beta = 0.0;
+
+        printmat(dum1);
+        printmat(dum2);
+        printmat(qm1lm1);
+
         dgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum1, &n,
                &beta, iv -> transi1, &n );
         dgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum2, &n,
@@ -618,7 +623,10 @@ loglikelyhood(void * params)
     const unsigned int pos = *((const unsigned int *)(par[1]));
 
     /* update the transition rates in the tree */
-    update_transi_halpern();
+
+    if (evolutionary_model == 2) {
+        update_transi_halpern();
+    }
 
     double logli = 0;
     for (ivma ima = mot.seqs.begin(); ima != mot.seqs.end(); ima++) {
