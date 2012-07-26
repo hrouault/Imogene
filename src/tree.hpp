@@ -70,10 +70,7 @@ double proba_fixation_rel(double ratio);
 vd evolvedist_felsen(vd & probs, vd & freqs, double dist);
 vd evolvedist_halpern(vd & probs, vd & freqs, double dist);
 
-double posterior_priormax(const gsl_vector * w, void * params);
-
-double posterior_priormean(const gsl_vector * w, void * params);
-
-double loglikelyhood(const gsl_vector * w, void * params);
+double posterior_priormax(const gsl_vector * w_pack, void * params);
+double posterior_priormean(vd w_pack, void * params);
 
 #endif // Matcons_H
