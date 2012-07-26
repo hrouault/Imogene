@@ -827,7 +827,7 @@ colopti(unsigned int pos, Motif * mot)
     gsl_vector_set_all (ss, winf);
     /* Initialize method and iterate */
     minex_func.n = 3;
-    minex_func.f = &loglikely;
+    minex_func.f = &posterior_priormax;
     void * par[2] = {(void *)mot, &pos};
     minex_func.params = par;
     s = gsl_multimin_fminimizer_alloc(T, 3);
@@ -950,7 +950,7 @@ colmean(unsigned int pos,Motif * mot)
 
    // Starting point
    w=winit;
-   f=loglikelyhood(w,par);
+   f=posterior_priormean(w,par);
    
    // =========
    // MAIN LOOP
@@ -1508,5 +1508,3 @@ scanseqsforinstancesnmask(vseq & align, vmot & mots)
       scanseqforinstancesnmask(*ivs, mots);
    }
 }
-
-
