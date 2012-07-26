@@ -88,10 +88,10 @@ noeud::noeud(int e1, int e2, int n, double p1, double p2)
     esp2 = e2;
     noe = n;
     if (evolutionary_model == 2) {
-        dist1 = p1;
-        dist2 = p2;
-        prox1 = p1;
-        prox2 = p2;
+        dist1 = p1 / (4 * kappa * pa * pc + 0.5);;
+        dist2 = p2 / (4 * kappa * pa * pc + 0.5);;
+        prox1 = 0;
+        prox2 = 0;
         transi1 = new double[4 * 4];
         transi2 = new double[4 * 4];
     } else if (evolutionary_model == 1) {
