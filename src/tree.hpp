@@ -45,8 +45,8 @@ class noeud
         double dist2;
 
         // Transition rate matrices
-        double * transi1;
-        double * transi2;
+        double transi1[4 * 4];
+        double transi2[4 * 4];
 
         noeud(int e1, int e2, int n, double p1, double p2);
 };

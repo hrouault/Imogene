@@ -92,8 +92,6 @@ noeud::noeud(int e1, int e2, int n, double p1, double p2)
         dist2 = p2 / (4 * kappa * pa * pc + 0.5);;
         prox1 = 0;
         prox2 = 0;
-        transi1 = new double[4 * 4];
-        transi2 = new double[4 * 4];
     } else if (evolutionary_model == 1) {
         double correction = 0.5 + 4.0 * conca * concc;
         prox1 = exp(-p1 / correction);
@@ -379,9 +377,9 @@ update_transi_halpern()
 
     transition_rates_halpern(rates);
 
-    double * l = new double[n];
-    double * lm1 = new double[n];
-    double * v = new double[n * (n + 1) / 2];
+    double l[n];
+    double lm1[n];
+    double v[n * (n + 1) / 2];
 
     // Build l
     for (unsigned int i = 0 ; i < n ; i++){
