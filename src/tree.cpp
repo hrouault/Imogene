@@ -489,9 +489,9 @@ update_transi_halpern()
         double alpha = 1.0;
         double beta = 0.0;
 
-        printmat(dum1);
-        printmat(dum2);
-        printmat(qm1lm1);
+        //printmat(dum1);
+        //printmat(dum2);
+        //printmat(qm1lm1);
 
         dgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum1, &n,
                &beta, iv -> transi1, &n );
