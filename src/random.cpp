@@ -18,9 +18,9 @@
  * along with Imogene.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <gsl/gsl_rng.h>
-#include<gsl/gsl_randist.h>
-#include<iostream>
-#include<fstream>
+#include <gsl/gsl_randist.h>
+#include <iostream>
+#include <fstream>
 
 #include "vectortypes.hpp"
 #include "const.hpp"
@@ -44,8 +44,8 @@ rnginit()
     T = gsl_rng_default;
     gslran = gsl_rng_alloc(T);
     // Shouldn't always use the same random numbers? ^^^ Agreed
-    long seed = time(NULL) * getpid();
-    gsl_rng_set(gslran, seed);
+    // long seed = time(NULL) * getpid();
+    // gsl_rng_set(gslran, seed);
     // *** Output seed to a file if using a variable seed!!
     // see gsl_rng_fwrite()
 }
