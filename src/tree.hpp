@@ -59,6 +59,7 @@ extern vnoe treedist;
 typedef vector<gsl_matrix *> vpgslmat;
 typedef vpgslmat::iterator ivpgslmat;
 
+void initconc();
 void inittreedist();
 
 int speciestonum(string name);//species2num

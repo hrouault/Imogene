@@ -75,7 +75,7 @@ vnoe treedist;
 double pa;
 double pc;
 
-const double kappa = 2.0;
+double kappa = 2.0;
 
 double w[4];
 double rates[4 * 4];
@@ -161,6 +161,20 @@ evolvedist(vd probs, double dist)
     return pf;
 }
 
+void
+initconc()
+{
+    if (species == "droso") {
+        conca = 0.3;
+    } else if (species == "eutherian") {
+        conca = 0.3;
+    }
+    concc = 0.5 - conca;
+    conct = conca;
+    concg = concc;
+    
+}
+
 void   // Currently used phylogenetic tree for drosophilae :  Heger and Pontig, 2007
 inittreedist()
 {
@@ -168,6 +182,8 @@ inittreedist()
     pc = concc;
     treedist.clear();
     if (species == "droso") {
+        kappa = 2.0;
+
         treedist.push_back(noeud(1,2,12,0.02,0.03)); // 12                           
         treedist.push_back(noeud(0,12,13,0.07,0.03)); // 13                        
         treedist.push_back(noeud(3,4,14,0.11,0.10)); // 14                         
@@ -181,6 +197,7 @@ inittreedist()
         treedist.push_back(noeud(18,21,22,0.14,0.15)); // 22 
         noemax = 22;
     } else if (species == "eutherian") {
+        kappa = 3.7;
         // Arbre de ensembl epo 12 eutharian
         //
          // (
