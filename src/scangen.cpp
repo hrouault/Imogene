@@ -140,6 +140,7 @@ scanmots()
         string chrom = chromfromint(seq.chrom);
         if (chrom != pchrom) {
             if (seq.chrom != 0) cout << "\n";
+            if (seq.chrom != 0) break;
             cout << "chromosome " << chrom << "\n";
             pchrom = chrom;
         }
@@ -292,7 +293,11 @@ outputresults()
     }
     for (ivginst ivg = finginst.begin(); ivg != finginst.end(); ivg++) {
         res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
-        res << (*ivg).besttss.gene << " (" << ivg->distbesttss << ") ";
+        if (ivg->distbesttss < annotextent) {
+            res << (*ivg).besttss.gene << " (" << ivg->distbesttss << ") ";
+        } else {
+            res << "NA (>" << annotextent << ") ";
+        }
         for (ivTSS ivt = (*ivg).TSSs.begin(); ivt != (*ivg).TSSs.end(); ivt++) {
             res << (*ivt).gene << ";";
         }
