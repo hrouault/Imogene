@@ -422,7 +422,7 @@ operator <<(ostream & os, const vcombi & vcomb)
 void
 GroupInstance::compbestannot()
 {
-    unsigned int dist = 1e9;
+    int dist = 1e9;
     for (ivTSS ivt = TSSs.begin(); ivt != TSSs.end(); ivt++) {
         if (abs((int)((*ivt).coord) - (int)start + (int)scanwidth / 2) < (int)dist) {
             dist = abs((int)(*ivt).coord - (int)start + (int)scanwidth / 2);
