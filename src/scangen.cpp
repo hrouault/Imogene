@@ -394,19 +394,15 @@ scangen_args_init()
     if (!strcmp(scangen_args.species_arg, "droso")) {
         species = "droso";
         nbspecies = 12;
-        conca = 0.3;
         nbchrom = 6;
         annotextent = 10000; // 10 kb
     } else if (!strcmp(scangen_args.species_arg, "eutherian")) {
         species = "eutherian";
         nbspecies = 12;
-        conca = 0.263;
         nbchrom = 21;
         annotextent = 100000; // 100 kb
     }
-    concc = 0.5 - conca;
-    conct = conca;
-    concg = concc;
+    initconc();
     scanwidth = scangen_args.scanwidth_arg;
     if (scangen_args.annotextent_given) {
         annotextent = scangen_args.annotextent_arg;
