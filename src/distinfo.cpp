@@ -33,6 +33,7 @@
 #include "const.hpp"
 #include "vectortypes.hpp"
 #include "motif.hpp"
+#include "tree.hpp"
 
 vd fback;
 
@@ -540,12 +541,7 @@ compdistance(Motif & mot1, Motif & mot2)
 void
 distinfo(const char * motfile)
 {
-    if (species == "droso")  conca = 0.3;
-    if (species == "eutherian")  conca = 0.268;
-    concc = 0.5 - conca;
-    //   cout << "conca: " << conca << endl;
-    conct = conca;
-    concg = concc;
+    initconc();
     if (distinfo_args.width_given) {
         width = distinfo_args.width_arg;
     }

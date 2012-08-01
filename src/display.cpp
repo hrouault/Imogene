@@ -914,15 +914,11 @@ display_args_init()
         if (!strcmp(display_args.species_arg, "droso")) {
             species = "droso";
             nbspecies = 12;
-            conca = 0.3;
         } else if (!strcmp(display_args.species_arg, "eutherian")) {
             species = "eutherian";
             nbspecies = 12;
-            conca = 0.263;
         }
-        concc = 0.5 - conca;
-        conct = conca;
-        concg = concc;
+        initconc();
         scorethr2 = display_args.threshold_arg * log(2);
         scorethr = scorethr2 * (1 - 2. / width);
         scorethrcons = scorethr2 * (1 - 1. / width);
