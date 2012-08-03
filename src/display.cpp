@@ -53,7 +53,7 @@ dispscoreseq(vseq & seqs, vmot & mots)
     for (ivseq ivs = seqs.begin(); ivs != seqs.end(); ivs++) {
         outf << ivs->name << "\t";
         vd scores(nbmots_for_score, 0.);
-        vvinstseq & instcons;
+        vvinstseq & instcons = ivs->instancescons;
         for (ivvinstseq ivv = instcons.begin(); ivv != instcons.end(); ivv++) {
             int ind = (*ivv)[0].motindex;
             scores[ind] += log(mots[ind].lambdatrain / mots[ind].lambdaback);
@@ -328,7 +328,7 @@ svgdisplay(ofstream & svgfile, Sequence & seq)
                 svgfile << xmot + 0.2 << "em\" y=\"" << (yline + 0.8);
                 svgfile << "em\"><tspan class=\"score\">" << fixed;
                 svgfile << setprecision(1) << (*ivi).score;
-                svgfile << "</tspan></text>" << end;
+                svgfile << "</tspan></text>" << endl;
             }
         }
         groupnb++;
