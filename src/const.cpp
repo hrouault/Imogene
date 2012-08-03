@@ -32,7 +32,7 @@
 
 using namespace std;
 
-const unsigned int nbiter = 20;
+const unsigned int nbiter = 40;
 const unsigned int distwidth = 20; // max number of instances for background motif distribution
 
 unsigned int width = 10;
@@ -56,7 +56,7 @@ unsigned int annotextent = 10000;
 
 unsigned int nbmots_for_score = 5;
 
-double alpha = 0.176; // beta exponent for A,T
+double alpha; // beta exponent for A,T
 double beta; // beta exponent for C,G
 
 unsigned int nbchrom;
