@@ -32,12 +32,11 @@
 
 using namespace std;
 
-const unsigned int nbiter = 3;
+const unsigned int nbiter = 20;
 const unsigned int distwidth = 20; // max number of instances for background motif distribution
 
 unsigned int width = 10;
 
-//const unsigned int distwidth=20;
 unsigned int neighbext = 20;
 
 double scorethr1 = 13;
