@@ -387,7 +387,7 @@ ostream & operator <<(ostream & os, const GroupInstance & ginst)
     os << ginst.stop << " ";
     os << ginst.score << " ";
     os << "\n";
-    vinst & insts = ginst.instances;
+    const vinst & insts = ginst.instances;
     for (civinst iv = insts.begin(); iv != insts.end(); iv++) {
         os << *iv;
     }
@@ -436,7 +436,7 @@ GroupInstance::compbestannot()
 {
     int dist = 1e9;
     for (ivTSS ivt = TSSs.begin(); ivt != TSSs.end(); ivt++) {
-        int tssdist = abs((*ivt).coord - (int)start + scanwidth / 2);
+        int tssdist = abs((int)(*ivt).coord - (int)start + (int)scanwidth / 2);
         if (tssdist < (int)dist) {
             dist = tssdist;
             besttss = *ivt;

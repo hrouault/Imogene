@@ -33,8 +33,11 @@
 using namespace std;
 
 const unsigned int nbiter = 40;
-const unsigned int distwidth = 20; // max number of instances for background motif distribution
-
+// const unsigned int distwidth = 20; // max number of instances for background
+                                      // motif distribution
+                                      // This variable is now declared in the
+                                      // header file const.hpp for reasons
+                                      // explained there. 
 unsigned int width = 10;
 
 unsigned int neighbext = 20;

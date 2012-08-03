@@ -31,7 +31,12 @@ extern unsigned int width; // motif width
 
 // for genmot
 extern const unsigned int nbiter; // max iterations for convergence
-extern const unsigned int distwidth; // max number of instances for background motif distribution
+
+// I declare the following directly in the header file. It shouldn't be
+// a prolbem since this is a const and so the multiply defined var problem
+// doesn't hold here
+const unsigned int distwidth = 20; // max number of instances for background motif distribution
+
 extern unsigned int neighbext; // extent of conserved motifs search
 
 extern string species; // droso or eutherian
