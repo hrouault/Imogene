@@ -132,25 +132,20 @@ seqanalysis(Sequence & currseq, vmot & genmots)
         currmot.matprecrevcomp = currmot.matricerevcomp;
         pseqs = currmot.seqs;
         for (unsigned int nb = 1; nb <= nbiter; nb++) {
-            int iter = 0;
-            while (iter < 20) {
-                if (nb > 2) currmot.matinit(scorethr2);
-                else currmot.matinit(scorethr);
-                if (currmot.nbcons < 1) break;
-                
-                if (!strcmp(genmot_args.method_arg, "max")) {
-                   currmot.compprec();
-                } else if (!strcmp(genmot_args.method_arg, "mean")) {
-                   currmot.compprec_MCMC();
-                } else if (!strcmp(genmot_args.method_arg, "inde")) {
-                   currmot.compprec_inde();
-                }
-
-                if (pseqs == currmot.seqs) break;
-                pseqs = currmot.seqs;
-                
-                iter++;
+            if (nb > 2) currmot.matinit(scorethr2);
+            else currmot.matinit(scorethr);
+            if (currmot.nbcons < 1) break;
+            
+            if (!strcmp(genmot_args.method_arg, "max")) {
+               currmot.compprec();
+            } else if (!strcmp(genmot_args.method_arg, "mean")) {
+               currmot.compprec_MCMC();
+            } else if (!strcmp(genmot_args.method_arg, "inde")) {
+               currmot.compprec_inde();
             }
+
+            if (pseqs == currmot.seqs) break;
+            pseqs = currmot.seqs;
             if (nb == 1) {
                 currmot.corrprec();
                 currmot.matprecrevcomp = reversecomp(currmot.matprec);
