@@ -140,7 +140,6 @@ scanmots()
         string chrom = chromfromint(seq.chrom);
         if (chrom != pchrom) {
             if (seq.chrom != 0) cout << "\n";
-            if (seq.chrom != 0) break;
             cout << "chromosome " << chrom << "\n";
             pchrom = chrom;
         }
