@@ -96,7 +96,7 @@ class Motif
 
         double scorepoiss;
 
-        int * distmot;
+        int distmot[distwidth];
 
         vvd matricerevcomp;
         vvd matprecrevcomp;

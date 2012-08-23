@@ -32,12 +32,14 @@
 
 using namespace std;
 
-const unsigned int nbiter = 3;
-const unsigned int distwidth = 20; // max number of instances for background motif distribution
-
+const unsigned int nbiter = 40;
+// const unsigned int distwidth = 20; // max number of instances for background
+                                      // motif distribution
+                                      // This variable is now declared in the
+                                      // header file const.hpp for reasons
+                                      // explained there. 
 unsigned int width = 10;
 
-//const unsigned int distwidth=20;
 unsigned int neighbext = 20;
 
 double scorethr1 = 13;
@@ -57,7 +59,7 @@ unsigned int annotextent = 10000;
 
 unsigned int nbmots_for_score = 5;
 
-double alpha = 0.176; // beta exponent for A,T
+double alpha; // beta exponent for A,T
 double beta; // beta exponent for C,G
 
 unsigned int nbchrom;

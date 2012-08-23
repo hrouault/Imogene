@@ -50,8 +50,6 @@ using namespace std;
 
 Motif::Motif()
 {
-    // *** only way to do if we want to define distwidth in the cpp
-    distmot = new int[distwidth];
     for (unsigned int i = 0; i < distwidth; i++) {
         distmot[i] = 0;
     }
@@ -77,15 +75,22 @@ Motif::Motif()
 void
 Motif::matinitforscanmots(Sequence & seq)
 {
-    unsigned int len = seq.iseqs[0].size();
+    vint & fseq = seq.iseqs[0];
+    unsigned int len = fseq.size();
     unsigned int i = 0;
-    for (vint::const_iterator istr = seq.iseqs[0].begin(); istr != seq.iseqs[0].end() - motwidth + 1; istr++) {
+    vint::const_iterator istr;
+    for (istr = fseq.begin(); istr != fseq.end() - motwidth + 1; istr++) {
         if (scoref(istr, matprec) > motscorethr2) {
-            vint::const_iterator endci = seq.iseqs[0].end() - motwidth + 1;
+            vint::const_iterator endci = fseq.end() - motwidth + 1;
             unsigned int sh = shift(istr, matprec, endci, motwidth);
             Motalign ma(i + sh, seq, *this, 1);
             if (ma.iscons()) {
-                Instance refinst(seq.chrom, seq.start + i + sh, 1, index, scoref(istr, matprec), vinttostring(ma.alignseq[0]));
+                Instance refinst(seq.chrom,
+                                 seq.start + i + sh,
+                                 1,
+                                 index,
+                                 scoref(istr, matprec),
+                                 vinttostring(ma.alignseq[0]));
                 refinstances_short.push_back(refinst);
                 if (i + sh < len - 2 * motwidth) {
                     istr += motwidth - 1 + sh;
@@ -95,11 +100,16 @@ Motif::matinitforscanmots(Sequence & seq)
                 }
             }
         } else if (scoref(istr, matprecrevcomp) > motscorethr2) {
-            vint::const_iterator endci = seq.iseqs[0].end() - motwidth + 1;
+            vint::const_iterator endci = fseq.end() - motwidth + 1;
             unsigned int sh = shift(istr, matprecrevcomp, endci, motwidth);
             Motalign ma(i + sh, seq, *this, -1);
             if (ma.iscons()) {
-                Instance refinst(seq.chrom, seq.start + i + sh, -1, index, scoref(istr, matprecrevcomp), vinttostring(ma.alignseq[0]));
+                Instance refinst(seq.chrom,
+                                 seq.start + i + sh,
+                                 -1,
+                                 index,
+                                 scoref(istr, matprecrevcomp),
+                                 vinttostring(ma.alignseq[0]));
                 refinstances_short.push_back(refinst);
                 if (i + sh < len - 2 * motwidth) {
                     istr += motwidth - 1 + sh;
@@ -110,7 +120,7 @@ Motif::matinitforscanmots(Sequence & seq)
             }
         }
         i++;
-        if (istr > seq.iseqs[0].end() - motwidth) break;
+        if (istr > fseq.end() - motwidth) break;
     }
 }
 
@@ -165,10 +175,8 @@ countbases(Motif & mot, Sequence & bds)
         int j = 0;
         for (ivint i = (*line).begin(); i != (*line).end(); i++) {
             mot.matrice[j][*i] += 1;
-            //cout << mot.matrice[j][*i] << " ";
             j++;
         }
-        //cout << endl;
     }
 }
 
@@ -238,7 +246,8 @@ Motif::pvaluecomp()
     for (iseq = regints.begin(); iseq != regints.end(); iseq++) {
         int consseq = nbmatchcons(*iseq);
         if (lambdaback == 0) pvalue = -100.;
-        else pvalue += log(gsl_ran_poisson_pdf(consseq, lambdaback * (*iseq).nbtb));
+        else pvalue += log(gsl_ran_poisson_pdf(consseq,
+                                               lambdaback * (*iseq).nbtb));
         nbbtrain += (*iseq).nbtb;
     }
     // Density of conserved binding sites in the training set
@@ -262,9 +271,11 @@ Motif::calcscorepoiss()
 {
     calcmeanpoiss();
     scorepoiss = 0.0;
+    unsigned int regtsize = regtests.size();
     for (unsigned int j = 0; j < distwidth; j++) {
         if (distmot[j] > 0 && meanpoiss > 0) {
-            scorepoiss += gsl_pow_2((double)distmot[j] - regtests.size() * gsl_ran_poisson_pdf(j, meanpoiss)) / (regtests.size() * gsl_ran_poisson_pdf(j, meanpoiss));
+            double poissexpect = regtsize * gsl_ran_poisson_pdf(j, meanpoiss);
+            scorepoiss += gsl_pow_2(distmot[j] - poissexpect) / poissexpect;
         }
     }
 }
@@ -278,11 +289,11 @@ Motif::corrprec()
         double frc = concc * exp(col[1]) + beta;
         double frg = concg * exp(col[2]) + beta;
         double frt = conct * exp(col[3]) + alpha;
-        double sum = fra + frt + frc + frg;
+        double sum = fra + frc + frg + frt;
         fra /= sum;
-        frt /= sum;
         frc /= sum;
         frg /= sum;
+        frt /= sum;
         col[0] = log(fra / conca);
         col[1] = log(frc / concc);
         col[2] = log(frg / concg);
@@ -376,7 +387,8 @@ ostream & operator <<(ostream & os, const GroupInstance & ginst)
     os << ginst.stop << " ";
     os << ginst.score << " ";
     os << "\n";
-    for (civinst iv = ginst.instances.begin(); iv != ginst.instances.end(); iv++) {
+    const vinst & insts = ginst.instances;
+    for (civinst iv = insts.begin(); iv != insts.end(); iv++) {
         os << *iv;
     }
     return os;
@@ -424,11 +436,11 @@ GroupInstance::compbestannot()
 {
     int dist = 1e9;
     for (ivTSS ivt = TSSs.begin(); ivt != TSSs.end(); ivt++) {
-        if (abs((int)((*ivt).coord) - (int)start + (int)scanwidth / 2) < (int)dist) {
-            dist = abs((int)(*ivt).coord - (int)start + (int)scanwidth / 2);
+        int tssdist = abs((int)(*ivt).coord - (int)start + (int)scanwidth / 2);
+        if (tssdist < (int)dist) {
+            dist = tssdist;
             besttss = *ivt;
             distbesttss = dist;
-            //cout << besttss.gene << endl;
         }
     }
 }
@@ -439,8 +451,9 @@ Motif::nbmatchcons(Sequence & seq)
     width = motwidth;
     int nmat = 0;
     unsigned int i = 0;
-    unsigned int len = seq.iseqs[0].size();
-    for (civint istr = seq.iseqs[0].begin(); istr != seq.iseqs[0].end() - width + 1; istr++) {
+    vint & fseq = seq.iseqs[0];
+    unsigned int len = fseq.size();
+    for (civint istr = fseq.begin(); istr != fseq.end() - width + 1; istr++) {
         double score = scoref(istr, matprec);
         if (score > motscorethr2) {
             Motalign ma(i, seq, *this, 1);
@@ -484,16 +497,25 @@ Motif::findinstancesnmask(Sequence & seq)
         if (seq.species[spe]) {
             unsigned int len = seq.iseqs[spe].size();
             unsigned int i = 0;
-            for (civint istr = seq.iseqs[spe].begin(); istr != seq.iseqs[spe].end() - motwidth + 1; istr++) {
+            vint & seqspe = seq.iseqs[spe];
+            civint lastb = seqspe.end() - motwidth + 1;
+            for (civint istr = seqspe.begin(); istr != lastb; istr++) {
                 double score = scoref(istr, matprec);
                 if (score > thr) {
-                    //pos relative to start and including gaps (for inter-species comparison)
-                    Instanceseq inst(index, 1, seq.imapsinv[spe][i], i, score, spe, name);
+                    // pos relative to start and including gaps (for
+                    // inter-species comparison)
+                    Instanceseq inst(index,
+                                     1,
+                                     seq.imapsinv[spe][i],
+                                     i,
+                                     score,
+                                     spe,
+                                     name);
                     inst.iseq = vint(istr, istr + motwidth);
                     inst.seq = vinttostring(inst.iseq);
                     seq.instances.push_back(inst);
                     for (unsigned int j = i; j < i + motwidth; j++) {
-                        seq.iseqs[spe][j] = 4;
+                        seqspe[j] = 4;
                     }
                     if (i < len - 2 * motwidth) {
                         istr += motwidth - 1;
@@ -504,12 +526,18 @@ Motif::findinstancesnmask(Sequence & seq)
                 } else {
                     score = scoref(istr, matprecrevcomp);
                     if (score > thr) {
-                        Instanceseq inst(index, -1, seq.imapsinv[spe][i], i, score, spe, name);
+                        Instanceseq inst(index,
+                                         -1,
+                                         seq.imapsinv[spe][i],
+                                         i,
+                                         score,
+                                         spe,
+                                         name);
                         inst.iseq = vint(istr, istr + motwidth);
                         inst.seq = vinttostring(inst.iseq);
                         seq.instances.push_back(inst);
                         for (unsigned int j = i; j < i + motwidth; j++) {
-                            seq.iseqs[spe][j] = 4;
+                            seqspe[j] = 4;
                         }
                         if (i < len - 2 * motwidth) {
                             istr += motwidth - 1;
@@ -1291,25 +1319,6 @@ GroupInstance::distance(const GroupInstance & gi)
 GroupInstance::isdiscarded()
 {
    if (besttss.gene == "") discarded = 1;
-   //   for (ivTSS ivt=TSSs.begin();ivt!=TSSs.end();ivt++){
-   //      if ((*ivt).gene=="phyl" ||
-   //            (*ivt).gene=="spdo" ||
-   //            (*ivt).gene=="vvl" ||
-   //            (*ivt).gene=="neur" ||
-   //            (*ivt).gene=="chn" ||
-   //            (*ivt).gene=="PFE" ||
-   //            (*ivt).gene=="CG32150" ||
-   //            (*ivt).gene=="mira" ||
-   //            (*ivt).gene=="CG9363" ||
-   //            (*ivt).gene=="cpo" ||
-   //            (*ivt).gene=="sens" ||
-   //            (*ivt).gene=="CG32392" ||
-   //            (*ivt).gene=="sv" ||
-   //            (*ivt).gene=="insv") {
-   //         discarded=1;
-   //         break;
-   //      }
-   //   }
 }
 
    void
@@ -1322,9 +1331,7 @@ displayhist(vginst & vgi, ostream & ostr)
          if ((*ivg).goodpheno) {
             ostr << pos << "\t" << (*ivg).besttss.gene << "\n";
          }
-         //if ((*ivg).besttss.gene.substr(0,2)!="CG"){
          pos++;
-         //}
       }
    }
 }

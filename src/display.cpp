@@ -26,6 +26,7 @@
 #include <string>
 #include <cstring>
 #include <sys/stat.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -45,14 +46,15 @@ dispscoreseq(vseq & seqs, vmot & mots)
     filename = "scores.txt";
     ofstream outf(filename.c_str());
     if (outf.fail()) {
-        cerr << "Cannot open file for txt recording: " << strerror(errno) << endl;
+        cerr << "Cannot open file for txt recording: ";
+        cerr << strerror(errno) << endl;
         exit(EXIT_FAILURE);
     }
     for (ivseq ivs = seqs.begin(); ivs != seqs.end(); ivs++) {
-        //cout << "Scanning " << ivs->name << endl;
         outf << ivs->name << "\t";
-        vd scores(nbmots_for_score,0.);
-        for (ivvinstseq ivv = ivs->instancescons.begin(); ivv != ivs->instancescons.end(); ivv++) {
+        vd scores(nbmots_for_score, 0.);
+        vvinstseq & instcons = ivs->instancescons;
+        for (ivvinstseq ivv = instcons.begin(); ivv != instcons.end(); ivv++) {
             int ind = (*ivv)[0].motindex;
             scores[ind] += log(mots[ind].lambdatrain / mots[ind].lambdaback);
         }
@@ -77,7 +79,8 @@ dispweblogo(vmot & mots)
             ss << index << " ";
             ss << concc << " ";
             string sep1 = "";
-            for (ivvd ivv = ivm->matfreq.begin(); ivv != ivm->matfreq.end(); ivv++) {
+            vvd & matf = ivm->matfreq;
+            for (ivvd ivv = matf.begin(); ivv != matf.end(); ivv++) {
                 ss << sep1;
                 string sep2 = "";
                 for (ivd iv = ivv->begin(); iv != ivv->end(); iv++) {
@@ -113,7 +116,8 @@ dispjaspar(vmot & mots)
             lineG << "G [";
             lineT << "T [";
 
-            for (ivvd ivv = ivm->matfreq.begin(); ivv != ivm->matfreq.end(); ivv++) {
+            vvd & matf = ivm->matfreq;
+            for (ivvd ivv = matf.begin(); ivv != matf.end(); ivv++) {
                 string sep2 = "";
                 lineA << (int)((*ivv)[0] * 100) << " ";
                 lineC << (int)((*ivv)[1] * 100) << " ";
@@ -169,16 +173,25 @@ svginit(ofstream & svgfile, Sequence & seq)
     for (unsigned int i = 0; i < nbspecies; i++) {
         if (seq.species[i]) nbspetot++;
     }
-    svgfile << "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\" ?>\n";
+    svgfile << "<?xml version=\"1.0\" encoding=\"utf-8\" ";
+    svgfile << "standalone=\"no\" ?>" << endl;
     svgfile << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"" << endl;
     svgfile << "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" << endl;
     svgfile << endl;
-    svgfile << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" viewBox=\"0 0 816 " << (nbgroup * (1.5 * nbspetot + 2) + 1.5) * 12 << "\" version=\"1.1\">" << endl;
+    svgfile << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" ";
+    svgfile << "viewBox=\"0 0 816 ";
+    svgfile << (nbgroup * (1.5 * nbspetot + 2) + 1.5) * 12;
+    svgfile << "\" version=\"1.1\">" << endl;
     svgfile << endl;
     svgfile << "    <style type=\"text/css\" >" << endl;
     svgfile << "      <![CDATA[" << endl;
     svgfile << endl;
-    svgfile << "text {color:#222;background:#fff;font-family:\"Helvetica Neue\", Arial, Helvetica, sans-serif;}" << endl;
+    svgfile << "text {" << endl;
+    svgfile << "   color:#222;" << endl;
+    svgfile << "   background:#fff;" << endl;
+    svgfile << "   font-family:\"Helvetica Neue\", Arial, Helvetica, ";
+    svgfile << "sans-serif;" << endl;
+    svgfile << "}" << endl;
     //   svgfile << "text.score {font-size: 6;}" << endl;
     svgfile << ".sequence {" << endl;
     svgfile << "   stroke: black;" << endl;
@@ -243,20 +256,27 @@ svgdisplay(ofstream & svgfile, Sequence & seq)
     int start = 0;
     double xscale = 0.03;
     while (start < sizeseq) {
+        // draw lines
         int linenb = 0;
         for (unsigned int i = 0; i < nbspecies; i++) {
             if (seq.species[i]) {
+                // print the name of the species
                 double yline = yoffset + 1.5 * linenb;
                 linenb++;
                 string dro;
                 dro = numtospecies(i);
-                svgfile << "<text class=\"species\" x=\"0.2em\" y=\"" << yline + 0.4 << "em\">" << dro << "</text>\n";
-                svgfile << "<line class=\"gap\" x1=\"" << xbegin << "em\" y1=\"" << yline << "em\" x2=\"" << (stop - start)*xscale + xbegin << "em\" y2=\"" << yline << "em\"/>\n";
+                svgfile << "<text class=\"species\" x=\"0.2em\" y=\"";
+                svgfile << yline + 0.4 << "em\">" << dro << "</text>\n";
+                svgfile << "<line class=\"gap\" x1=\"";
+                svgfile << xbegin << "em\" y1=\"" << yline;
+                svgfile << "em\" x2=\"" << (stop - start)*xscale + xbegin;
+                svgfile << "em\" y2=\"" << yline << "em\"/>\n";
                 vvint coords;
                 vint curcoord;
                 int seqorali = 0;
                 unsigned int p = 0;
-                for (istring is = seq.seqsrealigned[i].begin() + start; is != seq.seqsrealigned[i].begin() + stop; is++) {
+                string & seqrea = seq.seqsrealigned[i];
+                for (istring is = seqrea.begin() + start; is != seqrea.begin() + stop; is++) {
                     if (*is == '-') {
                         if (seqorali == 1) {
                             curcoord.push_back(p);
@@ -278,12 +298,17 @@ svgdisplay(ofstream & svgfile, Sequence & seq)
                     p++;
                 }
                 for (ivvint ivv = coords.begin(); ivv != coords.end(); ivv++) {
-                    svgfile << "<line class=\"sequence\" x1=\"" << xbegin + 0.03 * (*ivv)[0] << \
-                            "em\" y1=\"" << yline << "em\" x2=\"" << xbegin + 0.03 * (*ivv)[1] << "em\" y2=\"" << yline << "em\"/>\n";
+                    svgfile << "<line class=\"sequence\" x1=\"";
+                    svgfile << xbegin + 0.03 * (*ivv)[0];
+                    svgfile << "em\" y1=\"" << yline << "em\" x2=\"";
+                    svgfile << xbegin + 0.03 * (*ivv)[1] << "em\" y2=\"";
+                    svgfile << yline << "em\"/>" << endl;
                 }
             }
         }
-        for (ivinstseq ivi = seq.instances.begin(); ivi != seq.instances.end(); ivi++) {
+        // Draw rectangles for motif instances
+        vinstseq & insts = seq.instances;
+        for (ivinstseq ivi = insts.begin(); ivi != insts.end(); ivi++) {
             int moti = (*ivi).motindex;
             if (moti < 8 && (*ivi).pos < stop && (*ivi).pos > start) {
                 double xmot = xbegin + xscale * ((*ivi).pos - start);
@@ -294,8 +319,16 @@ svgdisplay(ofstream & svgfile, Sequence & seq)
                     motclass = "conserved";
                 else
                     motclass = "notconserved";
-                svgfile << "<line class=\"" + motclass + " mot" << moti + 1 << "\" x1=\"" << xmot << "em\" y1=\"" << yline - 0.5 << "em\" x2=\"" << xmot << "em\" y2=\"" << yline + 0.5 << "em\"/>\n";
-                svgfile << "<text x=\"" << xmot + 0.2 << "em\" y=\"" << (yline + 0.8) << "em\"><tspan class=\"score\">" << fixed << setprecision(1) << (*ivi).score << "</tspan></text>\n";
+                svgfile << "<line class=\"" + motclass + " mot" << moti + 1;
+                svgfile << "\" x1=\"" << xmot << "em\" y1=\"" << yline - 0.5;
+                svgfile << "em\" x2=\"" << xmot << "em\" y2=\"" << yline + 0.5;
+                svgfile << "em\"/>" << endl;
+
+                svgfile << "<text x=\"";
+                svgfile << xmot + 0.2 << "em\" y=\"" << (yline + 0.8);
+                svgfile << "em\"><tspan class=\"score\">" << fixed;
+                svgfile << setprecision(1) << (*ivi).score;
+                svgfile << "</tspan></text>" << endl;
             }
         }
         groupnb++;
