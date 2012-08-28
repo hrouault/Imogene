@@ -400,12 +400,12 @@ scangen_args_init()
         species = "droso";
         nbspecies = 12;
         nbchrom = 6;
-        annotextent = 10000; // 10 kb
+        annotextent = 10e3; // 10 kb
     } else if (!strcmp(scangen_args.species_arg, "eutherian")) {
         species = "eutherian";
         nbspecies = 12;
         nbchrom = 21;
-        annotextent = 100000; // 100 kb
+        annotextent = 1e6; // 1 Mb
     }
     initconc();
     scanwidth = scangen_args.scanwidth_arg;
