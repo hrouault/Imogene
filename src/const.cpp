@@ -32,7 +32,7 @@
 
 using namespace std;
 
-const unsigned int nbiter = 40;
+const unsigned int nbiter = 3;
 // const unsigned int distwidth = 20; // max number of instances for background
                                       // motif distribution
                                       // This variable is now declared in the
