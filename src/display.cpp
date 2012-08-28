@@ -192,6 +192,7 @@ svginit(ofstream & svgfile, Sequence & seq)
     svgfile << "   font-family:\"Helvetica Neue\", Arial, Helvetica, ";
     svgfile << "sans-serif;" << endl;
     svgfile << "}" << endl;
+    //   svgfile << "text.score {font-size: 6;}" << endl;
     svgfile << ".sequence {" << endl;
     svgfile << "   stroke: black;" << endl;
     svgfile << "   stroke-width: 0.2em;" << endl;
@@ -239,6 +240,26 @@ realindex(int spenb, Sequence & seq)
     return indspe;
 }
 
+void
+svgdisplay(ofstream & svgfile, Sequence & seq)
+{
+    double yoffset = 1.5;
+    double xbegin = 6;
+    int nbspetot = 0;
+    for (unsigned int i = 0; i < nbspecies; i++) {
+        if (seq.species[i]) nbspetot++;
+    }
+    int pos = 0;
+    int groupnb = 0;
+    int sizeseq = seq.seqsrealigned[0].size();
+    int stop = min(2000, sizeseq);
+    int start = 0;
+    double xscale = 0.03;
+    while (start < sizeseq) {
+        // draw lines
+        int linenb = 0;
+        for (unsigned int i = 0; i < nbspecies; i++) {
+            if (seq.species[i]) {
                 // print the name of the species
                 double yline = yoffset + 1.5 * linenb;
                 linenb++;
@@ -283,28 +304,6 @@ realindex(int spenb, Sequence & seq)
                     svgfile << xbegin + 0.03 * (*ivv)[1] << "em\" y2=\"";
                     svgfile << yline << "em\"/>" << endl;
                 }
-
-void
-svgdisplay(ofstream & svgfile, Sequence & seq)
-{
-    double yoffset = 1.5;
-    double xbegin = 6;
-    int nbspetot = 0;
-    for (unsigned int i = 0; i < nbspecies; i++) {
-        if (seq.species[i]) nbspetot++;
-    }
-    int pos = 0;
-    int groupnb = 0;
-    int sizeseq = seq.seqsrealigned[0].size();
-    int stop = min(2000, sizeseq);
-    int start = 0;
-    double xscale = 0.03;
-    while (start < sizeseq) {
-        // draw lines
-        int linenb = 0;
-        for (unsigned int i = 0; i < nbspecies; i++) {
-            if (seq.species[i]) {
-                // add previous block here
             }
         }
         // Draw rectangles for motif instances
@@ -574,6 +573,31 @@ dispseqwmots_html(Sequence & seq, vmot & mots, ofstream & outf)
         }
         int pstate = 0;
         int ppos = start;
+        //      for (unsigned int i=start;i<stop;i++){
+        //         if (vvstate[0][i]>0  && vvstate[0][i]!=pstate){
+        //            int deca;
+        //            deca=i-ppos;
+        //            outf << deca ;
+        //            if (vvstate[0][i]==2) outf << "<span class=emph>";
+        //            outf << "mot" << vvcol[0][i];
+        //            outf << setprecision(1) << fixed <<  scores[0][i] ;
+        //            if (vvstate[0][i]==2) outf << "}";
+        //            // to count the number of digits:
+        //            stringstream score;
+        //            score << setprecision(1) << fixed <<  scores[0][i] ;
+        //            for (unsigned int ii=1;ii<=score.str().size();ii++){
+        //               if ( i>0 && i%10 == 0 ) {
+        //                  outf << " ";
+        //               }
+        //               i++;
+        //            }
+        //            ppos=i;
+        //         }
+        //         pstate=vvstate[0][i];
+        //         if ( i>0 && (i+1)%10 == 0 ) {
+        //            outf << " ";
+        //         }
+        //      }
         start = stop2;
         stop2 = min(stop2 + 60, sizeseq);
         outf << endl;
