@@ -237,7 +237,8 @@ void
 Motif::pvaluecomp()
 {
     // Density of conserved binding sites in the background
-    lambdaback = nbconsback / (double)tottest;
+    if (nbconsback > 0 ) lambdaback = nbconsback / (double)tottest;
+    else lambdaback = 1. / (double)(tottest + 1);
     // Chi2 calculation
     calcscorepoiss();
     vseq::iterator iseq;
