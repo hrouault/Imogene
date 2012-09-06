@@ -57,15 +57,15 @@ extern "C" {
  
     /* Multiply a matrix by a vector
      */
-    int dgemv_(char *trans, int *m, int *n, double * alpha, double *a,
-               int *lda, double *x, int *incx, double *beta, double *y,
+    int dgemv_(char *trans, int *m, int *n, double * alphala, double *a,
+               int *lda, double *x, int *incx, double *betala, double *y,
                int *incy);
 
     /* Multiply two matrices
      */
     int dgemm_(const char *transa, const char *transb, int *l, int *n, int *m,
-               double *alpha, const void *a, int *lda, void *b, int *ldb,
-               double *beta, void *c, int *ldc);
+               double *alphala, const void *a, int *lda, void *b, int *ldb,
+               double *betala, void *c, int *ldc);
 }
 
 using namespace std;
@@ -503,17 +503,17 @@ update_transi_halpern()
             }
         }
         char trans = 'T';
-        double alpha = 1.0;
-        double beta = 0.0;
+        double alphala = 1.0;
+        double betala = 0.0;
 
         //printmat(dum1);
         //printmat(dum2);
         //printmat(qm1lm1);
 
-        dgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum1, &n,
-               &beta, iv -> transi1, &n );
-        dgemm_(&trans, &trans, &n, &n, &n, &alpha, qm1lm1 , &n, dum2, &n,
-               &beta, iv -> transi2, &n );
+        dgemm_(&trans, &trans, &n, &n, &n, &alphala, qm1lm1 , &n, dum1, &n,
+               &betala, iv -> transi1, &n );
+        dgemm_(&trans, &trans, &n, &n, &n, &alphala, qm1lm1 , &n, dum2, &n,
+               &betala, iv -> transi2, &n );
     }
 
     return EXIT_SUCCESS;
@@ -565,22 +565,22 @@ loglikely_column(const unsigned int pos, Motalign & ma)
         if (evolutionary_model == 2) {
             char trans = 'N'; // backward should impose the transpose but
                               // fortran convention add another transpose
-            double alpha = 1.0;
-            double beta = 0.0;
+            double alphala = 1.0;
+            double betala = 0.0;
 
             if (*sourc1 < -0.5 && *sourc2 < -0.5){
                 *targ = -1.0;
             } else if (*sourc2 < -0.5){
-                dgemv_(&trans, &n, &n, &alpha, iv -> transi1, &n, sourc1, &inc,
-                       &beta, targ, &inc);
+                dgemv_(&trans, &n, &n, &alphala, iv -> transi1, &n, sourc1, &inc,
+                       &betala, targ, &inc);
             } else if (*sourc1 < -0.5){
-                dgemv_(&trans, &n, &n, &alpha, iv -> transi2, &n, sourc2, &inc,
-                       &beta, targ, &inc);
+                dgemv_(&trans, &n, &n, &alphala, iv -> transi2, &n, sourc2, &inc,
+                       &betala, targ, &inc);
             } else {
-                dgemv_(&trans, &n, &n, &alpha, iv -> transi1, &n, sourc1, &inc,
-                       &beta, targ, &inc);
-                dgemv_(&trans, &n, &n, &alpha, iv -> transi2, &n, sourc2, &inc,
-                       &beta, dum, &inc);
+                dgemv_(&trans, &n, &n, &alphala, iv -> transi1, &n, sourc1, &inc,
+                       &betala, targ, &inc);
+                dgemv_(&trans, &n, &n, &alphala, iv -> transi2, &n, sourc2, &inc,
+                       &betala, dum, &inc);
                 for (unsigned int i = 0 ; i < 4 ; i++){
                     targ[i] *= dum[i];
                 }
