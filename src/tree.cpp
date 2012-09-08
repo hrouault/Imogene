@@ -680,7 +680,7 @@ posterior_priormean(vd w_pack, void * params)
     }
     initw(w_pack2);
     double logli = loglikelyhood(params);
-    logli += alpha * (log(w[0]) + log(w[3])) + beta * (log(w[1]) + log(w[2]));
-    return -logli;
+    logli += (alpha -1) * (log(w[0]) + log(w[3])) + (beta - 1) * (log(w[1]) + log(w[2]));
+    return logli;
 }
 
