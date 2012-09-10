@@ -441,8 +441,6 @@ def maskseq(start, stop, seq, mode):
 def posrecordleft(coordlist, coord):
     """Record selection function"""
     pos = bisect.bisect_left(coordlist, coord)
-    if pos > 0:
-        pos = pos - 1
     return pos
 
 
@@ -463,10 +461,10 @@ if args.species == 'eutherian':
                     coordline = fmavid.readline()
                     fmavid2.write(coordline)
                     coordline = coordline.rstrip().split()
-                    coordstart = [coordline[1], int(coordline[2]),
-                                  int(coordline[2])]
-                    coordstop = [coordline[1], int(coordline[3]),
-                                 int(coordline[3])]
+                    coordstart = (coordline[1], int(coordline[2]),
+                                  int(coordline[2]))
+                    coordstop = (coordline[1], int(coordline[3]),
+                                 int(coordline[3]))
 
                     ## Mask mouse CDS
                     seqline = list(fmavid.readline())
@@ -528,10 +526,10 @@ else:
                 coordline = fmavid.readline()
                 fmavid2.write(coordline)
                 coordline = coordline.rstrip().split()
-                coordstart = [coordline[1], int(coordline[2]),
-                              int(coordline[2])]
-                coordstop = [coordline[1], int(coordline[3]),
-                             int(coordline[3])]
+                coordstart = (coordline[1], int(coordline[2]),
+                              int(coordline[2]))
+                coordstop = (coordline[1], int(coordline[3]),
+                             int(coordline[3]))
 
                 ## Mask sequences
                 seqline = list(fmavid.readline())
