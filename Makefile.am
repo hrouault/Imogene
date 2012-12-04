@@ -33,7 +33,7 @@ dist-hook:
 
 SUBDIRS = src scripts doc data css $(MOBYLE_DIR)
 
-EXTRA_DIST = autogen.sh
+EXTRA_DIST = autogen.sh $(top_srcdir)/.version
 
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version

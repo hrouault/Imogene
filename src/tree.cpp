@@ -650,7 +650,7 @@ loglikelyhood(void * params)
     return logli;
 }
 
-int
+void
 initw(const double * w_pack){
     w[0] = w_pack[0];
     w[1] = w_pack[1];

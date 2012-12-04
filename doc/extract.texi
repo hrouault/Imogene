@@ -25,7 +25,7 @@
 This is the output of @code{imogene extract --help}:
 
 @smallexample
-@include extract.help
+@c @include extract.help
 @end smallexample
 
 You mainly need to provide a coordinate file in the BED4 format:

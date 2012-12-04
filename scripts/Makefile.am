@@ -21,9 +21,10 @@
 bin_SCRIPTS = getalign extract-bgrnd-coord weblogo-display
 nodist_python_PYTHON = mapping.py
 
-CLEANFILES = $(bin_SCRIPTS)
+CLEANFILES = $(bin_SCRIPTS) mapping.py emf2fasta.c
 EXTRA_DIST = getalign.py.in mapping.py.in weblogo-display.py.in\
-			 emf2fasta.pyx.in emf2fasta.pyx emf2fasta.c.in
+			 emf2fasta.pyx.in emf2fasta.pyx emf2fasta.c.in\
+			 extract-bgrnd-coord.py.in
 
 do_subst = $(SED) -e 's,[@]PYTHON[@],$(PYTHON),g'\
 		       -e 's,[@]pythondir[@],$(pythondir),g'\
