@@ -24,7 +24,7 @@
 AC_PREREQ([2.61])
 AC_INIT(Imogene, m4_esyscmd([tools/git-version-gen .tarball-version]),
     [rouault@lps.ens.fr marc.santolini@lps.ens.fr])
-AM_INIT_AUTOMAKE()
+AM_INIT_AUTOMAKE(tar-pax)
 
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
