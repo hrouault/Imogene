@@ -203,16 +203,19 @@ svginit(ofstream & svgfile, Sequence & seq)
     svgfile << "   stroke-width: 0.05em;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot1 {" << endl;
-    svgfile << "   stroke:  #730046;" << endl;
+    svgfile << "   stroke:  #E57272;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot2 {" << endl;
-    svgfile << "   stroke: #BFBB11;" << endl;
+    svgfile << "   stroke: #99995B;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot3 {" << endl;
-    svgfile << "   stroke: #FFC200;" << endl;
+    svgfile << "   stroke: #E5E55B;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot4 {" << endl;
-    svgfile << "   stroke: #E88801;" << endl;
+    svgfile << "   stroke: #5B6B99;" << endl;
+    svgfile << "}" << endl;
+    svgfile << ".mot5 {" << endl;
+    svgfile << "   stroke: #5B7EE5;" << endl;
     svgfile << "}" << endl;
     svgfile << ".conserved {" << endl;
     svgfile << "   stroke-width: 0.3em;" << endl;
@@ -310,7 +313,7 @@ svgdisplay(ofstream & svgfile, Sequence & seq)
         vinstseq & insts = seq.instances;
         for (ivinstseq ivi = insts.begin(); ivi != insts.end(); ivi++) {
             int moti = (*ivi).motindex;
-            if (moti < 8 && (*ivi).pos < stop && (*ivi).pos > start) {
+            if (moti < 5 && (*ivi).pos < stop && (*ivi).pos > start) {
                 double xmot = xbegin + xscale * ((*ivi).pos - start);
                 double yline = yoffset + 1.5 * realindex((*ivi).species, seq);
                 string width;
@@ -327,7 +330,7 @@ svgdisplay(ofstream & svgfile, Sequence & seq)
                 svgfile << "<text x=\"";
                 svgfile << xmot + 0.2 << "em\" y=\"" << (yline + 0.8);
                 svgfile << "em\"><tspan class=\"score\">" << fixed;
-                svgfile << setprecision(1) << (*ivi).score;
+                svgfile << setprecision(1) << (*ivi).score / log(2);
                 svgfile << "</tspan></text>" << endl;
             }
         }
@@ -829,7 +832,7 @@ disphtml_genmot(vseq & seqs, vmot & mots)
     }
     int retcode = mkdir("css" , S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
     if (retcode) {
-        cerr << "Cannot create directory: " << strerror(errno) << endl;
+        cerr << "Cannot create css directory: " << strerror(errno) << endl;
         exit(EXIT_FAILURE);
     }
     int retsym = symlink((display_datapath + "/css").c_str(), "css");
@@ -1001,20 +1004,11 @@ cmd_display(int argc, char ** argv)
         cout << "Loading alignments " << endl;
         vseq align;
         align = loadseqs(display_args.align_arg);
-        for (ivseq iv = align.begin(); iv != align.end(); iv++) {
-            texify(iv->name);
-        }
         cout << "Nb sequences to scan: " << align.size() << endl;
         cout << "Loading Motifs" << endl;
         vmot mots;
         loadmots(display_args.motifs_arg, mots);
         if (nbmots_for_score < mots.size()) mots.erase(mots.begin() + nbmots_for_score, mots.end());
-        for (ivmot iv = mots.begin(); iv != mots.end(); iv++) {
-            // use same score on all species for detection
-            // iv->motscorethrcons = iv->motscorethr2;
-            // avoid problems with _ and # characters for latex
-            texify(iv->name);
-        }
         cout << "Loaded " << mots.size() << " motifs." << endl;
         cout << "Scanning sequences for instances..." << endl;
         if (display_args.score_given){
@@ -1023,40 +1017,54 @@ cmd_display(int argc, char ** argv)
             scanseqsforinstances(align, mots);
         }
         else scanseqsforinstancesnmask(align, mots);
-        
+
         cout << "Defining conserved instances..." << endl;
         for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
-            ivs->instances2instancescons();
+           ivs->instances2instancescons();
         }
-        
+
         if (display_args.tex_ref_given) {
-            cout << "Creating tex file for reference species... " << endl;
-            disptex(align, mots);
+           cout << "Creating tex file for reference species... " << endl;
+           // avoid problems with _ and # characters for latex
+           for (ivseq iv = align.begin(); iv != align.end(); iv++) {
+              texify(iv->name);
+           }
+           for (ivmot iv = mots.begin(); iv != mots.end(); iv++) {
+              texify(iv->name);
+           }
+           disptex(align, mots);
         } else if (display_args.html_ref_given) {
-            cout << "Creating html file for reference species... " << endl;
-            disphtml_genmot(align, mots);
+           cout << "Creating html file for reference species... " << endl;
+           disphtml_genmot(align, mots);
         } else if (display_args.tex_align_given) {
-            cout << "Creating fasta/tex files... " << endl;
-            disptexwgaps(align, mots);
+           cout << "Creating fasta/tex files... " << endl;
+           // avoid problems with _ and # characters for latex
+           for (ivseq iv = align.begin(); iv != align.end(); iv++) {
+              texify(iv->name);
+           }
+           for (ivmot iv = mots.begin(); iv != mots.end(); iv++) {
+              texify(iv->name);
+           }
+           disptexwgaps(align, mots);
         } else if (display_args.jaspar_given) {
-            cout << "Outputting matrices... " << endl;
-            dispjaspar(mots);
+           cout << "Outputting matrices... " << endl;
+           dispjaspar(mots);
         } else if (display_args.logos_given) {
-            cout << "Creating logos... " << endl;
-            dispweblogo(mots);
+           cout << "Creating logos... " << endl;
+           dispweblogo(mots);
         } else if (display_args.svg_given) {
-            for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
-                scanseqforsvg(*ivs, mots);
-            }
+           for (ivseq ivs = align.begin(); ivs != align.end(); ivs++) {
+              scanseqforsvg(*ivs, mots);
+           }
         } else if (display_args.score_given) {
-            dispscoreseq(align,mots);
+           dispscoreseq(align,mots);
         } else {
-            cout << "No output mode was given. Exiting." << endl;
+           cout << "No output mode was given. Exiting." << endl;
         }
     } else {
-        if (display_args.scangen_mode_counter) {
-            disphtml_scangen();
-        }
+       if (display_args.scangen_mode_counter) {
+          disphtml_scangen();
+       }
     }
     return EXIT_SUCCESS;
 }		/* -----  end of function extract  ----- */
