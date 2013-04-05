@@ -123,6 +123,8 @@ scanmots()
     } else if (species == "eutherian") {
         cout << "Reading eutherian alignments..." << endl;
         align.open((scangen_datapath + "/eutherian/align.dat").c_str());
+        //for test purposes:
+        //align.open((scangen_datapath + "/eutherian/align-10.dat").c_str());
     }
     if (align.fail()) {
         cerr << "Alignment file opening failed: " << strerror(errno) << endl;
@@ -218,10 +220,22 @@ compgroupedinst()
                 ginst.totmots++;
             }
             ginst.compscore(motsdef, nbmots_for_score);
+
+            ivTSS bestivt;
+            int mindist(1e9);
             for (ivTSS ivt = TSSall.begin(); ivt != TSSall.end(); ivt++) {
-                if (ivt->chrom == ginst.chrom && abs(ivt->coord - (ginst.start + ginst.stop) / 2) <= annotextent) {
-                    ginst.TSSs.push_back(*ivt);
+               // replace annotextent by 5 nearest genes
+//                if (ivt->chrom == ginst.chrom && abs(ivt->coord - (ginst.start + ginst.stop) / 2) <= annotextent) {
+//                    ginst.TSSs.push_back(*ivt);
+//                }
+                if (ivt->chrom == ginst.chrom && abs(ivt->coord - (ginst.start + ginst.stop) / 2) <= mindist) {
+                   mindist = abs(ivt->coord - (ginst.start + ginst.stop) / 2);
+                   bestivt = ivt;
                 }
+            }
+
+            for (ivTSS ivt = max(bestivt - 2, TSSall.begin()); ivt != min(bestivt + 3, TSSall.end()); ivt++){ 
+               ginst.TSSs.push_back(*ivt);
             }
             //         cout << ginst;
             //         cout << "->";
@@ -291,8 +305,8 @@ outputresults()
         exit(EXIT_FAILURE);
     }
     for (ivginst ivg = finginst.begin(); ivg != finginst.end(); ivg++) {
-        res << (*ivg).score << " " << chromfromint((*ivg).chrom) << ":" << (*ivg).start << ".." << (*ivg).stop << " ";
-        if (ivg->distbesttss < annotextent) {
+        res << (*ivg).score << " chr" << chromfromint((*ivg).chrom) << ":" << (*ivg).start << "-" << (*ivg).stop << " ";
+        if (abs(ivg->distbesttss) < annotextent) {
             res << (*ivg).besttss.gene << " (" << ivg->distbesttss << ") ";
         } else {
             res << "NA (>" << annotextent << ") ";
@@ -404,7 +418,7 @@ scangen_args_init()
         species = "eutherian";
         nbspecies = 12;
         nbchrom = 21;
-        annotextent = 1e6; // 1 Mb
+        annotextent = 5e6; // 1 Mb
     }
     initconc();
     scanwidth = scangen_args.scanwidth_arg;
