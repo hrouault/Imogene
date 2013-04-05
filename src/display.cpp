@@ -846,12 +846,12 @@ disphtml_genmot(vseq & seqs, vmot & mots)
     copycss("custom.css");
     disphtmlinit(outf, "Imogene genmot output");
     dispmotifs_html(outf, mots);
-    outf << "<h2>Motif instances in the training set</h2>";
+    outf << "<h2>Motifs instances in the training set</h2>";
     for (ivseq ivs = seqs.begin(); ivs != seqs.end(); ivs++) {
         cout << "Scanning " << ivs->name << endl;
         dispseqwmots_html(*ivs, mots, outf);
     }
-    outf << "<h2>Motif presence in alignments</h2>";
+    outf << "<h2>Motifs presence in alignments</h2>";
     for (ivseq ivs = seqs.begin(); ivs != seqs.end(); ivs++) {
         outf << "<h3>" << (*ivs).name << "</h3>" << endl;
         string filename;
@@ -880,7 +880,8 @@ disphtml_scangen()
     }
     disphtmlinit(outf, "Imogene scangen output");
     outf << "<h2>Genome-wide predicted enhancers</h2>" << endl;
-    outf << "<p>TSS stands for Transcription start sites</p>" << endl;
+    outf << "<p>TSS stands for Transcription Start Site.<br>\
+       Only 200 first results are shown.</p>" << endl;
     ifstream enhf(display_args.enhancers_arg);
     if (enhf.fail()) {
         cerr << "Cannot open enhancer file: " << strerror(errno) << endl;
@@ -888,7 +889,13 @@ disphtml_scangen()
     }
     outf << "<table>" << endl;
     outf << "<tr>" << endl;
-    outf << "<th>Score</th><th>Coordinate</th> <th>Closest TSS</th><th>distance to closest TSS</th><th>TSSs</th>" << endl;
+    outf << "<th>Score</th>\
+       <th>Coordinate</th> \
+       <th>Closest TSS</th>\
+       <th class='TSS'>Relative distance to closest TSS (bp)</th>\
+       <th>5 surrounding TSSs</th>"\
+       //<th>TSSs in surrounding " << annotextent / 1e3 << "kb</th>"
+       << endl;
     outf << "</tr>" << endl;
     unsigned int i = 0;
     string strline;
@@ -910,7 +917,7 @@ disphtml_scangen()
         string tsses;
         getline(line, tsses, ' ');
         outf << "<tr><td>" << score << "</td><td>" << coordinate << "</td><td>";
-        outf << closesttss << "</td><td>" << disttss.substr(1, lendisttss - 2) << "</td><td>" << tsses << "</td></tr>" << endl;
+        outf << closesttss << "</td><td class='TSS'>" << disttss.substr(1, lendisttss - 2) << "</td><td>" << tsses << "</td></tr>" << endl;
         if (i > 200) {
             break;
         }
@@ -950,9 +957,11 @@ display_args_init()
         if (!strcmp(display_args.species_arg, "droso")) {
             species = "droso";
             nbspecies = 12;
+            annotextent = 10e3; // 10 kb
         } else if (!strcmp(display_args.species_arg, "eutherian")) {
-            species = "eutherian";
-            nbspecies = 12;
+           species = "eutherian";
+           nbspecies = 12;
+           annotextent = 5e6; // 1 Mb
         }
         initconc();
         scorethr2 = display_args.threshold_arg * log(2);
