@@ -27,6 +27,7 @@
             <doclink>https://github.com/hrouault/Imogene</doclink>
             <comment>
                 <div xmlns="http://www.w3.org/1999/xhtml">
+                   <p>
                     <em> Imogene</em> has two main purposes:
                     <ul>
                         <li>it detects statistically overrepresented motifs,
@@ -39,6 +40,7 @@
                             on user-selected motifs at the whole genome scale.
                         </li>
                     </ul>
+                 </p>
                     <p>Currently, <em>Imogene</em> supports two genome sets:
                         mammals and drosophilae, but we are open to integrating
                         other sets if you feel interested.</p>
@@ -243,7 +245,7 @@
                    
                    <parameter ismandatory="1"> <name>Ss1</name> <prompt
                          lang="en">Threshold used to scan training set
-                         sequences during display</prompt> <type> <datatype>
+                         sequences for display</prompt> <type> <datatype>
                             <class>Float</class> </datatype> </type> <vdef>
                          <value>8.0</value> </vdef> <comment> <div
                             xmlns="http://www.w3.org/1999/xhtml"> <p>Note that
@@ -256,20 +258,18 @@
 
 
                 <parameter ismandatory="1" issimple="1">
-                   <name>coord_file</name> <prompt lang="en">File of enhancer
-                      coordinates</prompt> <type> <datatype>
+                   <name>coord_file</name> <prompt lang="en">Training set
+                      sequences coordinates</prompt> <type> <datatype>
                          <class>Coordinates</class>
                          <superclass>AbstractText</superclass> </datatype>
                          </type> <comment> <div
                          xmlns="http://www.w3.org/1999/xhtml"> <p> List of
                             sequence
-                            coordinates in the BED4 format: </p><p> chrN start
-                            stop seq_name </p><p>
-
+                            coordinates in the BED4 format: <pre>chrN  start stop  seq_name </pre>
                               Below we give example training sets than can be
                            copy/pasted in the following form.  </p>
                         <!--<example>--> <ul> <li> Mouse example training
-                                 set (mm9 assembly):</li> <pre>
+                                 set (mm9 assembly, enhancers specific of the neural tube):</li> <pre>
 chr8  91462919 91464123 CYLD-SALL1
 chr4  99040833 99042291 APG4C-FOXD3
 chr14 118834760   118836087   SOX21-ABCC4
@@ -282,7 +282,7 @@ chr5  42914188 42915270 FAM44A-CPEB2
 chr9  91261697 91263041 ZIC4-ZIC1
 chr18 82027407 82028703 GALR1-SALL3
 chr13 73170587 73173631 IRX4-IRX2</pre>
-                              <li> Drosophila example training set (release 5 assembly):</li> <pre>
+                              <li> Drosophila example training set (release 5 assembly, enhancers expressed in mesoderm and somatic muscle):</li> <pre>
 chr3R   10415381 10415780 seq2300
 chr3R 17228198 17228402 seq2821
 chr2R 18937351 18937843 seq1357
