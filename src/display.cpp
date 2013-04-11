@@ -157,11 +157,11 @@ texify(string & str)
 string
 colfromint(int i)
 {
-    if (i == 0) return "red";
-    if (i == 1) return "blue";
-    if (i == 2) return "green";
-    if (i == 3) return "yellow";
-    if (i == 4) return "brown";
+    if (i == 0) return "Red";
+    if (i == 1) return "Blue";
+    if (i == 2) return "Green";
+    if (i == 3) return "Yellow";
+    if (i == 4) return "Brown";
     return "black";
 }
 
@@ -725,7 +725,7 @@ disptexinit(ofstream & outf)
 {
     outf << "\\documentclass[11pt,twoside,reqno,a4paper]{article}\n" <<
          "\\usepackage[french]{babel}\n" <<
-         "\\usepackage{color}\n" <<
+         "\\usepackage[usenames,dvipsnames]{color}\n" <<
          "\\usepackage[utf8]{inputenc}\n" <<
          "\\usepackage{geometry}\n" <<
          "\\geometry{a4paper}\n" <<

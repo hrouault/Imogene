@@ -337,8 +337,10 @@ operator >>(istream & is, TSS & tss)
         tss.sens = 1;
     } else if (dir == '-') {
         tss.sens = -1;
+    } else if (dir == '.') {
+        tss.sens = 0;
     } else if (!is.eof()) {
-        cout << "error!! pos : " << pos << "\n";
+        cout << "error during TSS importation!! pos : " << pos << "\n";
     }
     tss.chrom = intfromchrom(chrom);
     tss.coord = pos;
