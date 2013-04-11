@@ -119,7 +119,9 @@ scanmots()
     ifstream align;
     if (species == "droso") {
         cout << "Reading droso alignments..." << endl;
-        align.open((scangen_datapath + "/droso/align.dat").c_str());
+        //align.open((scangen_datapath + "/droso/align.dat").c_str());
+        //for test purposes:
+        align.open((scangen_datapath + "/droso/align-10.dat").c_str());
     } else if (species == "eutherian") {
         cout << "Reading eutherian alignments..." << endl;
         align.open((scangen_datapath + "/eutherian/align.dat").c_str());
@@ -190,7 +192,7 @@ compgroupedinst()
     importTSS(TSSall, annots);
     annots.close();
     // in the following, allinstances supposed to be sorted (done in scanmots)
-    cout << "Defining CRMs and assigning to TSS in annotextent region..." << endl;
+    cout << "Defining CRMs and assigning to TSS in surrounding region..." << endl;
     int counter = 1;
     for (ivinst ivi = allinstances.begin(); ivi != allinstances.end(); ivi++) {
         //cout << "\r" << counter << " " << allinstances.size();
@@ -306,11 +308,11 @@ outputresults()
     }
     for (ivginst ivg = finginst.begin(); ivg != finginst.end(); ivg++) {
         res << (*ivg).score << " chr" << chromfromint((*ivg).chrom) << ":" << (*ivg).start << "-" << (*ivg).stop << " ";
-        if (abs(ivg->distbesttss) < annotextent) {
+        //if (abs(ivg->distbesttss) < annotextent) {
             res << (*ivg).besttss.gene << " (" << ivg->distbesttss << ") ";
-        } else {
-            res << "NA (>" << annotextent << ") ";
-        }
+        //} else {
+        //    res << "NA (>" << annotextent << ") ";
+        //}
         for (ivTSS ivt = (*ivg).TSSs.begin(); ivt != (*ivg).TSSs.end(); ivt++) {
             res << (*ivt).gene << ";";
         }
@@ -413,18 +415,18 @@ scangen_args_init()
         species = "droso";
         nbspecies = 12;
         nbchrom = 6;
-        annotextent = 10e3; // 10 kb
+        //annotextent = 10e3; // 10 kb
     } else if (!strcmp(scangen_args.species_arg, "eutherian")) {
         species = "eutherian";
         nbspecies = 12;
         nbchrom = 21;
-        annotextent = 5e6; // 1 Mb
+        //annotextent = 5e6; // 1 Mb
     }
     initconc();
     scanwidth = scangen_args.scanwidth_arg;
-    if (scangen_args.annotextent_given) {
-        annotextent = scangen_args.annotextent_arg;
-    }
+    //if (scangen_args.annotextent_given) {
+    //    annotextent = scangen_args.annotextent_arg;
+    //}
     nbmots_for_score = scangen_args.nbmots_arg;
     neighbext = scangen_args.neighbext_arg;
     if (scangen_args.progress_given) progress = true;
@@ -445,7 +447,7 @@ cmd_scangen(int argc, char ** argv)
         scangen_datapath = imo_scangen_datapath;
     }
     sequence_datapath = scangen_datapath;
-    cout << "annotextent=" << annotextent << endl;
+    //cout << "annotextent=" << annotextent << endl;
     cout << "Loading Motifs" << endl;
     loadmotsforscangen();
     if (scangen_args.phenotype_given) {

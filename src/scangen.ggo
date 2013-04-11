@@ -39,8 +39,8 @@ option "species" s "Species selected"
 option  "scanwidth" -  "Width of selected enhancers"
             int  typestr="int" default="1000" optional
 
-option  "annotextent" -  "Extent for TSSs gene assignment (bp)"
-            int  typestr="int" default="10000" optional
+# option  "annotextent" -  "Extent for TSSs gene assignment (bp)"
+#            int  typestr="int" default="10000" optional
 
 option "wocons" - "Do NOT use conservation" optional
 
