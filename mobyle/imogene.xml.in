@@ -16,15 +16,17 @@
                 <text lang="en">Genome-wide identification of cis-regulatory
                     motifs and modules</text>
             </description>
-            <authors>H. Rouault, K. Mazouni, L. Couturier, V. Hakim
-                and F. Schweisguth</authors>
-             <reference>
-                Genome-wide identification of cis-regulatory motifs and
-                modules underlying gene coregulation using statistics and
-                phylogeny. Proc. Natl. Acad. Sci. U.S.A., 107:14615-14620,
-                Aug 2010.
+            <authors>H. Rouault, M. Santolini</authors>
+             <reference> H. Rouault, M. Santolini, F. Schweisguth and V. Hakim
+                (2013), Imogene: identification of motifs and cis regulatory
+                modules underlying gene co-regulation, submitted.  
              </reference>
-            <doclink>https://github.com/hrouault/Imogene</doclink>
+             <reference> H. Rouault, K. Mazouni, L. Couturier, V. Hakim and F.
+                Schweisguth (2010), Genome-wide identification of
+                cis-regulatory motifs and modules underlying gene coregulation
+                using statistics and phylogeny. Proc. Natl. Acad. Sci. U.S.A.,
+                107:14615-14620.  </reference>
+             <doclink>https://github.com/hrouault/Imogene</doclink>
             <comment>
                 <div xmlns="http://www.w3.org/1999/xhtml">
                    <p>
