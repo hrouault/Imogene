@@ -1,0 +1,5 @@
+This is the genmot mode.  Alignments correspond to extracted coordinates from
+the extract folder. Please make sure that you have extracted the alignments.
+Example scripts can be executed to produce motifs files.  The droso script
+should run very fast, while the eutherian script should take more time to
+complete.

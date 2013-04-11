@@ -1,0 +1,7 @@
+This is the display mode.  Given alignments (extract mode) and motifs (genmot
+mode), the display mode allows to generate weblogos for the motifs, and to
+display motifs instances on sequences in textual (pdf) or graphical (svg) form.
+Also, a html mode summarizes all the previous information.
+
+Example scripts show all useful commands. Make sure that you have run the
+genmot or scangen mode beforehand to generate all necessary files.

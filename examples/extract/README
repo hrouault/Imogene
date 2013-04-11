@@ -1,0 +1,4 @@
+This is the extract mode.  Coordinate correspond to neural tube specific
+enhancers (eutherian) and mesoderm / somatic muscle enhancers (drosophila) that
+were used in the analysis of Imogene paper.  Example scripts can be executed to
+produce the alignments used in genmot mode.
