@@ -305,7 +305,7 @@ chr2R 5025930  5026695  seq257</pre>
                 <parameter ishidden="1"> <name>cmd_2</name> <type> <datatype>
                          <class>String</class> </datatype> </type> <format>
                       <code proglang="python">" imogene genmot -s " + species +
-                         " -w " + str(width) + " -t " + str(threshold) + " -x "
+                         " -w " + str(width) + " -t " + str(Sg) + " -x "
                          + str(extent) + " -e " + str(evolutionary) + " -a
                          align &amp;&amp;" </code> </format> <argpos>2</argpos>
                 </parameter>
@@ -313,14 +313,14 @@ chr2R 5025930  5026695  seq257</pre>
                 <parameter ishidden="1"> <name>cmd_3</name> <type> <datatype>
                          <class>String</class> </datatype> </type> <format>
                       <code proglang="python">" imogene display -t "+
-                         str(threshold) +" -s " + species +" -m motifs.txt -a
+                         str(Ss1) +" -s " + species +" -m motifs.txt -a
                          align --logos --pdf --png &amp;&amp;"</code> </format>
                    <argpos>3</argpos> </parameter>
 
                 <parameter ishidden="1"> <name>cmd_4</name> <type> <datatype>
                          <class>String</class> </datatype> </type> <format>
                       <code proglang="python">" imogene display -t "+
-                         str(threshold) +" -s " + species +" -m motifs.txt -a
+                         str(Ss1) +" -s " + species +" -m motifs.txt -a
                          align --html-ref"</code> </format> <argpos>4</argpos>
                 </parameter>
 
@@ -345,7 +345,7 @@ chr2R 5025930  5026695  seq257</pre>
                          proglang="python">"results_genmot.html"</code>
                    </filenames> <comment> <div
                    xmlns="http://www.w3.org/1999/xhtml"> <p>Predicted motifs in
-                      pretty printed format (xhtml).  This page contain motif
+                      pretty printed format (xhtml).  This page contains motifs
                       logos.</p> </div> </comment> </parameter> 
 
                 <parameter isout="1"> <name>motif_png_out</name> <type>
@@ -420,7 +420,7 @@ chr2R 5025930  5026695  seq257</pre>
                 <parameter ishidden="1"> <name>cmdscangen_1</name> <type>
                       <datatype> <class>String</class> </datatype> </type>
                    <format> <code proglang="python">"imogene scangen -s " +
-                         species + " -t " + str(threshold) + " -x " +
+                         species + " -t " + str(Ss2) + " -x " +
                          str(extent) + " -m " + motifs_file + " --scanwidth=" +
                          str(crmwidth) + "&amp;&amp; "</code> </format>
                     <argpos>1</argpos> </parameter>
@@ -439,9 +439,11 @@ chr2R 5025930  5026695  seq257</pre>
                          proglang="python">"results_scangen.html"</code>
                     </filenames> <comment> <div
                     xmlns="http://www.w3.org/1999/xhtml"> <p>List of predicted
-                       enhancers, from the most concentrated in motif to the
-                       less enriched. The number of binding sites for each
-                       motif is also indicated.</p> </div> </comment>
+                       enhancers, from the most concentrated in motifs to the
+                       less enriched. 
+                       <!--The number of binding sites for each
+                       motif is also indicated. ZZ NOT TRUE ZZ-->
+              </p> </div> </comment>
            </parameter> 
 
             </parameters> </paragraph>
