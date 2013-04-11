@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 816 150" version="1.1">
+
+    <style type="text/css" >
+      <![CDATA[
+
+text {
+   color:#222;
+   background:#fff;
+   font-family:"Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.sequence {
+   stroke: black;
+   stroke-width: 0.2em;
+}
+
+.gap {
+   stroke: black;
+   stroke-width: 0.05em;
+}
+.mot1 {
+   stroke:  #E57272;
+}
+.mot2 {
+   stroke: #99995B;
+}
+.mot3 {
+   stroke: #E5E55B;
+}
+.mot4 {
+   stroke: #5B6B99;
+}
+.mot5 {
+   stroke: #5B7EE5;
+}
+.conserved {
+   stroke-width: 0.3em;
+}
+.notconserved {
+   stroke-width: 0.1em;
+}
+.score {
+   font-size: 0.7em;
+}
+
+      ]]>
+    </style>
+
+<g font-size="12">
+<text class="species" x="0.2em" y="1.9em">DroMel</text>
+<line class="gap" x1="6em" y1="1.5em" x2="12.54em" y2="1.5em"/>
+<line class="sequence" x1="6em" y1="1.5em" x2="8.1em" y2="1.5em"/>
+<line class="sequence" x1="8.37em" y1="1.5em" x2="8.73em" y2="1.5em"/>
+<line class="sequence" x1="8.76em" y1="1.5em" x2="9.93em" y2="1.5em"/>
+<line class="sequence" x1="10.02em" y1="1.5em" x2="12.51em" y2="1.5em"/>
+<text class="species" x="0.2em" y="3.4em">DroSim</text>
+<line class="gap" x1="6em" y1="3em" x2="12.54em" y2="3em"/>
+<line class="sequence" x1="6em" y1="3em" x2="7.26em" y2="3em"/>
+<line class="sequence" x1="8.04em" y1="3em" x2="8.1em" y2="3em"/>
+<line class="sequence" x1="8.37em" y1="3em" x2="8.73em" y2="3em"/>
+<line class="sequence" x1="8.76em" y1="3em" x2="9.93em" y2="3em"/>
+<line class="sequence" x1="10.02em" y1="3em" x2="12.51em" y2="3em"/>
+<text class="species" x="0.2em" y="4.9em">DroSec</text>
+<line class="gap" x1="6em" y1="4.5em" x2="12.54em" y2="4.5em"/>
+<line class="sequence" x1="6em" y1="4.5em" x2="7.26em" y2="4.5em"/>
+<line class="sequence" x1="8.04em" y1="4.5em" x2="8.1em" y2="4.5em"/>
+<line class="sequence" x1="8.37em" y1="4.5em" x2="8.73em" y2="4.5em"/>
+<line class="sequence" x1="8.76em" y1="4.5em" x2="9.93em" y2="4.5em"/>
+<line class="sequence" x1="10.02em" y1="4.5em" x2="12.51em" y2="4.5em"/>
+<text class="species" x="0.2em" y="6.4em">DroYak</text>
+<line class="gap" x1="6em" y1="6em" x2="12.54em" y2="6em"/>
+<line class="sequence" x1="6em" y1="6em" x2="6.03em" y2="6em"/>
+<line class="sequence" x1="7.26em" y1="6em" x2="8.19em" y2="6em"/>
+<line class="sequence" x1="8.37em" y1="6em" x2="8.7em" y2="6em"/>
+<line class="sequence" x1="9.45em" y1="6em" x2="9.75em" y2="6em"/>
+<line class="sequence" x1="10.05em" y1="6em" x2="12.51em" y2="6em"/>
+<text class="species" x="0.2em" y="7.9em">DroEre</text>
+<line class="gap" x1="6em" y1="7.5em" x2="12.54em" y2="7.5em"/>
+<line class="sequence" x1="6em" y1="7.5em" x2="6.18em" y2="7.5em"/>
+<line class="sequence" x1="6.93em" y1="7.5em" x2="8.94em" y2="7.5em"/>
+<line class="sequence" x1="9.33em" y1="7.5em" x2="10.41em" y2="7.5em"/>
+<line class="sequence" x1="11.16em" y1="7.5em" x2="12.51em" y2="7.5em"/>
+<text class="species" x="0.2em" y="9.4em">DroAna</text>
+<line class="gap" x1="6em" y1="9em" x2="12.54em" y2="9em"/>
+<line class="sequence" x1="6.39em" y1="9em" x2="6.87em" y2="9em"/>
+<line class="sequence" x1="7.05em" y1="9em" x2="7.62em" y2="9em"/>
+<line class="sequence" x1="8.4em" y1="9em" x2="8.85em" y2="9em"/>
+<line class="sequence" x1="11.16em" y1="9em" x2="11.28em" y2="9em"/>
+<line class="sequence" x1="11.76em" y1="9em" x2="11.91em" y2="9em"/>
+<line class="sequence" x1="12.09em" y1="9em" x2="12.51em" y2="9em"/>
+<line class="conserved mot2" x1="6.06em" y1="1em" x2="6.06em" y2="2em"/>
+<text x="6.26em" y="2.3em"><tspan class="score">11.5</tspan></text>
+<line class="conserved mot2" x1="6.1em" y1="2.5em" x2="6.1em" y2="3.5em"/>
+<text x="6.3em" y="3.8em"><tspan class="score">11.1</tspan></text>
+<line class="conserved mot2" x1="6.1em" y1="4.0em" x2="6.1em" y2="5.0em"/>
+<text x="6.3em" y="5.3em"><tspan class="score">11.1</tspan></text>
+<line class="conserved mot4" x1="11.4em" y1="1.0em" x2="11.4em" y2="2.0em"/>
+<text x="11.6em" y="2.3em"><tspan class="score">11.1</tspan></text>
+<line class="conserved mot4" x1="11.4em" y1="2.5em" x2="11.4em" y2="3.5em"/>
+<text x="11.6em" y="3.8em"><tspan class="score">11.1</tspan></text>
+<line class="conserved mot4" x1="11.4em" y1="4.0em" x2="11.4em" y2="5.0em"/>
+<text x="11.6em" y="5.3em"><tspan class="score">14.8</tspan></text>
+<line class="conserved mot4" x1="11.4em" y1="5.5em" x2="11.4em" y2="6.5em"/>
+<text x="11.6em" y="6.8em"><tspan class="score">11.1</tspan></text>
+<line class="conserved mot4" x1="11.4em" y1="7.0em" x2="11.4em" y2="8.0em"/>
+<text x="11.6em" y="8.3em"><tspan class="score">14.8</tspan></text>
+</g>
+</svg>

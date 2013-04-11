@@ -1,0 +1,514 @@
+\documentclass[11pt,twoside,reqno,a4paper]{article}
+\usepackage[french]{babel}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper}
+\usepackage{graphicx}
+\usepackage{array,multirow}
+\begin{document}
+\noindent
+\newlength{\charwidth}\settowidth{\charwidth}{\texttt{A}}$>$DroMel	seq1396\_2R\_19526211\_19526451	chr2R	19526211	19526451 \\
+ \\
+\texttt{DroMel	CAGAGGCCATC	GTGTCATCCA	AGATTATGAT	TTTGACAGGC	ATCACGACGA	TATGACATA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	CAGAGGCCATC	GTGTCATCCA	AGATTATGAT	TTTGACAGGC	ATCACGAT--	-ATGACATA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	CAGAGGCCATC	GTGTCATCCA	AGATTATGAT	TTTGACAGGC	ATCACGAT--	-ATGAC--G\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	CAGAGGCCATC	GTGTCATGCA	AGATTATGTT	TTTGACAGGC	TTCACGATAT	GACAT----\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	CAGAGGCCATA	TTGTCATCCA	AGATTATGTT	TTTGACAGGC	ATCACGCCTG	TCATA----\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	CGGAGCGGATC	-AATCATCTA	AAATTATGAT	TTTGACAG--	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-----------	----------	----------	-----CTGGG	AT--------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-----------	----------	----------	-----CTGGG	AT--------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	-----------	-TGCCATCCT	AGATTT----	----------	--CAC-----	--TGCTTTA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	CATA-------	----------	----------	----------	CGTATGTACA	TAAGAAAT-\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	CATA-------	----------	----------	----------	T--------A	TCAGAAATA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	TTAT-------	----------	----------	----------	ATTTCGTACA	TAGGAAAAG\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	-TGCACGAAT	GTCTCTTCGA	TC----TATT	TTTATAGGAG	AGATATCTGT	CAGCACATG\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	T	TTCTACG---	--------GT	TC----TATT	TTTATAGGAG	AGATATCTGT	CAGCACATG\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	G	TTCTACG---	--------GT	TC----TATT	TTTATAGGAG	AGATATCTGT	CAGCACATG\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----ACGCAT	GTCT-ACGGA	TC----TATT	TTTATAGCAG	AGATATCTGT	CAGCACATG\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----ACGAAT	GTCT-ACCGA	TC----TATT	TTTATAGCAG	AGATATCTGT	CAGCACATG\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	--------AT	GTCTCTGGGT	TCAAACTATT	TATATAGGAG	AGGTGTCTGT	CAGCAC--G\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	--------TT	TTTTGAGG--	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	--------TT	TTTTGAGG--	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	G	TTCAA-----	--------GA	ACAAAATA--	----------	----ATCCCT	CAAAATGGA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	-------TCT	---T------	-----ACAGT	TTTAAAGTAT	AG--------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	-------A\textcolor{Green}{A}\textcolor{Green}{T}	\textcolor{Green}{G}\textcolor{Green}{T}\textcolor{Green}{G}\textcolor{Green}{T}\textcolor{Green}{-}\textcolor{Green}{-}\textcolor{Green}{-}\textcolor{Green}{-}\textcolor{Green}{-}\textcolor{Green}{-}	\textcolor{Green}{-}\textcolor{Green}{-}\textcolor{Green}{-}\textcolor{Green}{-}\textcolor{Green}{-}\textcolor{Green}{T}\textcolor{Green}{C}\textcolor{Green}{T}\textcolor{Green}{G}T	TTT-------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{9\charwidth}\textcolor{Green}{8.1}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	T	TTGTAACCCT	ACACTCGTGC	CCTGCCTATA	---AATAAAA	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	T	TTGTAACCCT	ACACTCCTGC	CCTGCCTATA	---AATAAAT	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	T	TTGTAACCCT	ACACTCCTGT	CCTGCCTATA	---AATAAAT	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	T	TTGTAACCCT	ACACTCCTGT	CCTGCCTATA	---AAATTA-	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	T	TTGTAACCTT	ACACTCTTGT	CCTGCCTGTA	---CAAAAAT	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	T	GCAAAGGCCC	GAACTCAGGG	C---------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	-------AAA	---TATGAAT	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	-------AAA	---AATAAAT	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	C	TAG-------	----------	-------AAA	---AATAAAT	GCTTAAGACT	TTTTTGTAA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	---------T	GTAGCCAATC	TGTTCTAAAA	ACTACA----	-------AA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	--------CT	CAAGCTAAAA	TTGAATGAAG	ATTGCG----	-------CT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	A	ATATTTCATA	TTGCATATTC	ACCTGCAATA	ATATATTGAA	TCATATGTAT	ATATTTACC\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	A	AAGT------	---CCTATTC	-----TAATT	TTATATTCA-	----GTGTAG	AAATTGAGT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	T	TAAT------	---TATAATA	-----TAATT	TTGTATATA-	----AT----	--ATTTAAT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	-----CAATC	-----TCCAT	TTACATATT-	----TTTTTA	AAAATATAT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	T	TTTGAAAAAG	ATAAAATTTT	GATGAATTGG	TAGAACTTGT	AAAGCCACTT	TACATTACA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	C	TGACAA----	--AAAACCTT	TA--GAATG-	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	T	TGTAAA----	--ATAATATT	TATTATATA-	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	T	TGTACA----	--GAAATATC	TATTAATTGC	TAT-------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	A	AATGTTAAGT	TAGCCGCGGA	ACTCGTTTTG	GGTCTAAGCA	AAATGTTTGA	TTCTTGTAT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	G	TATTGTGGGG	CATTTTGTTT	TGGCGTTCTT	TTAGGTTATT	ATTTAATACT	AAAGTTCTT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	--------A\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	--------T\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	--GCG-----	----------	--------CT	GCAGTTGCA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	A	CGGCTAGAAA	GTACCATACA	AAGTAAATTA	AATTTTACGT	CGATTGAGAT	ATTTTTCAT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	A	C---------	----------	-----TATTA	A---------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	A	C---------	----------	-----AATTA	A---------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	G	C---------	----------	-----ATTTC	A---------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	C	AAAACAACGA	AAAGAGATAT	TATTAAAAAA	GGATATCAGC	AGGTACTTTT	TGCATTGGC\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	G	GCATAAAAAA	GAAAGAGACG	GAAGATTCTG	AGAAATGTCG	AATAAACTTA	CAGGAACAT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	T	GTGCACAACA	AAAAATAAT-	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	------TAAT	AGTATTAGTA	AATTTTTGTT	AACTCATTAC	CTAACAGTTT	ATCGCATTG\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	------AAAG	GAAAATATGA	AATTAT----	----------	---ACATTTT	AT-------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	------ATAA	AGACTTTGTC	TTTTATTTTA	AGCT------	-----TTTTG	ATCGTA---\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	---AAGTTAA	GAT-------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	---A-CTTAG	GAT-------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	---T---TAA	GAT-------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	--------AA	TTT-------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	------TTAA	TTT-------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	---A------	-CT-------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	---A------	-CT-------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	-	-GAATATTAA	AACCAACATT	AAGAAGAGCT	CTAAAATTCA	GATTATTACT	TTTATAAAA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	A	CTAAGATGTC	AACAACG---	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	-----ATTAA	AACAAAT---	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	-------GAA	AATCAAG---	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	C	ACAAAAAATG	GAGGAACTGA	ATTTCAAGAT	TTAAGTTTGA	ACCGTCAAAT	TCTTCAGCA\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	A	AATGCGACTT	GAAAAATCTC	AAAAATTTCA	TGATTAATAT	CCGTCGATTT	TTAGGGTTT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----CACAAT	TTTAAGGAGA	T---------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----CACAAT	TCTAAGGAGA	T---------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----TACAAT	TCTAAGGAGA	T---------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----TGTAA-	-------AGA	T---------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----CGAAA-	-------AGA	T---------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	---------T	CCTAGGGAAA	T---------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----CACAAG	TATA------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----CACAAG	TATA------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	T	CCCCAACAAT	TCTGACGATC	TTACCTCTTA	TCCTGTCGGC	TGACCTGTAT	AGTTGCGCT\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	-------T--	--C-------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	-------T--	--C-------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	-------TTA	GCC-------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	---------C	TTTGTTATAA	TATATTGATT	AATTT-----	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	---------C	TTCGTTATAA	TAAATTGATA	AATTT-----	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	---------C	TTCGT-ATAA	TATATTGAAA	AATTT-----	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	---------C	TTCTATATAA	TATATTGATT	AATTT-----	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	---------C	TTCTATATAA	TAAATTGATT	AATTT-----	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	--------AT	AATTT-----	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	-TCT----TT	TAAATAGATG	ATATC-----	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	-TGTATCTCT	TAAATAGATG	ATATC-----	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	G	TTGAAAACAC	TTCTTTA-AA	AAAATCAATT	AATTTTTTTG	CAGGGCAACG	AAGTCTATC\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	-----ATCTC	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	-----ATATC	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	-----ATATC	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	-----AGACC	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	-----A----	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	-----CTATA	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	-----CTATA	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	T	GTTTTGAATC	CCATTTTGAT	GAACAATATC	TCATTCGACG	GGAAATTTAA	TTCACTATC\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	T	TTCATAGTTC	AAGTGTAGTT	ATACTTTAGT	GTGAGTTAGT	GGCGTAAAGT	GACGCCAAG\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	----------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	-----G----	---AAATACC	TACAA---TT	CTTATCCCCA	TT--------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	-----G----	---AAATACC	TACAA---TT	CCTTTCTTCA	TT--------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	-----G----	---AAATACC	TATAG---TT	TCTTTCTCCA	TT--------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	-----TCC--	----AATTGT	TTT-------	-----CTCCA	TT--------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	-----TCTTA	AAAAAATAAA	TAC-------	-----CTTCA	CT--------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	--------TA	CAAAAATCCA	TTTA------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	-----GATTT	AATATTCAAA	TCCCA---TT	C---------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	-----GATTT	AATATTCAAA	TCCGA---TT	C---------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	C	AGAAAGACCA	AAAAAATACA	TACAAAATTG	AATTTGTCAA	TTGACTCCAA	ATTGGACCC\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	------TTTA	GA--------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	-----AATTA	AA--------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	-----ACTCA	AT--------	----------	----------	----------	---------\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+DroMel	-	----------	----------	----------	-------AGC	C\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSim	-	----------	----------	----------	-------AGC	C\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroSec	-	----------	----------	----------	-------AGC	C\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroYak	-	----------	----------	----------	-------AAC	C\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroEre	-	----------	----------	----------	-------AGC	C\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroAna	-	----------	----------	----------	----------	-\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPse	-	----------	----------	----------	----------	-\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroPer	-	----------	----------	----------	----------	-\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroWil	T	GGGGCCAAAT	TCTTAGTTCA	AATATCTTAG	TTTTACTAGA	C\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroVir	-	----------	------TT--	-ATTT-----	----------	-\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroMoj	-	----------	------TTGT	AATGT-----	----------	-\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+DroGri	-	----------	------CTCA	ATTAT-----	----------	-\\
+\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\\
+}
+\end{document}
