@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 816 150" version="1.1">
+
+    <style type="text/css" >
+      <![CDATA[
+
+text {
+   color:#222;
+   background:#fff;
+   font-family:"Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.sequence {
+   stroke: black;
+   stroke-width: 0.2em;
+}
+
+.gap {
+   stroke: black;
+   stroke-width: 0.05em;
+}
+.mot1 {
+   stroke:  #E57272;
+}
+.mot2 {
+   stroke: #99995B;
+}
+.mot3 {
+   stroke: #E5E55B;
+}
+.mot4 {
+   stroke: #5B6B99;
+}
+.mot5 {
+   stroke: #5B7EE5;
+}
+.conserved {
+   stroke-width: 0.3em;
+}
+.notconserved {
+   stroke-width: 0.1em;
+}
+.score {
+   font-size: 0.7em;
+}
+
+      ]]>
+    </style>
+
+<g font-size="12">
+<text class="species" x="0.2em" y="1.9em">DroMel</text>
+<line class="gap" x1="6em" y1="1.5em" x2="25.47em" y2="1.5em"/>
+<line class="sequence" x1="6em" y1="1.5em" x2="6.09em" y2="1.5em"/>
+<line class="sequence" x1="6.15em" y1="1.5em" x2="6.33em" y2="1.5em"/>
+<line class="sequence" x1="6.36em" y1="1.5em" x2="6.39em" y2="1.5em"/>
+<line class="sequence" x1="6.48em" y1="1.5em" x2="6.9em" y2="1.5em"/>
+<line class="sequence" x1="6.96em" y1="1.5em" x2="8.67em" y2="1.5em"/>
+<line class="sequence" x1="8.85em" y1="1.5em" x2="9.06em" y2="1.5em"/>
+<line class="sequence" x1="9.09em" y1="1.5em" x2="9.66em" y2="1.5em"/>
+<line class="sequence" x1="10.02em" y1="1.5em" x2="12.18em" y2="1.5em"/>
+<line class="sequence" x1="12.3em" y1="1.5em" x2="15.18em" y2="1.5em"/>
+<line class="sequence" x1="15.39em" y1="1.5em" x2="17.04em" y2="1.5em"/>
+<line class="sequence" x1="17.07em" y1="1.5em" x2="19.5em" y2="1.5em"/>
+<line class="sequence" x1="19.53em" y1="1.5em" x2="19.74em" y2="1.5em"/>
+<line class="sequence" x1="19.95em" y1="1.5em" x2="20.16em" y2="1.5em"/>
+<line class="sequence" x1="20.19em" y1="1.5em" x2="20.73em" y2="1.5em"/>
+<line class="sequence" x1="20.76em" y1="1.5em" x2="22.05em" y2="1.5em"/>
+<line class="sequence" x1="22.35em" y1="1.5em" x2="25.44em" y2="1.5em"/>
+<text class="species" x="0.2em" y="3.4em">DroSim</text>
+<line class="gap" x1="6em" y1="3em" x2="25.47em" y2="3em"/>
+<line class="sequence" x1="6em" y1="3em" x2="6.09em" y2="3em"/>
+<line class="sequence" x1="6.15em" y1="3em" x2="6.36em" y2="3em"/>
+<line class="sequence" x1="6.48em" y1="3em" x2="6.9em" y2="3em"/>
+<line class="sequence" x1="6.96em" y1="3em" x2="8.67em" y2="3em"/>
+<line class="sequence" x1="8.85em" y1="3em" x2="9.06em" y2="3em"/>
+<line class="sequence" x1="9.09em" y1="3em" x2="9.66em" y2="3em"/>
+<line class="sequence" x1="10.02em" y1="3em" x2="12.18em" y2="3em"/>
+<line class="sequence" x1="12.3em" y1="3em" x2="15.18em" y2="3em"/>
+<line class="sequence" x1="15.39em" y1="3em" x2="17.04em" y2="3em"/>
+<line class="sequence" x1="17.07em" y1="3em" x2="19.5em" y2="3em"/>
+<line class="sequence" x1="19.53em" y1="3em" x2="19.74em" y2="3em"/>
+<line class="sequence" x1="19.95em" y1="3em" x2="20.16em" y2="3em"/>
+<line class="sequence" x1="20.19em" y1="3em" x2="20.73em" y2="3em"/>
+<line class="sequence" x1="20.76em" y1="3em" x2="22.05em" y2="3em"/>
+<line class="sequence" x1="22.35em" y1="3em" x2="25.44em" y2="3em"/>
+<text class="species" x="0.2em" y="4.9em">DroSec</text>
+<line class="gap" x1="6em" y1="4.5em" x2="25.47em" y2="4.5em"/>
+<line class="sequence" x1="6em" y1="4.5em" x2="6.09em" y2="4.5em"/>
+<line class="sequence" x1="6.15em" y1="4.5em" x2="6.39em" y2="4.5em"/>
+<line class="sequence" x1="6.48em" y1="4.5em" x2="6.9em" y2="4.5em"/>
+<line class="sequence" x1="6.96em" y1="4.5em" x2="8.67em" y2="4.5em"/>
+<line class="sequence" x1="8.85em" y1="4.5em" x2="9.06em" y2="4.5em"/>
+<line class="sequence" x1="9.09em" y1="4.5em" x2="9.66em" y2="4.5em"/>
+<line class="sequence" x1="10.02em" y1="4.5em" x2="12.18em" y2="4.5em"/>
+<line class="sequence" x1="12.3em" y1="4.5em" x2="15.18em" y2="4.5em"/>
+<line class="sequence" x1="15.39em" y1="4.5em" x2="17.04em" y2="4.5em"/>
+<line class="sequence" x1="17.07em" y1="4.5em" x2="19.5em" y2="4.5em"/>
+<line class="sequence" x1="19.53em" y1="4.5em" x2="19.74em" y2="4.5em"/>
+<line class="sequence" x1="19.95em" y1="4.5em" x2="20.16em" y2="4.5em"/>
+<line class="sequence" x1="20.19em" y1="4.5em" x2="20.73em" y2="4.5em"/>
+<line class="sequence" x1="20.76em" y1="4.5em" x2="22.05em" y2="4.5em"/>
+<line class="sequence" x1="22.35em" y1="4.5em" x2="25.44em" y2="4.5em"/>
+<text class="species" x="0.2em" y="6.4em">DroYak</text>
+<line class="gap" x1="6em" y1="6em" x2="25.47em" y2="6em"/>
+<line class="sequence" x1="6em" y1="6em" x2="6.09em" y2="6em"/>
+<line class="sequence" x1="6.15em" y1="6em" x2="6.36em" y2="6em"/>
+<line class="sequence" x1="6.48em" y1="6em" x2="6.9em" y2="6em"/>
+<line class="sequence" x1="6.96em" y1="6em" x2="8.67em" y2="6em"/>
+<line class="sequence" x1="8.85em" y1="6em" x2="9.66em" y2="6em"/>
+<line class="sequence" x1="10.02em" y1="6em" x2="11.49em" y2="6em"/>
+<line class="sequence" x1="11.52em" y1="6em" x2="11.58em" y2="6em"/>
+<line class="sequence" x1="12.21em" y1="6em" x2="15.18em" y2="6em"/>
+<line class="sequence" x1="15.39em" y1="6em" x2="17.04em" y2="6em"/>
+<line class="sequence" x1="17.07em" y1="6em" x2="19.5em" y2="6em"/>
+<line class="sequence" x1="19.53em" y1="6em" x2="19.98em" y2="6em"/>
+<line class="sequence" x1="20.22em" y1="6em" x2="20.73em" y2="6em"/>
+<line class="sequence" x1="20.76em" y1="6em" x2="22.05em" y2="6em"/>
+<line class="sequence" x1="22.35em" y1="6em" x2="24.15em" y2="6em"/>
+<line class="sequence" x1="24.63em" y1="6em" x2="25.44em" y2="6em"/>
+<text class="species" x="0.2em" y="7.9em">DroEre</text>
+<line class="gap" x1="6em" y1="7.5em" x2="25.47em" y2="7.5em"/>
+<line class="sequence" x1="6em" y1="7.5em" x2="6.09em" y2="7.5em"/>
+<line class="sequence" x1="6.15em" y1="7.5em" x2="6.9em" y2="7.5em"/>
+<line class="sequence" x1="6.96em" y1="7.5em" x2="8.67em" y2="7.5em"/>
+<line class="sequence" x1="8.85em" y1="7.5em" x2="8.91em" y2="7.5em"/>
+<line class="sequence" x1="9em" y1="7.5em" x2="9.66em" y2="7.5em"/>
+<line class="sequence" x1="10.02em" y1="7.5em" x2="10.56em" y2="7.5em"/>
+<line class="sequence" x1="10.59em" y1="7.5em" x2="11.49em" y2="7.5em"/>
+<line class="sequence" x1="11.52em" y1="7.5em" x2="15.18em" y2="7.5em"/>
+<line class="sequence" x1="15.39em" y1="7.5em" x2="17.04em" y2="7.5em"/>
+<line class="sequence" x1="17.07em" y1="7.5em" x2="19.5em" y2="7.5em"/>
+<line class="sequence" x1="19.53em" y1="7.5em" x2="20.16em" y2="7.5em"/>
+<line class="sequence" x1="20.19em" y1="7.5em" x2="20.73em" y2="7.5em"/>
+<line class="sequence" x1="20.76em" y1="7.5em" x2="22.05em" y2="7.5em"/>
+<line class="sequence" x1="22.35em" y1="7.5em" x2="24.15em" y2="7.5em"/>
+<line class="sequence" x1="24.18em" y1="7.5em" x2="25.44em" y2="7.5em"/>
+<text class="species" x="0.2em" y="9.4em">DroAna</text>
+<line class="gap" x1="6em" y1="9em" x2="25.47em" y2="9em"/>
+<line class="sequence" x1="6em" y1="9em" x2="11.34em" y2="9em"/>
+<line class="sequence" x1="11.37em" y1="9em" x2="13.86em" y2="9em"/>
+<line class="sequence" x1="13.89em" y1="9em" x2="14.25em" y2="9em"/>
+<line class="sequence" x1="14.49em" y1="9em" x2="23.94em" y2="9em"/>
+<line class="sequence" x1="24.48em" y1="9em" x2="25.44em" y2="9em"/>
+<line class="notconserved mot1" x1="14.82em" y1="5.5em" x2="14.82em" y2="6.5em"/>
+<text x="15.02em" y="6.8em"><tspan class="score">9.1</tspan></text>
+<line class="notconserved mot1" x1="14.8em" y1="7.0em" x2="14.8em" y2="8.0em"/>
+<text x="15.0em" y="8.3em"><tspan class="score">10.0</tspan></text>
+<line class="notconserved mot1" x1="19.1em" y1="7.0em" x2="19.1em" y2="8.0em"/>
+<text x="19.3em" y="8.3em"><tspan class="score">9.7</tspan></text>
+<line class="notconserved mot2" x1="20.7em" y1="2.5em" x2="20.7em" y2="3.5em"/>
+<text x="20.9em" y="3.8em"><tspan class="score">9.5</tspan></text>
+<line class="notconserved mot2" x1="20.7em" y1="4.0em" x2="20.7em" y2="5.0em"/>
+<text x="20.9em" y="5.3em"><tspan class="score">9.5</tspan></text>
+<line class="notconserved mot2" x1="20.7em" y1="5.5em" x2="20.7em" y2="6.5em"/>
+<text x="20.9em" y="6.8em"><tspan class="score">9.5</tspan></text>
+<line class="notconserved mot2" x1="20.7em" y1="7.0em" x2="20.7em" y2="8.0em"/>
+<text x="20.9em" y="8.3em"><tspan class="score">9.5</tspan></text>
+<line class="conserved mot5" x1="22.9em" y1="1.0em" x2="22.9em" y2="2.0em"/>
+<text x="23.1em" y="2.3em"><tspan class="score">12.1</tspan></text>
+<line class="conserved mot5" x1="22.9em" y1="7.0em" x2="22.9em" y2="8.0em"/>
+<text x="23.1em" y="8.3em"><tspan class="score">12.1</tspan></text>
+</g>
+</svg>
