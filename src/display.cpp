@@ -627,6 +627,7 @@ dispseqwmotswgaps(Sequence & seq, vmot & mots, ofstream & outf)
 {
     //HEADER
     string name = numtospecies(0);
+    texify(seq.name);
     string texname = seq.name;
     outf << "$>$" << name <<  "\t";
     outf << texname << "\t" ;
@@ -636,6 +637,13 @@ dispseqwmotswgaps(Sequence & seq, vmot & mots, ofstream & outf)
     outf << " \\\\\n";
     //DEFINING STATES, COLORS AND SCORES
     unsigned int sizeseq = seq.seqsrealigned[0].size();
+    unsigned int maxsize(0);
+    for (int spe=0; spe < nbspecies; spe++){
+       if (seq.seqs[spe].size() > maxsize) 
+          maxsize = seq.seqs[spe].size();
+    }
+    ostringstream ssizeseq;
+    ssizeseq << maxsize;
     vint vdum(sizeseq, 0);
     vvint vvstate(nbspecies, vdum); // 0 nothing, 1 normal tfbs, 2 cons tfbs
     vvint vvcol(nbspecies, vdum); // 0 red, 1 blue, 2 green, 3 yellow
@@ -671,9 +679,16 @@ dispseqwmotswgaps(Sequence & seq, vmot & mots, ofstream & outf)
     unsigned int start = 0;
     unsigned int stop = min(60, sizeseq);
     outf << "\\texttt{";
+    int pstate = 0;
     while (start < sizeseq) {
         for (unsigned int spe = 0; spe < nbspecies; spe++) {
             if (seq.species[spe]) {
+               ostringstream num;
+               num << seq.imaps[spe][start + 1];
+               outf << seq.imaps[spe][start + 1] << 
+                  "\\hspace*{" << 
+                  ssizeseq.str().length() + 1 - num.str().length() << 
+                  "\\charwidth}";
                 outf << numtospecies(spe) << "\t";
                 for (unsigned int i = start; i < stop; i++) {
                     if (vvstate[spe][i] == 0) {
@@ -687,12 +702,12 @@ dispseqwmotswgaps(Sequence & seq, vmot & mots, ofstream & outf)
                         outf << seq.seqsrealigned[spe][i];
                         outf << "}}";
                     }
-                    if (i > 0 && i % 10 == 0) {
+                    if ((i + 1) % 10 == 0) {
                         outf << "\t";
                     }
                 }
                 outf << "\\\\\n";
-                int pstate = 0;
+                outf << "\\hspace*{" << ssizeseq.str().length() + 1  << "\\charwidth}";
                 int ppos = start;
                 outf << "\\hspace*{" << 7 << "\\charwidth}";// species name + space = 7 characters
                 for (unsigned int i = start; i < stop; i++) {
@@ -709,7 +724,7 @@ dispseqwmotswgaps(Sequence & seq, vmot & mots, ofstream & outf)
                         stringstream score;
                         score << setprecision(1) << fixed <<  scores[spe][i] ;
                         for (unsigned int ii = 1; ii <= score.str().size(); ii++) {
-                            if (i > 0 && i % 10 == 0) {
+                            if ((i + 1)% 10 == 0) {
                                 outf << "\\hspace*{1\\charwidth}";
                             }
                             i++;
@@ -717,7 +732,7 @@ dispseqwmotswgaps(Sequence & seq, vmot & mots, ofstream & outf)
                         ppos = i;
                     }
                     pstate = vvstate[spe][i];
-                    if (i > 0 && i % 10 == 0) {
+                    if ((i + 1) % 10 == 0) {
                         outf << "\\hspace*{1\\charwidth}";
                     }
                 }
@@ -1078,10 +1093,6 @@ cmd_display(int argc, char ** argv)
            disphtml_genmot(align, mots);
         } else if (display_args.tex_align_given) {
            cout << "Creating fasta/tex files... " << endl;
-           // avoid problems with _ and # characters for latex
-           for (ivseq iv = align.begin(); iv != align.end(); iv++) {
-              texify(iv->name);
-           }
            for (ivmot iv = mots.begin(); iv != mots.end(); iv++) {
               texify(iv->name);
            }
