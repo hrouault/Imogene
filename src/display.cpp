@@ -162,6 +162,11 @@ colfromint(int i)
     if (i == 2) return "Green";
     if (i == 3) return "Yellow";
     if (i == 4) return "Brown";
+    if (i == 5) return "Purple";
+    if (i == 6) return "Cyan";
+    if (i == 7) return "Magenta";
+    if (i == 8) return "Apricot";
+    if (i == 9) return "WildStrawberry";
     return "black";
 }
 
@@ -380,7 +385,9 @@ dispseqwmots(Sequence & seq, vmot & mots, ofstream & outf)
     outf << seq.stop << " \\\\\n";
     outf << " \\\\\n";
     //DEFINING STATES, COLORS AND SCORES
-    unsigned int sizeseq = seq.seqsrealigned[0].size();
+    unsigned int sizeseq = seq.seqs[0].size();
+    ostringstream ssizeseq;
+    ssizeseq << sizeseq;
     vint vdum(sizeseq, 0);
     vvint vvstate(nbspecies, vdum); // 0 nothing, 1 normal tfbs, 2 cons tfbs
     vvint vvcol(nbspecies, vdum); // 0 red, 1 blue, 2 green, 3 yellow
@@ -389,10 +396,11 @@ dispseqwmots(Sequence & seq, vmot & mots, ofstream & outf)
     //NOT CONS
     for (ivinstseq ivs = seq.instances.begin(); ivs != seq.instances.end(); ivs++) {
         int spe = ivs->species;
+        if (spe > 0) continue;
         int motwidth = mots[ivs->motindex].motwidth;
         int ipos = seq.imaps[spe][ivs->pos];
-        int stop = seq.imapsinv[spe][ipos + motwidth - 1];
-        for (int i = ivs->pos; i < stop + 1; i++) {
+        int stop = ipos + motwidth;
+        for (int i = ipos; i < stop; i++) {
             vvstate[spe][i] = 1;
             vvcol[spe][i] = ivs->motindex;
             scores[spe][i] = ivs->score;
@@ -403,10 +411,11 @@ dispseqwmots(Sequence & seq, vmot & mots, ofstream & outf)
     for (ivvinstseq ivvs = seq.instancescons.begin(); ivvs != seq.instancescons.end(); ivvs++) {
         for (ivinstseq ivs = (*ivvs).begin(); ivs != (*ivvs).end(); ivs++) {
             int spe = ivs->species;
+            if (spe > 0) continue;
             int motwidth = mots[ivs->motindex].motwidth;
             int ipos = seq.imaps[spe][ivs->pos];
-            int stop = seq.imapsinv[spe][ipos + motwidth - 1];
-            for (int i = ivs->pos; i < stop + 1; i++) {
+            int stop = ipos + motwidth;
+            for (int i = ipos; i < stop; i++) {
                 vvstate[spe][i] = 2;
                 scores[spe][i] = ivs->score;
             }
@@ -416,53 +425,57 @@ dispseqwmots(Sequence & seq, vmot & mots, ofstream & outf)
     unsigned int start = 0;
     unsigned int stop = min(60, sizeseq);
     outf << "\\texttt{";
+      int pstate = 0;
     while (start < sizeseq) {
         for (unsigned int spe = 0; spe < 1; spe++) {
             if (seq.species[spe]) {
+               ostringstream num;
+               num << start + 1;
+               outf << start + 1 << "\\hspace*{" << ssizeseq.str().length() + 1 - num.str().length() << "\\charwidth}";
                 for (unsigned int i = start; i < stop; i++) {
                     if (vvstate[spe][i] == 0) {
-                        outf << seq.seqsrealigned[spe][i];
+                        outf << seq.seqsrealigned[spe][seq.imapsinv[spe][i]];
                     } else if (vvstate[spe][i] == 1) {
                         outf << "\\textcolor{" << colfromint(vvcol[spe][i]) << "}{";
-                        outf << seq.seqsrealigned[spe][i];
+                        outf << seq.seqsrealigned[spe][seq.imapsinv[spe][i]];
                         outf << "}";
                     } else if (vvstate[spe][i] == 2) {
                         outf << "\\textit{\\textcolor{" << colfromint(vvcol[spe][i]) << "}{";
-                        outf << seq.seqsrealigned[spe][i];
+                        outf << seq.seqsrealigned[spe][seq.imapsinv[spe][i]];
                         outf << "}}";
                     }
-                    if (i > 0 && i % 10 == 0) {
-                        outf << "\t";
+                    if ((i + 1) % 10 == 0) {
+                       outf << "\t";
                     }
                 }
                 outf << "\\\\\n";
-                int pstate = 0;
+                outf << "\\hspace*{" << ssizeseq.str().length() + 1  << "\\charwidth}";
                 int ppos = start;
                 for (unsigned int i = start; i < stop; i++) {
-                    if (vvstate[spe][i] > 0  && vvstate[spe][i] != pstate) {
-                        int deca;
-                        deca = i - ppos;
-                        outf << "\\hspace*{" << deca << "\\charwidth}";
-                        if (vvstate[spe][i] == 2) outf << "\\textit{";
-                        outf << "\\textcolor{" << colfromint(vvcol[spe][i]) << "}{";
-                        outf << setprecision(1) << fixed <<  scores[spe][i] ;
-                        outf << "}";
-                        if (vvstate[spe][i] == 2) outf << "}";
-                        // to count the number of digits:
-                        stringstream score;
-                        score << setprecision(1) << fixed <<  scores[spe][i] ;
-                        for (unsigned int ii = 1; ii <= score.str().size(); ii++) {
-                            if (i > 0 && i % 10 == 0) {
-                                outf << "\\hspace*{1\\charwidth}";
-                            }
-                            i++;
-                        }
-                        ppos = i;
-                    }
-                    pstate = vvstate[spe][i];
-                    if (i > 0 && i % 10 == 0) {
-                        outf << "\\hspace*{1\\charwidth}";
-                    }
+                   if (vvstate[spe][i] > 0  && vvstate[spe][i] != pstate) {
+                      int deca;
+                      deca = i - ppos;
+                      outf << "\\hspace*{" << deca << "\\charwidth}";
+                      if (vvstate[spe][i] == 2) outf << "\\textit{";
+                      outf << "\\textcolor{" << colfromint(vvcol[spe][i]) << "}{";
+                      outf << setprecision(1) << fixed <<  scores[spe][i] ;
+                      outf << "}";
+                      if (vvstate[spe][i] == 2) outf << "}";
+                      // to count the number of digits:
+                      stringstream score;
+                      score << setprecision(1) << fixed <<  scores[spe][i] ;
+                      for (unsigned int ii = 1; ii <= score.str().size(); ii++) {
+                         if ((i + 1) % 10 == 0) {
+                            outf << "\\hspace*{1\\charwidth}";
+                         }
+                         i++;
+                      }
+                      ppos = i;
+                   }
+                   pstate = vvstate[spe][i];
+                   if ((i + 1) % 10 == 0) {
+                      outf << "\\hspace*{1\\charwidth}";
+                   }
                 }
                 outf << "\\\\\n";
             }
@@ -720,21 +733,39 @@ dispseqwmotswgaps(Sequence & seq, vmot & mots, ofstream & outf)
 
 // general tex header
 // TODO: more portable for international languages?
-void
-disptexinit(ofstream & outf)
+   void
+disptexinit(ofstream & outf, vmot & mots)
 {
-    outf << "\\documentclass[11pt,twoside,reqno,a4paper]{article}\n" <<
-         "\\usepackage[french]{babel}\n" <<
-         "\\usepackage[usenames,dvipsnames]{color}\n" <<
-         "\\usepackage[utf8]{inputenc}\n" <<
-         "\\usepackage{geometry}\n" <<
-         "\\geometry{a4paper}\n" <<
-         "\\usepackage{graphicx}\n" <<
-         "\\usepackage{array,multirow}\n" <<
-         "\\begin{document}\n" <<
-         "\\noindent\n" <<
-         "\\newlength{\\charwidth}" <<
-         "\\settowidth{\\charwidth}{\\texttt{A}}";
+   outf << "\\documentclass[11pt,twoside,reqno,a4paper]{article}\n" <<
+      "\\usepackage[french]{babel}\n" <<
+      "\\usepackage[usenames,dvipsnames]{color}\n" <<
+      "\\usepackage[utf8]{inputenc}\n" <<
+      "\\usepackage{geometry}\n" <<
+      "\\geometry{a4paper}\n" <<
+      "\\usepackage{graphicx}\n" <<
+      "\\usepackage{array,multirow}\n" <<
+      "\\begin{document}\n" <<
+      "\\noindent\n" <<
+      "\\newlength{\\charwidth}" <<
+      "\\settowidth{\\charwidth}{\\texttt{A}}";
+
+   for (int i = 0;i < nbmots_for_score; i++){
+      if (i==0){
+         outf << "Motif(s): " << 
+            "\\textcolor{" << 
+               colfromint(i) << "}{" << 
+               mots[i].name << "}"; 
+      }    
+      else{
+         outf << ", \\textcolor{" << 
+            colfromint(i) << "}{" << 
+            mots[i].name << "}"; 
+      }    
+   }
+
+   outf << "\\\\\n";
+   outf << "\\\\\n";
+
 }
 
 // general html header
@@ -795,7 +826,7 @@ disptex(vseq & seqs, vmot & mots)
         cerr << "Cannot open file for tex recording: " << strerror(errno) << endl;
         exit(EXIT_FAILURE);
     }
-    disptexinit(outf);
+    disptexinit(outf, mots);
     for (ivseq ivs = seqs.begin(); ivs != seqs.end(); ivs++) {
         cout << "Scanning " << ivs->name << endl;
         dispseqwmots(*ivs, mots, outf);
@@ -942,7 +973,7 @@ disptexwgaps(vseq & align, vmot & mots)
         file << ivs->name;
         file << ".tex";
         ofstream outf(file.str().c_str());
-        disptexinit(outf);
+        disptexinit(outf, mots);
         cout << "Scanning " << (*ivs).name << endl;
         dispseqwmotswgaps(*ivs, mots, outf);
         disptexclose(outf);
