@@ -377,6 +377,7 @@ dispseqwmots(Sequence & seq, vmot & mots, ofstream & outf)
 {
     //HEADER
     string name = numtospecies(0);
+    texify(seq.name);
     string texname = seq.name;
     outf << "$>$" << name <<  "\t";
     outf << texname << "\t" ;
@@ -515,7 +516,11 @@ dispseqwmots_html(Sequence & seq, vmot & mots, ofstream & outf)
     outf << "<h3>";
     string name = numtospecies(0);
     outf << ">" << name <<  " ";
-    outf << seq.name << " " ;
+    string shortname(seq.name);
+    size_t found = shortname.find("_");
+    if (found != string::npos) 
+        shortname = shortname.substr(0,found);
+    outf << shortname << " " ;
     outf << chromfromint(seq.chrom) << " ";
     outf << seq.start << " " ;
     outf << seq.stop << "</h3>" << endl;
@@ -899,7 +904,13 @@ disphtml_genmot(vseq & seqs, vmot & mots)
     }
     outf << "<h2>Motifs presence in alignments</h2>";
     for (ivseq ivs = seqs.begin(); ivs != seqs.end(); ivs++) {
-        outf << "<h3>" << (*ivs).name << "</h3>" << endl;
+       string shortname(ivs->name);
+       size_t found = shortname.find("_");
+       while (found != string::npos){
+          shortname.replace(found,1," ");
+          found = shortname.find("_");
+       }
+        outf << "<h3>" << shortname << "</h3>" << endl;
         string filename;
         filename += (*ivs).name;
         filename += ".svg";
@@ -1081,9 +1092,6 @@ cmd_display(int argc, char ** argv)
         if (display_args.tex_ref_given) {
            cout << "Creating tex file for reference species... " << endl;
            // avoid problems with _ and # characters for latex
-           for (ivseq iv = align.begin(); iv != align.end(); iv++) {
-              texify(iv->name);
-           }
            for (ivmot iv = mots.begin(); iv != mots.end(); iv++) {
               texify(iv->name);
            }
