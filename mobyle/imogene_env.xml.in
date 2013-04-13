@@ -1,5 +1,5 @@
 <envlist>
-<env name="PATH">@bindir@</env>
+   <env name="PATH">/Library/WebServer</env>
 <!-- to be defined for customized alignment files 
  <env name="IMOGENE_DATA"></env>    
      -->

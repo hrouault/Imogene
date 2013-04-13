@@ -198,7 +198,7 @@
 
         <paragraph> <name>genmot</name> <prompt lang="en">Genmot
               options</prompt> <precond> <code proglang="perl">$model ==
-                 'genmot'</code> <code proglang="python">model ==
+                 'genmot'</code> <code proglang="python">model == \
                  'genmot'</code> </precond> <argpos>2</argpos> <parameters>
 
                 <parameter ismandatory="1"> <name>evolutionary</name> <prompt
@@ -299,30 +299,30 @@ chr2R 5025930  5026695  seq257</pre>
 
                 <parameter ishidden="1"> <name>cmd_1</name> <type> <datatype>
                          <class>String</class> </datatype> </type> <format>
-                      <code proglang="python">"imogene extract -s " + species +
+                      <code proglang="python">"sudo /Library/WebServer/imogene extract -s " + species + \
                          " -i " + coord_file +" &amp;&amp; "</code> </format>
                    <argpos>1</argpos>
                 </parameter>
 
                 <parameter ishidden="1"> <name>cmd_2</name> <type> <datatype>
                          <class>String</class> </datatype> </type> <format>
-                      <code proglang="python">" imogene genmot -s " + species +
-                         " -w " + str(width) + " -t " + str(Sg) + " -x "
-                         + str(extent) + " -e " + str(evolutionary) + " -a
+                      <code proglang="python">" imogene genmot -s " + species + \
+                         " -w " + str(width) + " -t " + str(Sg) + " -x " \
+                         + str(extent) + " -e " + str(evolutionary) + " -a \
                          align &amp;&amp;" </code> </format> <argpos>2</argpos>
                 </parameter>
 
                 <parameter ishidden="1"> <name>cmd_3</name> <type> <datatype>
                          <class>String</class> </datatype> </type> <format>
-                      <code proglang="python">" imogene display -t "+
-                         str(Ss1) +" -s " + species +" -m motifs.txt -a
+                      <code proglang="python">" imogene display -t "+ \
+                         str(Ss1) +" -s " + species +" -m motifs.txt -a \
                          align --logos --pdf --png &amp;&amp;"</code> </format>
                    <argpos>3</argpos> </parameter>
 
                 <parameter ishidden="1"> <name>cmd_4</name> <type> <datatype>
                          <class>String</class> </datatype> </type> <format>
-                      <code proglang="python">" imogene display -t "+
-                         str(Ss1) +" -s " + species +" -m motifs.txt -a
+                      <code proglang="python">" imogene display -t "+ \
+                         str(Ss1) +" -s " + species +" -m motifs.txt -a \
                          align --html-ref"</code> </format> <argpos>4</argpos>
                 </parameter>
 
@@ -369,7 +369,7 @@ chr2R 5025930  5026695  seq257</pre>
 
         <paragraph> <name>scangen</name> <prompt lang="en">Scangen
               options</prompt> <precond> <code proglang="perl">$model ==
-                 'scangen'</code> <code proglang="python">model ==
+                 'scangen'</code> <code proglang="python">model == \
                  'scangen'</code> </precond> <argpos>2</argpos> <parameters>
               
               <parameter ismandatory="1"> <name>Ss2</name> <prompt
@@ -421,15 +421,15 @@ chr2R 5025930  5026695  seq257</pre>
 
                 <parameter ishidden="1"> <name>cmdscangen_1</name> <type>
                       <datatype> <class>String</class> </datatype> </type>
-                   <format> <code proglang="python">"imogene scangen -s " +
-                         species + " -t " + str(Ss2) + " -x " +
-                         str(extent) + " -m " + motifs_file + " --scanwidth=" +
+                   <format> <code proglang="python">"imogene scangen -s " + \
+                         species + " -t " + str(Ss2) + " -x " + \
+                         str(extent) + " -m " + motifs_file + " --scanwidth=" + \
                          str(crmwidth) + "&amp;&amp; "</code> </format>
                     <argpos>1</argpos> </parameter>
 
                 <parameter ishidden="1"> <name>cmdscangen_2</name> <type>
                       <datatype> <class>String</class> </datatype> </type>
-                   <format> <code proglang="python">" imogene display -e
+                   <format> <code proglang="python">" imogene display -e \
                          result*.dat"</code> </format> <argpos>2</argpos>
                 </parameter>
 
