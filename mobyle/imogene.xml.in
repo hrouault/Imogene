@@ -7,162 +7,153 @@
 <!-- 'Biological Software and Databases' Group, Institut Pasteur, Paris.         -->
 <!-- Distributed under LGPLv2 License. Please refer to the COPYING.LIB document. -->
 <program>
-    <head xmlns:xi="http://www.w3.org/2001/XInclude">
-        <name>@PACKAGE_NAME@</name>
-        <version>@PACKAGE_VERSION@</version>
-        <doc>
-            <title>@PACKAGE_NAME@</title>
-            <description>
-                <text lang="en">Genome-wide identification of cis-regulatory
+  <head xmlns:xi="http://www.w3.org/2001/XInclude">
+    <name>@PACKAGE_NAME@</name>
+    <version>@PACKAGE_VERSION@</version>
+    <doc>
+      <title>@PACKAGE_NAME@</title>
+      <description>
+        <text lang="en">Genome-wide identification of cis-regulatory
                     motifs and modules</text>
-            </description>
-            <authors>H. Rouault, M. Santolini</authors>
-             <reference> H. Rouault, M. Santolini, F. Schweisguth and V. Hakim
+      </description>
+      <authors>H. Rouault, M. Santolini</authors>
+      <reference> H. Rouault, M. Santolini, F. Schweisguth and V. Hakim
                 (2013), Imogene: identification of motifs and cis regulatory
-                modules underlying gene co-regulation, submitted.  
-             </reference>
-             <reference> H. Rouault, K. Mazouni, L. Couturier, V. Hakim and F.
+                modules underlying gene co-regulation, submitted. </reference>
+      <reference> H. Rouault, K. Mazouni, L. Couturier, V. Hakim and F.
                 Schweisguth (2010), Genome-wide identification of
                 cis-regulatory motifs and modules underlying gene coregulation
                 using statistics and phylogeny. Proc. Natl. Acad. Sci. U.S.A.,
-                107:14615-14620.  </reference>
-             <doclink>https://github.com/hrouault/Imogene</doclink>
-            <comment>
-                <div xmlns="http://www.w3.org/1999/xhtml">
-                   <p>
-                    <em> Imogene</em> has two main purposes:
-                    <ul>
-                        <li>it detects statistically overrepresented motifs,
-                            considering closely related genomes, in a set of
-                            training sequences. These sequences are generally
-                            selected for their biological relationships,
-                            ie cis-regulatory role.
-                        </li>
-                        <li>it predicts novel cis-regulatory sequences based
-                            on user-selected motifs at the whole genome scale.
-                        </li>
-                    </ul>
-                 </p>
-                    <p>Currently, <em>Imogene</em> supports two genome sets:
-                        mammals and drosophilae, but we are open to integrating
-                        other sets if you feel interested.</p>
-
-                    <p>The source code of Imogene is available on
-                        <em>github</em>: <a href="https://github.com/hrouault/Imogene">https://github.com/hrouault/Imogene</a>.
-                        It contains the main source code, as well as a
-                        documentation and local installation instructions.
-                        An online manual can also be found <a href="http://hrouault.github.com/Imogene">here</a>.
-                        Any trouble concerning its installation or bugs should
-                        be addressed on <em>github</em>.</p>
-
-                    <p>Please, feel free to contact us for any question
-                        concerning <em>Imogene</em>: Herve Rouault
-                        <a href="mailto:herve.rouault@pasteur.fr">herve.rouault@pasteur.fr</a>,
-                        Marc Santolini <a href="mailto:marc.santolini@lps.ens.fr">marc.santolini@lps.ens.fr</a>.</p>
-                </div>
-            </comment>
-        </doc>
-        <category>sequence:nucleic:regulation</category>
-        <xi:include href="../../../Local/Services/Programs/Env/imogene_env.xml" xpointer="xpointer(//env)">
-            <xi:fallback/>
-        </xi:include>
-    </head>
-    <parameters>
-
+                107:14615-14620. </reference>
+      <doclink>https://github.com/hrouault/Imogene</doclink>
+      <comment>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p><em>Imogene</em> has two main purposes:
+            <ul><li>it detects statistically overrepresented motifs,
+                    considering closely related genomes, in a set of training
+                    sequences. These sequences are generally selected for their
+                    biological relationships, ie cis-regulatory role.</li>
+                <li>it predicts novel cis-regulatory sequences based
+                    on user-selected motifs at the whole genome scale.</li>
+            </ul>
+          </p>
+          <p>Currently, <em>Imogene</em> supports two genome sets: mammals and
+             drosophilae, but we are open to integrating other sets if you
+             feel interested.</p>
+          <p>The source code of Imogene is available on <em>github</em>:
+            <a href="https://github.com/hrouault/Imogene">https://github.com/hrouault/Imogene</a>.
+            It contains the main source code, as well as a documentation and
+            local installation instructions.  An online manual can also be
+            found <a href="http://hrouault.github.com/Imogene">here</a>. Any
+            trouble concerning its installation or bugs should be addressed on
+            <em>github</em>.</p> <p>Please, feel free to contact us for any
+            question concerning <em>Imogene</em>: Herve Rouault
+            <a href="mailto:herve.rouault@pasteur.fr">herve.rouault@pasteur.fr</a>,
+            Marc Santolini <a href="mailto:marc.santolini@lps.ens.fr">marc.santolini@lps.ens.fr</a>.</p>
+        </div>
+      </comment>
+    </doc>
+    <category>sequence:nucleic:regulation</category>
+    <xi:include href="../../../Local/Services/Programs/Env/imogene_env.xml" xpointer="xpointer(//env)">
+      <xi:fallback/>
+    </xi:include>
+  </head>
+  <parameters>
+    <parameter ismandatory="1" issimple="1">
+      <name>model</name>
+      <prompt lang="en">Execution mode</prompt>
+      <type>
+        <datatype>
+          <class>Choice</class>
+        </datatype>
+      </type>
+      <vdef>
+        <value>null</value>
+      </vdef>
+      <vlist>
+        <velem undef="1">
+          <value>null</value>
+          <label>Choice</label>
+        </velem>
+        <velem>
+          <value>genmot</value>
+          <label>genmot: Generate motifs from a training set</label>
+        </velem>
+        <velem>
+          <value>scangen</value>
+          <label>scangen: Find instances of a list of motifs in the
+            genome</label>
+        </velem>
+      </vlist>
+      <comment>
+        <div xmlns="http://www.w3.org/1999/xhtml"><em>Imogene</em> has two
+          different modes of execution that should be performed sequentially:
+          <ul><li><strong>genmot</strong>: generates motifs from a
+                  set of functionally related CRMs</li>
+              <li><strong>scangen</strong>: predicts enhancers given
+                  the set of motifs generated using the <em>genmot</em> mode.</li>
+          </ul>
+        </div>
+      </comment>
+    </parameter>
+    <paragraph>
+      <name>general</name>
+      <prompt lang="en">General options</prompt>
+      <argpos>1</argpos>
+      <parameters>
         <parameter ismandatory="1" issimple="1">
-            <name>model</name>
-            <prompt lang="en">Execution mode</prompt>
-            <type>
-                <datatype>
-                    <class>Choice</class>
-                </datatype>
-            </type>
-            <vdef>
-                <value>null</value>
-            </vdef>
-            <vlist>
-                <velem undef="1">
-                    <value>null</value>
-                    <label>Choice</label>
-                </velem>
-                <velem>
-                    <value>genmot</value>
-                    <label>genmot: Generate motifs from a training set</label>
-                </velem>
-                <velem>
-                    <value>scangen</value>
-                    <label>scangen: Find instances of a list of motifs in the
-                        genome</label>
-                </velem>
-            </vlist>
-            <comment>
-                <div xmlns="http://www.w3.org/1999/xhtml">
-                    <em>Imogene</em> has two different modes of execution that
-                    should be performed sequentially:
-                    <ul>
-                        <li><strong>genmot</strong>: generates motifs from a
-                            set of functionally related CRMs</li>
-                        <li><strong>scangen</strong>: predicts enhancers given
-                            the set of motifs generated using the
-                            <em>genmot</em> mode.</li>
-                    </ul>
-                </div>
-            </comment>
+          <name>species</name>
+          <prompt lang="en">Family of species to consider</prompt>
+          <type>
+            <datatype>
+              <class>Choice</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>null</value>
+          </vdef>
+          <vlist>
+            <velem undef="1">
+              <value>null</value>
+              <label>Choice</label>
+            </velem>
+            <velem>
+              <value>droso</value>
+              <label>Drosophilae</label>
+            </velem>
+            <velem>
+              <value>eutherian</value>
+              <label>Eutherians</label>
+            </velem>
+          </vlist>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              Two families of genomes are currently supported by
+              <em>Imogene</em>:
+              <ul><li><strong>Drosophilae</strong>: genomes are taken from the
+                    12 genomes project (A. G. Clark, <em>et al</em>. Evolution of
+                    genes and genomes on the Drosophila phylogeny.
+                    <em>Nature</em>, 450(7167):203-218, Nov 2007.)</li>
+                  <li><strong>Eutherian</strong>: genomes are taken from the
+                    ensembl project (<a href="http://www.ensembl.org/">http://www.ensembl.org/</a>,
+                    folder epo_12_eutherian)</li>
+              </ul>
+            </div>
+          </comment>
         </parameter>
-
-        <paragraph>
-            <name>general</name>
-            <prompt lang="en">General options</prompt>
-            <argpos>1</argpos>
-            <parameters>
-
-                <parameter ismandatory="1" issimple="1">
-                    <name>species</name>
-                    <prompt lang="en">Family of species to consider</prompt>
-                    <type>
-                        <datatype>
-                            <class>Choice</class>
-                        </datatype>
-                    </type>
-                    <vdef>
-                        <value>null</value>
-                    </vdef>
-                    <vlist>
-                        <velem undef="1">
-                            <value>null</value>
-                            <label>Choice</label>
-                        </velem>
-                        <velem>
-                            <value>droso</value>
-                            <label>Drosophilae</label>
-                        </velem>
-                        <velem>
-                            <value>eutherian</value>
-                            <label>Eutherians</label>
-                        </velem>
-                    </vlist>
-                    <comment>
-                        <div xmlns="http://www.w3.org/1999/xhtml">
-                            Two families of genomes are currently supported by
-                            <em>Imogene</em>:
-                            <ul>
-                                <li><strong>Drosophilae</strong>: genomes are
-                                   taken from the 12 genomes project (A. G.
-                                   Clark, <em>et al</em>. Evolution of genes
-                                   and genomes on the Drosophila phylogeny.
-                                   <em>Nature</em>, 450(7167):203-218, Nov
-                                   2007.)</li>
-                                <li><strong>Eutherian</strong>: genomes are taken from
-                                   the ensembl project (<a
-                                      href="http://www.ensembl.org/">http://www.ensembl.org/</a>,
-                                   folder epo_12_eutherian)</li> </ul> </div>
-                    </comment> </parameter>
-
-                <parameter ismandatory="1"> <name>width</name> <prompt
-                      lang="en">Width of the motifs</prompt> <type> <datatype>
-                         <class>Integer</class> </datatype> </type> <vdef>
-                      <value>10</value> </vdef> <comment> <div
-                         xmlns="http://www.w3.org/1999/xhtml"> Motifs represent
+        <parameter ismandatory="1">
+          <name>width</name>
+          <prompt lang="en">Width of the motifs</prompt>
+          <type>
+            <datatype>
+              <class>Integer</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>10</value>
+          </vdef>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml"> Motifs represent
                          the affinity of transcription
                             factors for binding sites (BS). Please indicate here the
                             <em>width</em> of BSs in number of nucleotides (nts).
@@ -172,106 +163,147 @@
                             with background frequencies (non-specific non-coding
                             sequences). However, large motifs are more difficult
                             to infer when containing many degenerate bases.
-                      </div> </comment> </parameter>
-
-                <parameter ismandatory="1"> <name>extent</name> <prompt
-                      lang="en">Allowed shift of a binding site position in orthologous
-                      species</prompt> <type> <datatype> <class>Integer</class>
-                      </datatype> </type> <vdef> <value>20</value> </vdef>
-                      <comment> <div xmlns="http://www.w3.org/1999/xhtml">
-                            <p>In order to be robust to mistakes in the
-                               alignments, <em>Imogene</em> allows for local
-                               shifts of the binding sites in orthologous
-                               sequences.</p>
-
-                            <p>Considering the first base of a binding site in
-                               the reference species, an alignment will make it
-                               correspond to a position <em>p</em> in an
-                               orthologous genome. The algorithm will then
-                               search for binding sites in this orthologous
-                               species at positions <em>(p-s,p+w+s)</em>,
-                                where <em>s</em> is the shift indicated here
-                                and <em>w</em> is the width of the motif.</p>
-                    </div> </comment> </parameter>
-
-            </parameters> </paragraph>
-
-        <paragraph> <name>genmot</name> <prompt lang="en">Genmot
-              options</prompt> <precond> <code proglang="perl">$model ==
-                 'genmot'</code> <code proglang="python">model == \
-                 'genmot'</code> </precond> <argpos>2</argpos> <parameters>
-
-                <parameter ismandatory="1"> <name>evolutionary</name> <prompt
-                      lang="en">Evolutionary model used for motif
-                      generation</prompt> <type> <datatype>
-                         <class>Choice</class> </datatype> </type> <vdef>
-                      <value>1</value> </vdef> <vlist> <velem>
-                            <value>1</value> <label>Felsenstein model</label>
-                               </velem> <velem> <value>2</value>
-                               <label>Halpern-Bruno model</label> </velem>
-                                  </vlist> <comment> <div
-                                  xmlns="http://www.w3.org/1999/xhtml">
-                                  <p><em>Imogene</em> makes use of the
-                                     evolution of binding sites to infer
-                                     motifs. In order to
-                                function, <em>Imogene</em> consider the
-                                mutation rate of bases under selection thanks
-                                to an evolutionary model.</p>
-
-                            <p>Two models are currently supported by
-                               <em>Imogene</em> (see refs at the end of the
-                               page for a detailed description):
-                               <ul><li>Felsentein: this model is simple and runs faster</li>
-                                  <li>Halpern-Bruno: this model has a deeper
-                                     theoretical ground and better
-                                        predicts the speed of evolution of the
-                                        motifs but takes more time to
-                                        run.</li></ul></p> </div> </comment>
-                      </parameter>
-                      
-                      <parameter ismandatory="1"> <name>Sg</name> <prompt
-                      lang="en">Threshold used for motif generation</prompt>
-                   <type> <datatype> <class>Float</class> </datatype> </type>
-                   <vdef> <value>11.0</value> </vdef> <comment> <div
-                         xmlns="http://www.w3.org/1999/xhtml"> <p>The
-                         <em>threshold</em>, expressed in bits, corresponds to
-                         the level of specificity of a motif.  As an order of
-                         magnitude, a threshold equal to 10
-                            corresponds approximatively to one binding site
-                            every 1000 bases on average in the whole genome.
-                            Since we use conservation to define motifs
-                            instances, this number is actually an upper bound.
-                            Common values, that give reasonable results are
-                            comprised between 10 and 13 bits.  </p></div>
-                   </comment> </parameter>
-                   
-                   <parameter ismandatory="1"> <name>Ss1</name> <prompt
-                         lang="en">Threshold used to scan training set
-                         sequences for display</prompt> <type> <datatype>
-                            <class>Float</class> </datatype> </type> <vdef>
-                         <value>8.0</value> </vdef> <comment> <div
-                            xmlns="http://www.w3.org/1999/xhtml"> <p>Note that
-                         this scanning threshold is only used for the final
-                         display and does not interviene in motifs generation.
-                         In particular, a lower threshold is useful to check for cryptic sites
-                         in the sequences. </p> </div> </comment>
-                </parameter>
-
-
-
-                <parameter ismandatory="1" issimple="1">
-                   <name>coord_file</name> <prompt lang="en">Training set
-                      sequences coordinates</prompt> <type> <datatype>
-                         <class>Coordinates</class>
-                         <superclass>AbstractText</superclass> </datatype>
-                         </type> <comment> <div
-                         xmlns="http://www.w3.org/1999/xhtml"> <p> List of
-                            sequence
-                            coordinates in the BED4 format: <pre>chrN  start stop  seq_name </pre>
-                              Below we give example training sets than can be
-                           copy/pasted in the following form.  </p>
-                        <!--<example>--> <ul> <li> Mouse example training
-                                 set (mm9 assembly, enhancers specific of the neural tube):</li> <pre>
+                      </div>
+          </comment>
+        </parameter>
+        <parameter ismandatory="1">
+          <name>extent</name>
+          <prompt lang="en">Allowed shift of a binding site position in
+              orthologous species</prompt>
+          <type>
+            <datatype>
+              <class>Integer</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>20</value>
+          </vdef>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>In order to be robust to mistakes in the alignments,
+                <em>Imogene</em> allows for local shifts of the binding sites
+                in orthologous sequences.</p>
+              <p>Considering the first base of a binding site in the reference
+                species, an alignment will make it correspond to a position
+                <em>p</em> in an orthologous genome. The algorithm will then
+                search for binding sites in this orthologous species at
+                positions <em>(p-s,p+w+s)</em>, where <em>s</em> is the shift
+                indicated here and <em>w</em> is the width of the motif.</p>
+            </div>
+          </comment>
+        </parameter>
+      </parameters>
+    </paragraph>
+    <paragraph>
+      <name>genmot</name>
+      <prompt lang="en">Genmot options</prompt>
+      <precond>
+        <code proglang="perl">$model == 'genmot'</code>
+        <code proglang="python">model == 'genmot'</code>
+      </precond>
+      <argpos>2</argpos>
+      <parameters>
+        <parameter ismandatory="1">
+          <name>evolutionary</name>
+          <prompt lang="en">Evolutionary model used for motif generation</prompt>
+          <type>
+            <datatype>
+              <class>Choice</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>1</value>
+          </vdef>
+          <vlist>
+            <velem>
+              <value>1</value>
+              <label>Felsenstein model</label>
+            </velem>
+            <velem>
+              <value>2</value>
+              <label>Halpern-Bruno model</label>
+            </velem>
+          </vlist>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p><em>Imogene</em> makes use of the evolution of binding sites
+                to infer motifs. In order to function, <em>Imogene</em>
+                consider the mutation rate of bases under selection thanks
+                to an evolutionary model.</p>
+              <p>Two models are currently supported by <em>Imogene</em> (see
+                refs at the end of the page for a detailed description):
+                <ul><li>Felsentein: this model is simple and runs faster</li>
+                    <li>Halpern-Bruno: this model has a deeper theoretical
+                        ground and better predicts the speed of evolution of
+                        the motifs but takes more time to run.</li>
+                </ul></p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter ismandatory="1">
+          <name>Sg</name>
+          <prompt lang="en">Threshold used for motif generation</prompt>
+          <type>
+            <datatype>
+              <class>Float</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>11.0</value>
+          </vdef>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>The <em>threshold</em>, expressed in bits, corresponds to the
+                level of specificity of a motif.  As an order of magnitude,
+                a threshold equal to 10 corresponds approximatively to one
+                binding site every 1000 bases on average in the whole genome.
+                Since we use conservation to define motifs instances, this
+                number is actually an upper bound. Common values, that give
+                reasonable results are comprised between 10 and 13 bits.</p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter ismandatory="1">
+          <name>Ss1</name>
+          <prompt lang="en">Threshold used to scan training set sequences for
+            display</prompt>
+          <type>
+            <datatype>
+              <class>Float</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>8.0</value>
+          </vdef>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>Note that this scanning threshold is only used for the final
+                display and does not interviene in motifs generation. In
+                particular, a lower threshold is useful to check for cryptic
+                sites in the sequences. </p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter ismandatory="1" issimple="1">
+          <name>coord_file</name>
+          <prompt lang="en">Training set sequences coordinates</prompt>
+          <type>
+            <datatype>
+              <class>Coordinates</class>
+              <superclass>AbstractText</superclass>
+            </datatype>
+          </type>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p> List of sequence coordinates in the BED4 format:
+                <pre>chrN  start stop  seq_name </pre>
+                Below we give example training sets than can be copy/pasted in
+                the following form.  </p>
+              <!--<example>-->
+              <ul>
+                <li> Mouse example training set (mm9 assembly, enhancers
+                  specific of the neural tube):</li>
+                <pre>
 chr8  91462919 91464123 CYLD-SALL1
 chr4  99040833 99042291 APG4C-FOXD3
 chr14 118834760   118836087   SOX21-ABCC4
@@ -284,7 +316,8 @@ chr5  42914188 42915270 FAM44A-CPEB2
 chr9  91261697 91263041 ZIC4-ZIC1
 chr18 82027407 82028703 GALR1-SALL3
 chr13 73170587 73173631 IRX4-IRX2</pre>
-                              <li> Drosophila example training set (release 5 assembly, enhancers expressed in mesoderm and somatic muscle):</li> <pre>
+                <li> Drosophila example training set (release 5 assembly, enhancers expressed in mesoderm and somatic muscle):</li>
+                <pre>
 chr3R   10415381 10415780 seq2300
 chr3R 17228198 17228402 seq2821
 chr2R 18937351 18937843 seq1357
@@ -294,160 +327,264 @@ chr2R 19526211 19526451 seq1396
 chr2R 19526657 19527033 seq1397
 chr3R 17227574 17227958 seq2820
 chr2R 5025930  5026695  seq257</pre>
-                           </ul>
-                        <!--</example> --> </div> </comment> </parameter>
-
-                <parameter ishidden="1"> <name>cmd_1</name> <type> <datatype>
-                         <class>String</class> </datatype> </type> <format>
-                      <code proglang="python">"sudo /Library/WebServer/imogene extract -s " + species + \
-                         " -i " + coord_file +" &amp;&amp; "</code> </format>
-                   <argpos>1</argpos>
-                </parameter>
-
-                <parameter ishidden="1"> <name>cmd_2</name> <type> <datatype>
-                         <class>String</class> </datatype> </type> <format>
-                      <code proglang="python">" imogene genmot -s " + species + \
-                         " -w " + str(width) + " -t " + str(Sg) + " -x " \
-                         + str(extent) + " -e " + str(evolutionary) + " -a \
-                         align &amp;&amp;" </code> </format> <argpos>2</argpos>
-                </parameter>
-
-                <parameter ishidden="1"> <name>cmd_3</name> <type> <datatype>
-                         <class>String</class> </datatype> </type> <format>
-                      <code proglang="python">" imogene display -t "+ \
-                         str(Ss1) +" -s " + species +" -m motifs.txt -a \
-                         align --logos --pdf --png &amp;&amp;"</code> </format>
-                   <argpos>3</argpos> </parameter>
-
-                <parameter ishidden="1"> <name>cmd_4</name> <type> <datatype>
-                         <class>String</class> </datatype> </type> <format>
-                      <code proglang="python">" imogene display -t "+ \
-                         str(Ss1) +" -s " + species +" -m motifs.txt -a \
-                         align --html-ref"</code> </format> <argpos>4</argpos>
-                </parameter>
-
-                <parameter isout="1"> <name>motifs</name> <prompt>Motif
-                      file</prompt> <type> <datatype>
-                         <class>ScangenMotifDefinition</class>
-                         <superclass>AbstractText</superclass> </datatype>
-                         </type> <filenames> <code
-                         proglang="perl">"motifs.txt"</code> <code
-                         proglang="python">"motifs.txt"</code>
-                    </filenames> <comment> <div
-                    xmlns="http://www.w3.org/1999/xhtml"> <p>Predicted motifs
-                       in text file format. This file can be used as input for
-                       the <em>scangen</em> mode</p> </div> </comment>
-           </parameter>
-
-                <parameter isout="1"> <name>genmotoutput</name> <prompt>General
-                      output</prompt> <type> <datatype>
-                         <class>GenmotReport</class>
-                         <superclass>Report</superclass> </datatype>
-                      <dataFormat>HTML</dataFormat> </type> <filenames> <code
-                         proglang="python">"results_genmot.html"</code>
-                   </filenames> <comment> <div
-                   xmlns="http://www.w3.org/1999/xhtml"> <p>Predicted motifs in
-                      pretty printed format (xhtml).  This page contains motifs
-                      logos.</p> </div> </comment> </parameter> 
-
-                <parameter isout="1"> <name>motif_png_out</name> <type>
-                      <datatype> <class>Logo</class>
-                         <superclass>Binary</superclass> </datatype>
-                      <dataFormat>png</dataFormat> </type> <filenames> <code
-                         proglang="python">"Motif*.png"</code> </filenames>
-                </parameter>
-
-                <parameter isout="1"> <name>motif_pdf_out</name> <type>
-                      <datatype> <class>Logo</class>
-                         <superclass>Binary</superclass> </datatype>
-                      <dataFormat>pdf</dataFormat> </type> <filenames> <code
-                         proglang="python">"Motif*.pdf"</code> </filenames>
-                </parameter>
-
-            </parameters> </paragraph>
-
-
-        <paragraph> <name>scangen</name> <prompt lang="en">Scangen
-              options</prompt> <precond> <code proglang="perl">$model ==
-                 'scangen'</code> <code proglang="python">model == \
-                 'scangen'</code> </precond> <argpos>2</argpos> <parameters>
-              
-              <parameter ismandatory="1"> <name>Ss2</name> <prompt
-                         lang="en">Threshold used to scan the genome
-                            </prompt> <type> <datatype>
-                            <class>Float</class> </datatype> </type> <vdef>
-                         <value>8.0</value> </vdef> <comment> <div
-                            xmlns="http://www.w3.org/1999/xhtml"> <p>
-                            Usually less or equal to the generation threshold Sg. 
-                         </p>
-                     </div> </comment>
-                </parameter>
-
-                <parameter ismandatory="1"> <name>crmwidth</name> <prompt
-                      lang="en">Width of selected enhancers</prompt> <type>
-                      <datatype> <class>Integer</class> </datatype> </type>
-                   <vdef> <value>1000</value> </vdef> <comment> <div
-                         xmlns="http://www.w3.org/1999/xhtml"> <p>Width of the
-                            predicted enhancers in number of
-                                nucleotides (nt).</p> </div> </comment>
-                    </parameter>
-
-                <parameter ismandatory="1"> <name>nbmots</name> <prompt
-                      lang="en">Number of motifs to consider at
-                      maximum</prompt> <type> <datatype> <class>Integer</class>
-                         </datatype> </type> <vdef> <value>5</value> </vdef>
-                         <comment> <div xmlns="http://www.w3.org/1999/xhtml">
-                               <p>Enhancers are predicted on the basis of the
-                                presence of binding sites corresponding to
-                                chosen motifs. You must input an ordered list
-                                of motifs generated either by yourself (with
-                                the appropriate syntax) or by the
-                                <em>genmot</em> mode. The number of considered
-                                motifs will be the top <em>n</em>, where
-                                <em>n</em> is the integer indicated
-                                here.</p> </div> </comment> </parameter>
-
-                <parameter ismandatory="1" issimple="1">
-                   <name>motifs_file</name> <prompt lang="en">File containing a
+              </ul>
+              <!--</example> -->
+            </div>
+          </comment>
+        </parameter>
+        <parameter ishidden="1">
+          <name>cmd_1</name>
+          <type>
+            <datatype>
+              <class>String</class>
+            </datatype>
+          </type>
+          <format>
+            <code proglang="python">"imogene extract -s " + species + " -i " \
+              + coord_file +" &amp;&amp; "</code>
+          </format>
+          <argpos>1</argpos>
+        </parameter>
+        <parameter ishidden="1">
+          <name>cmd_2</name>
+          <type>
+            <datatype>
+              <class>String</class>
+            </datatype>
+          </type>
+          <format>
+            <code proglang="python">" imogene genmot -s " + species + " -w " \
+              + str(width) + " -t " + str(Sg) + " -x " + str(extent) + " -e " \
+              + str(evolutionary) + " -a align &amp;&amp;" </code>
+          </format>
+          <argpos>2</argpos>
+        </parameter>
+        <parameter ishidden="1">
+          <name>cmd_3</name>
+          <type>
+            <datatype>
+              <class>String</class>
+            </datatype>
+          </type>
+          <format>
+            <code proglang="python">" imogene display -t "+ str(Ss1) +" -s " +\
+              species +" -m motifs.txt -a align --logos --pdf --png &amp;&amp;"</code>
+          </format>
+          <argpos>3</argpos>
+        </parameter>
+        <parameter ishidden="1">
+          <name>cmd_4</name>
+          <type>
+            <datatype>
+              <class>String</class>
+            </datatype>
+          </type>
+          <format>
+            <code proglang="python">" imogene display -t "+ str(Ss1) +" -s " + \
+              species +" -m motifs.txt -a align --html-ref"</code>
+          </format>
+          <argpos>4</argpos>
+        </parameter>
+        <parameter isout="1">
+          <name>motifs</name>
+          <prompt>Motif
+                      file</prompt>
+          <type>
+            <datatype>
+              <class>ScangenMotifDefinition</class>
+              <superclass>AbstractText</superclass>
+            </datatype>
+          </type>
+          <filenames>
+            <code proglang="perl">"motifs.txt"</code>
+            <code proglang="python">"motifs.txt"</code>
+          </filenames>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>Predicted motifs in text file format. This file can be used as
+                input for the <em>scangen</em> mode</p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter isout="1">
+          <name>genmotoutput</name>
+          <prompt>General output</prompt>
+          <type>
+            <datatype>
+              <class>GenmotReport</class>
+              <superclass>Report</superclass>
+            </datatype>
+            <dataFormat>HTML</dataFormat>
+          </type>
+          <filenames>
+            <code proglang="python">"results_genmot.html"</code>
+          </filenames>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>Predicted motifs in pretty printed format (xhtml).  This page
+                contains motifs logos.</p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter isout="1">
+          <name>motif_png_out</name>
+          <type>
+            <datatype>
+              <class>Logo</class>
+              <superclass>Binary</superclass>
+            </datatype>
+            <dataFormat>png</dataFormat>
+          </type>
+          <filenames>
+            <code proglang="python">"Motif*.png"</code>
+          </filenames>
+        </parameter>
+        <parameter isout="1">
+          <name>motif_pdf_out</name>
+          <type>
+            <datatype>
+              <class>Logo</class>
+              <superclass>Binary</superclass>
+            </datatype>
+            <dataFormat>pdf</dataFormat>
+          </type>
+          <filenames>
+            <code proglang="python">"Motif*.pdf"</code>
+          </filenames>
+        </parameter>
+      </parameters>
+    </paragraph>
+    <paragraph>
+      <name>scangen</name>
+      <prompt lang="en">Scangen
+              options</prompt>
+      <precond>
+        <code proglang="perl">$model == 'scangen'</code>
+        <code proglang="python">model == 'scangen'</code>
+      </precond>
+      <argpos>2</argpos>
+      <parameters>
+        <parameter ismandatory="1">
+          <name>Ss2</name>
+          <prompt lang="en">Threshold used to scan the genome </prompt>
+          <type>
+            <datatype>
+              <class>Float</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>8.0</value>
+          </vdef>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p> Usually less or equal to the generation threshold Sg. </p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter ismandatory="1">
+          <name>crmwidth</name>
+          <prompt lang="en">Width of selected enhancers</prompt>
+          <type>
+            <datatype>
+              <class>Integer</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>1000</value>
+          </vdef>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>Width of the predicted enhancers in number of nucleotides.</p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter ismandatory="1">
+          <name>nbmots</name>
+          <prompt lang="en">Number of motifs to consider at maximum</prompt>
+          <type>
+            <datatype>
+              <class>Integer</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>5</value>
+          </vdef>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>Enhancers are predicted on the basis of the presence of
+                binding sites corresponding to chosen motifs. You must input an
+                ordered list of motifs generated either by yourself (with the
+                appropriate syntax) or by the <em>genmot</em> mode. The number
+                of considered motifs will be the top <em>n</em>, where
+                <em>n</em> is the integer indicated here.</p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter ismandatory="1" issimple="1">
+          <name>motifs_file</name>
+          <prompt lang="en">File containing a
                       list of motif definitions</prompt>
-
-                    <type> <datatype> <class>ScangenMotifDefinition</class>
-                          <superclass>AbstractText</superclass> </datatype>
-                             </type> <comment> <div
-                             xmlns="http://www.w3.org/1999/xhtml"> <p>List of
-                                motif definition in format identical to the
-                                output of the <em>genmot</em> mode.</p> </div>
-                    </comment> </parameter>
-
-                <parameter ishidden="1"> <name>cmdscangen_1</name> <type>
-                      <datatype> <class>String</class> </datatype> </type>
-                   <format> <code proglang="python">"imogene scangen -s " + \
-                         species + " -t " + str(Ss2) + " -x " + \
-                         str(extent) + " -m " + motifs_file + " --scanwidth=" + \
-                         str(crmwidth) + "&amp;&amp; "</code> </format>
-                    <argpos>1</argpos> </parameter>
-
-                <parameter ishidden="1"> <name>cmdscangen_2</name> <type>
-                      <datatype> <class>String</class> </datatype> </type>
-                   <format> <code proglang="python">" imogene display -e \
-                         result*.dat"</code> </format> <argpos>2</argpos>
-                </parameter>
-
-                <parameter isout="1"> <name>scangenOuthtml</name>
-                   <prompt>Scangen output</prompt> <type> <datatype>
-                         <class>ScangenReport</class>
-                         <superclass>Report</superclass> </datatype>
-                      <dataFormat>HTML</dataFormat> </type> <filenames> <code
-                         proglang="python">"results_scangen.html"</code>
-                    </filenames> <comment> <div
-                    xmlns="http://www.w3.org/1999/xhtml"> <p>List of predicted
-                       enhancers, from the most concentrated in motifs to the
-                       less enriched. 
-                       <!--The number of binding sites for each
-                       motif is also indicated. ZZ NOT TRUE ZZ-->
-              </p> </div> </comment>
-           </parameter> 
-
-            </parameters> </paragraph>
-
-    </parameters> </program>
+          <type>
+            <datatype>
+              <class>ScangenMotifDefinition</class>
+              <superclass>AbstractText</superclass>
+            </datatype>
+          </type>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>List of motif definition in format identical to the output of
+                the <em>genmot</em> mode.</p>
+            </div>
+          </comment>
+        </parameter>
+        <parameter ishidden="1">
+          <name>cmdscangen_1</name>
+          <type>
+            <datatype>
+              <class>String</class>
+            </datatype>
+          </type>
+          <format>
+            <code proglang="python">"imogene scangen -s " + species + " -t " \
+              + str(Ss2) + " -x " + str(extent) + " -m " + motifs_file       \
+              + " --scanwidth=" + str(crmwidth) + "&amp;&amp; "</code>
+          </format>
+          <argpos>1</argpos>
+        </parameter>
+        <parameter ishidden="1">
+          <name>cmdscangen_2</name>
+          <type>
+            <datatype>
+              <class>String</class>
+            </datatype>
+          </type>
+          <format>
+            <code proglang="python">" imogene display -e result*.dat"</code>
+          </format>
+          <argpos>2</argpos>
+        </parameter>
+        <parameter isout="1">
+          <name>scangenOuthtml</name>
+          <prompt>Scangen output</prompt>
+          <type>
+            <datatype>
+              <class>ScangenReport</class>
+              <superclass>Report</superclass>
+            </datatype>
+            <dataFormat>HTML</dataFormat>
+          </type>
+          <filenames>
+            <code proglang="python">"results_scangen.html"</code>
+          </filenames>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>List of predicted enhancers, from the most concentrated in
+                motifs to the less enriched. 
+              </p>
+            </div>
+          </comment>
+        </parameter>
+      </parameters>
+    </paragraph>
+  </parameters>
+</program>
