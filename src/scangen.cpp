@@ -119,9 +119,9 @@ scanmots()
     ifstream align;
     if (species == "droso") {
         cout << "Reading droso alignments..." << endl;
-        //align.open((scangen_datapath + "/droso/align.dat").c_str());
+        align.open((scangen_datapath + "/droso/align.dat").c_str());
         //for test purposes:
-        align.open((scangen_datapath + "/droso/align-10.dat").c_str());
+        //align.open((scangen_datapath + "/droso/align-10.dat").c_str());
     } else if (species == "eutherian") {
         cout << "Reading eutherian alignments..." << endl;
         align.open((scangen_datapath + "/eutherian/align.dat").c_str());
