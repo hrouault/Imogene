@@ -154,16 +154,14 @@
           </vdef>
           <comment>
             <div xmlns="http://www.w3.org/1999/xhtml"> Motifs represent
-                         the affinity of transcription
-                            factors for binding sites (BS). Please indicate here the
-                            <em>width</em> of BSs in number of nucleotides (nts).
-                            Typical values range between 8 and 12 nts.
-                            Note that motifs of larger width can model motifs
-                            with a specific core of lower width and flanking nts
-                            with background frequencies (non-specific non-coding
-                            sequences). However, large motifs are more difficult
-                            to infer when containing many degenerate bases.
-                      </div>
+              the affinity of transcription factors for binding sites (BS).
+              Please indicate here the <em>width</em> of BSs in number of
+              nucleotides (nts). Typical values range between 8 and 12 nts.
+              Note that motifs of larger width can model motifs with a specific
+              core of lower width and flanking nts with background frequencies
+              (non-specific non-coding sequences). However, large motifs are
+              more difficult to infer when containing many degenerate bases.
+            </div>
           </comment>
         </parameter>
         <parameter ismandatory="1">
@@ -387,8 +385,7 @@ chr2R 5025930  5026695  seq257</pre>
         </parameter>
         <parameter isout="1">
           <name>motifs</name>
-          <prompt>Motif
-                      file</prompt>
+          <prompt>Motif file</prompt>
           <type>
             <datatype>
               <class>ScangenMotifDefinition</class>
@@ -417,7 +414,7 @@ chr2R 5025930  5026695  seq257</pre>
             <dataFormat>HTML</dataFormat>
           </type>
           <filenames>
-            <code proglang="python">"results_genmot.html"</code>
+              <code proglang="python">"results_genmot.html css/custom.css css/print.css css/screen.css ie.css *.svg"</code>
           </filenames>
           <comment>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -522,8 +519,8 @@ chr2R 5025930  5026695  seq257</pre>
         </parameter>
         <parameter ismandatory="1" issimple="1">
           <name>motifs_file</name>
-          <prompt lang="en">File containing a
-                      list of motif definitions</prompt>
+          <prompt lang="en">File containing a list of motif
+            definitions</prompt>
           <type>
             <datatype>
               <class>ScangenMotifDefinition</class>
