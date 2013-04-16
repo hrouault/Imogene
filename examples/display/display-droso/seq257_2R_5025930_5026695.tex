@@ -1,6 +1,6 @@
 \documentclass[11pt,twoside,reqno,a4paper]{article}
 \usepackage[french]{babel}
-\usepackage[usenames,dvipsnames]{color}
+\usepackage{xcolor}
 \usepackage[utf8]{inputenc}
 \usepackage{geometry}
 \geometry{a4paper}
@@ -8,7 +8,7 @@
 \usepackage{array,multirow}
 \begin{document}
 \noindent
-\newlength{\charwidth}\settowidth{\charwidth}{\texttt{A}}Motif(s): \textcolor{Red}{Mot\_1}, \textcolor{Blue}{Mot\_2}, \textcolor{Green}{Mot\_3}, \textcolor{Yellow}{Mot\_4}, \textcolor{Brown}{Mot\_5}\\
+\newlength{\charwidth}\settowidth{\charwidth}{\texttt{A}}Motif(s): \textcolor{red}{Mot\_1}, \textcolor{blue}{Mot\_2}, \textcolor{green}{Mot\_3}, \textcolor{yellow}{Mot\_4}, \textcolor{brown}{Mot\_5}, \textcolor{magenta}{Mot\_6}, \textcolor{cyan}{Mot\_7}, \textcolor{violet}{Mot\_8}, \textcolor{orange}{Mot\_9}, \textcolor{olive}{Mot\_10}\\
 \\
 $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
  \\
@@ -37,10 +37,10 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \\
 56\hspace*{3\charwidth}DroMel	GAAGACTAGG	CAAGACCGAG	AAGAG-----	----TGACAA	AGAGC-GAGG	GCGGAAGTGC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-56\hspace*{3\charwidth}DroSim	AAAGACTAGA	CAAGACCGAG	AAGAG-----	----AGACAA	AGAGC-GAGG	GCGGAAGTGC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-56\hspace*{3\charwidth}DroSec	AAAGACTAGA	CAAGACCGAA	AAGAG-----	----AGACAA	AGAGC-GAGG	GCGGAAGTAC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+56\hspace*{3\charwidth}DroSim	AAAGACTAGA	CAAGACCGAG	AAGAG-----	----AGACAA	AGA\textcolor{cyan}{G}\textcolor{cyan}{C}\textcolor{cyan}{-}\textcolor{cyan}{G}\textcolor{cyan}{A}\textcolor{cyan}{G}\textcolor{cyan}{G}	\textcolor{cyan}{G}\textcolor{cyan}{C}\textcolor{cyan}{G}\textcolor{cyan}{G}AAGTGC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{43\charwidth}\textcolor{cyan}{6.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+56\hspace*{3\charwidth}DroSec	AAAGACTAGA	CAAGACCGAA	AAGAG-----	----AGACAA	AGA\textcolor{cyan}{G}\textcolor{cyan}{C}\textcolor{cyan}{-}\textcolor{cyan}{G}\textcolor{cyan}{A}\textcolor{cyan}{G}\textcolor{cyan}{G}	\textcolor{cyan}{G}\textcolor{cyan}{C}\textcolor{cyan}{G}\textcolor{cyan}{G}AAGTAC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{43\charwidth}\textcolor{cyan}{6.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 56\hspace*{3\charwidth}DroYak	AAAGACTAGG	AAAGACAGAG	AAGTA-----	----AGACAA	AGAGC-AAGA	GCGGAAGTGC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 56\hspace*{3\charwidth}DroEre	GCAGACTAGG	CAAGACAGAG	AAGTG-----	----AGACAA	AGAGC-CAGG	GCGGAAGTGC	\\
@@ -58,16 +58,16 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 0\hspace*{4\charwidth}DroGri	----------	----------	----------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 \\
-106\hspace*{2\charwidth}DroMel	GGCGAGGACA	AGGCTGA-TC	TGCGATGAAC	AC--CAGGTA	GAAGG----T	AAGTGTATCC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-106\hspace*{2\charwidth}DroSim	GACGAGGACA	AGGCTGA-TC	TGCGATGAAC	----CAGGTA	GAAGG----T	AAGTGTATTC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-106\hspace*{2\charwidth}DroSec	GACGAGGACA	AGGCTGA-TC	TGCGATGAAC	----CAGGTA	GAAGG----T	AAGTGTATCC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-106\hspace*{2\charwidth}DroYak	GACGATGACA	AGGCTGA-TC	TGCGATGAAC	CAGGTAG---	-----AACGT	AAGTGTATCT	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-106\hspace*{2\charwidth}DroEre	GACGATGACA	AGGTTGA-TC	TGTG\textcolor{Green}{A}\textcolor{Green}{T}\textcolor{Green}{G}\textcolor{Green}{T}\textcolor{Green}{A}\textcolor{Green}{C}	\textcolor{Green}{T}\textcolor{Green}{A}\textcolor{Green}{T}\textcolor{Green}{G}TAGGTA	GAACGTACAT	AAGTGTACC-	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{24\charwidth}\textcolor{Green}{6.4}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+106\hspace*{2\charwidth}DroMel	GGCG\textcolor{magenta}{A}\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{A}\textcolor{magenta}{C}\textcolor{magenta}{A}	\textcolor{magenta}{A}\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{C}TGA-TC	TGCGATGAAC	AC--CAGGTA	GAAGG----T	AAGTGTATCC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{4\charwidth}\textcolor{magenta}{7.8}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+106\hspace*{2\charwidth}DroSim	GACG\textcolor{magenta}{A}\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{A}\textcolor{magenta}{C}\textcolor{magenta}{A}	\textcolor{magenta}{A}\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{C}TGA-TC	TGCGATGAAC	----CAGGTA	GAAGG----T	AAGTGTATTC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{4\charwidth}\textcolor{magenta}{7.8}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+106\hspace*{2\charwidth}DroSec	GACG\textcolor{magenta}{A}\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{A}\textcolor{magenta}{C}\textcolor{magenta}{A}	\textcolor{magenta}{A}\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{C}TGA-TC	TGCGATGAAC	----CAGGTA	GAAGG----T	AAGTGTATCC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{4\charwidth}\textcolor{magenta}{7.8}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+106\hspace*{2\charwidth}DroYak	GACG\textcolor{magenta}{A}\textcolor{magenta}{T}\textcolor{magenta}{G}\textcolor{magenta}{A}\textcolor{magenta}{C}\textcolor{magenta}{A}	\textcolor{magenta}{A}\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{C}TGA-TC	TGCGATGAAC	CAGGTAG---	-----AACGT	AAGTGTATCT	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{4\charwidth}\textcolor{magenta}{6.2}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+106\hspace*{2\charwidth}DroEre	GACGATGACA	AGGTTGA-TC	TGTG\textcolor{green}{A}\textcolor{green}{T}\textcolor{green}{G}\textcolor{green}{T}\textcolor{green}{A}\textcolor{green}{C}	\textcolor{green}{T}\textcolor{green}{A}\textcolor{green}{T}\textcolor{green}{G}TAGGTA	GAACGTACAT	AAGTGTACC-	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{24\charwidth}\textcolor{green}{6.4}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 121\hspace*{2\charwidth}DroAna	GT---TCACG	AGGCTGGCTG	TATGATGAAC	----CAGGTA	GAACG-----	------ACCC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 0\hspace*{4\charwidth}DroPse	----------	----------	----------	----------	----------	----------	\\
@@ -129,12 +129,12 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \\
 259\hspace*{2\charwidth}DroMel	GATGTAGAAA	CCAGACGCTT	TCCAGACTAT	GGCAGCACCC	CAAGAAACTC	TTGGAAATAC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-253\hspace*{2\charwidth}DroSim	GATGTAGAAA	CCAGACGCTT	TCCAGACGAC	GCCAACACCC	CAAGAAACTC	TTG\textcolor{Yellow}{G}\textcolor{Yellow}{A}\textcolor{Yellow}{A}\textcolor{Yellow}{A}\textcolor{Yellow}{-}\textcolor{Yellow}{-}\textcolor{Yellow}{-}	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{53\charwidth}\textcolor{Yellow}{7.1}\hspace*{1\charwidth}\\
-257\hspace*{2\charwidth}DroSec	GATGTAGAAA	CCAGACGCTT	TCCAGACGAC	GCCAACACCC	CAAGAAACTC	TTG\textcolor{Yellow}{G}\textcolor{Yellow}{A}\textcolor{Yellow}{A}\textcolor{Yellow}{A}\textcolor{Yellow}{-}\textcolor{Yellow}{-}\textcolor{Yellow}{-}	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{53\charwidth}\textcolor{Yellow}{7.1}\hspace*{1\charwidth}\\
-268\hspace*{2\charwidth}DroYak	-----CGAAA	CCAGACGCTT	TCCAGACGAT	GCCAACACCC	CAAGAAACTC	TCA\textcolor{Yellow}{G}\textcolor{Yellow}{A}\textcolor{Yellow}{A}\textcolor{Yellow}{A}\textcolor{Yellow}{-}\textcolor{Yellow}{-}\textcolor{Yellow}{-}	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{53\charwidth}\textcolor{Yellow}{7.1}\hspace*{1\charwidth}\\
+253\hspace*{2\charwidth}DroSim	GATGTAGAAA	CCAGACGCTT	TCCAGACGAC	GCCAACACCC	CAAGAAACTC	TTG\textcolor{yellow}{G}\textcolor{yellow}{A}\textcolor{yellow}{A}\textcolor{yellow}{A}\textcolor{yellow}{-}\textcolor{yellow}{-}\textcolor{yellow}{-}	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{53\charwidth}\textcolor{yellow}{7.1}\hspace*{1\charwidth}\\
+257\hspace*{2\charwidth}DroSec	GATGTAGAAA	CCAGACGCTT	TCCAGACGAC	GCCAACACCC	CAAGAAACTC	TTG\textcolor{yellow}{G}\textcolor{yellow}{A}\textcolor{yellow}{A}\textcolor{yellow}{A}\textcolor{yellow}{-}\textcolor{yellow}{-}\textcolor{yellow}{-}	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{53\charwidth}\textcolor{yellow}{7.1}\hspace*{1\charwidth}\\
+268\hspace*{2\charwidth}DroYak	-----CGAAA	CCAGACGCTT	TCCAGACGAT	GCCAACACCC	CAAGAAACTC	TCA\textcolor{yellow}{G}\textcolor{yellow}{A}\textcolor{yellow}{A}\textcolor{yellow}{A}\textcolor{yellow}{-}\textcolor{yellow}{-}\textcolor{yellow}{-}	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{53\charwidth}\textcolor{yellow}{7.1}\hspace*{1\charwidth}\\
 273\hspace*{2\charwidth}DroEre	-----AGAAA	CCAGACGCTT	TCCAGACGTT	GCCAACACCC	CATGTAACTC	TTGGAAA---	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 270\hspace*{2\charwidth}DroAna	-----AGCCA	CCAGACGGCT	TCCAGACGTT	GGAAACACCC	AAACAAAGGC	--------AC	\\
@@ -150,14 +150,14 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 0\hspace*{4\charwidth}DroGri	----------	----------	----GACGAT	G---------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 \\
-319\hspace*{2\charwidth}DroMel	TACTCATTGC	TA\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{C}\textcolor{Green}{G}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{C}	\textcolor{Green}{A}\textcolor{Green}{T}ATGACGTA	CACTTGGAGA	AACA------	----------	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{12\charwidth}\textcolor{Green}{7.5}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-310\hspace*{2\charwidth}DroSim	\textcolor{Yellow}{T}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{A}TTGC	TACACCGAAC	ATATGACGTA	CACTTGAAGA	AACA------	----------	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{Yellow}{7.1}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-314\hspace*{2\charwidth}DroSec	\textcolor{Yellow}{T}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{A}TTGC	TACACCGT--	----------	----------	----------	----------	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{Yellow}{7.1}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-321\hspace*{2\charwidth}DroYak	\textcolor{Yellow}{T}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{A}TCGG	TTTACCGAAC	ATATGACATG	CACTTGGAAA	AACA------	----------	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{Yellow}{7.1}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+319\hspace*{2\charwidth}DroMel	TACTCATTGC	TA\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{C}\textcolor{green}{G}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{C}	\textcolor{green}{A}\textcolor{green}{T}ATGACGTA	CACTTGGAGA	AACA------	----------	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{12\charwidth}\textcolor{green}{7.5}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+310\hspace*{2\charwidth}DroSim	\textcolor{yellow}{T}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{A}TTGC	TACACCGAAC	ATATGACGTA	CACTTGAAGA	AACA------	----------	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{yellow}{7.1}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+314\hspace*{2\charwidth}DroSec	\textcolor{yellow}{T}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{A}TTGC	TACACCGT--	----------	----------	----------	----------	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{yellow}{7.1}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+321\hspace*{2\charwidth}DroYak	\textcolor{yellow}{T}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{A}TCGG	TTTACCGAAC	ATATGACATG	CACTTGGAAA	AACA------	----------	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{yellow}{7.1}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 326\hspace*{2\charwidth}DroEre	AACACATTGC	TACGCCGAAC	ATATGGCAG-	CACTTGGAAA	AACA------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 318\hspace*{2\charwidth}DroAna	TCCAAACAAA	TACACACAA-	-----AAATA	CACCTAGACG	AAAAGTTGTG	CGTGACTTTA	\\
@@ -344,8 +344,8 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 460\hspace*{2\charwidth}DroEre	TT---CAGCT	TGGTAAC-TC	CGATTTGCGC	TAACT-TG-T	ACCTTGAACC	ATTTCAGC--	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-559\hspace*{2\charwidth}DroAna	TGC--AAGAG	AGGGAATAT-	--ATTTATCT	TAAAT-AGAT	AAGTAATACT	ATT-------	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+559\hspace*{2\charwidth}DroAna	T\textcolor{cyan}{G}\textcolor{cyan}{C}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{A}\textcolor{cyan}{A}\textcolor{cyan}{G}\textcolor{cyan}{A}\textcolor{cyan}{G}	\textcolor{cyan}{A}\textcolor{cyan}{G}\textcolor{cyan}{G}GAATAT-	--ATTTATCT	TAAAT-AGAT	AAGTAATACT	ATT-------	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\textcolor{cyan}{7.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 320\hspace*{2\charwidth}DroPse	TGCCGAAGCG	TGGATTATTC	CGATTTGCGG	TTGTTGTGCA	AGTGTTAGGC	A----AGTCA	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 316\hspace*{2\charwidth}DroPer	TGCCGAAGCG	TGGATTATTC	CGATTTGCGG	TTATTGTGCA	AGTGTAAGGC	A----AGTCA	\\
@@ -359,20 +359,20 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \\
 517\hspace*{2\charwidth}DroMel	CGTGCCATTT	CTTCCAGTGC	ACGAGCGGC-	-TTTCCCATG	TGTGTGTGCT	GCGTGGTAGC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-508\hspace*{2\charwidth}DroSim	CGCGCCATTT	CTTCCAGTGC	ATGAGCGGCG	A\textcolor{Blue}{T}\textcolor{Blue}{T}\textcolor{Blue}{G}\textcolor{Blue}{C}\textcolor{Blue}{A}\textcolor{Blue}{T}\textcolor{Blue}{G}\textcolor{Blue}{T}\textcolor{Blue}{G}	\textcolor{Blue}{T}GTGTGTGCT	GCGTGGTAGC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{31\charwidth}\textcolor{Blue}{7.6}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-335\hspace*{2\charwidth}DroSec	----------	----------	----------	----------	----------	--GTGGTAGT	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+508\hspace*{2\charwidth}DroSim	CGCGCCATTT	CTTCCAGTGC	ATGAGCGGCG	A\textcolor{blue}{T}\textcolor{blue}{T}\textcolor{blue}{G}\textcolor{blue}{C}\textcolor{blue}{A}\textcolor{blue}{T}\textcolor{blue}{G}\textcolor{blue}{T}\textcolor{blue}{G}	\textcolor{blue}{T}GTGTGTGCT	GCGTGGTAGC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{31\charwidth}\textcolor{blue}{7.6}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+335\hspace*{2\charwidth}DroSec	----------	----------	----------	----------	----------	--GTGGT\textcolor{cyan}{A}\textcolor{cyan}{G}\textcolor{cyan}{T}	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{57\charwidth}\textcolor{cyan}{6.4}\hspace*{1\charwidth}\\
 547\hspace*{2\charwidth}DroYak	CGCCTCATTT	CTTTCGGTGT	ATGAGCGGAG	AGTATGGGTG	TGTGCGTGCT	GCGTGGTAGC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 512\hspace*{2\charwidth}DroEre	CCCACCATTT	CTTACGGTGT	ATGA------	----------	-------GCT	GCGTGGTCGC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 605\hspace*{2\charwidth}DroAna	--CATAATTT	TTTTCTCTGT	AGGAGAGCTC	TT------TG	TATGGGTGCT	GCGTGGCACC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-376\hspace*{2\charwidth}DroPse	CGTACCTGCC	GTTGCAGTAA	ATAA------	----------	----------	-------ACC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-372\hspace*{2\charwidth}DroPer	CGTACCTGCC	GTTGCAGTAA	ATAA------	----------	----------	-------ACC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+376\hspace*{2\charwidth}DroPse	CGTA\textcolor{olive}{C}\textcolor{olive}{C}\textcolor{olive}{T}\textcolor{olive}{G}\textcolor{olive}{C}\textcolor{olive}{C}	\textcolor{olive}{G}\textcolor{olive}{T}\textcolor{olive}{T}\textcolor{olive}{G}CAGTAA	ATAA------	----------	----------	-------ACC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{4\charwidth}\textcolor{olive}{7.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+372\hspace*{2\charwidth}DroPer	CGTA\textcolor{olive}{C}\textcolor{olive}{C}\textcolor{olive}{T}\textcolor{olive}{G}\textcolor{olive}{C}\textcolor{olive}{C}	\textcolor{olive}{G}\textcolor{olive}{T}\textcolor{olive}{T}\textcolor{olive}{G}CAGTAA	ATAA------	----------	----------	-------ACC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{4\charwidth}\textcolor{olive}{7.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 22\hspace*{3\charwidth}DroWil	----------	----------	----------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 35\hspace*{3\charwidth}DroMoj	----------	----------	----------	----------	----------	----------	\\
@@ -384,8 +384,8 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 568\hspace*{2\charwidth}DroSim	CACTCACA--	--CAGCGGCA	AA--------	----------	-------ACA	CGACGCCTTC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-344\hspace*{2\charwidth}DroSec	CACTCACA--	--CAGCGGCA	AA--------	----------	-------ACA	CGACGCCTTC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+344\hspace*{2\charwidth}DroSec	\textcolor{cyan}{C}\textcolor{cyan}{A}\textcolor{cyan}{C}\textcolor{cyan}{T}\textcolor{cyan}{C}\textcolor{cyan}{A}\textcolor{cyan}{C}A--	--CAGCGGCA	AA--------	----------	-------ACA	CGACGCCTTC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{cyan}{6.4}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 607\hspace*{2\charwidth}DroYak	CACTCACA--	--CAGAGGCA	AA--------	----------	-------TCC	CGACGCCTTC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 549\hspace*{2\charwidth}DroEre	CACTCACA--	--CAGAGGCA	AC--------	----------	-------ACC	CGACGCCTTC	\\
@@ -461,10 +461,10 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 742\hspace*{2\charwidth}DroAna	----------	----------	----------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-571\hspace*{2\charwidth}DroPse	AAAGTGCCGC	GCAACTTTGA	TCGTGTGTCG	GAGTCCACCT	CCATCTCCAC	CT\textcolor{Red}{C}\textcolor{Red}{C}\textcolor{Red}{A}\textcolor{Red}{G}\textcolor{Red}{T}\textcolor{Red}{G}\textcolor{Red}{C}\textcolor{Red}{C}	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{52\charwidth}\textcolor{Red}{7.7}\hspace*{1\charwidth}\\
-567\hspace*{2\charwidth}DroPer	AAAGTGCCGC	GCAACTTTGA	TCGTGTGTCG	GAGTCCACCT	CCACCTCCAC	CT\textcolor{Red}{C}\textcolor{Red}{C}\textcolor{Red}{A}\textcolor{Red}{G}\textcolor{Red}{T}\textcolor{Red}{G}\textcolor{Red}{C}\textcolor{Red}{C}	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{52\charwidth}\textcolor{Red}{7.7}\hspace*{1\charwidth}\\
+571\hspace*{2\charwidth}DroPse	AAAGTGCCGC	GCAACTTTGA	TCGTGTGTCG	GAGTCCACCT	CCATCTCCAC	CT\textcolor{red}{C}\textcolor{red}{C}\textcolor{red}{A}\textcolor{red}{G}\textcolor{red}{T}\textcolor{red}{G}\textcolor{red}{C}\textcolor{red}{C}	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{52\charwidth}\textcolor{red}{7.7}\hspace*{1\charwidth}\\
+567\hspace*{2\charwidth}DroPer	AAAGTGCCGC	GCAACTTTGA	TCGTGTGTCG	GAGTCCACCT	CCACCTCCAC	CT\textcolor{red}{C}\textcolor{red}{C}\textcolor{red}{A}\textcolor{red}{G}\textcolor{red}{T}\textcolor{red}{G}\textcolor{red}{C}\textcolor{red}{C}	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{52\charwidth}\textcolor{red}{7.7}\hspace*{1\charwidth}\\
 25\hspace*{3\charwidth}DroWil	AAAGTG----	----------	----------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 35\hspace*{3\charwidth}DroMoj	----------	----------	----------	----------	----------	----------	\\
@@ -482,12 +482,12 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 611\hspace*{2\charwidth}DroEre	----------	---GATGCCG	ACGC-CGTGC	CT--------	---TGTTTCG	-TTTTCAGTG	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-742\hspace*{2\charwidth}DroAna	----------	--CGATGCC-	AGGC-CATGC	CT--------	---T------	-TTTTCAGTG	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-631\hspace*{2\charwidth}DroPse	\textcolor{Red}{A}\textcolor{Red}{C}CCCACCCA	TCCGCTCCGG	CCGCGCGTGC	GTGTTGTAAC	TTTTGATTAG	CTTTTGAGTC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{Red}{7.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-627\hspace*{2\charwidth}DroPer	\textcolor{Red}{A}\textcolor{Red}{C}CCCACCCA	TCCGCTCCGG	CCGCGCGTGC	GTGTTGTAAC	TTTTGATTAG	CTTTTGAGTC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{Red}{7.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+742\hspace*{2\charwidth}DroAna	----------	--\textcolor{olive}{C}\textcolor{olive}{G}\textcolor{olive}{A}\textcolor{olive}{T}\textcolor{olive}{G}\textcolor{olive}{C}\textcolor{olive}{C}\textcolor{olive}{-}	\textcolor{olive}{A}\textcolor{olive}{G}\textcolor{olive}{G}C-CATGC	CT--------	---T------	-TTTTCAGTG	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{12\charwidth}\textcolor{olive}{6.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+631\hspace*{2\charwidth}DroPse	\textcolor{red}{A}\textcolor{red}{C}CCCACCCA	TCCGCTCCGG	CCGCGCGTGC	GTGTTGTAAC	TTTTGATTAG	CTTTTGAGTC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{red}{7.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+627\hspace*{2\charwidth}DroPer	\textcolor{red}{A}\textcolor{red}{C}CCCACCCA	TCCGCTCCGG	CCGCGCGTGC	GTGTTGTAAC	TTTTGATTAG	CTTTTGAGTC	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{red}{7.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 31\hspace*{3\charwidth}DroWil	TCTACAGGAA	CCCGAAGTCG	A---------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 35\hspace*{3\charwidth}DroMoj	----------	----------	----------	---------C	TTTTGTTTTG	CTTTTGG---	\\
@@ -505,8 +505,8 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 646\hspace*{2\charwidth}DroEre	CGATCGCA--	---GACATTG	TGCAAAACGG	TTCAC-----	------AGTT	CTCTCCTCGC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-771\hspace*{2\charwidth}DroAna	CGATCAAA--	---ACGGTTG	TGCAAAACGG	TTCTC-----	----------	--CTCCTCGC	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+771\hspace*{2\charwidth}DroAna	CGATCAAA--	---ACGGTTG	TGCAAAACGG	TTCTC-----	----------	--CT\textcolor{cyan}{C}\textcolor{cyan}{C}\textcolor{cyan}{T}\textcolor{cyan}{C}\textcolor{cyan}{G}\textcolor{cyan}{C}	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{54\charwidth}\textcolor{cyan}{7.6}\hspace*{1\charwidth}\\
 691\hspace*{2\charwidth}DroPse	GGAACGGATC	TGAGGCGTCT	TTCACTCCAG	TGCACCTCTT	TGGAACATTG	CGCTGCTTGC	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 687\hspace*{2\charwidth}DroPer	GGAACGGATC	TGAGGCGTCT	TTCACTCCAG	TGCACCTCTT	TGGAACATTG	CGCTGCTTGC	\\
@@ -528,12 +528,12 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 690\hspace*{2\charwidth}DroEre	G---------	----------	----ACTGGA	GG--------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-808\hspace*{2\charwidth}DroAna	----------	----------	----------	--TCG-----	----------	--------GA	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-751\hspace*{2\charwidth}DroPse	GTTTTTCGTA	ACTTATCG\textcolor{Green}{C}\textcolor{Green}{C}	\textcolor{Green}{G}\textcolor{Green}{C}\textcolor{Green}{C}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{T}CT	CGCCGTTGCT	TTTTGTTGTG	GTTCTTACGG	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{18\charwidth}\textcolor{Green}{9.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-747\hspace*{2\charwidth}DroPer	GTTTTTCGTA	ACTTATCG\textcolor{Green}{C}\textcolor{Green}{C}	\textcolor{Green}{G}\textcolor{Green}{C}\textcolor{Green}{C}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{T}CT	CGCCGTTGCT	TTTTGTTGTG	GTTCTTACGG	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{18\charwidth}\textcolor{Green}{9.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+808\hspace*{2\charwidth}DroAna	\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}	\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}	\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}	\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{T}\textcolor{cyan}{C}\textcolor{cyan}{G}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}	\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}	\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{-}\textcolor{cyan}{G}A	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{cyan}{7.6}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+751\hspace*{2\charwidth}DroPse	GTTTTTCGTA	ACTTATCG\textcolor{green}{C}\textcolor{green}{C}	\textcolor{green}{G}\textcolor{green}{C}\textcolor{green}{C}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{T}CT	CGCCGTTGCT	TTTTGTTGTG	GTTCTTACGG	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{18\charwidth}\textcolor{green}{9.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+747\hspace*{2\charwidth}DroPer	GTTTTTCGTA	ACTTATCG\textcolor{green}{C}\textcolor{green}{C}	\textcolor{green}{G}\textcolor{green}{C}\textcolor{green}{C}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{T}CT	CGCCGTTGCT	TTTTGTTGTG	GTTCTTACGG	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{18\charwidth}\textcolor{green}{9.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 56\hspace*{3\charwidth}DroWil	----------	----------	----------	--TAGATGTT	TATTTTTCT-	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 53\hspace*{3\charwidth}DroMoj	----------	----------	----------	----------	----------	----------	\\
@@ -664,14 +664,14 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 792\hspace*{2\charwidth}DroYak	----------	----------	-AAGAAGCCG	GAGCAACCGG	AGCCAAAGCA	AGT-------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-728\hspace*{2\charwidth}DroEre	----------	----------	-AAGAAG\textcolor{Red}{C}\textcolor{Red}{C}\textcolor{Red}{G}	\textcolor{Red}{G}\textcolor{Red}{A}\textcolor{Red}{G}\textcolor{Red}{C}\textcolor{Red}{C}\textcolor{Red}{A}\textcolor{Red}{C}CGG	AGCCAAAGCA	AGT-------	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{Red}{7.5}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+728\hspace*{2\charwidth}DroEre	----------	----------	-AAGAAG\textcolor{red}{C}\textcolor{red}{C}\textcolor{red}{G}	\textcolor{red}{G}\textcolor{red}{A}\textcolor{red}{G}\textcolor{red}{C}\textcolor{red}{C}\textcolor{red}{A}\textcolor{red}{C}CGG	AGCCAAAGCA	AGT-------	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{red}{7.5}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 851\hspace*{2\charwidth}DroAna	----------	----------	-GAGAAGTTG	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 1111\hspace*{1\charwidth}DroPse	CCCTGCACAT	TCCACAAGCG	GAAGATGCCA	CAG--ACCAT	GGGCAAAAAA	AGTGAAATTT	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-1107\hspace*{1\charwidth}DroPer	CCCT\textcolor{Blue}{G}\textcolor{Blue}{C}\textcolor{Blue}{A}\textcolor{Blue}{C}\textcolor{Blue}{A}\textcolor{Blue}{T}	\textcolor{Blue}{G}\textcolor{Blue}{C}\textcolor{Blue}{C}\textcolor{Blue}{A}CAAGCG	GAAGATGCCA	CAG--ACCAT	GGGCAAAAAA	AGTGAAATTT	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{4\charwidth}\textcolor{Blue}{10.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+1107\hspace*{1\charwidth}DroPer	CCCT\textcolor{blue}{G}\textcolor{blue}{C}\textcolor{blue}{A}\textcolor{blue}{C}\textcolor{blue}{A}\textcolor{blue}{T}	\textcolor{blue}{G}\textcolor{blue}{C}\textcolor{blue}{C}\textcolor{blue}{A}CAAGCG	GAAGATGCCA	CAG--ACCAT	GGGCAAAAAA	AGTGAAATTT	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{4\charwidth}\textcolor{blue}{10.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 73\hspace*{3\charwidth}DroWil	----------	----------	----------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 53\hspace*{3\charwidth}DroMoj	----------	----------	----------	----------	----------	----------	\\
@@ -691,10 +691,10 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 860\hspace*{2\charwidth}DroAna	----------	----------	----------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-1169\hspace*{1\charwidth}DroPse	ACGACACAAC	TTTTGTAATT	ATTGGCC\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{G}	\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{T}TTT	TATTGCATAT	TAGCATGGGG	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{Green}{6.6}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-1165\hspace*{1\charwidth}DroPer	ACGACACAAC	TTTTGTAATT	ATTGGCC\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{G}	\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{T}TTT	TATTGCATAT	TAGCATGGGG	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{Green}{6.6}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+1169\hspace*{1\charwidth}DroPse	ACGACACAAC	TTTTGTAATT	ATTGGCC\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{G}	\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{T}TTT	TATTGCATAT	TAGCATGGGG	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{green}{6.6}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+1165\hspace*{1\charwidth}DroPer	ACGACACAAC	TTTTGTAATT	ATTGGCC\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{G}	\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{T}TTT	TATTGCATAT	TAGCATGGGG	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{green}{6.6}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 73\hspace*{3\charwidth}DroWil	----------	----------	----------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 53\hspace*{3\charwidth}DroMoj	----------	----------	----------	----------	----------	----------	\\
@@ -714,10 +714,10 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 860\hspace*{2\charwidth}DroAna	----------	----------	----------	----------	----------	GTGGAATTGT	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-1229\hspace*{1\charwidth}DroPse	GATGGGATGG	GATGGG----	------TTTG	TTCTGCGAAT	ATCG\textcolor{Green}{A}\textcolor{Green}{T}\textcolor{Green}{G}\textcolor{Green}{T}\textcolor{Green}{G}\textcolor{Green}{G}	\textcolor{Green}{G}\textcolor{Green}{C}\textcolor{Green}{T}\textcolor{Green}{G}ATGCCA	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{44\charwidth}\textcolor{Green}{10.2}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-1225\hspace*{1\charwidth}DroPer	GATGGGATGG	GATGGGATGG	GATGGGTTTG	TTCTGCGAAT	ATCG\textcolor{Green}{A}\textcolor{Green}{T}\textcolor{Green}{G}\textcolor{Green}{T}\textcolor{Green}{G}\textcolor{Green}{G}	\textcolor{Green}{G}\textcolor{Green}{C}\textcolor{Green}{T}\textcolor{Green}{G}------	\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{44\charwidth}\textcolor{Green}{10.2}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+1229\hspace*{1\charwidth}DroPse	GATGGGATGG	GATG\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{-}\textcolor{magenta}{-}\textcolor{magenta}{-}\textcolor{magenta}{-}	\textcolor{magenta}{-}\textcolor{magenta}{-}\textcolor{magenta}{-}\textcolor{magenta}{-}\textcolor{magenta}{-}\textcolor{magenta}{-}\textcolor{magenta}{T}\textcolor{magenta}{T}\textcolor{magenta}{T}\textcolor{magenta}{G}	\textcolor{magenta}{T}\textcolor{magenta}{T}\textcolor{magenta}{C}\textcolor{magenta}{T}GCGAAT	ATCG\textcolor{green}{A}\textcolor{green}{T}\textcolor{green}{G}\textcolor{green}{T}\textcolor{green}{G}\textcolor{green}{G}	\textcolor{green}{G}\textcolor{green}{C}\textcolor{green}{T}\textcolor{green}{G}AT\textcolor{cyan}{G}\textcolor{cyan}{C}\textcolor{cyan}{C}\textcolor{cyan}{A}	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{14\charwidth}\textcolor{magenta}{6.9}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{green}{10.2}\hspace*{1\charwidth}\hspace*{8\charwidth}\textcolor{cyan}{6.6}\hspace*{1\charwidth}\\
+1225\hspace*{1\charwidth}DroPer	GATGGGATGG	GATGGGATGG	GATG\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{T}\textcolor{magenta}{T}\textcolor{magenta}{T}\textcolor{magenta}{G}	\textcolor{magenta}{T}\textcolor{magenta}{T}\textcolor{magenta}{C}\textcolor{magenta}{T}GCGAAT	ATCG\textcolor{green}{A}\textcolor{green}{T}\textcolor{green}{G}\textcolor{green}{T}\textcolor{green}{G}\textcolor{green}{G}	\textcolor{green}{G}\textcolor{green}{C}\textcolor{green}{T}\textcolor{green}{G}------	\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{24\charwidth}\textcolor{magenta}{6.9}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{17\charwidth}\textcolor{green}{10.2}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 73\hspace*{3\charwidth}DroWil	----------	----------	----------	----------	----------	----------	\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 53\hspace*{3\charwidth}DroMoj	----------	----------	----------	----------	----------	----------	\\
@@ -737,8 +737,8 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	chr2R	5025930	5026695 \\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\\
 871\hspace*{2\charwidth}DroAna	GTCAAA\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\\
-1279\hspace*{1\charwidth}DroPse	GCGAAT\\
-\hspace*{5\charwidth}\hspace*{7\charwidth}\\
+1279\hspace*{1\charwidth}DroPse	\textcolor{cyan}{G}\textcolor{cyan}{C}\textcolor{cyan}{G}\textcolor{cyan}{A}\textcolor{cyan}{A}\textcolor{cyan}{T}\\
+\hspace*{5\charwidth}\hspace*{7\charwidth}\hspace*{0\charwidth}\textcolor{cyan}{6.6}\\
 1278\hspace*{1\charwidth}DroPer	----AT\\
 \hspace*{5\charwidth}\hspace*{7\charwidth}\\
 73\hspace*{3\charwidth}DroWil	------\\

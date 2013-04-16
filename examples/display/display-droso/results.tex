@@ -1,6 +1,6 @@
 \documentclass[11pt,twoside,reqno,a4paper]{article}
 \usepackage[french]{babel}
-\usepackage[usenames,dvipsnames]{color}
+\usepackage{xcolor}
 \usepackage[utf8]{inputenc}
 \usepackage{geometry}
 \geometry{a4paper}
@@ -8,27 +8,27 @@
 \usepackage{array,multirow}
 \begin{document}
 \noindent
-\newlength{\charwidth}\settowidth{\charwidth}{\texttt{A}}Motif(s): \textcolor{Red}{Mot\_1}, \textcolor{Blue}{Mot\_2}, \textcolor{Green}{Mot\_3}, \textcolor{Yellow}{Mot\_4}, \textcolor{Brown}{Mot\_5}\\
+\newlength{\charwidth}\settowidth{\charwidth}{\texttt{A}}Motif(s): \textcolor{red}{Mot\_1}, \textcolor{blue}{Mot\_2}, \textcolor{green}{Mot\_3}, \textcolor{yellow}{Mot\_4}, \textcolor{brown}{Mot\_5}, \textcolor{magenta}{Mot\_6}, \textcolor{cyan}{Mot\_7}, \textcolor{violet}{Mot\_8}, \textcolor{orange}{Mot\_9}, \textcolor{olive}{Mot\_10}\\
 \\
 $>$DroMel	seq1357\_2R\_18937351\_18937843	2R	18937351	18937843 \\
  \\
-\texttt{1\hspace*{3\charwidth}CAAAGGACAC	GGACACGCAT	CCTGGCATTG	TTTTCAATTC	ATTTACGCGT	CGACTCAAGT	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-61\hspace*{2\charwidth}CGCTCGCCCA	CACATATGTT	GGGAAAATAA	TCGAAAAACG	GTTTGTCCCT	TGGCATGAGG	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-121\hspace*{1\charwidth}TCCTTTTTGC	TGCGCAGCT\textit{\textcolor{Brown}{A}}	\textit{\textcolor{Brown}{G}}\textit{\textcolor{Brown}{A}}\textit{\textcolor{Brown}{T}}\textit{\textcolor{Brown}{T}}\textit{\textcolor{Brown}{T}}\textit{\textcolor{Brown}{G}}\textit{\textcolor{Brown}{C}}\textit{\textcolor{Brown}{A}}\textit{\textcolor{Brown}{G}}T	CCCTTGGCGC	ATA\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{T}}\textit{\textcolor{Blue}{G}}	\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}TTGATTA	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{19\charwidth}\textit{\textcolor{Brown}{9.2}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{21\charwidth}\textit{\textcolor{Blue}{10.0}}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\texttt{1\hspace*{3\charwidth}CAAAGGACAC	GGACACGCAT	\textit{\textcolor{olive}{C}}\textit{\textcolor{olive}{C}}\textit{\textcolor{olive}{T}}\textit{\textcolor{olive}{G}}\textit{\textcolor{olive}{G}}\textit{\textcolor{olive}{C}}\textit{\textcolor{olive}{A}}\textit{\textcolor{olive}{T}}\textit{\textcolor{olive}{T}}\textit{\textcolor{olive}{G}}	TTTTCAATTC	ATTTACGCGT	CGACTCA\textit{\textcolor{cyan}{A}}\textit{\textcolor{cyan}{G}}\textit{\textcolor{cyan}{T}}	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{20\charwidth}\textit{\textcolor{olive}{9.6}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{34\charwidth}\textit{\textcolor{cyan}{11.9}}\hspace*{1\charwidth}\\
+61\hspace*{2\charwidth}\textit{\textcolor{cyan}{C}}\textit{\textcolor{cyan}{G}}\textit{\textcolor{cyan}{C}}\textit{\textcolor{cyan}{T}}\textit{\textcolor{cyan}{C}}\textit{\textcolor{cyan}{G}}\textit{\textcolor{cyan}{C}}CCA	CACATATGTT	GGGAAAATAA	TCGAAAAAC\textit{\textcolor{magenta}{G}}	\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{C}}\textit{\textcolor{magenta}{C}}\textit{\textcolor{magenta}{C}}T	TGGCATGAGG	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{39\charwidth}\textit{\textcolor{magenta}{12.0}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+121\hspace*{1\charwidth}TCCTTTTTGC	TGCGCAGCT\textit{\textcolor{brown}{A}}	\textit{\textcolor{brown}{G}}\textit{\textcolor{brown}{A}}\textit{\textcolor{brown}{T}}\textit{\textcolor{brown}{T}}\textit{\textcolor{brown}{T}}\textit{\textcolor{brown}{G}}\textit{\textcolor{brown}{C}}\textit{\textcolor{brown}{A}}\textit{\textcolor{brown}{G}}T	CCCTTGGCGC	ATA\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{T}}\textit{\textcolor{blue}{G}}	\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}TTGATTA	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{19\charwidth}\textit{\textcolor{brown}{9.2}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{21\charwidth}\textit{\textcolor{blue}{10.0}}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 181\hspace*{1\charwidth}CCATGTGTGG	GAATTAGCCT	TGCGAAAAAA	GAAGTTAGTT	AAAATCACAC	ATAAAGAGGC	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-241\hspace*{1\charwidth}AATGCCAATG	GCTGTAGGTC	CCTGATCCTC	CGTCCTGGCA	GAGAGCTCAC	ACGTCCTGCA	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-301\hspace*{1\charwidth}GCGATCCTTC	CACCCTCTGC	ACGTTCTA\textcolor{Brown}{A}\textcolor{Brown}{A}	\textcolor{Brown}{T}\textcolor{Brown}{T}\textcolor{Brown}{T}\textcolor{Brown}{A}\textcolor{Brown}{G}\textcolor{Brown}{C}\textcolor{Brown}{C}\textcolor{Brown}{G}CT	GGATTTATGA	CCCCTGTCAT	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{28\charwidth}\textcolor{Brown}{7.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+241\hspace*{1\charwidth}\textcolor{olive}{A}\textcolor{olive}{A}\textcolor{olive}{T}\textcolor{olive}{G}\textcolor{olive}{C}\textcolor{olive}{C}\textcolor{olive}{A}\textcolor{olive}{A}\textcolor{olive}{T}\textcolor{olive}{G}	GCTGTAGGTC	CCTGATCCTC	CGTCCTGGCA	GAGAGCTCAC	ACGTCCTGCA	\\
+\hspace*{4\charwidth}\hspace*{0\charwidth}\textcolor{olive}{7.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+301\hspace*{1\charwidth}GCGATCCTTC	CACCCTCTGC	ACGTTCTA\textcolor{brown}{A}\textcolor{brown}{A}	\textcolor{brown}{T}\textcolor{brown}{T}\textcolor{brown}{T}\textcolor{brown}{A}\textcolor{brown}{G}\textcolor{brown}{C}\textcolor{brown}{C}\textcolor{brown}{G}CT	GGATTTATGA	CCCCTGTCAT	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{28\charwidth}\textcolor{brown}{7.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 361\hspace*{1\charwidth}TTGAGCCGCT	CTTCCAGTAC	TTCTTAAAAA	ACCCCTGGAA	TTACATGCAG	TCGAAGAAGG	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-421\hspace*{1\charwidth}AAGAGAGTGG	AGGAGTCCAA	TGAGTCGAAG	GAGCCCAATG	AGTCGAATGA	GTCGGAGAGG	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-481\hspace*{1\charwidth}GGGCGTTGAC	AGT\\
+421\hspace*{1\charwidth}AAGAGAGTGG	AGGAGTCCAA	TGAGTCGAAG	GAGCCCAATG	AGTCGAATGA	GTCGGAGA\textit{\textcolor{violet}{G}}\textit{\textcolor{violet}{G}}	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{58\charwidth}\textit{\textcolor{violet}{11.5}}\hspace*{1\charwidth}\\
+481\hspace*{1\charwidth}\textit{\textcolor{violet}{G}}\textit{\textcolor{violet}{G}}\textit{\textcolor{violet}{G}}\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{G}}\textit{\textcolor{violet}{T}}\textit{\textcolor{violet}{T}}\textit{\textcolor{violet}{G}}AC	AGT\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\\
 }
 \\
@@ -52,15 +52,15 @@ $>$DroMel	seq1397\_2R\_19526657\_19527033	2R	19526657	19527033 \\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 61\hspace*{2\charwidth}GACAACGAAA	AAACAAGGAA	ATACAGTTGT	AAAACCGGCG	ACTCGAGCCA	CAGAAAAGCA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-121\hspace*{1\charwidth}GAA\textcolor{Blue}{A}\textcolor{Blue}{C}\textcolor{Blue}{A}\textcolor{Blue}{A}\textcolor{Blue}{A}\textcolor{Blue}{T}\textcolor{Blue}{G}	\textcolor{Blue}{C}\textcolor{Blue}{G}\textcolor{Blue}{G}AT\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}	\textit{\textcolor{Blue}{T}}\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{T}}\textit{\textcolor{Blue}{C}}GCCGG	CTCGTAATCT	TAATCCTTCA	CACAATAAAC	\\
-\hspace*{4\charwidth}\hspace*{3\charwidth}\textcolor{Blue}{7.8}\hspace*{1\charwidth}\hspace*{9\charwidth}\textit{\textcolor{Blue}{9.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-181\hspace*{1\charwidth}GCCCCTCGAA	TGGACTGCTG	TAT\textcolor{Green}{G}\textcolor{Green}{T}\textcolor{Green}{G}\textcolor{Green}{T}\textcolor{Green}{G}\textcolor{Green}{C}\textcolor{Green}{T}	\textcolor{Green}{A}\textcolor{Green}{T}\textcolor{Green}{G}CAGGACT	CTCTTCTGGT	AGCAATATCC	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{23\charwidth}\textcolor{Green}{9.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-241\hspace*{1\charwidth}TGATCCTGTT	TGCCGGCAGC	GCCCTTCACA	GCTTCGCTTC	TGGATTGTCG	CATTATGGAT	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-301\hspace*{1\charwidth}TTCCGAGCGG	TCGCAGCGGT	GTGTCCTTTT	GTTTTAAATT	AGCACGGCAT	GTT\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{T}}\textit{\textcolor{Blue}{G}}	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{53\charwidth}\textit{\textcolor{Blue}{10.6}}\hspace*{1\charwidth}\\
-361\hspace*{1\charwidth}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{G}}CATCATC	TGTCCGT\\
+121\hspace*{1\charwidth}GAA\textcolor{blue}{A}\textcolor{blue}{C}\textcolor{blue}{A}\textcolor{blue}{A}\textcolor{blue}{A}\textcolor{blue}{T}\textcolor{blue}{G}	\textcolor{blue}{C}\textcolor{blue}{G}\textcolor{blue}{G}AT\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}	\textit{\textcolor{blue}{T}}\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{T}}\textit{\textcolor{blue}{C}}GCCGG	CTCGTAATCT	TAATCCTTCA	CACAAT\textit{\textcolor{violet}{A}}\textit{\textcolor{violet}{A}}\textit{\textcolor{violet}{A}}\textit{\textcolor{violet}{C}}	\\
+\hspace*{4\charwidth}\hspace*{3\charwidth}\textcolor{blue}{7.8}\hspace*{1\charwidth}\hspace*{9\charwidth}\textit{\textcolor{blue}{9.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{38\charwidth}\textit{\textcolor{violet}{11.1}}\hspace*{1\charwidth}\\
+181\hspace*{1\charwidth}\textit{\textcolor{violet}{G}}\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{T}}CGAA	TGGACTGCTG	TAT\textcolor{green}{G}\textcolor{green}{T}\textcolor{green}{G}\textcolor{green}{T}\textcolor{green}{G}\textcolor{green}{C}\textcolor{green}{T}	\textcolor{green}{A}\textcolor{green}{T}\textcolor{green}{G}CAGGACT	CTCTTCTGGT	AGCAATATCC	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{23\charwidth}\textcolor{green}{9.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+241\hspace*{1\charwidth}TGATCCTGTT	TGCCGG\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{A}}\textit{\textcolor{violet}{G}}\textit{\textcolor{violet}{C}}	\textit{\textcolor{violet}{G}}\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{C}}\textit{\textcolor{violet}{T}}\textit{\textcolor{violet}{T}}CACA	GCTTCGCTTC	T\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{A}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{C}}\textit{\textcolor{magenta}{G}}	\textit{\textcolor{magenta}{C}}ATTATGGAT	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{16\charwidth}\textit{\textcolor{violet}{12.0}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{21\charwidth}\textit{\textcolor{magenta}{9.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+301\hspace*{1\charwidth}TTCCGAGCGG	TCGCAGC\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{T}}	\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{G}}\textit{\textcolor{magenta}{T}}\textit{\textcolor{magenta}{C}}\textit{\textcolor{magenta}{C}}\textit{\textcolor{magenta}{T}}TTT	GTTTTAAATT	AGCACGGCAT	GTT\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{T}}\textit{\textcolor{blue}{G}}	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{17\charwidth}\textit{\textcolor{magenta}{9.8}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{33\charwidth}\textit{\textcolor{blue}{10.6}}\hspace*{1\charwidth}\\
+361\hspace*{1\charwidth}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{G}}CATCATC	TGTCCGT\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\\
 }
 \\
@@ -68,16 +68,16 @@ $>$DroMel	seq2300\_3R\_10415381\_10415780	3R	10415381	10415780 \\
  \\
 \texttt{1\hspace*{3\charwidth}TTGTTAATAT	CTTAACTTTT	CAGGATATAA	CATGCTAAGT	GTTATATTAT	ATAACATTAA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-61\hspace*{2\charwidth}AGTTATTTCT	GCCAGTGTAA	CGTTGCA\textcolor{Red}{G}\textcolor{Red}{A}\textcolor{Red}{G}	\textcolor{Red}{T}\textcolor{Red}{C}\textcolor{Red}{A}\textcolor{Red}{C}\textcolor{Red}{T}\textcolor{Red}{T}\textcolor{Red}{G}CTC	CGCAGAGAGC	CGCCACTCAA	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{Red}{7.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-121\hspace*{1\charwidth}AGATCAACCC	TCGATGGCAG	ACTCTCGCCT	TTATGGACTA	CGAAATGTGC	AATTTCTGCT	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-181\hspace*{1\charwidth}CGGGTACCGA	GTTTTACGAT	TTTTCCATAG	GTCCCAATAT	GCC\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{T}}\textit{\textcolor{Blue}{C}}	\textit{\textcolor{Blue}{T}}\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{T}}GTGGTAG	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{43\charwidth}\textit{\textcolor{Blue}{10.6}}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-241\hspace*{1\charwidth}GGGTTATTTG	GTTGTTGGCC	CAGTATCGAT	GGCAGGCCCG	ATTTTAGACC	CAGTCCACTT	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-301\hspace*{1\charwidth}AGGAATTCCA	CGGA\textit{\textcolor{Green}{C}}\textit{\textcolor{Green}{A}}\textit{\textcolor{Green}{G}}\textit{\textcolor{Green}{A}}\textit{\textcolor{Green}{C}}\textit{\textcolor{Green}{C}}	\textit{\textcolor{Green}{A}}\textit{\textcolor{Green}{C}}\textit{\textcolor{Green}{A}}\textit{\textcolor{Green}{T}}G\textit{\textcolor{Red}{G}}\textit{\textcolor{Red}{A}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{T}}\textit{\textcolor{Red}{C}}	\textit{\textcolor{Red}{T}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{T}}\textit{\textcolor{Red}{A}}\textit{\textcolor{Red}{G}}CATTT	TGCCACTTCA	GTTGTTGCTT	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{14\charwidth}\textit{\textcolor{Green}{11.0}}\hspace*{1\charwidth}\hspace*{7\charwidth}\textit{\textcolor{Red}{7.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+61\hspace*{2\charwidth}AGTTATTTCT	GCCAGTGTAA	CGTTGCA\textcolor{red}{G}\textcolor{red}{A}\textcolor{red}{G}	\textcolor{red}{T}\textcolor{red}{C}\textcolor{red}{A}\textcolor{red}{C}\textcolor{red}{T}\textcolor{red}{T}\textcolor{red}{G}CTC	CGCAGAGAGC	CGCCACTCAA	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{27\charwidth}\textcolor{red}{7.3}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+121\hspace*{1\charwidth}AGATCAACCC	TCGATGGC\textcolor{cyan}{A}\textcolor{cyan}{G}	\textcolor{cyan}{A}\textcolor{cyan}{C}\textcolor{cyan}{T}\textcolor{cyan}{C}\textcolor{cyan}{T}\textcolor{cyan}{C}\textcolor{cyan}{G}\textcolor{cyan}{C}CT	TTATGGACTA	CGAAATGTGC	AATTTCTGCT	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{18\charwidth}\textcolor{cyan}{7.9}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+181\hspace*{1\charwidth}CGGGTACCGA	GTTTTACGAT	TTTTCCATAG	GTCCCAATAT	GCC\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{T}}\textit{\textcolor{blue}{C}}	\textit{\textcolor{blue}{T}}\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{T}}GTGGTAG	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{43\charwidth}\textit{\textcolor{blue}{10.6}}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+241\hspace*{1\charwidth}GGGTTATTTG	GTTGTTGGCC	CAGTAT\textcolor{olive}{C}\textcolor{olive}{G}\textcolor{olive}{A}\textcolor{olive}{T}	\textcolor{olive}{G}\textcolor{olive}{G}\textcolor{olive}{C}\textcolor{olive}{A}\textcolor{olive}{G}\textcolor{olive}{G}CCCG	ATTTTAGACC	CAGTCCACTT	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{26\charwidth}\textcolor{olive}{7.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+301\hspace*{1\charwidth}AGGAATTCCA	CGGA\textit{\textcolor{green}{C}}\textit{\textcolor{green}{A}}\textit{\textcolor{green}{G}}\textit{\textcolor{green}{A}}\textit{\textcolor{green}{C}}\textit{\textcolor{green}{C}}	\textit{\textcolor{green}{A}}\textit{\textcolor{green}{C}}\textit{\textcolor{green}{A}}\textit{\textcolor{green}{T}}G\textit{\textcolor{red}{G}}\textit{\textcolor{red}{A}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{T}}\textit{\textcolor{red}{C}}	\textit{\textcolor{red}{T}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{T}}\textit{\textcolor{red}{A}}\textit{\textcolor{red}{G}}CATTT	TGCCACTTCA	GTTGTTGCTT	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{14\charwidth}\textit{\textcolor{green}{11.0}}\hspace*{1\charwidth}\hspace*{7\charwidth}\textit{\textcolor{red}{7.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 361\hspace*{1\charwidth}CAGTTTCAGT	TTTTTTTTTC	CTAGTTGCAC	TGGGGAAAAA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 }
@@ -86,16 +86,16 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	2R	5025930	5026695 \\
  \\
 \texttt{1\hspace*{3\charwidth}AAGTCCACGA	CAATCAACAT	GCATCGGAGC	ACAATAAAAA	GGCAAAAGTG	GAAAGGAAGA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-61\hspace*{2\charwidth}CTAGGCAAGA	CCGAGAAGAG	TGACAAAGAG	CGAGGGCGGA	AGTGCGGCGA	GGACAAGGCT	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+61\hspace*{2\charwidth}CTAGGCAAGA	CCGAGAAGAG	TGACAAAGAG	CGAGGGCGGA	AGTGCGGCG\textcolor{magenta}{A}	\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{A}\textcolor{magenta}{C}\textcolor{magenta}{A}\textcolor{magenta}{A}\textcolor{magenta}{G}\textcolor{magenta}{G}\textcolor{magenta}{C}T	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{49\charwidth}\textcolor{magenta}{7.8}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 121\hspace*{1\charwidth}GATCTGCGAT	GAACACCAGG	TAGAAGGTAA	GTGTATCCAC	CGCACAGATT	TAGCCAAAAC	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 181\hspace*{1\charwidth}AGTCCAAAAC	ATATGTATGA	AAGCAACTAA	AAGAAACGGC	GATCAAAACA	AACAAATGTT	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 241\hspace*{1\charwidth}TGGTACCAGT	GTACCACAGA	TGTAGAAACC	AGACGCTTTC	CAGACTATGG	CAGCACCCCA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-301\hspace*{1\charwidth}AGAAACTCTT	GGAAATACTA	CTCATTGCTA	\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{C}\textcolor{Green}{G}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{C}\textcolor{Green}{A}\textcolor{Green}{T}	ATGACGTACA	CTTGGAGAAA	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{30\charwidth}\textcolor{Green}{7.5}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+301\hspace*{1\charwidth}AGAAACTCTT	GGAAATACTA	CTCATTGCTA	\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{C}\textcolor{green}{G}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{C}\textcolor{green}{A}\textcolor{green}{T}	ATGACGTACA	CTTGGAGAAA	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{30\charwidth}\textcolor{green}{7.5}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 361\hspace*{1\charwidth}CAAGCACATT	CCAAACAATG	CGTATGTACC	TAGTTATTTC	ATTACAAGGA	ATTGAATTTA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 421\hspace*{1\charwidth}ATGTACCCAA	AGTTAAGCAG	TAGCATTTAG	TATTTATGTT	TTCTGGATAT	ATTAACTGAA	\\
@@ -114,8 +114,8 @@ $>$DroMel	seq257\_2R\_5025930\_5026695	2R	5025930	5026695 \\
 \\
 $>$DroMel	seq2820\_3R\_17227574\_17227958	3R	17227574	17227958 \\
  \\
-\texttt{1\hspace*{3\charwidth}CCTTGTCGCC	C\textit{\textcolor{Red}{G}}\textit{\textcolor{Red}{T}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{G}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{T}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{C}}	\textit{\textcolor{Red}{G}}ACCAGACAG	\textit{\textcolor{Red}{G}}\textit{\textcolor{Red}{A}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{A}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{T}}\textit{\textcolor{Red}{C}}\textit{\textcolor{Red}{T}}\textit{\textcolor{Red}{T}}\textit{\textcolor{Red}{G}}	AGGATGTCGG	CAGGAGGATG	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{11\charwidth}\textit{\textcolor{Red}{10.2}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{15\charwidth}\textit{\textcolor{Red}{9.7}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\texttt{1\hspace*{3\charwidth}CCTTGTCGCC	C\textit{\textcolor{red}{G}}\textit{\textcolor{red}{T}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{G}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{T}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{C}}	\textit{\textcolor{red}{G}}ACCAGACAG	\textit{\textcolor{red}{G}}\textit{\textcolor{red}{A}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{A}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{T}}\textit{\textcolor{red}{C}}\textit{\textcolor{red}{T}}\textit{\textcolor{red}{T}}\textit{\textcolor{red}{G}}	AGGATGTCGG	CAGGAGGATG	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{11\charwidth}\textit{\textcolor{red}{10.2}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{15\charwidth}\textit{\textcolor{red}{9.7}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 61\hspace*{2\charwidth}AAATNNNNNN	NNNNNNNNNN	NNNNNNNNNN	NNNNNNNNNN	NNNNNNNNNN	NNNNNNNNNN	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 121\hspace*{1\charwidth}NNNNNNNNNN	NNNNNNNNNN	NNNNNNNNNN	NNNNNNNNNN	NNNNNNNNNN	NNNNNNNNNN	\\
@@ -132,12 +132,12 @@ $>$DroMel	seq2820\_3R\_17227574\_17227958	3R	17227574	17227958 \\
 \\
 $>$DroMel	seq2821\_3R\_17228198\_17228402	3R	17228198	17228402 \\
  \\
-\texttt{1\hspace*{3\charwidth}TG\textcolor{Blue}{T}\textcolor{Blue}{G}\textcolor{Blue}{G}\textcolor{Blue}{C}\textcolor{Blue}{A}\textcolor{Blue}{T}\textcolor{Blue}{A}\textcolor{Blue}{T}	\textcolor{Blue}{G}\textcolor{Blue}{T}GTATATTT	TCCATATGTT	AAAGTACATT	ATTTTACGCA	TTTACTGAAG	\\
-\hspace*{4\charwidth}\hspace*{2\charwidth}\textcolor{Blue}{8.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+\texttt{1\hspace*{3\charwidth}TG\textcolor{blue}{T}\textcolor{blue}{G}\textcolor{blue}{G}\textcolor{blue}{C}\textcolor{blue}{A}\textcolor{blue}{T}\textcolor{blue}{A}\textcolor{blue}{T}	\textcolor{blue}{G}\textcolor{blue}{T}GTATATTT	TCCATATGTT	AAAGTACATT	ATTTTACGCA	TTTACTGAAG	\\
+\hspace*{4\charwidth}\hspace*{2\charwidth}\textcolor{blue}{8.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 61\hspace*{2\charwidth}AAACTTCGTC	TAAGTTAATA	TATTTTCAGA	CAGTTCTTAT	GGAAATTATA	AATATCATTA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-121\hspace*{1\charwidth}ATGCCTCGAT	CTCTATTTGT	TGTTTACAGT	ACAGAAACGA	TTTTTGGC\textcolor{Yellow}{C}\textcolor{Yellow}{G}	\textcolor{Yellow}{T}\textcolor{Yellow}{G}\textcolor{Yellow}{T}\textcolor{Yellow}{A}\textcolor{Yellow}{T}\textcolor{Yellow}{C}\textcolor{Yellow}{C}\textcolor{Yellow}{C}AC	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{48\charwidth}\textcolor{Yellow}{7.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+121\hspace*{1\charwidth}ATGCCTCGAT	CTCTATTTGT	TGTTTACAGT	ACAGAAACGA	TTTTTGGC\textcolor{yellow}{C}\textcolor{yellow}{G}	\textcolor{yellow}{T}\textcolor{yellow}{G}\textcolor{yellow}{T}\textcolor{yellow}{A}\textcolor{yellow}{T}\textcolor{yellow}{C}\textcolor{yellow}{C}\textcolor{yellow}{C}AC	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{48\charwidth}\textcolor{yellow}{7.7}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 181\hspace*{1\charwidth}CACTCGACTA	GTGCATTTAG	TGCTG\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 }
@@ -146,20 +146,20 @@ $>$DroMel	seq2837\_3R\_17392100\_17392639	3R	17392100	17392639 \\
  \\
 \texttt{1\hspace*{3\charwidth}TGCAGTGAAT	GCAACTTGTA	AATCTGTCAC	GCGTCCCAGT	AAATCATCCT	GCATAAGTAA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-61\hspace*{2\charwidth}TGTGC\textit{\textcolor{Brown}{A}}\textit{\textcolor{Brown}{G}}\textit{\textcolor{Brown}{T}}\textit{\textcolor{Brown}{T}}\textit{\textcolor{Brown}{T}}	\textit{\textcolor{Brown}{A}}\textit{\textcolor{Brown}{G}}\textit{\textcolor{Brown}{C}}\textit{\textcolor{Brown}{C}}\textit{\textcolor{Brown}{C}}GGAGA	ACACACCCAG	AATTCGAAA\textcolor{Yellow}{A}	\textcolor{Yellow}{C}\textcolor{Yellow}{G}\textcolor{Yellow}{A}\textcolor{Yellow}{T}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{T}\textcolor{Yellow}{C}\textcolor{Yellow}{C}C	CTCGAACCAC	\\
-\hspace*{4\charwidth}\hspace*{5\charwidth}\textit{\textcolor{Brown}{9.2}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{31\charwidth}\textcolor{Yellow}{9.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-121\hspace*{1\charwidth}TTTGTCACTC	\textcolor{Yellow}{G}\textcolor{Yellow}{A}\textcolor{Yellow}{G}\textcolor{Yellow}{A}\textcolor{Yellow}{T}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{T}\textcolor{Yellow}{C}\textcolor{Yellow}{G}	AAATACCCGA	GGAGACACTG	C\textit{\textcolor{Yellow}{G}}\textit{\textcolor{Yellow}{G}}\textit{\textcolor{Yellow}{G}}\textit{\textcolor{Yellow}{A}}\textit{\textcolor{Yellow}{T}}\textit{\textcolor{Yellow}{A}}\textit{\textcolor{Yellow}{C}}\textit{\textcolor{Yellow}{T}}\textit{\textcolor{Yellow}{C}}	\textit{\textcolor{Yellow}{C}}\textit{\textcolor{Yellow}{G}}\textit{\textcolor{Yellow}{G}}\textit{\textcolor{Yellow}{A}}\textit{\textcolor{Yellow}{A}}\textit{\textcolor{Yellow}{T}}\textit{\textcolor{Yellow}{A}}\textit{\textcolor{Yellow}{C}}\textit{\textcolor{Yellow}{T}}\textit{\textcolor{Yellow}{C}}	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{10\charwidth}\textcolor{Yellow}{7.8}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{28\charwidth}\textit{\textcolor{Yellow}{11.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-181\hspace*{1\charwidth}\textit{\textcolor{Yellow}{A}}\textcolor{Yellow}{A}\textcolor{Yellow}{A}\textcolor{Yellow}{G}\textcolor{Yellow}{A}\textcolor{Yellow}{T}\textcolor{Yellow}{A}\textcolor{Yellow}{C}\textcolor{Yellow}{T}\textcolor{Yellow}{C}	\textcolor{Yellow}{C}TCTGACTGC	A\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{A}}\textit{\textcolor{Blue}{T}}\textit{\textcolor{Blue}{G}}\textit{\textcolor{Blue}{C}}\textit{\textcolor{Blue}{C}}	\textit{\textcolor{Blue}{G}}GAATATAAT	AAAGTCGGGG	GAGTGTGAAA	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\textcolor{Yellow}{8.8}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{17\charwidth}\textit{\textcolor{Blue}{10.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-241\hspace*{1\charwidth}TT\textit{\textcolor{Green}{G}}\textit{\textcolor{Green}{T}}\textit{\textcolor{Green}{G}}\textit{\textcolor{Green}{T}}\textit{\textcolor{Green}{G}}\textit{\textcolor{Green}{C}}\textit{\textcolor{Green}{T}}\textit{\textcolor{Green}{C}}	\textit{\textcolor{Green}{T}}\textit{\textcolor{Green}{G}}CGGCGACT	GAAGGCGGTC	CG\textit{\textcolor{Brown}{C}}\textit{\textcolor{Brown}{G}}\textit{\textcolor{Brown}{G}}\textit{\textcolor{Brown}{C}}\textit{\textcolor{Brown}{T}}\textit{\textcolor{Brown}{A}}\textit{\textcolor{Brown}{A}}\textit{\textcolor{Brown}{T}}	\textit{\textcolor{Brown}{C}}\textit{\textcolor{Brown}{T}}ATGACAGA	AAACATGTAA	\\
-\hspace*{4\charwidth}\hspace*{2\charwidth}\textit{\textcolor{Green}{10.7}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{26\charwidth}\textit{\textcolor{Brown}{12.5}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+61\hspace*{2\charwidth}TGTGC\textit{\textcolor{brown}{A}}\textit{\textcolor{brown}{G}}\textit{\textcolor{brown}{T}}\textit{\textcolor{brown}{T}}\textit{\textcolor{brown}{T}}	\textit{\textcolor{brown}{A}}\textit{\textcolor{brown}{G}}\textit{\textcolor{brown}{C}}\textit{\textcolor{brown}{C}}\textit{\textcolor{brown}{C}}GGAGA	ACACACCCAG	AATTCGAAA\textcolor{yellow}{A}	\textcolor{yellow}{C}\textcolor{yellow}{G}\textcolor{yellow}{A}\textcolor{yellow}{T}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{T}\textcolor{yellow}{C}\textcolor{yellow}{C}C	CTCGAACCAC	\\
+\hspace*{4\charwidth}\hspace*{5\charwidth}\textit{\textcolor{brown}{9.2}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{31\charwidth}\textcolor{yellow}{9.0}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+121\hspace*{1\charwidth}TTTGTCACTC	\textcolor{yellow}{G}\textcolor{yellow}{A}\textcolor{yellow}{G}\textcolor{yellow}{A}\textcolor{yellow}{T}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{T}\textcolor{yellow}{C}\textcolor{yellow}{G}	AAATACCCGA	GGAGACACTG	C\textit{\textcolor{yellow}{G}}\textit{\textcolor{yellow}{G}}\textit{\textcolor{yellow}{G}}\textit{\textcolor{yellow}{A}}\textit{\textcolor{yellow}{T}}\textit{\textcolor{yellow}{A}}\textit{\textcolor{yellow}{C}}\textit{\textcolor{yellow}{T}}\textit{\textcolor{yellow}{C}}	\textit{\textcolor{yellow}{C}}\textit{\textcolor{yellow}{G}}\textit{\textcolor{yellow}{G}}\textit{\textcolor{yellow}{A}}\textit{\textcolor{yellow}{A}}\textit{\textcolor{yellow}{T}}\textit{\textcolor{yellow}{A}}\textit{\textcolor{yellow}{C}}\textit{\textcolor{yellow}{T}}\textit{\textcolor{yellow}{C}}	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{10\charwidth}\textcolor{yellow}{7.8}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{28\charwidth}\textit{\textcolor{yellow}{11.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+181\hspace*{1\charwidth}\textit{\textcolor{yellow}{A}}\textcolor{yellow}{A}\textcolor{yellow}{A}\textcolor{yellow}{G}\textcolor{yellow}{A}\textcolor{yellow}{T}\textcolor{yellow}{A}\textcolor{yellow}{C}\textcolor{yellow}{T}\textcolor{yellow}{C}	\textcolor{yellow}{C}TCTGACTGC	A\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{A}}\textit{\textcolor{blue}{T}}\textit{\textcolor{blue}{G}}\textit{\textcolor{blue}{C}}\textit{\textcolor{blue}{C}}	\textit{\textcolor{blue}{G}}GAATATAAT	AAAGTCGGGG	GAGTGTGAAA	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\textcolor{yellow}{8.8}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{17\charwidth}\textit{\textcolor{blue}{10.9}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+241\hspace*{1\charwidth}TT\textit{\textcolor{green}{G}}\textit{\textcolor{green}{T}}\textit{\textcolor{green}{G}}\textit{\textcolor{green}{T}}\textit{\textcolor{green}{G}}\textit{\textcolor{green}{C}}\textit{\textcolor{green}{T}}\textit{\textcolor{green}{C}}	\textit{\textcolor{green}{T}}\textit{\textcolor{green}{G}}CGGCGACT	GAAGGCGGTC	CG\textit{\textcolor{brown}{C}}\textit{\textcolor{brown}{G}}\textit{\textcolor{brown}{G}}\textit{\textcolor{brown}{C}}\textit{\textcolor{brown}{T}}\textit{\textcolor{brown}{A}}\textit{\textcolor{brown}{A}}\textit{\textcolor{brown}{T}}	\textit{\textcolor{brown}{C}}\textit{\textcolor{brown}{T}}ATGACAGA	AAACATGTAA	\\
+\hspace*{4\charwidth}\hspace*{2\charwidth}\textit{\textcolor{green}{10.7}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{26\charwidth}\textit{\textcolor{brown}{12.5}}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 301\hspace*{1\charwidth}TCGGAGCGAA	ATGCCGAAAA	TAACTCGTCG	TCGGGGACCT	TTGACTTCAT	TTGCAGCTCT	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 361\hspace*{1\charwidth}TTACTTGGCC	ATGTTCCCAA	AGGCCTGGCC	CCTGGCACTA	AAGTTGCTCT	GGGTGGCGAT	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-421\hspace*{1\charwidth}TCGGCGGCCA	ATTAAAATCC	CAATCAGGGC	TCTACTGTAA	TACATTGTGC	GTCGAATTTA	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+421\hspace*{1\charwidth}T\textcolor{orange}{C}\textcolor{orange}{G}\textcolor{orange}{G}\textcolor{orange}{C}\textcolor{orange}{G}\textcolor{orange}{G}\textcolor{orange}{C}\textcolor{orange}{C}\textcolor{orange}{A}	\textcolor{orange}{A}TTAAAATCC	CAATCAGGGC	TCTACTGTAA	TACATTGTGC	GTCGAATTTA	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\textcolor{orange}{7.5}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 481\hspace*{1\charwidth}GTTGTTCAAA	TTAATTATGG	TACACGGGAA	ATAAAAATGA	GTTCGTAGAG	CGTAGAAAAA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 }
@@ -174,18 +174,18 @@ $>$DroMel	seq6531\_2L\_21853080\_21853669	2L	21853080	21853669 \\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 181\hspace*{1\charwidth}CTTAAATAGA	CAACTGCAAA	ACGGAAATGT	ACATCATAAA	AATATTAAAA	ATTCTCTGTC	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-241\hspace*{1\charwidth}ATTCTTCTAA	TATGGTCTTT	TTGGACATTC	TTGGAAAGAT	AAAAGTCGAT	GCCGGTTGGC	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-301\hspace*{1\charwidth}CGCCGTTCCA	GTGCATTAGA	GATCGCGTTT	AAAATGGTAC	CCCGATGGGC	TGTCAAGGCC	\\
+241\hspace*{1\charwidth}ATTCTTCTAA	TATGGTCTTT	TTGGACATTC	TTGGAAAGAT	AAAAGTCGAT	GCCGG\textcolor{orange}{T}\textcolor{orange}{T}\textcolor{orange}{G}\textcolor{orange}{G}\textcolor{orange}{C}	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{55\charwidth}\textcolor{orange}{7.5}\hspace*{1\charwidth}\\
+301\hspace*{1\charwidth}\textcolor{orange}{C}\textcolor{orange}{G}\textcolor{orange}{C}\textcolor{orange}{C}\textcolor{orange}{G}TTCCA	GTGCATTAGA	GATCGCGTTT	AAAATGGTAC	CCCGATGGGC	TGTCAAGGCC	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 361\hspace*{1\charwidth}GTAAATCTAG	AATAGGGGCA	CTCTTTGCTG	CCCTCTCGTG	CAGCTCATGT	ATTTTCATAA	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 421\hspace*{1\charwidth}TTTTCATATT	TCTCCGTGGC	TCAGCAGCTG	CGCGCCTGCG	CTAAAGTGTC	TGACGGATGC	\\
 \hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-481\hspace*{1\charwidth}GGCGCATTCG	ATTTCGTTCT	GCC\textcolor{Brown}{A}\textcolor{Brown}{A}\textcolor{Brown}{A}\textcolor{Brown}{T}\textcolor{Brown}{T}\textcolor{Brown}{A}\textcolor{Brown}{G}	\textcolor{Brown}{C}\textcolor{Brown}{C}\textcolor{Brown}{G}GGCCCCG	TGATTTATGT	CGTCCTTCTG	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{23\charwidth}\textcolor{Brown}{8.4}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
-541\hspace*{1\charwidth}GCTCTTTGGC	CGTTTGTCCC	TTTTAGCCAG	TCCGCGTGAC	TCGAGCGTTG	\\
-\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+481\hspace*{1\charwidth}GGCGCATTCG	ATTTCGTTCT	GCC\textcolor{brown}{A}\textcolor{brown}{A}\textcolor{brown}{A}\textcolor{brown}{T}\textcolor{brown}{T}\textcolor{brown}{A}\textcolor{brown}{G}	\textcolor{brown}{C}\textcolor{brown}{C}\textcolor{brown}{G}GGCCCCG	TGATTTATGT	CGTCCTTCTG	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{23\charwidth}\textcolor{brown}{8.4}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
+541\hspace*{1\charwidth}GCTCTTTGGC	\textcolor{magenta}{C}\textcolor{magenta}{G}\textcolor{magenta}{T}\textcolor{magenta}{T}\textcolor{magenta}{T}\textcolor{magenta}{G}\textcolor{magenta}{T}\textcolor{magenta}{C}\textcolor{magenta}{C}\textcolor{magenta}{C}	TTTTAGCCAG	TCCGCGTGAC	TCGAGCGTTG	\\
+\hspace*{4\charwidth}\hspace*{1\charwidth}\hspace*{10\charwidth}\textcolor{magenta}{7.9}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\hspace*{1\charwidth}\\
 }
 \\
 \end{document}
