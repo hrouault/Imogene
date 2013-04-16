@@ -414,7 +414,7 @@ chr2R 5025930  5026695  seq257</pre>
             <dataFormat>HTML</dataFormat>
           </type>
           <filenames>
-              <code proglang="python">"results_genmot.html css/custom.css css/print.css css/screen.css ie.css *.svg"</code>
+              <code proglang="python">"results_genmot.html"</code>
           </filenames>
           <comment>
             <div xmlns="http://www.w3.org/1999/xhtml">

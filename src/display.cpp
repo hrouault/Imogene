@@ -494,7 +494,7 @@ dispmotifs_html(ofstream & outf, vmot & mots)
     outf << "<h2> Motifs</h2>" << endl;
     outf << "<table>" << endl;
     outf << "<tr>" << endl;
-    outf << "<th>Color</th><th>Rank</th> <th>Logo</th><th>P-value</th><th>Over-representation</th>" << endl;
+    outf << "<th>Color</th><th>Rank</th> <th>Logo</th><th>P-value (log10)</th><th>Over-representation</th>" << endl;
     outf << "</tr>" << endl;
     unsigned int i = 1;
     for (ivmot iv = mots.begin(); iv != mots.end(); iv++) {
