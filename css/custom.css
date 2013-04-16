@@ -13,36 +13,36 @@ h3 {
 pre, code, tt {font:1.3em monospace;line-height:1.5;}
 
 .mot1 {
-   color: #FF00;
+   color: #FF0000;
    background: #FFAAAA;
    font-weight:bold;
 }
 table tr:nth-child(even) td.mot1 {
-   background: #FFAAAA;
+   background: #FF0000;
 }
 .mot2 {
-   color: #00FF;
+   color: #0000FF;
    background: #AAAAFF;
    font-weight:bold;
 }
 td.mot2 {
-   background: #AAAAFF;
+   background: #0000FF;
 }
 .mot3 {
-   color: #0FF0;
-   background: #AAFFAA;
+   color: #007F7F;
+   background: #AAD4D4;
    font-weight:bold;
 }
 table tr:nth-child(even) td.mot3 {
-   background: #AAFFAA;
+   background: #007F7F;
 }
 .mot4 {
-   color: #FFFF0;
-   background: #FFFFAA;
+   color: #FFBFBF;
+   background: #FFE9E9;
    font-weight:bold;
 }
 td.mot4 {
-   background: #FFFFAA;
+   background: #FFBFBF;
 }
 .mot5 {
    color: #BF7F3F;
@@ -50,45 +50,45 @@ td.mot4 {
    font-weight:bold;
 }
 table tr:nth-child(even) td.mot5 {
-   background: #E9D4BF;
+   background: #BF7F3F;
 }
 .mot6 {
-   color: #FF0FF;
+   color: #FF00FF;
    background: #FFAAFF;
    font-weight:bold;
 }
 td.mot6 {
-   background: #FFAAFF;
+   background: #FF00FF;
 }
 .mot7 {
-   color: #0FFFF;
-   background: #AAFFFF;
+   color: #3F3F3F;
+   background: #BFBFBF;
    font-weight:bold;
 }
 table tr:nth-child(even) td.mot7 {
-   background: #AAFFFF;
+   background: #3F3F3F;
 }
 .mot8 {
-   color: #7F07F;
+   color: #7F007F;
    background: #D4AAD4;
    font-weight:bold;
 }
 td.mot8 {
-   background: #D4AAD4;
+   background: #7F007F;
 }
 .mot9 {
-   color: #FF7F0;
+   color: #FF7F00;
    background: #FFD4AA;
    font-weight:bold;
 }
 table tr:nth-child(even) td.mot9 {
-   background: #FFD4AA;
+   background: #FF7F00;
 }
 .mot10 {
-   color: #7F7F0;
+   color: #7F7F00;
    background: #D4D4AA;
    font-weight:bold;
 }
 td.mot10 {
-   background: #D4D4AA;
+   background: #7F7F00;
 }

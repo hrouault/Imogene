@@ -22,19 +22,34 @@ text {
    stroke-width: 0.05em;
 }
 .mot1 {
-   stroke:  #E57272;
+   stroke:  #FF0000;
 }
 .mot2 {
-   stroke: #99995B;
+   stroke: #0000FF;
 }
 .mot3 {
-   stroke: #E5E55B;
+   stroke: #007F7F;
 }
 .mot4 {
-   stroke: #5B6B99;
+   stroke: #FFBFBF;
 }
 .mot5 {
-   stroke: #5B7EE5;
+   stroke: #BF7F3F;
+}
+.mot6 {
+   stroke: #FF00FF;
+}
+.mot7 {
+   stroke: #3F3F3F;
+}
+.mot8 {
+   stroke: #7F007F;
+}
+.mot9 {
+   stroke: #FF7F00;
+}
+.mot10 {
+   stroke: #7F7F00;
 }
 .conserved {
    stroke-width: 0.3em;

@@ -22,19 +22,34 @@ text {
    stroke-width: 0.05em;
 }
 .mot1 {
-   stroke:  #E57272;
+   stroke:  #FF0000;
 }
 .mot2 {
-   stroke: #99995B;
+   stroke: #0000FF;
 }
 .mot3 {
-   stroke: #E5E55B;
+   stroke: #007F7F;
 }
 .mot4 {
-   stroke: #5B6B99;
+   stroke: #FFBFBF;
 }
 .mot5 {
-   stroke: #5B7EE5;
+   stroke: #BF7F3F;
+}
+.mot6 {
+   stroke: #FF00FF;
+}
+.mot7 {
+   stroke: #3F3F3F;
+}
+.mot8 {
+   stroke: #7F007F;
+}
+.mot9 {
+   stroke: #FF7F00;
+}
+.mot10 {
+   stroke: #7F7F00;
 }
 .conserved {
    stroke-width: 0.3em;
@@ -307,10 +322,22 @@ text {
 <text x="19.7em" y="2.3em"><tspan class="score">11.4</tspan></text>
 <line class="conserved mot1" x1="11.0em" y1="2.5em" x2="11.0em" y2="3.5em"/>
 <text x="11.2em" y="3.8em"><tspan class="score">10.5</tspan></text>
+<line class="conserved mot1" x1="19.5em" y1="2.5em" x2="19.5em" y2="3.5em"/>
+<text x="19.7em" y="3.8em"><tspan class="score">8.7</tspan></text>
 <line class="conserved mot1" x1="11.0em" y1="4.0em" x2="11.0em" y2="5.0em"/>
 <text x="11.2em" y="5.3em"><tspan class="score">10.5</tspan></text>
+<line class="conserved mot1" x1="19.5em" y1="4.0em" x2="19.5em" y2="5.0em"/>
+<text x="19.7em" y="5.3em"><tspan class="score">8.7</tspan></text>
+<line class="conserved mot1" x1="19.5em" y1="5.5em" x2="19.5em" y2="6.5em"/>
+<text x="19.7em" y="6.8em"><tspan class="score">8.7</tspan></text>
+<line class="notconserved mot1" x1="22.2em" y1="5.5em" x2="22.2em" y2="6.5em"/>
+<text x="22.4em" y="6.8em"><tspan class="score">8.0</tspan></text>
 <line class="conserved mot1" x1="11.0em" y1="7.0em" x2="11.0em" y2="8.0em"/>
 <text x="11.2em" y="8.3em"><tspan class="score">10.5</tspan></text>
+<line class="conserved mot1" x1="19.5em" y1="7.0em" x2="19.5em" y2="8.0em"/>
+<text x="19.7em" y="8.3em"><tspan class="score">8.7</tspan></text>
+<line class="conserved mot1" x1="6.5em" y1="8.5em" x2="6.5em" y2="9.5em"/>
+<text x="6.7em" y="9.8em"><tspan class="score">8.1</tspan></text>
 <line class="conserved mot1" x1="10.2em" y1="8.5em" x2="10.2em" y2="9.5em"/>
 <text x="10.4em" y="9.8em"><tspan class="score">12.2</tspan></text>
 <line class="conserved mot1" x1="15.7em" y1="8.5em" x2="15.7em" y2="9.5em"/>
@@ -321,10 +348,14 @@ text {
 <text x="10.8em" y="11.3em"><tspan class="score">10.8</tspan></text>
 <line class="conserved mot1" x1="11.8em" y1="10.0em" x2="11.8em" y2="11.0em"/>
 <text x="12.0em" y="11.3em"><tspan class="score">12.2</tspan></text>
+<line class="notconserved mot1" x1="17.5em" y1="10.0em" x2="17.5em" y2="11.0em"/>
+<text x="17.7em" y="11.3em"><tspan class="score">7.6</tspan></text>
 <line class="conserved mot1" x1="10.6em" y1="11.5em" x2="10.6em" y2="12.5em"/>
 <text x="10.8em" y="12.8em"><tspan class="score">10.8</tspan></text>
 <line class="conserved mot1" x1="11.8em" y1="11.5em" x2="11.8em" y2="12.5em"/>
 <text x="12.0em" y="12.8em"><tspan class="score">12.2</tspan></text>
+<line class="notconserved mot1" x1="17.5em" y1="11.5em" x2="17.5em" y2="12.5em"/>
+<text x="17.7em" y="12.8em"><tspan class="score">7.6</tspan></text>
 <line class="conserved mot1" x1="19.6em" y1="13.0em" x2="19.6em" y2="14.0em"/>
 <text x="19.8em" y="14.3em"><tspan class="score">15.6</tspan></text>
 <line class="conserved mot1" x1="19.6em" y1="14.5em" x2="19.6em" y2="15.5em"/>
@@ -341,16 +372,24 @@ text {
 <text x="16.5em" y="6.8em"><tspan class="score">15.3</tspan></text>
 <line class="conserved mot2" x1="16.3em" y1="7.0em" x2="16.3em" y2="8.0em"/>
 <text x="16.5em" y="8.3em"><tspan class="score">15.3</tspan></text>
-<line class="notconserved mot2" x1="19.8em" y1="7.0em" x2="19.8em" y2="8.0em"/>
-<text x="20.0em" y="8.3em"><tspan class="score">9.6</tspan></text>
+<line class="conserved mot2" x1="13.9em" y1="8.5em" x2="13.9em" y2="9.5em"/>
+<text x="14.1em" y="9.8em"><tspan class="score">8.1</tspan></text>
 <line class="conserved mot2" x1="16.3em" y1="8.5em" x2="16.3em" y2="9.5em"/>
 <text x="16.5em" y="9.8em"><tspan class="score">10.1</tspan></text>
 <line class="conserved mot2" x1="16.3em" y1="10.0em" x2="16.3em" y2="11.0em"/>
 <text x="16.5em" y="11.3em"><tspan class="score">12.2</tspan></text>
+<line class="conserved mot2" x1="18.0em" y1="10.0em" x2="18.0em" y2="11.0em"/>
+<text x="18.2em" y="11.3em"><tspan class="score">9.0</tspan></text>
 <line class="conserved mot2" x1="16.3em" y1="11.5em" x2="16.3em" y2="12.5em"/>
 <text x="16.5em" y="12.8em"><tspan class="score">12.2</tspan></text>
+<line class="conserved mot2" x1="18.0em" y1="11.5em" x2="18.0em" y2="12.5em"/>
+<text x="18.2em" y="12.8em"><tspan class="score">9.0</tspan></text>
+<line class="notconserved mot2" x1="16.6em" y1="13.0em" x2="16.6em" y2="14.0em"/>
+<text x="16.8em" y="14.3em"><tspan class="score">7.4</tspan></text>
 <line class="conserved mot2" x1="17.5em" y1="13.0em" x2="17.5em" y2="14.0em"/>
 <text x="17.7em" y="14.3em"><tspan class="score">12.7</tspan></text>
+<line class="conserved mot2" x1="6.1em" y1="14.5em" x2="6.1em" y2="15.5em"/>
+<text x="6.3em" y="15.8em"><tspan class="score">8.7</tspan></text>
 <line class="conserved mot2" x1="16.3em" y1="14.5em" x2="16.3em" y2="15.5em"/>
 <text x="16.5em" y="15.8em"><tspan class="score">13.0</tspan></text>
 <line class="conserved mot2" x1="16.3em" y1="16.0em" x2="16.3em" y2="17.0em"/>
@@ -377,5 +416,53 @@ text {
 <text x="19.4em" y="12.8em"><tspan class="score">13.0</tspan></text>
 <line class="conserved mot3" x1="19.2em" y1="13.0em" x2="19.2em" y2="14.0em"/>
 <text x="19.4em" y="14.3em"><tspan class="score">15.8</tspan></text>
+<line class="conserved mot3" x1="7.0em" y1="14.5em" x2="7.0em" y2="15.5em"/>
+<text x="7.2em" y="15.8em"><tspan class="score">8.4</tspan></text>
+<line class="notconserved mot3" x1="8.2em" y1="16.0em" x2="8.2em" y2="17.0em"/>
+<text x="8.4em" y="17.3em"><tspan class="score">7.3</tspan></text>
+<line class="conserved mot5" x1="21.6em" y1="4.0em" x2="21.6em" y2="5.0em"/>
+<text x="21.8em" y="5.3em"><tspan class="score">8.5</tspan></text>
+<line class="notconserved mot6" x1="14.7em" y1="17.5em" x2="14.7em" y2="18.5em"/>
+<text x="14.9em" y="18.8em"><tspan class="score">7.4</tspan></text>
+<line class="conserved mot7" x1="12.8em" y1="1.0em" x2="12.8em" y2="2.0em"/>
+<text x="13.0em" y="2.3em"><tspan class="score">11.4</tspan></text>
+<line class="conserved mot7" x1="12.2em" y1="2.5em" x2="12.2em" y2="3.5em"/>
+<text x="12.4em" y="3.8em"><tspan class="score">9.8</tspan></text>
+<line class="conserved mot7" x1="12.8em" y1="2.5em" x2="12.8em" y2="3.5em"/>
+<text x="13.0em" y="3.8em"><tspan class="score">11.4</tspan></text>
+<line class="conserved mot7" x1="12.2em" y1="4.0em" x2="12.2em" y2="5.0em"/>
+<text x="12.4em" y="5.3em"><tspan class="score">9.8</tspan></text>
+<line class="conserved mot7" x1="12.8em" y1="4.0em" x2="12.8em" y2="5.0em"/>
+<text x="13.0em" y="5.3em"><tspan class="score">11.4</tspan></text>
+<line class="conserved mot7" x1="11.0em" y1="5.5em" x2="11.0em" y2="6.5em"/>
+<text x="11.2em" y="6.8em"><tspan class="score">11.2</tspan></text>
+<line class="conserved mot7" x1="12.4em" y1="5.5em" x2="12.4em" y2="6.5em"/>
+<text x="12.6em" y="6.8em"><tspan class="score">9.8</tspan></text>
+<line class="conserved mot7" x1="12.8em" y1="5.5em" x2="12.8em" y2="6.5em"/>
+<text x="13.0em" y="6.8em"><tspan class="score">11.4</tspan></text>
+<line class="conserved mot7" x1="12.5em" y1="7.0em" x2="12.5em" y2="8.0em"/>
+<text x="12.7em" y="8.3em"><tspan class="score">13.4</tspan></text>
+<line class="conserved mot7" x1="12.4em" y1="13.0em" x2="12.4em" y2="14.0em"/>
+<text x="12.6em" y="14.3em"><tspan class="score">9.8</tspan></text>
+<line class="conserved mot7" x1="14.8em" y1="14.5em" x2="14.8em" y2="15.5em"/>
+<text x="15.0em" y="15.8em"><tspan class="score">11.6</tspan></text>
+<line class="conserved mot8" x1="8.0em" y1="7.0em" x2="8.0em" y2="8.0em"/>
+<text x="8.2em" y="8.3em"><tspan class="score">10.7</tspan></text>
+<line class="conserved mot8" x1="12.4em" y1="16.0em" x2="12.4em" y2="17.0em"/>
+<text x="12.6em" y="17.3em"><tspan class="score">11.2</tspan></text>
+<line class="conserved mot9" x1="8.9em" y1="10.0em" x2="8.9em" y2="11.0em"/>
+<text x="9.1em" y="11.3em"><tspan class="score">8.1</tspan></text>
+<line class="conserved mot10" x1="10.4em" y1="1.0em" x2="10.4em" y2="2.0em"/>
+<text x="10.6em" y="2.3em"><tspan class="score">9.6</tspan></text>
+<line class="conserved mot10" x1="17.7em" y1="1.0em" x2="17.7em" y2="2.0em"/>
+<text x="17.9em" y="2.3em"><tspan class="score">11.2</tspan></text>
+<line class="conserved mot10" x1="10.4em" y1="2.5em" x2="10.4em" y2="3.5em"/>
+<text x="10.6em" y="3.8em"><tspan class="score">9.6</tspan></text>
+<line class="conserved mot10" x1="17.7em" y1="2.5em" x2="17.7em" y2="3.5em"/>
+<text x="17.9em" y="3.8em"><tspan class="score">11.2</tspan></text>
+<line class="conserved mot10" x1="17.7em" y1="4.0em" x2="17.7em" y2="5.0em"/>
+<text x="17.9em" y="5.3em"><tspan class="score">11.2</tspan></text>
+<line class="notconserved mot10" x1="17.7em" y1="16.0em" x2="17.7em" y2="17.0em"/>
+<text x="17.9em" y="17.3em"><tspan class="score">7.5</tspan></text>
 </g>
 </svg>

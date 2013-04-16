@@ -1,12 +1,13 @@
 
-# base colors
+# base colors:
+# red, blue, teal, pink, brown, magenta, darkgray, violet, orange, olive
 bcol = [[1,0,0],
       [0,0,1],
-      [0,1,0],
-      [1,1,0],
+      [0,.5,.5],
+      [1,.75,.75],
       [.75,.5,.25],
       [1,0,1],
-      [0,1,1],
+      [.25,.25,.25],
       [.5,0,.5],
       [1,.5,0],
       [.5,.5,0]]
@@ -25,9 +26,9 @@ for i in range(0, 10):
     if (i + 1) % 2:
         print('table tr:nth-child(even) td.mot{0} {{\n\
     background: #{1:X}{2:X}{3:X};\n\
-}}'.format(i+1, colbr, colbg, colbb))
+}}'.format(i+1, colr, colg, colb))
     else:
         print('td.mot{0} {{\n\
     background: #{1:X}{2:X}{3:X};\n\
-}}'.format(i+1, colbr, colbg, colbb))
+}}'.format(i+1, colr, colg, colb))
 

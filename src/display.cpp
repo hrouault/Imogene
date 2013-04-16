@@ -159,11 +159,11 @@ colfromint(int i)
 {
     if (i == 0) return "red";
     if (i == 1) return "blue";
-    if (i == 2) return "green";
-    if (i == 3) return "yellow";
+    if (i == 2) return "teal";
+    if (i == 3) return "pink";
     if (i == 4) return "brown";
     if (i == 5) return "magenta";
-    if (i == 6) return "cyan";
+    if (i == 6) return "darkgray";
     if (i == 7) return "violet";
     if (i == 8) return "orange";
     if (i == 9) return "olive";
@@ -208,19 +208,34 @@ svginit(ofstream & svgfile, Sequence & seq)
     svgfile << "   stroke-width: 0.05em;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot1 {" << endl;
-    svgfile << "   stroke:  #E57272;" << endl;
+    svgfile << "   stroke:  #FF0000;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot2 {" << endl;
-    svgfile << "   stroke: #99995B;" << endl;
+    svgfile << "   stroke: #0000FF;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot3 {" << endl;
-    svgfile << "   stroke: #E5E55B;" << endl;
+    svgfile << "   stroke: #007F7F;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot4 {" << endl;
-    svgfile << "   stroke: #5B6B99;" << endl;
+    svgfile << "   stroke: #FFBFBF;" << endl;
     svgfile << "}" << endl;
     svgfile << ".mot5 {" << endl;
-    svgfile << "   stroke: #5B7EE5;" << endl;
+    svgfile << "   stroke: #BF7F3F;" << endl;
+    svgfile << "}" << endl;
+    svgfile << ".mot6 {" << endl;
+    svgfile << "   stroke: #FF00FF;" << endl;
+    svgfile << "}" << endl;
+    svgfile << ".mot7 {" << endl;
+    svgfile << "   stroke: #3F3F3F;" << endl;
+    svgfile << "}" << endl;
+    svgfile << ".mot8 {" << endl;
+    svgfile << "   stroke: #7F007F;" << endl;
+    svgfile << "}" << endl;
+    svgfile << ".mot9 {" << endl;
+    svgfile << "   stroke: #FF7F00;" << endl;
+    svgfile << "}" << endl;
+    svgfile << ".mot10 {" << endl;
+    svgfile << "   stroke: #7F7F00;" << endl;
     svgfile << "}" << endl;
     svgfile << ".conserved {" << endl;
     svgfile << "   stroke-width: 0.3em;" << endl;
@@ -318,7 +333,7 @@ svgdisplay(ofstream & svgfile, Sequence & seq)
         vinstseq & insts = seq.instances;
         for (ivinstseq ivi = insts.begin(); ivi != insts.end(); ivi++) {
             int moti = (*ivi).motindex;
-            if (moti < 5 && (*ivi).pos < stop && (*ivi).pos > start) {
+            if (moti < 10 && (*ivi).pos < stop && (*ivi).pos > start) {
                 double xmot = xbegin + xscale * ((*ivi).pos - start);
                 double yline = yoffset + 1.5 * realindex((*ivi).species, seq);
                 string width;
