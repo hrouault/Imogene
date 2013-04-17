@@ -282,6 +282,27 @@
             </div>
           </comment>
         </parameter>
+        <parameter ismandatory="1">
+          <name>gennbmots</name>
+          <prompt lang="en">Number of motifs to display at maximum (between 1
+            and 10)</prompt>
+          <type>
+            <datatype>
+              <class>Integer</class>
+            </datatype>
+          </type>
+          <vdef>
+            <value>5</value>
+          </vdef>
+          <comment>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+              <p>The algorithm output consists of many motifs on general.
+                Although, they are all present in the text file output, they
+                cannot all be displayed and shown on the input sequences. It is
+                usually fine to consider between 5 et 10 motifs. </p>
+            </div>
+          </comment>
+        </parameter>
         <parameter ismandatory="1" issimple="1">
           <name>coord_file</name>
           <prompt lang="en">Training set sequences coordinates</prompt>
@@ -365,8 +386,9 @@ chr2R 5025930  5026695  seq257</pre>
             </datatype>
           </type>
           <format>
-            <code proglang="python">" imogene display -t "+ str(Ss1) +" -s " +\
-              species +" -m motifs.txt -a align --logos --pdf --png &amp;&amp;"</code>
+            <code proglang="python">" imogene display -t " + str(Ss1) + " -s "\
+              + species + " -n " + str(gennbmots)\
+              + " -m motifs.txt -a align --logos --pdf --png &amp;&amp;"</code>
           </format>
           <argpos>3</argpos>
         </parameter>
@@ -379,7 +401,7 @@ chr2R 5025930  5026695  seq257</pre>
           </type>
           <format>
             <code proglang="python">" imogene display -t "+ str(Ss1) +" -s " + \
-              species +" -m motifs.txt -a align --html-ref"</code>
+              species + " -n " + str(gennbmots) + " -m motifs.txt -a align --html-ref"</code>
           </format>
           <argpos>4</argpos>
         </parameter>
