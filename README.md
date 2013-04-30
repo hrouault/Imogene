@@ -13,7 +13,7 @@ Documentation
 =============
 
 The full documentation is available online
-[here](http://http://hrouault.github.io/Imogene/).
+[here](http://hrouault.github.io/Imogene/).
 
 
 Installation
