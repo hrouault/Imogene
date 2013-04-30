@@ -31,7 +31,7 @@ copy paste from the paper
 This is the output of @code{imogene distinfo --help}:
 
 @smallexample
-@c @include distinfo.help
+@include distinfo.help
 @end smallexample
 
 You mainly need to provide two PWMs in the format produced with the genmot mode:

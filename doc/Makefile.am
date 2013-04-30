@@ -18,24 +18,26 @@
 # along with Imogene; see the file COPYING  If not, see
 # <http://www.gnu.org/licenses/>.
 
+EXTRA_DIST = extract.help distinfo.help genmot.help display.help
+
 ## BUILT_SOURCES = extract.help distinfo.help genmot.help display.help
 ## 
-## extract.help: ../src/imogene
-## 	../src/imogene extract --help > $@
-## 
-## distinfo.help: ../src/imogene
-## 	../src/imogene distinfo --help > $@
-## 
-## genmot.help: ../src/imogene
-## 	../src/imogene genmot --help > $@
-## 
-## display.help: ../src/imogene
-## 	../src/imogene display --help > $@
+extract.help:
+	../src/imogene extract --help > $@
+
+distinfo.help:
+	../src/imogene distinfo --help > $@
+
+genmot.help:
+	../src/imogene genmot --help > $@
+
+display.help:
+	../src/imogene display --help > $@
 
 AM_MAKEINFOHTMLFLAGS = --no-split
 
 info_TEXINFOS = imogene.texi
 imogene_TEXINFOS = fdl.texi extract.texi distinfo.texi genmot.texi\
 				   install.texi display.texi test.texi mobyle.texi\
-				   imogene-mob.png imogene-mob.eps
-#				   extract.help distinfo.help genmot.help display.help 
+				   imogene-mob.png imogene-mob.eps\
+				   extract.help distinfo.help genmot.help display.help 

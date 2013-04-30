@@ -28,5 +28,5 @@
 This is the output of @code{imogene genmot --help}:
 
 @smallexample
-@c @include genmot.help
+@include genmot.help
 @end smallexample

@@ -105,8 +105,6 @@ This manual is for Imogene
 
 @include mobyle.texi
 
-@c @include help.texi
-
 
 @node Copying
 @appendix Copying This Manual
