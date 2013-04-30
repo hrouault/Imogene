@@ -41,7 +41,7 @@ AM_MAKEINFOHTMLFLAGS = --no-split
 
 info_TEXINFOS = imogene.texi
 imogene_TEXINFOS = fdl.texi extract.texi distinfo.texi genmot.texi\
-				   install.texi display.texi test.texi mobyle.texi\
-				   imogene-mob.png imogene-mob.eps\
+				   scangen.texi install.texi display.texi test.texi\
+				   mobyle.texi imogene-mob.png imogene-mob.eps\
 				   extract.help distinfo.help genmot.help scangen.help\
 				   display.help 
