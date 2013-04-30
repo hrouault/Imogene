@@ -17,16 +17,16 @@
 @c You should have received a copy of the GNU General Public License
 @c along with Imogene; see the file COPYING  If not, see <http://www.gnu.org/licenses/>.
 
-@node Mobyle
-@chapter Mobyle interface
+@node Scangen
+@chapter Scan the genome for the predicted motifs
 
-@cindex mobyle, interface
+@cindex genome scanning
 
-You can run imogene from the Mobyle interface:
 
-@image{imogene-mob,17cm}
+@section Invoking the command line tool
 
-The interface can be installed locally on your computer but more simply, we
-made it available for the community at:
-@url{http://mobyle.pasteur.fr/cgi-bin/portal.py\#forms::imogene}.
+This is the output of @code{imogene scangen --help}:
 
+@smallexample
+@include scangen.help
+@end smallexample

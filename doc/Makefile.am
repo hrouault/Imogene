@@ -18,7 +18,7 @@
 # along with Imogene; see the file COPYING  If not, see
 # <http://www.gnu.org/licenses/>.
 
-EXTRA_DIST = extract.help distinfo.help genmot.help display.help
+EXTRA_DIST = extract.help distinfo.help genmot.help scangen.help display.help
 
 ## BUILT_SOURCES = extract.help distinfo.help genmot.help display.help
 ## 
@@ -31,6 +31,9 @@ distinfo.help:
 genmot.help:
 	../src/imogene genmot --help > $@
 
+scangen.help:
+	../src/imogene scangen --help > $@
+
 display.help:
 	../src/imogene display --help > $@
 
@@ -40,4 +43,5 @@ info_TEXINFOS = imogene.texi
 imogene_TEXINFOS = fdl.texi extract.texi distinfo.texi genmot.texi\
 				   install.texi display.texi test.texi mobyle.texi\
 				   imogene-mob.png imogene-mob.eps\
-				   extract.help distinfo.help genmot.help display.help 
+				   extract.help distinfo.help genmot.help scangen.help\
+				   display.help 

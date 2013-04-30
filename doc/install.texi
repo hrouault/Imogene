@@ -27,7 +27,7 @@
 
 The last stable version can be found on @emph{github} at the address:
 
-@uref{https://github.com/hrouault/Imogene/downloads}.
+@uref{https://github.com/hrouault/Imogene/tarballs}.
 
 @subsection Development version
 
@@ -48,8 +48,6 @@ C++ and make
 @item corebio : 
 @item weblogo : 
 @item python module argparse (for python version <2.7)
-@item for eutherian, it is better to have cython for higher speed of alignment
-conversion
 @end itemize
 
 If you use a development version, you will need some additional tools:
@@ -57,7 +55,8 @@ If you use a development version, you will need some additional tools:
 @item GNU Automake: @uref{http://www.gnu.org/software/autoconf}
 @item GNU Autoconf: @uref{http://www.gnu.org/software/automake}
 @item GNU Libtool: @uref{http://www.gnu.org/software/libtool}
-@item GNU Gengetopt @uref{http://www.gnu.org/software/gengetopt/}
+@item GNU Gengetopt: @uref{http://www.gnu.org/software/gengetopt}
+@item Cython: @uref{http://www.cython.org}
 @end itemize
 Many standard Unix systems include packages for these tools.  
 
@@ -94,18 +93,21 @@ can install it by appending @command{--enable-mobyle} to the configure command:
 ../configure --prefix="install/full/path" --enable-mobyle
 @end example
 
-For compiling mobyle related files:
-
-you will then need to indicate that you want to create mobyle files with the
-@command{--enable-mobyle} option if the @command{configure} script.
-
 @emph{Imogene} is now installed but cannot be used yet. You will need to
-download the genomic alignment files (see next sections).
+download the genomic alignment files and background sequences (see next
+sections).
+
+Finally, you can generate the documentation corresponding to your version by
+running @command{make dvi}, @command{make ps}, @command{make pdf} and
+@command{make html} depending on the format you want, and install them on you
+system by running @command{make install-dvi}, @command{make install-ps},
+@command{make install-pdf} and @command{make install-html} respectively.
 
 @subsection Development version
 
-Note that if you use the development version from github, you have to first
-automatically generate files that are normally provided within the tarball:
+Note that if you use the development version from @emph{github}, you have to
+first automatically generate files that are normally provided within the
+tarball:
 @example
 git clone http://github.com/hrouault/Imogene.git
 cd Imogene
@@ -124,11 +126,12 @@ make install
 
 @section Alignment files download
 
-@emph{Imogene} provides a helper script to download the necessary genomic alignment files. This script is present in 
+@emph{Imogene} provides a helper script to download the necessary genomic alignment files. This script is present in @file{$PREFIX/bin/getalign}.
 
 
 To download the genomes, you have to execute the proper python script:
-@command{python $PREFIX/bin/getalign}
+@command{$PREFIX/bin/getalign --species @{droso,eutherian@}} (see
+@command{$PREFIX/bin/getalign --help}).
 
 
 @section Background sequences generation
@@ -137,15 +140,14 @@ In order to compare the statistics of the sequences taken into account for
 motif generation, some background sequences need to be selected. Two options
 are offered to you: 
 @enumerate 
-@item use the set of coordinates provided in the data folder 
 @item generate a new set of coordinates 
+@item use the set of coordinates provided in the data folder (easier and necessary to reproduce the examples provided).
 @end enumerate
 
 @subsection Generate a new set of coordinates (optional)
 
 This step generates coordinates for background sequences. Note that background
-coordinates are already provided by the package so that this step is completely
-optional.
+coordinates are already provided by the package so that this step is optional.
 
 You have to execute the command @command{python $PREFIX/bin/extract-bgrnd-coord > your-background-coords.bed}. 
 

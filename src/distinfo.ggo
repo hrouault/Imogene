@@ -34,3 +34,6 @@ option "species" s "Species used for motifs generation."
 
 option  "motifs" m  "file containing a list of motif definitons"
             string typestr="str" required
+
+option  "displaydist" d "Display the distance in the standard output"
+             optional

@@ -464,6 +464,8 @@ compmotsthr(vmot & mots)
     return;
 }
 
+distinfo_args_info distinfo_args;
+
 
 // sets check flags on/off to filter identical motifs in a p-value sorted motifs list
 // // *** BEWARE, hidden is a cutoff on vmot size
@@ -489,7 +491,10 @@ compmotsdist(vmot & mots)
             if ((*ivm2).check) {
                 if (sum(abs((*ivm).matprec - (*ivm2).matprec)) > 1e-3 && sum(abs((*ivm).matprec - (*ivm2).matprecrevcomp)) > 1e-3) {
                     distance = distmot(*ivm, *ivm2);
-                    //               cout << "final distance : " << distance << endl;
+                    if (distinfo_args.displaydist_given){
+                       cout << ivm->bsinit << ", " << ivm2->bsinit;
+                       cout << " : " << distance << endl;
+                    }
                 }
                 if (distance < 3.0) {
                     (*ivm).check = false;
@@ -509,7 +514,6 @@ compmotsdist(vmot & mots)
     return;
 }
 
-distinfo_args_info distinfo_args;
 
 double
 compdistance(Motif & mot1, Motif & mot2)

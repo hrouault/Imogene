@@ -48,4 +48,9 @@ This mode uses the @command{python} modules corebio and weblogo. You can install
 > pip install weblogo
 @end smallexample
 
+You can obtain the logos by running:
+@smallexample
+imogene display -s eutherian -m motifs.txt -a align --logos
+@end smallexample
+(the folder align do not need to exist in that case).
 

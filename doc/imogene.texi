@@ -33,7 +33,9 @@
 This manual is for Imogene
 (version @value{VERSION}, @value{UPDATED}).
 
-Copyright @copyright{} 2005-2011 Herv@'e Rouault
+Copyright @copyright{} 2006-2013 Herv@'e Rouault
+
+Copyright @copyright{} 2009-2013 Marc Santolini
 
 
 @quotation
@@ -83,6 +85,7 @@ This manual is for Imogene
 * Extract::
 * Distinfo::
 * Genmot:: 
+* Scangen:: 
 * Display:: 
 * Test::
 * Mobyle::
@@ -98,6 +101,8 @@ This manual is for Imogene
 @include distinfo.texi
 
 @include genmot.texi
+
+@include scangen.texi
 
 @include display.texi
 
