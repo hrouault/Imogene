@@ -29,3 +29,5 @@ cmdline.c
 cmdline.h
 .DS_Store
 test
+*.swp
+tarballs
