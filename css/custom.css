@@ -92,3 +92,7 @@ table tr:nth-child(even) td.mot9 {
 td.mot10 {
    background: #7F7F00;
 }
+
+.conserved {
+   font-style:italic;
+}
