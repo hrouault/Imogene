@@ -9,6 +9,12 @@ It is programmed in C++, accompanied by a bunch of python help scripts. In
 addition, an xml description page is provided for the
 [mobyle](mobyle.pasteur.fr) system.
 
+Documentation
+=============
+
+The full documentation is available online
+[here](http//http://hrouault.github.io/Imogene/).
+
 
 Installation
 ============
