@@ -1040,6 +1040,10 @@ display_args_init()
         scorethr = scorethr2 * (1 - 2. / width);
         scorethrcons = scorethr2 * (1 - 1. / width);
         nbmots_for_score = display_args.nbmots_arg;
+        if (display_args.logos_given){
+            cout << "Nb of motifs ignored for logo generation" << endl;
+            nbmots_for_score = 10000;
+        }
     }
 }
 

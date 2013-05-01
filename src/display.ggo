@@ -33,7 +33,7 @@ modeoption  "threshold" t "Threshold used for motif scanning"
 modeoption "species" s "Species used for motifs generation."
             string typestr="str" mode="genmot" required
 
-modeoption  "nbmots" n  "Number of motifs to display (max=10)"
+modeoption  "nbmots" n  "Number of motifs to display (max=20)"
             int typestr="int" default="5" mode="genmot" optional
 
 modeoption  "align" a "Folder containing the fasta formatted (.fa) files of enhancer alignments."
