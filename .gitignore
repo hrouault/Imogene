@@ -1,8 +1,7 @@
 *~
 scripts/python/cython
 Makefile.in
-config.h.in
-config.h.in~
+config.*
 configure
 depcomp
 build
@@ -12,6 +11,7 @@ install-sh
 INSTALL
 missing
 py-compile
+m4
 aclocal.m4
 autom4te.cache
 depcomp
@@ -31,3 +31,4 @@ cmdline.h
 test
 *.swp
 tarballs
+ltmain.sh
