@@ -24,7 +24,8 @@
 
 @section Description of the distance
 
-copy paste from the paper
+@emph{Imogene} uses a distance between PWMs that has been first employed in
+(Rouault et al, PNAS 2010) and described in its supplementary materials.
 
 @section Invoking the command line tool
 
