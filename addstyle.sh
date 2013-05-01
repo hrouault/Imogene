@@ -3,7 +3,7 @@
 for i in doc-origin/*.html
 do
    defname=`echo $i | sed "s/doc-origin\///"`
-sed -e '/Content-Style-Type/ s;^;   <link rel="stylesheet" href="css/screen.css" type="text/css" media="screen, projection">\
+sed -e '/style type=/ s;^;   <link rel="stylesheet" href="css/screen.css" type="text/css" media="screen, projection">\
    <link rel="stylesheet" href="css/print.css" type="text/css" media="print"> \
    <!--[if lt IE 8]>\
    <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen, projection">\
