@@ -20,6 +20,7 @@
 
 bin_SCRIPTS = getalign extract-bgrnd-coord weblogo-display
 nodist_python_PYTHON = mapping.py
+BUILT_SOURCES = mapping.py
 
 CLEANFILES = $(bin_SCRIPTS) mapping.py emf2fasta.c
 EXTRA_DIST = getalign.py.in mapping.py.in weblogo-display.py.in\
