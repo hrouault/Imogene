@@ -569,7 +569,7 @@ loadseqs(const char * folder)
             string file = string(folder);
             file += "/";
             file += ep->d_name;
-            if (file.find(".fa") != string::npos) {
+            if (file.substr(file.size() - 3, file.size()) == ".fa") {
                 Sequence seq = loadseqconserv(file);
                 // get rid of root path
                 seq.name = string(ep->d_name);
@@ -599,7 +599,7 @@ loadfilenames(const char * folder)
             string file = string(folder);
             file += "/";
             file += ep->d_name;
-            if (file.find(".fa") != string::npos) {
+            if (file.substr(file.size() - 3, file.size()) == ".fa") {
                 filenames.push_back(file);
             }
         }
