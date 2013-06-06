@@ -1,0 +1,141 @@
+<tool id="genmot" name="Motif generation">
+  <description>Generates motifs from a set of functionally related
+      CRMs</description>
+  <version_command>imogene --version</version_command>
+  <command python>genmot_comp.py -s $species -i $coord_file -w $width -t $Sg -x $extent -e $evolutionary -t $Ss1 -n $gennbmots </command>
+  <inputs>
+    <param name="species" type="select" label="Family of species to consider">
+        <option value="droso">Drosophilae</option>
+        <option value="eutherian">Eutherian</option>
+    </param>
+    <param name="width" size="4" type="integer" value="10" label="Width of the motifs">
+        <help> Motifs represent the affinity of transcription factors for
+            binding sites (BS).  Please indicate here the *width* of BSs in
+            number of nucleotides (nts). Typical values range between 8 and 12
+            nts.  Note that motifs of larger width can model motifs with
+            a specific core of lower width and flanking nts with background
+            frequencies (non-specific non-coding sequences). However, large
+            motifs are more difficult to infer when containing many degenerate
+            bases.</help>
+    </param>
+    <param name="extent" size="4" type="integer" value="20" label="Allowed shift of a binding site position in orthologous species">
+        <help>In order to be robust to mistakes in the alignments,
+                *Imogene* allows for local shifts of the binding sites
+                in orthologous sequences.
+              Considering the first base of a binding site in the reference
+                species, an alignment will make it correspond to a position
+                <em>p</em> in an orthologous genome. The algorithm will then
+                search for binding sites in this orthologous species at
+                positions <em>(p-s,p+w+s)</em>, where <em>s</em> is the shift
+                indicated here and <em>w</em> is the width of the motif.</help>
+    </param>
+    <param name="evolutionary" type="select" label="Evolutionary model used for motif generation">
+        <option value="1">Felsenstein</option>
+        <option value="2">Halpern-Bruno</option>
+        <help><p><em>Imogene</em> makes use of the evolution of binding sites
+                to infer motifs. In order to function, <em>Imogene</em>
+                consider the mutation rate of bases under selection thanks
+                to an evolutionary model.</p>
+              <p>Two models are currently supported by <em>Imogene</em> (see
+                refs at the end of the page for a detailed description):
+                <ul><li>Felsentein: this model is simple and runs faster</li>
+                    <li>Halpern-Bruno: this model has a deeper theoretical
+                        ground and better predicts the speed of evolution of
+                        the motifs but takes more time to run.</li>
+                </ul></p>
+            </help>
+    </param>
+    <param name="Sg" size="4" type="float" value="11.0" label="Threshold used for motif generation">
+        <help><p>The <em>threshold</em>, expressed in bits, corresponds to the
+                level of specificity of a motif.  As an order of magnitude,
+                a threshold equal to 10 corresponds approximatively to one
+                binding site every 1000 bases on average in the whole genome.
+                Since we use conservation to define motifs instances, this
+                number is actually an upper bound. Common values, that give
+                reasonable results are comprised between 10 and 13 bits.</p></help>
+    </param>
+    <param name="Ss1" size="4" type="float" value="8.0" label="Threshold used to scan training set sequences for display">
+        <help><p>Note that this scanning threshold is only used for the final
+                display and does not interviene in motifs generation. In
+                particular, a lower threshold is useful to check for cryptic
+                sites in the sequences. </p></help>
+    </param>
+    <param name="gennbmots" size="4" type="integer" value="5" label="Number of motifs to display at maximum (between 1 and 10)">
+        <help><p>The algorithm output consists of many motifs on general.
+                Although, they are all present in the text file output, they
+                cannot all be displayed and shown on the input sequences. It is
+                usually fine to consider between 5 et 10 motifs. </p></help>
+    </param>
+    <param format="bed" name="coord_file" type="data" label="Training set sequences coordinates"><help>Please use the "Get Data" tool in the menu to import bed files</help></param>
+  </inputs>
+  <outputs>
+    <data format="html" name="outhtml" label="Genmot html" />
+  </outputs>
+
+  <help>
+**What is it for?**
+
+*Imogene* has two main purposes:
+
+i.  it detects statistically overrepresented motifs, considering closely
+    related genomes, in a set of training sequences. These sequences are
+    generally selected for their biological relationships, *ie*
+    cis-regulatory role.
+ii. it predicts novel cis-regulatory sequences based on user-selected
+    motifs at the whole genome scale.
+
+Currently, *Imogene* supports two genome sets: mammals and drosophilae, but we
+are open to integrating other sets if you feel interested.
+
+-----
+
+**Genomes**
+
+Two families of genomes are currently supported by *Imogene*:
+
+- *Drosophilae*: genomes are taken from the 12 genomes project
+  (A. G. Clark, *et al*. Evolution of genes and genomes on the Drosophila
+  phylogeny. *Nature*, 450(7167):203-218, Nov 2007.)
+- *Eutherian*: genomes are taken from the ensembl project
+  (http://www.ensembl.org/, folder epo_12_eutherian)
+
+-----
+
+**Source code**
+
+The source code of *Imogene* is available on *github*:
+https://github.com/hrouault/Imogene.
+
+It contains the main source code, as well as a documentation and local
+installation instructions.  An online manual can also be found here_.
+Any trouble concerning its installation or bugs should be addressed on
+*github*.
+
+.. _here: http://hrouault.github.com/Imogene>
+            
+Please, feel free to contact us for any question concerning *Imogene*:
+Herve Rouault herve.rouault@pasteur.fr_,
+Marc Santolini marc.santolini@lps.ens.fr_.
+
+.. _herve.rouault@pasteur.fr: herve.rouault@pasteur.fr
+.. _marc.santolini@lps.ens.fr: marc.santolini@lps.ens.fr
+
+-----
+
+**References:**
+
+Please cite
+
+H. Rouault, M. Santolini, F. Schweisguth and V. Hakim
+(2013), Imogene: identification of motifs and cis regulatory
+modules underlying gene co-regulation, submitted.
+
+or
+
+H. Rouault, K. Mazouni, L. Couturier, V. Hakim and F. Schweisguth (2010),
+Genome-wide identification of cis-regulatory motifs and modules underlying gene
+coregulation using statistics and phylogeny. Proc. Natl. Acad. Sci. U.S.A.,
+107:14615-14620.
+  </help>
+
+</tool>

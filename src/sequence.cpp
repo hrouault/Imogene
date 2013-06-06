@@ -327,12 +327,11 @@ operator >>(istream & is, TSS & tss)
     is >> dir;
     is >> chrom;
     is >> gname;
-    // TSS file updated for eutherians
-    //if (species == "droso"){
+    if (species == "droso"){
       is >> gnamevar;
-    //} else {
-    //   gnamevar = gname;
-    //}
+    } else {
+       gnamevar = gname;
+    }
     if (dir == '+') {
         tss.sens = 1;
     } else if (dir == '-') {

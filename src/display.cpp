@@ -929,7 +929,8 @@ disphtml_genmot(vseq & seqs, vmot & mots)
         string filename;
         filename += (*ivs).name;
         filename += ".svg";
-        outf << "<object data=\"" + filename + "\" width=\"950px\" type=\"image/svg+xml\"></object>" << endl;
+        outf << "<object data=\"" + filename;
+        outf << "\" width=\"950px\" type=\"image/svg+xml\"></object>" << endl;
     }
     disphtmlclose(outf);
     outf.close();
@@ -961,13 +962,13 @@ disphtml_scangen()
     }
     outf << "<table>" << endl;
     outf << "<tr>" << endl;
-    outf << "<th>Score</th>\
-       <th>Coordinate</th> \
-       <th>Closest TSS</th>\
-       <th class='TSS'>Relative distance to closest TSS (bp)</th>\
-       <th>5 surrounding TSSs</th>"\
-       //<th>TSSs in surrounding " << annotextent / 1e3 << "kb</th>"
-       << endl;
+    outf << "<th>Score</th>"
+            "<th>Coordinate</th>"
+            "<th>Closest TSS</th>"
+            "<th class='TSS'>Relative distance to closest TSS (bp)</th>"
+            "<th>5 surrounding TSSs</th>";
+            //<th>TSSs in surrounding " << annotextent / 1e3 << "kb</th>"
+    outf << endl;
     outf << "</tr>" << endl;
     unsigned int i = 0;
     string strline;

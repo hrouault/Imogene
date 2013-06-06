@@ -437,9 +437,8 @@ GroupInstance::compbestannot()
 {
     int dist = 1e9;
     for (ivTSS ivt = TSSs.begin(); ivt != TSSs.end(); ivt++) {
-        //int tssdist = abs((int)(*ivt).coord - (int)start + (int)scanwidth / 2);
-        int tssdist = (int)(*ivt).coord - (int)start + (int)scanwidth / 2;
-        if (abs(tssdist) < abs(dist)) {
+        int tssdist = abs((int)(*ivt).coord - (int)start + (int)scanwidth / 2);
+        if (tssdist < dist) {
             dist = tssdist;
             besttss = *ivt;
             distbesttss = dist;

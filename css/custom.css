@@ -96,3 +96,9 @@ td.mot10 {
 .conserved {
    font-style:italic;
 }
+
+.TSS {
+   width:150px;
+   text-align:center;
+   white-space:normal;
+}
