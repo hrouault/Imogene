@@ -959,15 +959,18 @@ colmean(unsigned int pos,Motif * mot)
 
    // INIT
    vd winit(4,0.);
-   winit[0]=conca*exp(mot->matprec[pos][0]);
-   winit[1]=concc*exp(mot->matprec[pos][1]);
-   winit[2]=concg*exp(mot->matprec[pos][2]);
-   winit[3]=conct*exp(mot->matprec[pos][3]);
-   double sum=winit[0]+winit[1]+winit[2]+winit[3];
-   winit[0]/=sum;
-   winit[1]/=sum;
-   winit[2]/=sum;
-   winit[3]/=sum;
+   double sum;
+   //winit[0]=conca*exp(mot->matprec[pos][0]);
+   //winit[1]=concc*exp(mot->matprec[pos][1]);
+   //winit[2]=concg*exp(mot->matprec[pos][2]);
+   //winit[3]=conct*exp(mot->matprec[pos][3]);
+   //sum=winit[0]+winit[1]+winit[2]+winit[3];
+   //winit[0]/=sum;
+   //winit[1]/=sum;
+   //winit[2]/=sum;
+   //winit[3]/=sum;
+   
+   winit = wmeaninde;
    
    double f,ftrial;
    void * par[2]={(void *)mot,&pos};

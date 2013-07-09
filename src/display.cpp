@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 Hervé Rouault <rouault@lps.ens.fr>
+ * Copyright (C) 2006-2011 HervÃ© Rouault <rouault@lps.ens.fr>
  * Copyright (C) 2009-2011 Marc Santolini <santolin@lps.ens.fr>
  *
  * This file is part of Imogene.
@@ -929,8 +929,7 @@ disphtml_genmot(vseq & seqs, vmot & mots)
         string filename;
         filename += (*ivs).name;
         filename += ".svg";
-        outf << "<object data=\"" + filename;
-        outf << "\" width=\"950px\" type=\"image/svg+xml\"></object>" << endl;
+        outf << "<object data=\"" + filename + "\" width=\"950px\" type=\"image/svg+xml\"></object>" << endl;
     }
     disphtmlclose(outf);
     outf.close();
@@ -962,13 +961,13 @@ disphtml_scangen()
     }
     outf << "<table>" << endl;
     outf << "<tr>" << endl;
-    outf << "<th>Score</th>"
-            "<th>Coordinate</th>"
-            "<th>Closest TSS</th>"
-            "<th class='TSS'>Relative distance to closest TSS (bp)</th>"
-            "<th>5 surrounding TSSs</th>";
-            //<th>TSSs in surrounding " << annotextent / 1e3 << "kb</th>"
-    outf << endl;
+    outf << "<th>Score</th>\
+       <th>Coordinate</th> \
+       <th>Closest TSS</th>\
+       <th class='TSS'>Relative distance to closest TSS (bp)</th>\
+       <th>5 surrounding TSSs</th>"\
+       //<th>TSSs in surrounding " << annotextent / 1e3 << "kb</th>"
+       << endl;
     outf << "</tr>" << endl;
     unsigned int i = 0;
     string strline;
@@ -1041,10 +1040,6 @@ display_args_init()
         scorethr = scorethr2 * (1 - 2. / width);
         scorethrcons = scorethr2 * (1 - 1. / width);
         nbmots_for_score = display_args.nbmots_arg;
-        if (display_args.logos_given){
-            cout << "Nb of motifs ignored for logo generation" << endl;
-            nbmots_for_score = 10000;
-        }
     }
 }
 
