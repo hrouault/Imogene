@@ -35,7 +35,7 @@ make install
 Once the package is installed, the first thing to do is to download the
 required genomes. To help in that task, scripts have been added in the script
 folder.  execute
-`$(prefix)/lib/python-version/site/packages/generate-droso-align.py` (for
+`$(prefix)/bin/getalign --species droso` (for
 drosophila genomes)
 
 Files will be automatically installed in `$(prefix)/share/imogene`.

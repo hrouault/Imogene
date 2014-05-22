@@ -229,7 +229,7 @@ else:
     message('Downloading Mavid Mercator alignment files.')
     alignfn = 'fly_CAF1.1.tar.gz'
     if not checkexist(alignfn, hashes[alignfn]):
-        geturl('http://www.biostat.wisc.edu/~cdewey/fly_CAF1/data/' +
+        geturl('ftp://ftp.biostat.wisc.edu/pub/cdewey/data/fly_alignments/' +
                alignfn, hashes[alignfn])
     files_present.append(alignfn)
 
